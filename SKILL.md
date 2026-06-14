@@ -133,8 +133,14 @@ from before the full build. The four:
        with **3 *differentiated* directions** (distinct light/dark, warm/cool, serif/sans —
        not three shades of one idea), each a style module rendered by
        `scripts/archetypes.py` into the **same** representative slides (cover / points+
-       callout / diagram / data), quick-critic each, then collect the pick + knobs. The
-       chosen module becomes the deck's `style.py`.
+       callout / diagram / data), quick-critic each, then collect the pick + knobs. Present
+       the pick as **A / B / C plus a fourth "D — describe your own" option**: if the user
+       picks D, they *type the look they have in mind* (a reference, a brand, a mood, a
+       constraint) and you **synthesize a fourth direction from that description** — build it
+       as a style module, render the same archetypes, and show it alongside (iterate until
+       they consent), rather than forcing one of your three guesses. The three are only your
+       opening proposals; the author's own intention always outranks them. The
+       chosen/synthesized module becomes the deck's `style.py`.
      - *Picks design-one* → build a single look shaped to purpose, as above.
      This offer is **skippable, never forced** — a brand-new from-scratch deck is exactly
      when showing options pays off, but a user in a hurry can decline in one click.

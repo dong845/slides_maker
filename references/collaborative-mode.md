@@ -40,8 +40,15 @@ use them as a throwaway mood sketch, then confirm with a real rendered slide.)
 4. Render all directions, present them (a contact sheet / the PNGs), and collect
    **structured feedback** with `AskUserQuestion`: pick a direction, plus **knobs** —
    density (minimal/moderate/dense), accent colour, font pairing, light/dark.
-5. Apply knobs by editing the chosen **style module** (a tweak = change a constant +
-   re-render the archetypes — cheap) until the user consents.
+   - **Always include a final "D — describe your own" option** beyond the rendered
+     directions. The rendered options are only your *opening proposals*; the author may
+     have a look in their head you didn't guess. If they pick D, they **type their
+     intention** — a reference deck/site, a brand, a mood, a colour, a constraint ("like
+     our website", "warmer", "a serif on dark") — and you **synthesize a new style module
+     from that description**, render the same archetypes, and bring it back (step 5 loop).
+     A blend ("B's palette with A's serif") is a valid D too. Never force one of your three.
+5. Apply knobs — or a "D" free-text intention — by editing/creating the **style module**
+   (a tweak = change a constant + re-render the archetypes — cheap) until the user consents.
 6. On consent, the chosen module becomes the deck's `style.py`. **Optionally persist
    it** to `~/.claude/slide-templates/<name>/` (profile.md + the style module) so it's
    a reusable registered template next time — collaborative mode *grows the registry*.
