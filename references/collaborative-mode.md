@@ -19,11 +19,17 @@ use them as a throwaway mood sketch, then confirm with a real rendered slide.)
 ## The three gates (each cheap to change; expensive work deferred)
 
 ### Gate A — Direction + archetypes
-1. From the interview (purpose/audience/style) generate **2–3 *differentiated*
-   directions** — distinct design languages, each grounded in `design-by-purpose.md`
-   and named with a one-line rationale (e.g. *Editorial* — serif, airy, gravitas;
-   *Bold* — geometric, high-contrast, energetic). Each direction is a **style module**
-   with the standard interface (see `references/examples/style_example.py`).
+1. From the interview (purpose/audience/style) generate **differentiated directions** —
+   distinct design *languages*, not three shades of one idea: vary the big axes
+   (light/dark, warm/cool, serif/sans, restrained/bold) so the choice is real. Each is
+   grounded in `design-by-purpose.md` and named with a one-line rationale (e.g.
+   *Editorial* — serif, airy, gravitas; *Keynote* — dark, high-contrast, energetic;
+   *Corporate* — light, crisp, institutional). Each direction is a **style module** with
+   the standard interface (see `references/examples/style_example.py`).
+   - **How many:** when this gate fires because the user chose **"design a clean one" /
+     no template** (its recommended-default home), use **3** — the look is fully yours to
+     invent, so a fuller spread earns the pick. For the lighter "unsure / brand-defining"
+     opt-in offer, **2–3** is fine. Present the pick itself as `AskUserQuestion` options.
 2. For each, build the **same archetype slides** with `scripts/archetypes.py`
    (`build_archetypes(prs, S)` / `preview_direction(style_path, out)`): cover, a
    bullets+callout slide, a diagram slide, and a data/figure slide. Same content,

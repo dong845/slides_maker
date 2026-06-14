@@ -105,9 +105,11 @@ encouraged; assuming a domain for someone who gave you nothing is the failure to
 all four; a genuinely tiny ask (a single slide, a quick infographic) still needs purpose
 and content confirmed, but you may collapse template/style to a sensible default *stated
 in one line* ("I'll do a clean minimal look — say if you have a template") rather than a
-full prompt. Scaling ≠ skipping — never infer purpose or content. Two answers trigger a quick follow-up *after* the
+full prompt. Scaling ≠ skipping — never infer purpose or content. Three answers trigger a quick follow-up *after* the
 batch: *a conference talk* → ask which venue, then research it; *a new template* → they
-hand over the file. The four:
+hand over the file; *"design a clean one" (no template)* → offer the **direction gate**
+(see Q1's design-one branch) — recommend showing **3** rendered style directions to pick
+from before the full build. The four:
 
 1. **Template / brand.** First **list this user's registered templates** — check
    `~/.claude/slide-templates/` (each subfolder is one template they've used before,
@@ -122,6 +124,20 @@ hand over the file. The four:
      and **shape the look to the chosen purpose** (step 2 / `references/design-by-purpose.md`)
      rather than always shipping the same default blue — a defense, an exec readout,
      and a lecture should not look alike.
+     **Because the look is entirely yours to invent here, default to offering the
+     direction gate** — this is the one branch where preference, not just quality, is
+     unresolved, so let the user *choose* the look rather than guessing one for them.
+     After the interview, present (as `AskUserQuestion` options, not free text)
+     **"see 3 style directions first (recommended)"** vs **"just design one and go."**
+     - *Picks the 3 directions* → run **Gate A** of `references/collaborative-mode.md`
+       with **3 *differentiated* directions** (distinct light/dark, warm/cool, serif/sans —
+       not three shades of one idea), each a style module rendered by
+       `scripts/archetypes.py` into the **same** representative slides (cover / points+
+       callout / diagram / data), quick-critic each, then collect the pick + knobs. The
+       chosen module becomes the deck's `style.py`.
+     - *Picks design-one* → build a single look shaped to purpose, as above.
+     This offer is **skippable, never forced** — a brand-new from-scratch deck is exactly
+     when showing options pays off, but a user in a hurry can decline in one click.
 
    **Never hardcode or assume a specific institution's template.** This skill ships
    to anyone: a brand-new user has an *empty* registry, so they see only "provide one"
@@ -215,10 +231,14 @@ hand over the file. The four:
    - Plus any tone (academic, corporate, playful).
    Honor their choice over your own habits; nudge toward concise + visual when
    unsure; carry the choice into the plan (step 3) and the build (step 4).
-   - **Optional offer:** if the user is unsure on style, or it's a brand-defining/
-     high-stakes deck, offer to **show 2–3 directions first** (collaborative mode,
-     `references/collaborative-mode.md`) — real rendered archetype slides they pick
-     from — before committing to the full build. Opt-in; don't force it.
+   - **Direction gate (when to show rendered options first).** Two cases call for it:
+     (a) **"design a clean one" / no template** → it's the *recommended default* there —
+     offer 3 directions as described in Q1's design-one branch above; (b) any other case
+     where the user is **unsure on style** or it's a **brand-defining / high-stakes** deck →
+     offer **2–3 directions** as a lighter opt-in. Either way it's the same machinery
+     (collaborative mode Gate A, `references/collaborative-mode.md` + `scripts/archetypes.py`):
+     real rendered archetype slides the user picks from before the full build. **Skippable,
+     never forced.** A *provided* template means the look is already decided — don't offer it.
 
 **Language (decide it, then hold it).** A deck is written in **one language
 throughout** — default to the language the *user* writes in. **When the source
