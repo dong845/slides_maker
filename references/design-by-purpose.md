@@ -22,7 +22,10 @@ kind of document* the moment it's on screen, which earns trust before a word is 
    *style*, not the discipline (one idea per slide, figures whole, contrast ≥ 4.5:1).
 
 Adopt these as **tasteful defaults, not rules** — if the user states a brand colour,
-tone, or preference, that always wins.
+tone, or preference, that always wins. And **vary within them**: each entry is a *mood*,
+not a fixed palette — pick a distinct, concrete look each time (warm/cool, light/dark,
+serif/sans, restrained/vivid) rather than shipping one identical house style across decks.
+Don't reuse the previous deck's scheme out of habit.
 
 **Non-Latin decks:** the font names below are Latin. For Chinese/Japanese/Korean, pick
 the script-appropriate equivalent and set `deckkit.EAFONT` — sans (modern/corporate/

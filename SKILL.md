@@ -262,13 +262,14 @@ authors' actual emphasis, not a plausible-sounding paraphrase. Reuse their figur
   present an unverifiable claim as established fact. This matters because a no-source deck
   has **no paper to anchor it** — *you* are the only check on whether a confident-sounding
   statement is actually true, and an expert audience spots a wrong "fact" instantly (the
-  failure mode here is being *wrong*, not just vague). **Ground to the *current date*, not
-  just the last complete year.** You know today's date (it's in context) — search for the
-  **latest** developments (year-to-date figures, recent events, things that happened this
-  year) and fold the material ones in, then put an "as of \<month year\>" marker on the
-  deck. A deck dated this year that silently stops at last year reads as stale and can miss
-  pivotal recent events (a just-announced deal, filing, launch, or result). When the latest
-  full-year metric is last year's, label it as such and add a current-year update rather
+  failure mode here is being *wrong*, not just vague). **Ground to TODAY — search right up
+  to the current day, not just the current year.** You know today's date (it's in context);
+  use it. Run **recency-bounded** searches (this month / the last few weeks for fast-moving
+  topics), confirm time-sensitive facts *as of now*, and fold in material recent events — a
+  just-announced deal, filing, launch, ruling, price, or result. Date the deck with the real
+  **"as of \<day month year\>"**. A deck dated this year that silently stops at last year — or
+  misses something that happened last week — reads as stale. When the latest *full-year*
+  metric is last year's, label it as such and add the current year-to-date figure rather
   than presenting old data as current. Then confirm the outline with the user before
   building the full deck (cheaper to correct an outline than a finished deck).
   > **🔴 CHECKPOINT** — get the user's OK on the outline before building the full deck.
@@ -313,6 +314,16 @@ iterate without clobbering the user's manual edits.
   deck and adapt concrete ideas. A status update should read as crisp and corporate,
   a defense as sober and formal, a lecture as warm and clear — the design should
   signal the right kind of document before a word is read.
+  - **Vary the look deliberately — don't default to one house style.** When *you* define
+    the style, treat each deck as a fresh visual identity: choose a palette, type pairing,
+    layout grid, and a signature motif that fit *this* purpose/audience/mood — and do NOT
+    reuse the last deck's scheme out of habit (not the deckkit default blue, not whatever
+    you built last time). Range widely across decks — warm vs cool, **light vs dark**,
+    serif vs sans, minimal vs bold, restrained vs vivid; `design-by-purpose.md` gives a
+    starting mood per purpose, but pick a *distinct, concrete* look within it. Unsure or
+    brand-defining? Show 2–3 rendered direction archetypes and let the user pick
+    (collaborative mode, `scripts/archetypes.py`). Sameness across decks is the failure to
+    avoid; the only constant is the craft (contrast, hierarchy, one idea per slide).
 
 **Fonts for non-Latin languages (Chinese / Japanese / Korean)** — applies to both
 branches. The defaults are Latin-only, so set a script-appropriate font before
