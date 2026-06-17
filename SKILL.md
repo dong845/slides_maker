@@ -405,19 +405,54 @@ its fill clears ~4.5:1 before you commit to it). If the user gave a **style exam
 build to your **style brief** of it — match its palette/accents, density, title
 treatment, and figure/table/equation motifs (override the deckkit defaults to suit).
 A few rules that matter (see `references/design-principles.md`):
-- **Use the source's own figures, whole.** For *any* deck (research, work, exec,
-  teaching): if the source — paper, report, doc, existing slide, or a chart already
-  produced from the code/data — has a figure (architecture, results, a plot), use
-  *that* — don't redraw it (slow, risks wrong detail) and don't show only a partial
-  crop (hides context). Trim just the page header/caption/whitespace; annotate the
-  whole figure with callouts. Build native diagrams only for structure with no
-  source figure.
-  - **Figure trapped in a PDF (paper/report)?** Get it out with `scripts/extract_pdf.py`
-    rather than redrawing it: `page` rasterises a whole page to a high-DPI PNG (the most
-    reliable — it composites the figure's vector + text + raster exactly as printed),
-    `crop` lifts one figure off a busy page (give a point/fraction box), and `images`
-    pulls embedded bitmaps at native resolution (best for a single photo, but a vector
-    chart won't appear there). Then place the PNG *whole*, like any other source figure.
+- **Use the source's own figures, WHOLE — integral is the default.** For *any* deck
+  (research, work, exec, teaching): if the source — paper, report, doc, existing slide, or a
+  chart already produced from the code/data — has a figure (architecture, results, a plot),
+  use *that*; don't redraw it (slow, risks wrong detail). **The default is to show the figure
+  integral — the complete figure as one unit — not chopped into pieces.** Many users
+  *prefer* the whole figure even when it's dense (it's the artifact they know and trust), so
+  when a figure feels too busy, your *first* move is to give it a whole slide — large, with an
+  **assertion title + a one-line caption** pointing attention to the part that matters (e.g.
+  "rightmost column is Ours") — not to crop it down. Reach for cropping only to (a) **trim**
+  surrounding page header / caption / whitespace, or (b) lift **one cleanly-separable
+  sub-figure** that genuinely stands alone. Chopping a multi-panel figure into a few columns
+  *loses context and changes what the authors showed* — do it only when the whole is truly
+  unusable on a slide, and prefer to **confirm with the user** before discarding panels.
+  Build native diagrams only for structure with no source figure.
+  - **Never clip the figure's OWN parts.** Whether you place a figure whole or crop it, the
+    legend, colour bar, axis labels/ticks, title, units, and the outermost rows/columns are
+    *part of the figure* — losing them is worse than showing the figure a touch smaller. After
+    every crop **and** after placing/scaling a figure on a slide, **re-view the result** and
+    confirm nothing of the figure is cut off (a half-cut legend at the top edge is the classic
+    miss). If a crop box starts at the very edge of a legend/axis, give it a margin.
+  - **Figure trapped in a PDF (paper/report)? Crop it FROM the paper — don't ask the user
+    for an original** (you may *offer* to use one if they have it, but you can get a clean,
+    precise crop yourself). The primary tool is `scripts/extract_pdf.py`'s auto-detection,
+    which anchors on captions and snaps to the figure's real extent:
+    `python extract_pdf.py figures paper.pdf` lists every detected figure (with `cov=`/`bodyov=`
+    checks and a `⚠ CHECK` flag on suspect ones); `extract_pdf.py figure paper.pdf <idx> out.png`
+    renders one (auto-trimmed); `autofig paper.pdf figs/` dumps them all. **Always view a
+    rendered crop before using it**, and for a `⚠`-flagged one (dense multi-figure pages can
+    mis-localise) fall back to the manual loop: `page` rasterises a whole page to high-DPI PNG
+    (composites vector+text+raster exactly as printed), then `crop_helper.py grid`→`crop` to
+    cut precisely. (`crop` by point/fraction box and `images` for embedded bitmaps still exist.)
+    Then place the PNG *whole*, like any other source figure.
+  - **When you DO crop, do it by looking, never by guessing.** The failure mode is cropping
+    **blind** — inventing fraction coordinates, clipping a column or a legend, and not
+    noticing. `scripts/crop_helper.py` removes the guessing with a **see-it loop**: `grid
+    img _g.png` overlays a labelled ruler → *view it* and read the box off the labels →
+    `crop img out.png x0 y0 x1 y1 --frac` → **view the crop and confirm** nothing's clipped
+    (adjust and redo if so). One or two looked-at iterations beat a single blind guess.
+  - **Dense comparison / panel grid (N methods × M examples)?** First consider showing it
+    **whole** on its own slide (the integral default above) — that is often what the user
+    wants. Only if you and the user agree the full grid is unusable, keep the columns/rows
+    that make the point and **reassemble** them, preserving the header row and row-label
+    column: `crop_helper.py panel fig.png _idx.png --grid RxC --xpad <left-label>
+    --ypad <top-header>` overlays numbered cells (*view it*, tune `--xpad/--ypad` until the
+    lines sit on the cell gaps), then add `--keep-cols 0,1,3,9 --keep-rows 0,2,3` to emit a
+    compact figure. View the result to confirm the kept headers still line up — this is also
+    a fidelity check (you can read each cell's numbers and confirm they're faithful). When the
+    user provides the *original* source images/PDFs, prefer working from those.
 - **Animated results (GIF / looping animations) → insert the GIF itself**, never reduce
   it to a single frame. `s.shapes.add_picture(path_to.gif, ...)` embeds the real animated
   GIF; PowerPoint and Keynote **loop it in slideshow**. For time-resolved / 4D / dynamic
@@ -491,22 +526,35 @@ fights the single-file artifact, and doesn't speed up the parts that actually co
 time. Full workflow (incl. the critic panel + finding-routing) in
 `references/large-deck-orchestration.md`.
 
-**Motion & builds (consider on EVERY deck, any purpose).** Some slides land better
-revealed *step by step* — a pipeline that builds one stage per click, a multi-part
-argument that appears as you reach it, a takeaway shown last. **This is a standard step
-for all purposes, not just talks/pitches:** on every deck, scan each slide and ask
-"would a purposeful build help the audience follow this?" — a step-by-step diagram or
-build-to-takeaway aids a lab meeting, status update, or lecture just as much as a
-keynote. Restraint still rules: animation's job is to **control attention and pace**,
-never decoration — most *individual* slides stay static, and you never animate for
-flourish. Use `scripts/anim.py` (it injects the PowerPoint timing XML python-pptx
-can't): draw the static scaffold, wrap each reveal-on-click chunk in a `Build.step()`,
-then `apply(effect="fade")` — subtle fade, one idea per click, scaffold always visible.
-A calm **deck-wide slide transition** (`slide_transition(s, "fade")` on each slide) is a
-reasonable polish default that doesn't distract; reserve *click-builds* for the slides
-where step-by-step genuinely helps (pipelines, multi-part arguments, build-to-takeaway).
-A slide must still read correctly fully-built (for print/PDF). See
-`references/animation.md` for when to animate, the craft rules, and usage.
+**Motion & builds — a REQUIRED pass on EVERY deck, any purpose.** Motion is not a
+talks-only flourish; a step-by-step diagram or a build-to-takeaway aids a lab meeting,
+status update, or lecture just as much as a keynote. So this is a *standard build step you
+do not skip* — a deck that ships with zero motion because nobody looked is the failure this
+pass exists to prevent. Two distinct layers, decided separately:
+- **The calm deck-wide transition is the DEFAULT, applied unless you have a reason not
+  to.** Add `slide_transition(s, "fade")` (~0.4–0.5s) to *every* slide — it adds polish and
+  continuity and never distracts. Only omit it deliberately (e.g. a print-only leave-behind)
+  — and if you omit it, say why. Don't leave it off just because you forgot to consider it.
+- **Click-builds are per-slide — scan every slide, record the decision.** Walk each slide
+  and ask "would revealing this step by step help the audience follow it?" Reach for a build
+  on **pipelines / multi-stage diagrams** (one stage + its arrow per click), **multi-part
+  arguments** (reveal each part as you reach it), **before→after / problem→solution**, and
+  **build-to-takeaway** (evidence first, the takeaway callout last). Restraint still rules:
+  most *individual* slides have nothing to pace and stay static, and you never animate for
+  flourish — if a build doesn't help the audience *follow*, drop it. The discipline is that
+  you *considered* every slide, not that you animated many.
+
+Use `scripts/anim.py` (it injects the PowerPoint timing XML python-pptx can't): draw the
+static scaffold, wrap each reveal-on-click chunk in a `Build.step()`, then
+`apply(effect="fade")` — subtle fade, one idea per click, scaffold always visible. A slide
+must still read correctly fully-built (for print/PDF) — builds layer on a correct static
+slide, never fix a cluttered one. See `references/animation.md` for craft rules and usage.
+
+**Record a one-line motion manifest** as you go — for each slide, `build: <what reveals,
+in order>` or `static: <why nothing to pace>`, plus whether the deck-wide transition is on.
+You'll hand this to the critic in step 5 (it can't *see* motion in a static render, so it
+judges your motion *design* from this manifest plus the build-candidates it spots in the
+pixels). Keep it next to the build (a comment block in `build_<deck>.py` is fine).
 
 ## Step 5 — Render, verify, then run the actor–critic loop
 First **render and look** (`bash scripts/render_deck.sh <deck.pptx>` → one PNG per
@@ -534,8 +582,9 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
 *demanding* judge (see `agents/critic.md`), not a rubber stamp:
 1. **Critique.** Dispatch an independent critic subagent (Agent tool) pointed at
    `agents/critic.md`, giving it the rendered PNGs, the deck's **purpose + audience**,
-   `references/review-rubrics.md`, **and the source material** (so it can verify
-   claims/figures/numbers, not just style). A *separate* agent matters: it judges the
+   `references/review-rubrics.md`, the **motion manifest** from step 4 (so it can judge the
+   motion *design* it can't see in a static render), **and the source material** (so it can
+   verify claims/figures/numbers, not just style). A *separate* agent matters: it judges the
    pixels, not your intentions. It returns structured JSON — `verdict`
    ("consent"/"revise"), per-slide `findings` (severity + concrete fix), strengths.
    - **Scale the critic to the stakes — and run it as a panel** (this is the main
@@ -643,8 +692,14 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
 - **Never act as your own final critic** — an independent critic must consent; **never ship
   a partially-rendered or contested-blocker deck silently** (surface the disagreement).
 - **Never clobber the user's hand-edits** — reconcile before regenerating over their file.
-- **Never** ship a wall-of-text slide, a partial-cropped/redrawn source figure, a cine GIF
-  reduced to one frame, meaning carried by colour alone, or text below ~4.5:1 contrast.
+- **Never** ship a wall-of-text slide, a redrawn source figure where a real one exists, a
+  cine GIF reduced to one frame, meaning carried by colour alone, or text below ~4.5:1 contrast.
+- **Never** clip a figure's own parts (legend, colour bar, axis labels/ticks, outer
+  row/column) with a crop or a too-large placement, and **never** chop a multi-panel figure
+  into context-losing pieces when the whole figure would serve — default to the integral
+  figure; **re-view every figure after cropping/placing** to confirm nothing is cut off.
+- **Never** leave text in a callout / chip / takeaway bar visibly off-centre (sitting low or
+  edge-hugging) — centred boxes need the textbox to span the box's true extent.
 - **Never** paste Unicode super/subscripts (ᴴ ᵀ ᵣ); **never** build a "generic conference"
   deck (research the venue); **never** let the deck drift between languages.
 
@@ -663,9 +718,14 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   data) for each candidate direction, for collaborative mode's direction gate.
 - `scripts/extract_deck.py` — pull text/tables/figures OUT of an existing deck (the
   redesign path), so a rebuild reuses the user's real content and figures.
-- `scripts/extract_pdf.py` — pull a figure OUT of a source PDF/paper as a clean PNG
-  (render a page, crop a region, or extract embedded images), for the "use the source's
-  figure whole" rule when the figure is trapped in a PDF.
+- `scripts/extract_pdf.py` — pull a figure OUT of a source PDF/paper as a clean PNG.
+  **`figures`/`figure`/`autofig` auto-detect and crop figures precisely from the paper**
+  (caption-anchored + snap-to-content, with `⚠ CHECK` flags) — the primary "crop from the
+  paper" path; `page`/`crop`/`images` are the manual fallback.
+- `scripts/crop_helper.py` — work on an image *by looking, not guessing*: `grid` overlays a
+  labelled ruler to read a crop box off, `crop` (`--snap`) cuts it, `trim` snaps any image to
+  its content (removes background, never clips a legend/axis — light or dark bg), and `panel`
+  reassembles chosen columns/rows out of a dense comparison grid (keeping headers + labels).
 - `scripts/export_notes.py` — export a deck's speaker notes to a plain-text rehearsal
   script (`python scripts/export_notes.py deck.pptx`); offer it at hand-off.
 - `agents/critic.md` — the independent critic's brief + output JSON schema.

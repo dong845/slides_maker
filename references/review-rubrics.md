@@ -42,8 +42,13 @@ Score each dimension; cite specific slides.
    whose claim can't be verified from the image is a blocker.
 3. **Cognitive load / text.** Few words per point; no paragraph the audience must
    read while the speaker talks. No text that merely duplicates what's said.
-4. **Figures labeled.** Every figure has a legend (what rows/cols/axes are) and a
-   one-line takeaway (what to notice). Unlabeled figure = major issue.
+4. **Figures labeled & intact.** Every figure has a legend (what rows/cols/axes are) and
+   a one-line takeaway (what to notice). Unlabeled figure = major issue. Also check the
+   figure is **intact**: none of its own parts — legend, colour bar, axis labels/ticks,
+   title, units, outer rows/columns — is clipped by a crop or by the slide placement (a
+   half-cut legend is the classic miss), and the figure isn't **chopped into pieces that lose
+   the authors' context** (prefer the whole, integral figure; a narrowed crop that changes
+   what was shown is a real finding).
 5. **Signaling.** Is the eye guided to what matters (arrow, box, color, bold), or
    is everything the same weight?
 6. **Narrative flow.** Do the slides form an arc (problem → idea → method →
@@ -61,9 +66,11 @@ Score each dimension; cite specific slides.
    a figure (architecture, results, a chart), is it shown **whole** rather than
    partial-cropped or hand-redrawn (redraws risk dropping/mis-stating detail)? Is
    there breathing room — a consistent gutter between figures and text, nothing
-   crammed? Does colour vary with intent, or is everything one monotone accent? Is
-   the closing slide named for its purpose ("Conclusion" for a talk, "Next steps"
-   for a status update — not a generic "Take home")?
+   crammed, **and no two elements overlapping** (a figure encroaching on a table/text)?
+   Is text inside filled boxes (callouts, chips, takeaway bars, cells) **optically
+   centred**, not hugging an edge or sitting a touch low? Does colour vary with intent,
+   or is everything one monotone accent? Is the closing slide named for its purpose
+   ("Conclusion" for a talk, "Next steps" for a status update — not a generic "Take home")?
 10. **Factual fidelity** *(when source material exists — the check every system fails).*
    Does every number, label, and headline claim trace back to the source? Does the deck
    represent the source's *actual emphasis* (e.g. a comparison table foregrounds the
@@ -80,6 +87,18 @@ Score each dimension; cite specific slides.
    product pitch, warm/clear for teaching (see `references/design-by-purpose.md`)? A
    purpose-mismatched look (or a generic default palette shipped for a high-polish
    pitch/exec deck) is a real finding. Judge against this purpose, not a generic ideal.
+12. **Motion & pacing** *(applies to every purpose, not just talks).* Was motion *designed*,
+   or did the deck ship with none because nobody looked? Two checks, read against the
+   **motion manifest** (the static render can't show a reveal sequence, so judge the design,
+   not the playback): (a) a calm **deck-wide transition** is the default — its absence with no
+   stated reason is a minor finding; (b) any slide that is clearly a **pipeline / multi-stage
+   diagram, a multi-part argument, or an evidence→takeaway** shown all at once, where a
+   step-by-step build would help the audience follow — left static with no reason — is a real
+   finding (typically major for a *presented* talk, minor for a read-alone deck). Calibrate:
+   title/section/one-idea slides and side-by-side comparisons *should* be static; most
+   individual slides stay static; "static, because X" is a valid answer. You're enforcing
+   that the pacing decision was *made*, never that everything animates. A cluttered
+   *final built* state is still a layout finding, not a motion one — animation never excuses it.
 
 ## Severity scale
 - **blocker** — undermines the deck's purpose (e.g. results illegible at a

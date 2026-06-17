@@ -59,13 +59,24 @@ s.shapes.add_picture("results/demo_loop.gif", Inches(x), Inches(y), height=Inche
   *moves* — both loop together.
 - Keep file size sane: prefer the source GIF; if you generate one, palette-optimize it.
 
-## A calm deck-wide transition is a fine default
+## A calm deck-wide transition is the default — apply it unless you have a reason not to
 Separate from click-builds, a subtle **slide-to-slide transition** applied across the
-whole deck (`slide_transition(s, "fade")` on each slide, ~0.4–0.5s) adds a touch of
-polish and continuity without ever distracting — it's a reasonable default for most
-decks. It's independent of builds: you can use it on a deck whose individual slides are
-otherwise static, and combine it with click-builds on the few slides that warrant them.
-Keep it calm (fade/none); avoid theatrical transitions (cube, push, morph-everywhere).
+whole deck (`slide_transition(s, "fade")` on each slide, ~0.4–0.5s) adds polish and
+continuity without ever distracting — so make it the **default-on** choice, not an
+afterthought. Add it to every slide; only omit it deliberately (e.g. a print-only
+leave-behind), and record that reason in the motion manifest. It's independent of builds:
+use it on a deck whose individual slides are otherwise static, and combine it with
+click-builds on the few slides that warrant them. Keep it calm (fade/none); avoid
+theatrical transitions (cube, push, morph-everywhere).
+
+## Record a motion manifest (so the critic can judge what it can't see)
+A static render — and the critic reviewing it — can't watch a reveal sequence. So as you
+build, jot a one-line-per-slide **motion manifest**: `build: <what reveals, in order>` or
+`static: <why nothing to pace>`, plus whether the deck-wide transition is on. Hand it to the
+critic with the renders. This is what makes "consider motion on every slide" *enforceable*:
+the critic checks that a pacing decision was made (and flags a deck with no motion and
+obvious build-candidates), rather than rubber-stamping a deck that simply never got the pass.
+A comment block at the top of `build_<deck>.py` is a perfectly good place to keep it.
 
 ## Craft rules
 - **Default to a subtle fade**, ~0.4–0.6s. Avoid flashy entrances (fly/spin/bounce);

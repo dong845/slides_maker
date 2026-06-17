@@ -17,15 +17,26 @@ something.
   the Read tool, and zoom/crop when you need to check fine detail. You review the
   rendered *pixels*: overflow, low contrast, illegible figures, missing glyphs,
   mislabels, and crowding only show up here. **These images are the *final built
-  state* of each slide.** If the deck uses animation/builds you cannot see the reveal
-  sequence — that's expected and fine. Judge the fully-built slide; **never penalize a
-  slide merely for lacking animation**, and treat animation playback as out of your
-  scope (the presenter verifies it in PowerPoint). Do, however, flag a slide whose
-  *final built state* is overcrowded — animation is never an excuse for a cluttered
-  end state. Likewise, an **embedded animated GIF** (a looping / 4D / time-resolved
-  result) shows as its **first frame** in the render but loops in PowerPoint/Keynote —
-  judge that frame's legibility, but **don't flag it as "static" or "only one frame"**;
-  the motion is intended.
+  state* of each slide.** You cannot see a reveal *sequence* play — that's expected;
+  you judge the motion *design*, not its playback (see the motion manifest below), and
+  you always flag a slide whose *final built state* is overcrowded (animation is never an
+  excuse for a cluttered end state). An **embedded animated GIF** (a looping / 4D /
+  time-resolved result) shows as its **first frame** in the render but loops in
+  PowerPoint/Keynote — judge that frame's legibility, but **don't flag it as "static" or
+  "only one frame"**; the motion is intended.
+- The **motion manifest** (usually provided): one line per slide — `build: <reveals>` or
+  `static: <why>`, plus whether the deck-wide transition is on. Use it to judge whether
+  motion was *designed*, since you can't watch it. **Motion is a required design pass, so do
+  check it** (rubric dimension "Motion & pacing"): flag (deck-level) if the manifest is
+  **absent or shows no purposeful motion at all** (no builds anywhere *and* no deck-wide
+  transition, with no stated reason) — that usually means nobody considered pacing. And per
+  slide, flag a clear **build-candidate you can see in the pixels** — a multi-stage
+  pipeline/diagram, a multi-part argument, or an evidence→takeaway slide — that the manifest
+  marks `static` with no good reason, suggesting it would land better revealed step by step.
+  Calibrate: a title/section/one-idea slide *should* be static (don't flag those), most
+  individual slides stay static, and "designed to be static for reason X" is a valid answer —
+  you're enforcing that the decision was *made*, not that everything animates. If no manifest
+  is given, note that and judge candidates from the pixels alone.
 - The deck's **purpose + audience** (e.g. "MICCAI oral, 10 min, broad audience").
 - Optionally the **source material** (paper/README/data). If given, **verify claims,
   figure labels, and numbers against it** — a caption that disagrees with its figure,
@@ -54,8 +65,8 @@ Do not just skim for the first few obvious issues. Run these passes:
 1. **Per-slide × every dimension.** For *each* slide, walk the full universal rubric
    (1 one-idea, 2 results-legibility, 3 cognitive-load, 4 figures-labeled, 5
    signaling, 6 narrative-flow, 7 visual-quality, 8 framing, 9 layout/figures/colour,
-   10 factual-fidelity, 11 design-fits-purpose) *and* the craft checks below. Don't
-   stop at one problem per slide.
+   10 factual-fidelity, 11 design-fits-purpose, 12 motion-&-pacing) *and* the craft
+   checks below. Don't stop at one problem per slide.
 2. **Four lenses — adopt each deliberately:**
    - *Content & accuracy:* is every claim true and supported? Do captions match the
      figures? Are numbers/labels right? Any over-claim beyond what's shown? Crucially,
@@ -85,11 +96,17 @@ Do not just skim for the first few obvious issues. Run these passes:
    which are present (this list is concrete on purpose; treat absence as something you
    verified, not something you skipped):
    - **Layout:** overflow / clipped text, content occluded or jammed on the footer,
-     misaligned elements, no clear visual hierarchy (everything one weight), crowding
-     (no gutter between figure and text). **A drawn diagram shape (box/icon/chip)
-     escaping its container** — a box/icon/node sitting outside the card or panel it
-     belongs to, or an asymmetric/misaligned cluster of shapes — is a real flaw; check that
-     every element of a native diagram stays inside its frame and reads as deliberately placed.
+     **two elements overlapping** (a figure/card encroaching on a table or text — check a
+     figure placed beside a table isn't covering its last column), misaligned elements, no
+     clear visual hierarchy (everything one weight), crowding (no gutter between figure and
+     text). **A drawn diagram shape (box/icon/chip) escaping its container** — a box/icon/node
+     sitting outside the card or panel it belongs to, or an asymmetric/misaligned cluster of
+     shapes — is a real flaw; check that every element of a native diagram stays inside its
+     frame and reads as deliberately placed.
+   - **Text alignment inside filled boxes:** text in a callout / chip / takeaway bar / table
+     cell should sit **optically centred** in its box (or intentionally aligned) — text that
+     hugs the bottom or top edge, or sits a few px below the vertical middle, reads as a
+     centring bug. Check the bottom takeaway bars especially.
    - **Typography:** text too small to read from the back (callout/caption/figure
      labels — see the size floor in `design-principles.md`), inconsistent fonts/sizes.
      For **non-Latin (CJK) decks**: any **tofu / missing glyphs** (□) is a blocker; the
@@ -105,9 +122,16 @@ Do not just skim for the first few obvious issues. Run these passes:
      drifting between slides) unless the user asked for a bilingual/mixed deck.
      Established technical terms, proper nouns, acronyms, units, and code in their
      original form are fine and are *not* violations.
-   - **Figures:** illegible or partial-cropped / hand-redrawn where a whole source
-     figure exists, missing legend/axes, missing one-line takeaway, **caption that
-     disagrees with the figure**.
+   - **Figures:** illegible or hand-redrawn where a whole source figure exists, missing
+     one-line takeaway, **caption that disagrees with the figure**. Two specific clipping/
+     cropping flaws to check by eye on every figure: (1) **a part of the figure cut off** —
+     a legend, colour bar, axis label/ticks, title, units, or an outer row/column sliced by
+     the crop or by the slide placement (a half-cut legend at a figure's top edge is the
+     classic miss); flag it even if the rest looks fine. (2) **a multi-panel figure chopped
+     into pieces that lose context** — when only some columns/panels of the source figure are
+     shown such that the authors' comparison is narrowed or changed; the integral whole figure
+     is usually the safer choice, so flag an over-aggressive crop (note: a *deliberate*,
+     faithful sub-figure that stands alone is fine — judge whether context was lost).
    - **Fidelity (judge hardest — see below):** any number, label, or claim not
      traceable to the source; an over-claimed trend; a table that foregrounds the
      wrong comparison.

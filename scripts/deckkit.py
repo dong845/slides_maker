@@ -112,7 +112,12 @@ def set_font(run, size, color, bold=False, italic=False, font=None, ea=None):
 def text(slide, x, y, w, h, runs, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP,
          space_after=6, line_spacing=1.0):
     """runs = list of paragraphs; each paragraph = list of run tuples
-    (txt, size, color, bold, italic[, font])."""
+    (txt, size, color, bold, italic[, font]).
+
+    Vertical centring: to centre text inside a filled box/card, pass anchor=MSO_ANCHOR.MIDDLE
+    AND give this textbox the SAME (x, y, w, h) as the box. A y-offset (e.g. y+0.07) combined
+    with the box's full height pushes the centre below the box's true middle — text then reads
+    "a bit low". Want top padding? Use margin_top, not a y-offset with unchanged height."""
     tb = slide.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
     tf = tb.text_frame
     tf.word_wrap = True
@@ -343,7 +348,9 @@ def callout(slide, x, y, w, h, label, body, label_c=MAGENTA, fill=TINT, body_c=D
     box(slide, x, y, w, h, fill=fill, round=True)
     rad = 0.08 * min(w, h)                                   # inset the accent bar so its square
     box(slide, x, y + rad, 0.07, h - 2 * rad, fill=label_c)  # ends fall on the card's straight edge
-    text(slide, x + 0.24, y + 0.07, w - 0.44, h,
+    # text box spans the card's full height so MSO_ANCHOR.MIDDLE centres on the card's true
+    # centre (y + h/2). A y-offset here with the same height would push the text below centre.
+    text(slide, x + 0.24, y, w - 0.44, h,
          [[(label + "  ", 11, label_c, True, False), (body, 12.5, body_c, False, False)]],
          anchor=MSO_ANCHOR.MIDDLE, space_after=0, line_spacing=1.08)
     return y + h   # bottom edge, so callers can keep a margin below
