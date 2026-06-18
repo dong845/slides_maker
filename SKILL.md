@@ -557,6 +557,11 @@ slide). python-pptx writes blind — overflow, low contrast, a callout on the fo
 or a missing glyph only show up in the image. Fix mechanical issues and re-render.
 (First time on a machine, or a render errors? `bash scripts/check_env.sh` verifies
 LibreOffice + the python deps and prints the fix for anything missing.)
+**On native Windows (PowerShell / cmd) there is no bash — call the Python entry points
+directly: `python scripts\render_deck.py <deck.pptx>` and `python scripts\check_env.py`.**
+The `.sh` files are just shims that forward to those `.py` scripts, so macOS / Linux /
+Git Bash / WSL keep working unchanged; everything else in the toolchain is already
+cross-platform Python.
 
 **If a render fails *after* `check_env.sh` passes** (a build/LibreOffice error mid-loop),
 isolate it rather than thrash: the **build script is the source of truth and re-runnable**,
@@ -705,10 +710,13 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
 ## Files
 - `scripts/deckkit.py` — import this; build helpers for both template & blank decks.
 - `scripts/inspect_template.py` — print a template's layouts/placeholders/logos.
-- `scripts/render_deck.sh` — pptx → one PNG per slide for the verify + critic loop
-  (cross-platform: finds LibreOffice on macOS/Linux/WSL, or set `SOFFICE`).
-- `scripts/check_env.sh` — one-time preflight; verifies LibreOffice + python deps and
-  prints the exact fix for anything missing. Run it if a render ever fails.
+- `scripts/render_deck.py` — pptx → one PNG per slide for the verify + critic loop. The
+  real, cross-platform implementation (macOS / Linux / WSL / native Windows): finds
+  LibreOffice on PATH or in OS-specific install locations (incl. `C:\Program Files\…`),
+  or set `SOFFICE`. `render_deck.sh` is a thin bash shim that forwards to it.
+- `scripts/check_env.py` — one-time preflight; verifies LibreOffice + python deps and
+  prints the exact fix for anything missing. Run it if a render ever fails. `check_env.sh`
+  is a thin bash shim that forwards to it. On native Windows run the `.py` directly.
 - `scripts/anim.py` — inject purposeful PowerPoint builds/animations (click-reveal,
   fade) that python-pptx can't; pair with `references/animation.md`.
 - `scripts/assemble.py` — assemble a large deck from parallel-authored section modules

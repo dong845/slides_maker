@@ -47,6 +47,8 @@ with zipfile.ZipFile(path) as z:
         imgs = sorted(set(re.findall(r'media/(image[0-9]+\.[a-z]+)', data)))
         if imgs:
             print(f"  {rels.split('/')[-1]}: {', '.join(imgs)}")
+    import tempfile
     print("\n  tip: .emf files are usually vector LOGOS; .png on the master is often"
           "\n       the decorative header band. Convert an .emf to view it with:"
-          "\n       soffice --headless --convert-to png --outdir /tmp ppt/media/imageN.emf")
+          f"\n       soffice --headless --convert-to png --outdir {tempfile.gettempdir()} ppt/media/imageN.emf"
+          "\n       (on Windows, soffice may be soffice.exe / soffice.com)")

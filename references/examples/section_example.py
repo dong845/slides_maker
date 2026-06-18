@@ -9,13 +9,15 @@ construction. The orchestrator:
   - then calls build_section during assembly (scripts/assemble.py).
 
 While authoring, the subagent self-checks by rendering JUST this section:
-    python section_NN_<name>.py        # writes /tmp/section_preview.pptx
-    bash scripts/render_deck.sh /tmp/section_preview.pptx   # look at the PNGs
+    python section_NN_<name>.py        # writes <tempdir>/section_preview.pptx
+    bash scripts/render_deck.sh <that path>   # look at the PNGs
+    # native Windows: python scripts\render_deck.py <that path>
 Because the preview uses the same style/base, what you see is what you'll get after
 assembly. Iterate here, then return the finalized module.
 """
 import os
 import sys
+import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))               # find style.py
 sys.path.insert(0, os.path.expanduser("~/.claude/skills/slide-maker/scripts"))  # deckkit, assemble
 # In the real workflow the shared module is named style.py; this example ships it as
@@ -56,6 +58,6 @@ def build_section(prs):
 
 if __name__ == "__main__":
     from assemble import preview_section
-    out = "/tmp/section_preview.pptx"
+    out = os.path.join(tempfile.gettempdir(), "section_preview.pptx")
     preview_section(__file__, out)
     print("section preview ->", out)

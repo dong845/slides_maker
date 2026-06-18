@@ -5,10 +5,11 @@ so it shows the deckkit helpers without any institution's branding.
 If the user has a template, build on it instead (deckkit.open_template + the template's
 profile in ~/.claude/slide-templates/<name>/). This file is just a how-to for the kit.
 
-Run:  python3 build_example_generic.py   →  /tmp/slide_maker_demo.pptx
-Then: bash ../../scripts/render_deck.sh /tmp/slide_maker_demo.pptx && inspect the PNGs.
+Run:  python build_example_generic.py   →  <tempdir>/slide_maker_demo.pptx
+Then: bash ../../scripts/render_deck.sh <that path>   (or, on native Windows,
+      python ..\\..\\scripts\\render_deck.py <that path>)  and inspect the PNGs.
 """
-import sys, os
+import sys, os, tempfile
 sys.path.insert(0, os.path.expanduser("~/.claude/skills/slide-maker/scripts"))
 from deckkit import (  # noqa: E402
     blank_deck, add_slide, title_bar, footer,
@@ -18,7 +19,7 @@ from deckkit import (  # noqa: E402
     GOLD, STEEL, VIOLET, ACCENTS,
 )
 
-OUT = "/tmp/slide_maker_demo.pptx"
+OUT = os.path.join(tempfile.gettempdir(), "slide_maker_demo.pptx")
 prs = blank_deck()                      # fresh 16:9 deck, no template
 
 # --- title slide ---
@@ -58,7 +59,7 @@ title_bar(s, "Typeset math reads as formal", kicker="equations")
 footer(s, "demo deck", page=4)
 # render a LaTeX-style line to a PNG (Computer Modern), then place scaled to a target height
 # so glyph size is consistent across slides; color is RRGGBB hex without '#'.
-_eqp = "/tmp/slide_maker_demo_eq.png"
+_eqp = os.path.join(tempfile.gettempdir(), "slide_maker_demo_eq.png")
 _wpx, _hpx = equation_png([r"\hat{x} = \mathrm{arg\,min}_{x}\,\|Ax-y\|_{2}^{2} + \lambda R(x)"],
                           _eqp, color="003C66", fontsize=30, dpi=300, mathfont="cm")
 _th = 0.7; _tw = _th * _wpx / _hpx

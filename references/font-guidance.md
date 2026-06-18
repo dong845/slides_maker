@@ -42,5 +42,6 @@ unless the brand font is essential.
 1. The glyph is missing in the (substituted) font — for CJK, set `EAFONT`; for special
    symbols, prefer `equation_png` or a Unicode-complete font (Arial).
 2. The font name isn't installed on the render machine — `bash scripts/check_env.sh`
-   lists what's available; switch `FONT`/`MONO`/`EQFONT` to a present font and rebuild.
+   (or `python scripts/check_env.py` on native Windows) lists what's available; switch
+   `FONT`/`MONO`/`EQFONT` to a present font and rebuild.
 3. Re-render and confirm. At hand-off, tell the user which fonts the deck depends on.
