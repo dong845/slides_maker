@@ -290,25 +290,21 @@ authors' actual emphasis, not a plausible-sounding paraphrase. Reuse their figur
   present an unverifiable claim as established fact. This matters because a no-source deck
   has **no paper to anchor it** — *you* are the only check on whether a confident-sounding
   statement is actually true, and an expert audience spots a wrong "fact" instantly (the
-  failure mode here is being *wrong*, not just vague). **Ground to TODAY — search right up
-  to the current day, not just the current year.** You know today's date (it's in context);
-  use it. Run **recency-bounded** searches (this month / the last few weeks for fast-moving
-  topics), confirm time-sensitive facts *as of now*, and fold in material recent events — a
-  just-announced deal, filing, launch, ruling, price, or result. Date the deck with the real
-  **"as of \<day month year\>"**. A deck dated this year that silently stops at last year — or
-  misses something that happened last week — reads as stale. When the latest *full-year*
-  metric is last year's, label it as such and add the current year-to-date figure rather
-  than presenting old data as current. **Re-verify time-sensitive facts on *every* build,
-  including a regeneration/rebuild — never reuse earlier research for fast-moving or *dated*
-  facts.** A price, count, ranking, role-holder, version, or status that was right days ago
-  can be stale now. Re-check anything time-bound: live metrics; "current / latest / upcoming"
-  claims; "first / largest / record" superlatives; who currently holds a position; and any
-  **scheduled or dated event** (a launch, release, ruling, earnings, election, deadline). For
-  a dated event, check whether it has **already happened as of today** and write it in the
-  correct status/tense — a "planned / upcoming" item whose date has passed is **completed**,
-  and a "leading / latest" thing may since have been overtaken or superseded. Reusing cached
-  research is fine for *stable* facts, never for anything time-bound. Then confirm the outline
-  with the user before building the full deck (cheaper to correct an outline than a finished deck).
+  failure mode here is being *wrong*, not just vague).
+  - **Ground to *today* — the current day, not just the year — and re-verify on every build.**
+    You know today's date; use it: run **recency-bounded** searches (this month / the last few
+    weeks for fast-moving topics) and fold in material recent events. Re-check anything
+    **time-bound** *every* build (including a regeneration) — never reuse cached research for it
+    (cached is fine for *stable* facts): prices, counts, rankings, role-holders, versions,
+    status; "current / latest / upcoming" claims; "first / largest / record" superlatives; and
+    any **scheduled / dated event** (launch, release, ruling, earnings, election, deadline). For
+    a dated event, check whether it has **already happened as of today** and write the correct
+    status/tense — a "planned / upcoming" item whose date has passed is **completed**; a
+    "leading / latest" thing may since have been superseded. Date the deck **"as of \<day month
+    year\>"**; if the newest *full-year* metric is last year's, label it and add the current
+    year-to-date figure rather than presenting old data as current.
+  Then confirm the outline with the user before building the full deck (cheaper to correct an
+  outline than a finished deck).
   > **🔴 CHECKPOINT** — get the user's OK on the outline before building the full deck.
 
 ## Step 2 — Set up the canvas
@@ -408,8 +404,7 @@ A few rules that matter (see `references/design-principles.md`):
 - **Use the source's own figures, WHOLE — integral is the default.** For *any* deck
   (research, work, exec, teaching): if the source — paper, report, doc, existing slide, or a
   chart already produced from the code/data — has a figure (architecture, results, a plot),
-  use *that*; don't redraw it (slow, risks wrong detail). **The default is to show the figure
-  integral — the complete figure as one unit — not chopped into pieces.** Many users
+  use *that*; don't redraw it (slow, risks wrong detail) and don't chop it into pieces. Many users
   *prefer* the whole figure even when it's dense (it's the artifact they know and trust), so
   when a figure feels too busy, your *first* move is to give it a whole slide — large, with an
   **assertion title + a one-line caption** pointing attention to the part that matters (e.g.
