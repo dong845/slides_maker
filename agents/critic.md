@@ -107,21 +107,28 @@ Do not just skim for the first few obvious issues. Run these passes:
      text). **Unequal split panels / lopsided margins** — on a left/right (or N-up) slide,
      a left panel and right panel of different widths, or a wider strip of white space on
      one side than the other (when no asymmetry is clearly intended) — reads as careless;
-     flag it. **A drawn diagram shape (box/icon/chip) escaping its container** — a box/icon/node
+     flag it. **A large dead-white band in a panel** — a narrow element (a timeline, a thin
+     chart, a short list) stranded in a too-wide column, leaving a big empty strip beside it —
+     is also a finding (fix: narrow that column or centre the element). **A drawn diagram
+     shape (box/icon/chip) escaping its container** — a box/icon/node
      sitting outside the card or panel it belongs to, or an asymmetric/misaligned cluster of
      shapes — is a real flaw; check that every element of a native diagram stays inside its
      frame and reads as deliberately placed.
    - **Diagram connectors:** an arrow pointing the **wrong way for the flow** — most often a
      *sideways* arrow squeezed between two **vertically-stacked** boxes (where it should point
      down/up); and **unequal spacing** of repeated blocks/connectors in a row or column (one
-     gap or arrow visibly longer than the next). Both read as careless — check arrow direction
-     matches the layout and that gaps are even.
+     gap or arrow visibly longer than the next); and **two blocks touching** with no gap
+     between them (a stacked pair whose edges meet reads as one merged block). Check arrow
+     direction matches the layout, gaps are even, and adjacent blocks have a visible gap.
    - **A single glyph/icon off-centre** in its box (a "?", number, or mark sitting low or to
      one side instead of optically centred). On a **CJK deck**, an off-centre large mark is
      usually a *full-width* punctuation glyph (`？！。`), which sits left-of-centre in its
      advance — the fix is the **ASCII** form, not re-centring (see `multilingual.md`).
    - **Title accent crowded:** a subtitle/definition line jammed against the title's accent
      rule with no breathing gap.
+   - **Kicker echoes the title:** the small eyebrow/kicker above the title repeats a word the
+     title already leads with (kicker "Origin" over a title "Origin: …") — duplication; the
+     kicker should add the section/category, not restate the title.
    - **Image crops the subject:** a placed image (generated OR source) whose key subject is
      sliced by the frame — a figure, product, person, chart, or object cut off so only part of
      it shows. A `cover`-fit plate that loses its subject, or any image showing only part of

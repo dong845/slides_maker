@@ -683,11 +683,14 @@ invisible in the build code and only appear in the pixels; catching them yoursel
 critic round — full rationale in `references/design-principles.md`):
 - **Overflow / contrast / footer / glyphs** — no clipped or spilling text, ≥4.5:1 contrast,
   nothing jammed on the footer, no tofu/missing glyphs.
-- **Balance** — split panels and their flanking margins equal; repeated blocks/connectors
-  evenly spaced; elements aligned to a grid, nothing lopsided.
-- **Diagrams** — arrows point the way the flow moves (down/up between stacked boxes); a lone
-  glyph/icon optically centred (ASCII, not full-width, for a centred mark on a CJK deck).
-- **Titles** — a subtitle/definition line has a clear gap below the title's accent rule.
+- **Balance** — split panels and their flanking margins equal; no large dead-white band beside
+  a narrow element (narrow that column or centre it); repeated blocks/connectors evenly spaced;
+  elements aligned to a grid, nothing lopsided.
+- **Diagrams** — arrows point the way the flow moves (down/up between stacked boxes); adjacent
+  blocks have a visible gap (never touching); a lone glyph/icon optically centred (ASCII, not
+  full-width, for a centred mark on a CJK deck).
+- **Titles** — a subtitle/definition line has a clear gap below the title's accent rule; the
+  kicker/eyebrow adds a section label, it doesn't echo a word the title already leads with.
 - **Images** — the key **subject is whole, not cropped** (`contain` vs `cover`); a generated
   image of real things is **factually right** (relative size/proportion, count, colour); any
   **labels sit under the feature** they name.

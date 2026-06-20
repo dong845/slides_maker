@@ -90,6 +90,13 @@ as much as the words on it. Design is not optional polish; it is half the job.
   margins and equal gutters). An *intentional* asymmetric split (e.g. a 1/3 text rail beside
   a 2/3 figure) is fine, but keep the outer left and right margins equal, and **check the
   render** — the two sides should look balanced, not accidentally uneven.
+- **Don't strand a narrow element in a too-wide panel.** When one column's content is
+  *naturally* much narrower than its half — a vertical timeline, a tall thin chart, a short
+  list beside a paragraph — a 50/50 split leaves a big dead-white gap on that side. Fix it
+  by **either** giving that column a *narrower, intentional* width (asymmetric split, equal
+  outer margins) so its content **fills** the region, **or** centring the narrow element in
+  its panel so the leftover white is symmetric. A large lopsided white band on one side is
+  the tell to catch in the render.
 - **Bottom margin.** Keep content clear of the footer — nothing should touch or
   cross the footer band (stop content by ~5.05 in on a 5.625-in slide). A line or
   box jammed against the bottom edge is the most common amateur tell.
@@ -106,6 +113,14 @@ as much as the words on it. Design is not optional polish; it is half the job.
   rule* before the subline (and start the body a step below that) — a sub-line jammed against
   the accent rule reads as cramped. If a slide needs a subtitle, budget vertical space for it
   (push the content region down) rather than tucking it under the rule.
+- **The kicker/eyebrow adds a category — it must not echo the title.** The small label above
+  the title (`title_bar(..., kicker=...)`) is a section/eyebrow; it should carry information
+  the title *doesn't* — the section name, a step number, a phase. A kicker that repeats a word
+  the title already leads with (kicker "Origin" over a title "Origin: founded in 2002") is
+  pure duplication and looks careless. Fix it by **stripping the repeated word from the
+  title** (let the kicker carry the section, the title state the specific point — "founded in
+  2002, nearly bankrupt") **or dropping the kicker**. Same idea across slides: kickers should
+  read as a consistent set of *section labels*, not restate each title.
 - **Centre a single glyph or icon in its box.** A lone character or icon (a "?", a number, a
   mark) inside a box must be *optically centred*: give the textbox the **same x/y/w/h as the
   box**, `anchor=MIDDLE`, `align=CENTER` — and then **check the render**, since a single glyph
@@ -154,7 +169,10 @@ as much as the words on it. Design is not optional polish; it is half the job.
   as careless. Derive the blocks from one grid: **`deckkit.columns(n, gap=...)` for a
   horizontal row**, **`deckkit.rows(n, gap=...)` for a vertical stack** (both return equal
   cells with equal gaps; pass `slide=s`). Then drop each connector **centred in the equal
-  gap** rather than eyeballing positions.
+  gap** rather than eyeballing positions. And **adjacent blocks always need a visible gap
+  between them — never let two boxes touch** (a stacked pair whose bottom edge meets the next
+  box's top edge reads as one merged block); leave a clear `gap` (the `rows`/`columns` helpers
+  enforce one). A zero-gap seam between blocks is a common hand-placed-coordinate bug.
 - **Image `fit`: never crop the subject out.** `fit="cover"` fills a frame by cropping the
   overflow — fine for edge-tolerant texture, atmosphere, or backgrounds, but it will happily
   slice off the very thing the image is *about* (the subject cut down to a sliver; a key

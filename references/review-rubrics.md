@@ -69,11 +69,14 @@ Score each dimension; cite specific slides.
    crammed, **and no two elements overlapping** (a figure encroaching on a table/text)?
    On **split layouts** (text + figure, two-up, image + caption), are the left and right
    regions — *and the white margins flanking them* — the **same width** (or a clearly
-   intentional asymmetric split with equal outer margins)? Unequal panels or a lopsided
-   left-vs-right white margin is a real finding, not a nitpick. In **diagrams**, do arrows
-   point the way the flow moves (a *sideways* arrow between vertically-stacked boxes is wrong),
-   and are repeated blocks/connectors **evenly spaced** (no gap or arrow longer than its
-   peers)? On **image slides**, is the key subject **whole and uncropped** — not sliced by the
+   intentional asymmetric split with equal outer margins)? Unequal panels, a lopsided
+   left-vs-right white margin, or a **large dead-white band** beside a narrow element stranded
+   in a too-wide column is a real finding, not a nitpick. Does the **kicker/eyebrow add a
+   section label rather than echo a word the title already leads with**? In **diagrams**, do
+   arrows point the way the flow moves (a *sideways* arrow between vertically-stacked boxes is
+   wrong), are repeated blocks/connectors **evenly spaced**, and do **adjacent blocks have a
+   visible gap** (never touching)? On **image slides**, is the key subject **whole and
+   uncropped** — not sliced by the
    frame (a figure, product, person, or object cut off so only part of it shows)?
    A `cover`-fit plate that loses its subject is a real finding (fix: `contain`/shrink/regenerate).
    And is a **generated image of real things factually right** — correct **relative
