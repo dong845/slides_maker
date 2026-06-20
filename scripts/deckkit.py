@@ -166,8 +166,18 @@ def box(slide, x, y, w, h, fill=None, line=None, line_w=1.0, round=False, corner
     return s
 
 
-def arrow(slide, x, y, w, h, color=BLUE):
-    a = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(x), Inches(y), Inches(w), Inches(h))
+_ARROW_SHAPE = {"right": MSO_SHAPE.RIGHT_ARROW, "left": MSO_SHAPE.LEFT_ARROW,
+                "up": MSO_SHAPE.UP_ARROW, "down": MSO_SHAPE.DOWN_ARROW}
+
+def arrow(slide, x, y, w, h, color=BLUE, direction="right"):
+    """A solid block arrow. **Point it in the direction the flow actually moves.**
+    `direction` is "right" (default), "left", "up", or "down". For a vertical flow —
+    e.g. two stacked boxes (problem on top, solution below) — use "down" (or "up"), NOT a
+    sideways arrow: a left/right arrow between vertically-stacked blocks reads as wrong.
+    For an up/down arrow give it a tall, narrow box (small w, larger h); for left/right a
+    wide, short box. The arrow fills the (w, h) box you pass."""
+    shape = _ARROW_SHAPE.get(direction.lower(), MSO_SHAPE.RIGHT_ARROW)
+    a = slide.shapes.add_shape(shape, Inches(x), Inches(y), Inches(w), Inches(h))
     a.fill.solid(); a.fill.fore_color.rgb = color
     a.line.fill.background(); a.shadow.inherit = False
     try: a.adjustments[0] = 0.55; a.adjustments[1] = 0.55
@@ -175,19 +185,25 @@ def arrow(slide, x, y, w, h, color=BLUE):
     return a
 
 
-def arrow_label(slide, x, y, w, h, label, color=BLUE, size=9, lab_c=None, box_w=1.3, bold=True):
-    """An arrow with its label centred just above it, with a tight gap — so connector
-    labels (a verb, a transform name, a step — e.g. 'encode', 'train', 'merge', 'step 2')
-    stay centred on the arrow and snug, rather than drifting to one side or floating far
-    above it. The label box is centred on the
-    arrow's horizontal centre and its bottom sits ~0.04 in above the arrow's top.
-    `box_w` is the (transparent) label-box width; shrink it (e.g. 1.2) when the arrow sits
-    in a narrow gap between figures so the box can't visually collide. Returns the arrow."""
+def arrow_label(slide, x, y, w, h, label, color=BLUE, size=9, lab_c=None, box_w=1.3, bold=True,
+                direction="right"):
+    """An arrow with its label snug against it — so connector labels (a verb, a transform
+    name, a step — e.g. 'encode', 'train', 'merge', 'step 2') stay tight to the arrow rather
+    than drifting. **Pass `direction` to match the flow** (right/left/up/down, same as
+    `arrow`): for a horizontal arrow the label sits centred just above it; for a **vertical**
+    (up/down) arrow it sits centred just to the **right** of it (placing it above a vertical
+    arrow would read as belonging to the box above). `box_w` is the (transparent) label-box
+    width; shrink it when the arrow sits in a narrow gap. Returns the arrow."""
     lab_c = lab_c or color
     th = size / 72.0 * 1.3
-    text(slide, x + w / 2.0 - box_w / 2.0, y - th - 0.04, box_w, th + 0.04,
-         [[(label, size, lab_c, bold, False)]], align=PP_ALIGN.CENTER, space_after=0)
-    return arrow(slide, x, y, w, h, color=color)
+    if direction.lower() in ("up", "down"):
+        text(slide, x + w + 0.06, y + h / 2.0 - th / 2.0, box_w, th + 0.04,
+             [[(label, size, lab_c, bold, False)]], align=PP_ALIGN.LEFT,
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    else:
+        text(slide, x + w / 2.0 - box_w / 2.0, y - th - 0.04, box_w, th + 0.04,
+             [[(label, size, lab_c, bold, False)]], align=PP_ALIGN.CENTER, space_after=0)
+    return arrow(slide, x, y, w, h, color=color, direction=direction)
 
 
 # ====================================================================== images
@@ -287,6 +303,44 @@ def columns(n=2, *, slide=None, w_in=None, h_in=None, top=1.15, bottom=0.55, mar
     y = top
     h = h_in - top - bottom
     return [(margin + i * (cw + gap), y, cw, h) for i in range(n)]
+
+
+def rows(n=2, *, slide=None, h_in=None, x=None, y=None, w=None, top=1.15, bottom=0.55, gap=None):
+    """Return ``n`` equal-**height** row rects ``(x, y, w, h)`` stacked top-to-bottom with
+    equal gaps — the vertical counterpart of :func:`columns`.
+
+    Use it for a **vertical stack** of boxes (problem→solution, before→after, a list of
+    cards) so the gaps — and any ``arrow(..., direction="down")`` connectors you drop between
+    them — are **equal by construction** rather than eyeballed. Pass ``x``/``w`` to confine the
+    stack to one column (e.g. the left half from ``columns``); they default to a full-width
+    band inset by ``GUTTER``::
+
+        L, R = dk.columns(2, slide=s)
+        top_box, bot_box = dk.rows(2, slide=s, x=L[0], w=L[2], top=1.5, bottom=1.3)
+        dk.chip(s, *top_box, "abandon", "used once", STEEL)
+        dk.arrow(s, top_box[0]+top_box[2]/2-0.11, top_box[1]+top_box[3]+gap_mid, 0.22, 0.3,
+                 direction="down")           # sits in the equal gap between the two rows
+        dk.chip(s, *bot_box, "reuse", "flies again", ORANGE)
+
+    Pass ``slide=`` so it matches the deck's real height. Returns ``(x, y, w, h)`` tuples,
+    top to bottom.
+    """
+    if slide is not None:
+        prs = slide.part.package.presentation_part.presentation
+        if h_in is None:
+            h_in = prs.slide_height / 914400
+    h_in = 5.625 if h_in is None else h_in
+    gap = GUTTER if gap is None else gap
+    x = GUTTER if x is None else x
+    w = (10.0 - 2 * GUTTER) if w is None else w
+    y = top
+    if n < 1:
+        raise ValueError("rows(n) needs n >= 1")
+    usable = h_in - top - bottom - (n - 1) * gap
+    if usable <= 0:
+        raise ValueError("top/bottom/gap leave no room for rows; reduce them")
+    rh = usable / n
+    return [(x, y + i * (rh + gap), w, rh) for i in range(n)]
 
 
 # ================================================================= components

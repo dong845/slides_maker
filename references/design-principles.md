@@ -101,6 +101,15 @@ as much as the words on it. Design is not optional polish; it is half the job.
   box (the deckkit `chip`/`callout` helpers bake this in; for boxes you draw yourself,
   inset text ~0.15 in from the edges, more at the top of a titled card). Cramped text
   touching a rounded corner reads as unfinished even when nothing overflows.
+- **Don't crowd the title's accent rule.** `title_bar` draws a short accent underline below
+  the title. When you add a subtitle / definition line under it, leave a clear gap *below the
+  rule* before the subline (and start the body a step below that) — a sub-line jammed against
+  the accent rule reads as cramped. If a slide needs a subtitle, budget vertical space for it
+  (push the content region down) rather than tucking it under the rule.
+- **Centre a single glyph or icon in its box.** A lone character or icon (a "?", a number, a
+  mark) inside a box must be *optically centred*: give the textbox the **same x/y/w/h as the
+  box**, `anchor=MIDDLE`, `align=CENTER` — and then **check the render**, since a single glyph
+  off-centre is obvious. Don't offset the textbox or rely on default top-left placement.
 - **Even bullet rhythm needs a consistent line count.** A list looks evenly spaced only
   when every item occupies the *same* number of lines. The moment one item wraps to two
   lines, it claims an extra line-height of vertical space, so the gap before the *next* item
@@ -129,6 +138,30 @@ as much as the words on it. Design is not optional polish; it is half the job.
   with a small gap — not drifting to one side or floating far above. `deckkit.arrow_label`
   does this for you (places the label at the arrow's centre x, a hair above its top), so
   every connector label stays consistent.
+- **Connectors point the way the flow actually moves.** An arrow between two blocks must run
+  *along the flow*. Side-by-side blocks → a left/right arrow; **vertically stacked** blocks
+  (problem→solution, before→after read top-to-bottom) → a **down/up** arrow
+  (`deckkit.arrow(..., direction="down")`). A sideways arrow squeezed between two
+  stacked boxes is a classic wrong-direction tell — match every connector's orientation to
+  the layout, and check it in the render.
+- **Equal spacing for repeated elements.** A row or column of blocks joined by connectors
+  must have **equal gaps and equal connector lengths** — hand-placing each block's `x`/`y` and
+  each arrow produces visibly unequal spacing (one arrow longer than the next), which reads
+  as careless. Derive the blocks from one grid: **`deckkit.columns(n, gap=...)` for a
+  horizontal row**, **`deckkit.rows(n, gap=...)` for a vertical stack** (both return equal
+  cells with equal gaps; pass `slide=s`). Then drop each connector **centred in the equal
+  gap** rather than eyeballing positions.
+- **Image `fit`: never crop the subject out.** `fit="cover"` fills a frame by cropping the
+  overflow — fine for edge-tolerant texture, atmosphere, or backgrounds, but it will happily
+  slice off the very thing the image is *about* (a rocket reduced to its tail; planets shown
+  only as slivers). Use **`fit="contain"` whenever the image's subject — or all its parts —
+  must stay fully visible**: a figure, a whole object, a multi-element scene (several planets,
+  a full rocket), anything whose meaning needs the whole. If `contain` letterboxes too much,
+  **shrink/zoom the placement or regenerate at the frame's aspect ratio** — never switch to
+  `cover` and crop the subject away. **After placing *any* image (generated or source),
+  re-view the slide and confirm the key subject isn't cut off** — the same look-after-you-place
+  rule used for cropped figures, applied to every `picture()`. A full-bleed `cover` plate is
+  only safe when its subject sits well inside the central safe area.
 - **Let the hero breathe.** When a figure *is* the point of the slide (results, an
   ablation, an architecture), give it the slide — enlarge it and reduce competing
   text to one caption + one takeaway, rather than shrinking it to make room for

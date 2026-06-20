@@ -20,10 +20,12 @@ something.
   state* of each slide.** You cannot see a reveal *sequence* play — that's expected;
   you judge the motion *design*, not its playback (see the motion manifest below), and
   you always flag a slide whose *final built state* is overcrowded (animation is never an
-  excuse for a cluttered end state). You also flag the **over-application** side: needless
-  motion (a build that aids no comprehension, or builds on most slides) and generated-image
-  over-use (a decorative plate on most/every slide) — restraint is part of good design, so
-  judge it in both directions, not just "is there enough motion". An **embedded animated GIF** (a looping / 4D /
+  excuse for a cluttered end state). Judge motion and generated images by **taste and
+  purpose, not by count** — flag *thoughtless* use (a build or a plate that doesn't
+  emphasize/engage/guide, that distracts, or is added for flourish) and the opposite (a clear
+  beat left plain that a build would have helped), but **never** flag a slide for being plain
+  or a deck for having several/consecutive builds or plates — frequency is a legitimate design
+  choice. An **embedded animated GIF** (a looping / 4D /
   time-resolved result) shows as its **first frame** in the render but loops in
   PowerPoint/Keynote — judge that frame's legibility, but **don't flag it as "static" or
   "only one frame"**; the motion is intended.
@@ -109,6 +111,20 @@ Do not just skim for the first few obvious issues. Run these passes:
      sitting outside the card or panel it belongs to, or an asymmetric/misaligned cluster of
      shapes — is a real flaw; check that every element of a native diagram stays inside its
      frame and reads as deliberately placed.
+   - **Diagram connectors:** an arrow pointing the **wrong way for the flow** — most often a
+     *sideways* arrow squeezed between two **vertically-stacked** boxes (where it should point
+     down/up); and **unequal spacing** of repeated blocks/connectors in a row or column (one
+     gap or arrow visibly longer than the next). Both read as careless — check arrow direction
+     matches the layout and that gaps are even.
+   - **A single glyph/icon off-centre** in its box (a "?", number, or mark sitting low or to
+     one side instead of optically centred).
+   - **Title accent crowded:** a subtitle/definition line jammed against the title's accent
+     rule with no breathing gap.
+   - **Image crops the subject:** a placed image (generated OR source) whose key subject is
+     sliced by the frame — a rocket reduced to its tail, planets shown as slivers, an object
+     cut at the edge. A `cover`-fit plate that loses its subject, or any image showing only
+     part of what it's meant to show, is a real finding — the fix is `contain`/shrink/regenerate,
+     not leaving it cropped. (This is easy to miss; look for it on every image slide.)
    - **Text alignment inside filled boxes:** text in a callout / chip / takeaway bar / table
      cell should sit **optically centred** in its box (or intentionally aligned) — text that
      hugs the bottom or top edge, or sits a few px below the vertical middle, reads as a
@@ -123,12 +139,15 @@ Do not just skim for the first few obvious issues. Run these passes:
      monotone (one accent everywhere) or clashing/off-brand colour.
    - **Text:** excessive density / wall of bullets, full sentences the audience must
      read while the speaker talks, text that merely duplicates narration.
-   - **Motion & imagery over-use** *(restraint, not just presence):* judged against the
-     motion manifest plus the slides — a click-build on a slide that gains nothing from one,
-     or builds on most slides, is needless motion; flag it and name the slides that should
-     revert to static. Likewise **generated-image over-use** — a decorative AI plate on
-     most/every slide, or one where a source figure / real computed artifact / chart / plain
-     whitespace would serve better. Sparse and purposeful is the bar; one-per-slide is a flaw.
+   - **Thoughtless motion or imagery** *(taste & purpose, judged by intent not count):*
+     against the motion manifest plus the slides — a click-build or a generated plate that
+     doesn't *emphasize / engage / guide*, that distracts, or is added for flourish or
+     "consistency"; a plate where a source figure / real computed artifact / chart / plain
+     whitespace would serve better; or plates that don't share one purpose-fitting
+     art-direction. Also flag the opposite — a clear pipeline / multi-part / evidence→takeaway
+     beat left plain where a build would have helped. **Do not** flag a slide for being plain,
+     or a deck for having several or *consecutive* builds/plates — frequency is a legitimate
+     design choice, not a flaw.
    - **Language consistency:** the whole deck should be in **one** language — flag any
      accidental mixing (a heading/label/bullet in another language, or the language
      drifting between slides) unless the user asked for a bilingual/mixed deck.

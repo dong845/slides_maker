@@ -4,20 +4,24 @@ Use generated images as optional visual plates, not as the source of truth. The 
 claims, labels, tables, charts, equations, and important annotations still belong in
 editable PowerPoint objects or faithful source figures.
 
-## Use sparingly — most slides need no generated image
-Image generation is a **per-slide judgment call, not a per-deck habit** — the same restraint
-as animation. Many strong decks use **zero** generated images, and a generated plate on
-*every* slide is the failure to avoid: it makes a deck look templated and pulls attention
-off the content. Default to **no** generated image, and add one only when a *specific* slide
-clears this bar:
-- the slide would genuinely feel visually thin without it, **and**
-- a *decorative or conceptual* image (not evidence) is what it needs, **and**
-- nothing more faithful — a source figure, a real computed/extracted artifact, a chart, or
-  simply more whitespace — would serve that slide better.
+## Decide by taste and purpose — not by a rule or a quota
+Whether a slide gets a generated image is a **design call**, the same way motion is. Reach
+for a plate where your design sense says it will **emphasize** a point, make a slide **more
+engaging**, or help **guide** the audience — and skip it where it wouldn't. There is **no
+count to hit in either direction**: it's fine for two or several *consecutive* slides to
+carry a plate when the design wants that, and fine for a long stretch (or a whole deck) to
+have none. Don't think "most slides need zero" or "spread them out" — think about what
+*this* slide and the deck's story need.
 
-If you can't name what a plate adds to *that particular slide*, don't generate it. When the
-user asks to use a GPT/image tool, this still applies: generate for the few slides that need
-it, not one per slide. Decide image-by-image, the same way you decide build-by-build.
+The failure to avoid is **thoughtless** use, not frequency:
+- a plate dropped in for flourish, to fill space, or that competes with the slide's content;
+- a generated image standing in where evidence belongs — a source figure, a real
+  computed/extracted artifact, a chart, a screenshot, a logo. Those stay real and traceable.
+
+When the user asks to use a GPT/image tool, this still applies: generate where your taste
+says it helps, by design sense — and **propose plates for the user to opt into** rather than
+generating on every slide by reflex. Decide image-by-image, the same way you decide
+build-by-build.
 
 ## When to use image generation
 
@@ -37,9 +41,9 @@ Prefer real or deterministic assets instead when the visual carries evidence:
 ## Planning workflow
 
 1. During Step 3, decide each slide's visual role: source figure, deterministic chart,
-   native diagram, generated plate, or **no image** (the default — see "Use sparingly"
-   above). Write down the short list of slides that actually earned a plate; for most decks
-   that list is empty or one or two slides.
+   native diagram, generated plate, or no image — **by taste and purpose** (see the section
+   above). Note which slides your design sense calls for a plate, so the manifest covers
+   exactly those.
 2. For generated plates, write the intended frame before prompting: full-bleed background,
    side panel, crop strip, texture block, or isolated object.
 3. Build the prompt manifest from a sub-outline of **only the plate-worthy slides**, not the
@@ -53,10 +57,10 @@ Prefer real or deterministic assets instead when the visual carries evidence:
      --calm-zone "left third / right third / top band / none"
    ```
 
-   **Do NOT pass `--count <deck-slide-count>`.** Feeding the full deck length generates a
-   context-free plate for *every* slide — the one-image-per-slide habit to avoid. The script
-   no longer pads to a count; it emits one prompt per heading in the sub-outline. (`--count`
-   remains only as an optional *cap* that truncates the list.)
+   **Do NOT pass `--count <deck-slide-count>`.** Feeding the full deck length would emit a
+   context-free plate for every slide regardless of whether the design wants one — thoughtless,
+   padded imagery. The script no longer pads to a count; it emits one prompt per heading in
+   your sub-outline. (`--count` remains only as an optional *cap* that truncates the list.)
 4. Feed each prompt from `image_prompt_manifest.json` or `image_prompts.md` to the
    agent's image generation skill/tool.
 5. Save the selected outputs to the manifest filenames in the deck folder. **Note the
@@ -78,8 +82,26 @@ Prefer real or deterministic assets instead when the visual carries evidence:
    )
    ```
 
-Use `fit="contain"` for source figures or screenshots whose edges must remain visible.
-Use `fit="cover"` only when cropping is acceptable.
+**Choosing `fit` — never crop the subject out.** `fit="cover"` fills the frame by cropping
+the overflow; `fit="contain"` shows the whole image, letterboxed. The deciding question is
+whether the image has a **subject the slide depends on**:
+- **`fit="contain"`** whenever the subject — or all its parts — must stay fully visible: a
+  rocket that should read as a whole rocket, a scene of several objects (e.g. Earth + Moon +
+  Mars that must each show completely), a figure or screenshot whose edges matter. `cover`
+  would slice the subject (a rocket reduced to its tail, planets shown as slivers).
+- **`fit="cover"`** only for edge-tolerant **texture, atmosphere, or backgrounds** where any
+  crop is fine and there's no single subject to lose.
+- If `contain` letterboxes too much, **shrink/zoom the placement or regenerate the plate at
+  the frame's aspect ratio** — do NOT switch to `cover` and crop the subject away.
+
+**Generate to fit the placement.** When a plate goes in a specific frame, either generate it
+at that frame's aspect ratio, or prompt for the subject **centred with generous margin** so a
+`cover` crop (or any reframing) can't cut it. For a full-bleed `cover` plate, require the
+subject to sit well inside the central safe area, away from the edges.
+
+**Always re-view after placing.** Look at the rendered slide and confirm the key subject is
+whole and uncropped — for *every* `picture()`, generated or source. A cropped-out subject is
+the most common generated-image failure; the static render is where you catch it.
 
 ## OpenAI API fallback
 
@@ -123,7 +145,9 @@ After placing generated assets:
 
 - render the deck and check that the image does not compete with slide text;
 - confirm no accidental readable text, pseudo-labels, fake logos, or fake charts appear;
-- check that important subject matter is not cropped awkwardly;
+- **confirm the key subject is whole, not cropped** — the main object/scene must be fully
+  visible, not sliced by the frame (the #1 generated-image failure); switch `cover`→`contain`
+  or shrink/regenerate if it's cut;
 - make sure every informative image has alt text, and decorative plates use `alt=""`;
 - keep final selected assets in the deck folder so the build script is reproducible.
 

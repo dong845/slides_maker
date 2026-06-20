@@ -70,9 +70,17 @@ Score each dimension; cite specific slides.
    On **split layouts** (text + figure, two-up, image + caption), are the left and right
    regions — *and the white margins flanking them* — the **same width** (or a clearly
    intentional asymmetric split with equal outer margins)? Unequal panels or a lopsided
-   left-vs-right white margin is a real finding, not a nitpick.
+   left-vs-right white margin is a real finding, not a nitpick. In **diagrams**, do arrows
+   point the way the flow moves (a *sideways* arrow between vertically-stacked boxes is wrong),
+   and are repeated blocks/connectors **evenly spaced** (no gap or arrow longer than its
+   peers)? On **image slides**, is the key subject **whole and uncropped** — not sliced by the
+   frame (a rocket reduced to its tail, planets shown as slivers, an object cut at the edge)?
+   A `cover`-fit plate that loses its subject is a real finding (fix: `contain`/shrink/regenerate).
    Is text inside filled boxes (callouts, chips, takeaway bars, cells) **optically
-   centred**, not hugging an edge or sitting a touch low? Does colour vary with intent,
+   centred**, not hugging an edge or sitting a touch low — **including a lone glyph or icon**
+   (a "?", a number, a mark), which must sit dead-centre in its box, not top-left or low?
+   Does a **subtitle / definition line under the title** leave a clear gap below the accent
+   rule rather than jamming against it? Does colour vary with intent,
    or is everything one monotone accent? Is the closing slide named for its purpose
    ("Conclusion" for a talk, "Next steps" for a status update — not a generic "Take home")?
 10. **Factual fidelity** *(when source material exists — the check every system fails).*
@@ -91,30 +99,31 @@ Score each dimension; cite specific slides.
    product pitch, warm/clear for teaching (see `references/design-by-purpose.md`)? A
    purpose-mismatched look (or a generic default palette shipped for a high-polish
    pitch/exec deck) is a real finding. Judge against this purpose, not a generic ideal.
-12. **Motion & pacing** *(applies to every purpose, not just talks).* Was the pacing
-   decision *made deliberately* — animating only the slides a build genuinely helps, and no
-   more? Two failure modes count: under-design (shipped static because nobody looked) and the
-   more common over-application (a build on every slide, or motion added for polish). Two
-   checks, read against the
-   **motion manifest** (the static render can't show a reveal sequence, so judge the design,
-   not the playback): (a) a calm **deck-wide transition** is the default — its absence with no
-   stated reason is a minor finding; (b) any slide that is clearly a **pipeline / multi-stage
-   diagram, a multi-part argument, or an evidence→takeaway** shown all at once, where a
-   step-by-step build would help the audience follow — left static with no reason — is a real
-   finding (typically major for a *presented* talk, minor for a read-alone deck). Calibrate:
-   title/section/one-idea slides and side-by-side comparisons *should* be static; most
-   individual slides stay static; "static, because X" is a valid answer. You're enforcing
-   that the pacing decision was *made*, never that everything animates — **over-animation is
-   equally a finding**: a build on a slide that gains nothing from one, motion added for
-   polish/consistency, or builds on most slides reads as needless and is a real flaw (flag
-   it and say which slides should revert to static). A cluttered
-   *final built* state is still a layout finding, not a motion one — animation never excuses it.
-12a. **Generated-image restraint** *(when the deck uses AI-generated plates).* Generated
-   images should be *sparse and purposeful*, not one-per-slide. Flag **over-use** — a
-   decorative plate on most/every slide, a generated image where a source figure / real
-   computed artifact / chart / plain whitespace would serve better, or imagery that competes
-   with the slide's text. (Fidelity violations — readable text, fake charts/labels/logos, or
-   a generated image standing in for evidence — are blockers under item 10, not this one.)
+12. **Motion & pacing** *(applies to every purpose, not just talks).* Judge motion by
+   **taste and purpose, not by a count** — there is no right number of builds and no quota in
+   either direction. Read against the **motion manifest** (the static render can't show a
+   reveal sequence, so judge the *design*, not the playback). The two failures to flag are
+   both about *thoughtlessness*: (a) **thoughtless motion** — a build (or flashy entrance)
+   that doesn't emphasize, engage, or guide, that distracts, or that is added for flourish or
+   for "consistency"; and (b) a **missed beat** — a slide that is clearly a pipeline /
+   multi-stage diagram, a multi-part argument, or an evidence→takeaway shown all at once,
+   where a step-by-step build would clearly have helped the audience follow, left plain for no
+   reason (typically major for a *presented* talk, minor for read-alone). Also: a calm
+   **deck-wide transition** is a sensible default — its absence with no stated reason is a
+   minor finding. **Do not** flag a slide for being plain, or a deck for having "too few" or
+   even several *consecutive* built slides — that's a legitimate design choice; "plain,
+   because nothing to pace here" is a valid answer, and so is "built, because this beat needed
+   guiding." A cluttered *final built* state is a layout finding, not a motion one — animation
+   never excuses it.
+12a. **Generated images — taste & purpose** *(when the deck uses AI-generated plates).*
+   Judge them the same way as motion: by design intent, not by count. Flag **thoughtless**
+   use — a plate added for flourish, to fill space, or that competes with the slide's text;
+   and a plate where a source figure / real computed artifact / chart / plain whitespace
+   would serve better; and **style incoherence** — plates that don't share one art-direction
+   fitting the deck's purpose and topic. **Do not** flag a deck merely for having several or
+   *consecutive* plates, or for using none — frequency is a design choice. (Fidelity
+   violations — readable text, fake charts/labels/logos, or a generated image standing in for
+   evidence — are blockers under item 10, not this one.)
 
 ## Severity scale
 - **blocker** — undermines the deck's purpose (e.g. results illegible at a
@@ -166,12 +175,14 @@ framing/fidelity and content-completeness — it's a style sample, not the deck;
 `consent` = "strong and on-purpose enough to show the user."
 
 **Animation / builds.** Judge the *final built state* shown in the render (static PNGs
-can't play a sequence). Never treat the absence of animation as a flaw, and don't demand
-it — most slides should stay static. Two kinds of animation finding exist: (a) a
-**cluttered final state** — a slide that would only look clean mid-build is relying on
-animation to hide crowding (fix the layout, not the timeline); and (b) **over-application**
-— a build on a slide that gains nothing, motion added for polish/consistency, or builds on
-most slides; flag it and name the slides that should revert to static (see item 12).
+can't play a sequence), and judge motion by taste and purpose — never by count. Never treat
+a plain slide, or several/consecutive built slides, as a flaw in itself. Two kinds of
+animation finding exist: (a) a **cluttered final state** — a slide that would only look
+clean mid-build is relying on animation to hide crowding (fix the layout, not the timeline);
+and (b) **thoughtless motion** — a build (or flashy entrance) that doesn't emphasize,
+engage, or guide, that distracts, or that's added for flourish or "consistency" (see
+item 12, which also covers the opposite: a clear beat left plain that a build would have
+helped).
 
 ---
 

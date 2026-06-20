@@ -62,11 +62,12 @@ use them as a throwaway mood sketch, then confirm with a real rendered slide.)
    previews were scaffolding for the choice; don't leave demo decks littering the user's
    Downloads. Then continue to Gate B/C and build the **full** deck in the chosen style.
 
-### Gate B — Outline
-Present the slide-by-slide **takeaways / arc** (cheap text, from step 3 of the main
-flow). Approve before building all slides — this catches structural/content-direction
-errors before the costly build. Confirm scope here too ("9 slides in *Editorial* —
-proceed?").
+### Gate B — Deck plan
+This gate **is the Step 3 plan checkpoint surfaced as a gate** — present the content-planner's
+**deck plan**: the slide-by-slide takeaways / arc *and* the per-slide spec + the **image
+opt-in list** (not a thinner "outline"). Approve before building all slides — this catches
+structural/content-direction errors before the costly build. Confirm scope here too ("9
+slides in *Editorial* — proceed?").
 
 ### Gate C — Draft (the existing step 6)
 Build the **full** deck in the approved direction — single-author by default, or

@@ -54,10 +54,10 @@ Every deck flows through seven steps (`SKILL.md` is the authoritative spec):
 | Step | What happens | Why it exists |
 |---|---|---|
 | **0 — Interview** | One compact interview turn: template, purpose & audience, source material, style. Structured choices when the host supports them; direct free-text prompts in plain Codex chat. | The user's requirements are the source of truth; you *learn* them, never inherit them from a prior deck. |
-| **1 — Understand** | Read all source deeply; write a **comprehension brief** (one-sentence message, contributions, method essence, what each figure/table is *for*, limitations). | A deck that looks right but misreads the work fools no expert. Faithfulness starts here. |
+| **1 — Understand & plan** | A dispatched **content-planner agent** reads all source deeply (or web-researches + fact-checks when there's none), writes a **comprehension brief**, then designs the deck — this step plus Step 3 as one deep pass by one mind. | A deck that looks right but misreads the work fools no expert. Faithfulness starts here. |
 | **2 — Canvas** | Decide output folder (`~/Downloads/<deck>/`), load template *or* design a purpose-fit look; set palette/fonts (incl. CJK `EAFONT`). | Branding lives on layouts; design should signal the right *kind* of document before a word is read. |
-| **3 — Plan** | Slide count scales to the time budget (~1/min): short talk ~6–9, longer talk/lecture/defense/job-talk ~10–20+. One idea each, takeaway-first, arc shaped to the purpose; ~15+ → section fan-out (step 4). | Cheap to fix an outline; expensive to fix a finished deck. |
-| **4 — Build** | One build script using `deckkit` helpers. Whole source figures, optional text-free generated visual plates, gutters, rotating accents, real equations, one language, purposeful builds/animation (consider every slide; most stay static, animate only where a build aids comprehension), speaker notes. | python-pptx is fast; one script run, one coherent author. |
+| **3 — Plan** | Per-slide spec (takeaway-first, content, visual source, layout, motion + image opt-in), one idea each, slide count ~1/min, arc shaped to the purpose; ~15+ → section fan-out. **The plan is shown for approval before building.** | Cheap to fix a plan; expensive to fix a finished deck. |
+| **4 — Build** | One build script using `deckkit` helpers. Whole source figures, equal split panels (`columns`), optional text-free generated visual plates, gutters, rotating accents, real equations, one language, builds/animation and images by **taste & purpose** (emphasize / engage / guide — no quota), speaker notes. | python-pptx is fast; one script run, one coherent author. |
 | **5 — Render + critic loop** | Render to PNGs and *look*; then an **independent critic subagent** returns JSON (consent / revise + per-slide fixes). Loop until consent. | python-pptx writes blind — overflow/contrast/glyph bugs only show in pixels. You are not the judge of your own work. |
 | **6 — Hand off + iterate** | Show the user, give the folder path, explain editability + the two change-lanes, fold in feedback. | The deck is theirs to own and keep tweaking — safely. |
 
@@ -171,6 +171,7 @@ The interview (step 0, Q3 especially) routes the request:
 - `export_notes.py` — export a deck's speaker notes to a plain-text rehearsal script.
 
 **Judgement**
+- `agents/content-planner.md` — the constructive planner's brief: understand the material deeply (or web-research), then design the narrative arc + per-slide plan (content, layout, motion, purpose-styled images).
 - `agents/critic.md` — the independent critic's brief + JSON schema.
 - `references/review-rubrics.md` — universal rubric + per-purpose overlays (research-grounded).
 - `references/design-principles.md` — the craft and the "why."

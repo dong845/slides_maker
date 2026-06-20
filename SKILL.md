@@ -269,7 +269,26 @@ units, and code may stay in their original form (that's not "mixing"). Build a
 **mixed/bilingual** deck only if the user asks (or picks it) — and then do it
 systematically (same pairing on every slide). See `references/multilingual.md`.
 
-## Step 1 — Get the content right (understand it deeply, don't skim)
+## Step 1 — Understand the material & plan the deck (dispatch the content-planner)
+**Dispatch an independent content-planner subagent (Agent tool) pointed at
+`agents/content-planner.md` to do this step and Step 3 as one deep pass** — it is the
+constructive counterpart to the critic/arbiter judges. Give it the interview answers
+(purpose/audience/time, style/language, template
+decision, venue if any), the source material (or "none"), and the craft references
+(`design-principles.md`, `design-by-purpose.md`, `animation.md`, `image-generation.md`,
+`review-rubrics.md`, `multilingual.md`). It returns a **deck plan**: a comprehension brief
++ the narrative arc + a build-ready per-slide spec (takeaway · content · visual source ·
+layout · motion · proposed image), plus an image opt-in list, flagged forward-looking
+content, and open questions. You then take that plan into the **Step 3 checkpoint** (show
+it, get the user's OK), set up the canvas (Step 2), and build it (Step 4). The planner is
+*one mind* — it may fan out *reading* across multiple documents, but it synthesises the
+understanding, arc, and design itself; never split one paper across blind agents. For a
+quick, low-stakes deck you may do this pass inline yourself rather than dispatching — but
+the deep-understanding and planning standard below is the same either way.
+
+The rest of this step and Step 3 are the **specification the planner works to** (and what
+you check its plan against). The bar — understand it deeply, don't skim:
+
 A deck is only as good as your grasp of the material — a superficial read produces a
 deck that *looks* right but misrepresents the work, which an expert audience spots
 instantly. Read **all of it**, not the abstract: run the code's README, read the
@@ -290,6 +309,15 @@ If you can't fill this in confidently, you haven't understood it yet — re-read
 the user. Build only once the brief is right; every slide must be faithful to the
 authors' actual emphasis, not a plausible-sounding paraphrase. Reuse their figures
 (relabel for the slide).
+
+**Having a source is rarely the whole story — use the web for the gaps, even with one.**
+Most decks are *partial*: a paper that needs related-work-since-publication or current
+framing, a code repo with no writeup, figures with no prose, a doc that omits the venue. So
+the web step below is **not only for the "No content" case** — run it whenever a source
+leaves a gap, and in particular **re-verify the source's own falsifiable / time-bound claims
+at *today's* date**: a paper's "state-of-the-art", an adoption number, a "first/largest/
+latest" superlative may be stale by presentation day. Re-verifying a source claim is not
+inventing — it's fidelity to what's *true now*.
 
 - **No content:** draft an outline from your own expertise, then **ground *and verify*
   it** with `WebSearch`/`WebFetch` — treat this as a **fact-check, not just framing**.
@@ -312,9 +340,9 @@ authors' actual emphasis, not a plausible-sounding paraphrase. Reuse their figur
     "leading / latest" thing may since have been superseded. Date the deck **"as of \<day month
     year\>"**; if the newest *full-year* metric is last year's, label it and add the current
     year-to-date figure rather than presenting old data as current.
-  Then confirm the outline with the user before building the full deck (cheaper to correct an
-  outline than a finished deck).
-  > **🔴 CHECKPOINT** — get the user's OK on the outline before building the full deck.
+  Carry the verified outline + source log into the **Step 3 deck plan**, where the user
+  approves it — a no-source deck still produces one full plan, gated once at the Step 3
+  checkpoint, not twice here.
 
 ## Step 2 — Set up the canvas
 **First, decide where the deck lands.** Deliver each deck as one self-contained
@@ -393,29 +421,40 @@ denser one. At **~15+ slides**, consider the section fan-out (step 4) to keep a 
 coherent. Write each slide's **takeaway** first; bullets are support, not the message.
 
 Plan each slide's visual source before building: source figure, deterministic chart,
-native diagram, generated visual plate, or **no image** (a clean, well-typeset slide
-needs none). Generated plates are optional style support, not evidence.
-**Use generated images with judgment, not by default — most decks need zero, and a plate
-on *every* slide is the failure to avoid.** Decide per slide whether one earns its place:
-add a generated plate only when a *specific* slide would otherwise feel visually thin and a
-text-free, decorative/conceptual image genuinely helps — never reflexively, never one-per-
-slide, and never when a source figure, a real generated artifact, a chart, or simply more
-whitespace would serve better. When in doubt, leave the slide image-free. When they do earn
-their place, use them for text-free hero imagery, atmosphere, side panels, textures,
-conceptual scenes, and decorative motifs; do **not** use them for source figures, data
-charts, medical/scientific evidence, screenshots, logos, or anything whose content must be
-traceable. For generated plates, read `references/image-generation.md`
-and create a prompt manifest with `scripts/image_prompts.py` so the selected images live
-inside the deck folder and the build stays reproducible. In Codex, prefer the native
-imagegen tool when available. Outside Codex, use `scripts/generate_images_openai.py` with
-`OPENAI_API_KEY` as an optional API fallback, or ask the user to provide externally
-generated images with the manifest filenames.
+native diagram, generated visual plate, or **no image**. Generated plates are style
+support, not evidence. **Whether a slide gets a generated image is a matter of taste and
+purpose, not a rule or a quota** — reach for one where your design sense says it will
+*emphasize* a point, make the slide *more engaging*, or help *guide* the audience, and skip
+it where it wouldn't. There's no count to hit in either direction: it's fine for several or
+even consecutive slides to carry a plate when the design wants it, and fine for a long
+stretch to be plain. The only thing to avoid is *thoughtless* use — an image dropped in for
+flourish, to fill space, or that competes with the slide's content. When a plate fits, use
+it for text-free hero imagery, atmosphere, side panels, textures, conceptual scenes, and
+decorative motifs; do **not** use one for source figures, data charts, medical/scientific
+evidence, screenshots, logos, or anything whose content must be traceable. **Derive the
+image style from the deck's purpose + topic** (one coherent art-direction applied across all
+plates — see `references/design-by-purpose.md`), and **propose images for the user to opt
+into — generate nothing until they approve.** For generated plates, read
+`references/image-generation.md` and create a prompt manifest with `scripts/image_prompts.py`
+(from a sub-outline of only the plated slides) so the selected images live inside the deck
+folder and the build stays reproducible. In Codex, prefer the native imagegen tool when
+available. Outside Codex, use `scripts/generate_images_openai.py` with `OPENAI_API_KEY` as an
+optional API fallback, or ask the user to provide externally generated images with the
+manifest filenames.
 
 **Sanity-check pace against the clock.** After planning, compute `slide_count ÷
 time_minutes`: well over ~1/min for a *spoken* talk means you'll overrun — cut slides or
 get more time, and flag it to the user. Count an **animated/build slide once** (a 4-click
 pipeline is one slide for pacing, not four). Read-alone decks (no speaker) aren't bound by
 this.
+
+**Show the plan and get approval before building — always.** The deck plan (from the
+content-planner in Step 1) is the cheapest place to course-correct, so present it to the
+user every time: the narrative arc + the per-slide spec (takeaway, content, visual source,
+layout, motion) + the **image opt-in list** (which slides you'd propose a generated plate
+for, in what style — the user chooses whether any are generated) + any flagged
+forward-looking content + open questions. Fold in their edits, then build.
+> **🔴 CHECKPOINT** — show the deck plan and get the user's OK (including the image opt-in) before building.
 
 ## Step 4 — Build with deckkit
 Write a small per-deck build script that imports `scripts/deckkit.py` rather than
@@ -504,14 +543,16 @@ A few rules that matter (see `references/design-principles.md`):
   artifact, plot the real distribution from the data — so what you show is what genuinely
   occurs, not a plausible-looking stand-in. Keep generated assets in the deck folder and
   reproducible from the build.
-- **Need atmosphere or a conceptual visual → use image generation deliberately, and
-  sparingly.** This is a *per-slide judgment call, not a per-deck habit* — the same
-  restraint as animation. Most slides (and many whole decks) need **no** generated image;
-  reach for one only when a *specific* slide would otherwise feel visually thin **and** a
-  decorative or conceptual image genuinely helps it — not to fill space, not on every slide,
-  and not when a source figure, a real computed artifact, a chart, or plain whitespace would
-  serve better. If you can't name what a plate adds to *that* slide, don't generate it. When
-  one does earn its place and the missing image is decorative or
+- **Want atmosphere or a conceptual visual → use image generation by taste and purpose.**
+  Like motion, this is a design call, not a rule: reach for a generated plate where your
+  design sense says it will *emphasize*, *engage*, or *guide* — and skip it where it
+  wouldn't, with no quota in either direction (consecutive plates are fine when the design
+  wants them; a plain stretch is fine too). Avoid only *thoughtless* use — an image dropped
+  in for flourish, to fill space, or that competes with the slide's content (or where a
+  source figure, a real computed artifact, a chart, or plain whitespace serves better).
+  Derive the image **style from the deck's purpose + topic** (one art-direction across all
+  plates), and **propose plates for the user to opt into — generate nothing until they
+  approve.** When a plate fits and the missing image is decorative or
   conceptual rather than evidentiary, use the agent's image generation skill to create a
   **text-free visual plate**. Keep all slide words, numbers, labels, charts, equations,
   citations, UI copy, and logos as editable PowerPoint objects or real source assets. Run
@@ -519,9 +560,10 @@ A few rules that matter (see `references/design-principles.md`):
   generate/select the images with the native imagegen tool when available, or run
   `scripts/generate_images_openai.py <manifest>` when the user has configured
   `OPENAI_API_KEY`. Copy/keep the final assets in `~/Downloads/<deck>/assets/generated/`,
-  and place them with `deckkit.picture(..., fit="cover", alt="")` for decorative plates or
-  `fit="contain"` when edges must be preserved. Always render-check that generated imagery
-  leaves calm space behind text and contains no accidental pseudo-text/fake charts. Full
+  and place them with `deckkit.picture(..., fit="cover", alt="")` only for edge-tolerant
+  decorative plates, or `fit="contain"` whenever a subject or edges must stay whole. Always
+  render-check that generated imagery leaves calm space behind text, contains no accidental
+  pseudo-text/fake charts, **and that its key subject isn't cropped out of frame**. Full
   rules: `references/image-generation.md`.
 - **Speaker notes — put the spoken script in the notes, not on the slide.** For any deck
   the user will *present* (especially a conference talk, defense, or lecture), move the
@@ -542,6 +584,20 @@ A few rules that matter (see `references/design-principles.md`):
   drop content into those rects. If you *intend* an asymmetric split (e.g. a 1/3 text rail
   beside a 2/3 figure), make it clearly intentional and keep the *outer* margins equal —
   and **re-view the render** to confirm the two sides look balanced, not accidentally uneven.
+- **Diagrams: arrows follow the flow, spacing is equal.** Point each `deckkit.arrow` the way
+  the flow moves — between **stacked** boxes use `direction="down"`/`"up"`, between
+  side-by-side boxes left/right (a sideways arrow between vertically-stacked blocks is a
+  wrong-direction tell). For a row/column of blocks joined by connectors, make the **gaps and
+  connector lengths equal** — derive blocks from `columns(n, gap=...)` (horizontal) or
+  `rows(n, gap=...)` (vertical stack), and centre each connector in the equal gap rather than
+  eyeballing. Centre a lone glyph/icon (a "?", a number) with the textbox at the box's exact
+  rect, `anchor=MIDDLE`, `align=CENTER`.
+- **Image `fit` — never crop the subject out.** Use `picture(..., fit="contain")` whenever the
+  image's subject or all its parts must stay visible (a whole rocket, a multi-object scene, a
+  figure); reserve `fit="cover"` for edge-tolerant texture/atmosphere only. If `contain`
+  letterboxes too much, shrink/zoom or regenerate at the frame's aspect ratio — don't crop the
+  subject with `cover`. After placing *any* image, re-view the slide and confirm the subject
+  isn't cut off. (Full rules: `references/design-principles.md`, `references/image-generation.md`.)
 - **Colour.** Rotate `deckkit.ACCENTS` so diagrams aren't monotone; reserve magenta
   for emphasis. Name the closing slide for its purpose ("Conclusion" for a talk).
 - **Accessibility.** Keep text ≥4.5:1 on its fill (`contrast_ratio`; `chip`/`modbox`
@@ -582,30 +638,26 @@ fights the single-file artifact, and doesn't speed up the parts that actually co
 time. Full workflow (incl. the critic panel + finding-routing) in
 `references/large-deck-orchestration.md`.
 
-**Motion & builds — CONSIDER on every slide, ANIMATE only where it earns its place.**
-What's required is the *consideration pass* (so a deck that obviously needed a step-by-step
-build doesn't ship static because nobody looked) — **not** motion on every slide. The
-default outcome of that pass is the opposite: **most slides stay static**, and a click-build
-is the *exception* you add only when you can name the specific thing it helps the audience
-follow. Animating reflexively — a build on every slide, motion for polish — is exactly the
-failure to avoid; it pulls attention to the motion instead of the meaning. Two distinct
+**Motion & builds — a matter of taste and purpose, not a rule or a quota.** Reach for a
+build where your design sense says it will *emphasize* a point, make a slide *more
+engaging*, or *guide the audience step by step* — and leave it off where it wouldn't.
+Decide by feel and intent, slide by slide; there's no count to hit in either direction. It
+is completely fine for two or several **consecutive** slides to build when the story wants
+that momentum, and equally fine for a long stretch to be plain. The only thing to avoid is
+*thoughtless* motion — a build (or a flashy entrance) added for flourish that pulls the eye
+off the meaning. Judge each one's intent and effect, never its frequency. Two distinct
 layers, decided separately:
 - **The calm deck-wide transition** is a sensible, low-distraction default: a subtle
   `slide_transition(s, "fade")` (~0.4–0.5s) applied uniformly across the deck adds
-  continuity without anyone noticing it. Apply it as the default *for the deck* (it is the
-  one motion that's fine to apply broadly), or omit it for a static/print feel — either is a
-  legitimate choice; just decide deliberately and record it. This is *not* the "animation"
-  that makes a deck feel over-animated — that's the per-slide builds below.
-- **Click-builds are per-slide, and the bar is high — static is the default.** Walk each
-  slide and ask "would revealing this step by step genuinely help the audience *follow*?"
-  For most slides the honest answer is no, and they stay static — **that is the expected,
-  correct outcome, not a gap.** Add a build *only* for the clear cases: **pipelines /
-  multi-stage diagrams** (one stage + its arrow per click), **multi-part arguments** (reveal
-  each part as you reach it), **before→after / problem→solution**, and **build-to-takeaway**
-  (evidence first, the takeaway callout last). Title / section / single-idea slides and
-  side-by-side comparisons the audience scans together **should stay static**. The test
-  before animating any slide: *name the comprehension aid the build provides* — if you can't,
-  leave it static. The discipline is that you *considered* every slide, then animated *few*.
+  continuity without anyone noticing it. Apply it as the default *for the deck*, or omit it
+  for a static/print feel — either is a legitimate choice; decide deliberately and record it.
+- **Click-builds are per-slide — use them where the design calls for it.** A build shines
+  when you want to reveal a **pipeline / multi-stage diagram** one stage at a time, walk
+  through a **multi-part argument**, show **before→after / problem→solution**, or land an
+  **evidence→takeaway** beat — anywhere stepping the reveal *emphasizes* or *guides*. Some
+  slides (a title, a section divider, a single image the audience should take in at once)
+  simply have nothing to pace, so they're plain — not because of a rule, but because a build
+  there would add nothing. Let the slide's purpose and your taste decide.
 
 Use `scripts/anim.py` (it injects the PowerPoint timing XML python-pptx can't): draw the
 static scaffold, wrap each reveal-on-click chunk in a `Build.step()`, then
@@ -815,6 +867,10 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   reassembles chosen columns/rows out of a dense comparison grid (keeping headers + labels).
 - `scripts/export_notes.py` — export a deck's speaker notes to a plain-text rehearsal
   script (`python scripts/export_notes.py deck.pptx`); offer it at hand-off.
+- `agents/content-planner.md` — the constructive planner's brief: understand the material
+  deeply (or web-research when there's none), then design the narrative arc + a build-ready
+  per-slide plan (takeaway, content, visual source, layout, motion, proposed image with a
+  purpose-derived style). Dispatched in Step 1; its plan is the Step 3 checkpoint.
 - `agents/critic.md` — the independent critic's brief + output JSON schema.
 - `agents/arbiter.md` — the independent finding-arbiter's brief + per-finding verdict
   JSON; high-stakes cross-validation of critic findings before the actor acts, plus

@@ -25,7 +25,12 @@ by an independent critic panel.
 
 ## Actor side — coordinator + parallel section authors
 
-1. **Coordinator does the non-parallelizable core itself (one owner):**
+1. **Coordinator does the non-parallelizable core itself (one owner):** the comprehension
+   brief and plan/arc are the **content-planner's** job (`agents/content-planner.md`,
+   SKILL.md Step 1). On a large deck the coordinator *is* that single planner mind (or
+   dispatches it once); like the planner it may fan out *reading* across the independent
+   sources, but it must never split the brief or arc across the section subagents — that one
+   owner is what keeps the deck coherent.
    - the **comprehension brief** (step 1) — one mind holds the through-line,
    - the **plan/arc** (step 3) — write each slide's takeaway, then **group slides into
      contiguous sections** and assign each section its **role** and its **page range**
