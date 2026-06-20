@@ -147,7 +147,7 @@ La entrevista (paso 0, especialmente la P3) encamina la solicitud:
 - `SKILL.md` — las instrucciones de funcionamiento que sigue el modelo (pasos 0–6, las reglas).
 
 **Motor (`scripts/`)**
-- `deckkit.py` — el kit de construcción: ayudantes de texto/formas/componentes (`bullet`, `callout`, `chip`, `arrow`, `modbox`, `hrule`), ayudantes de maquetación/imagen (`columns` para paneles divididos de igual ancho, `picture`), ecuaciones (`eq_par`, `equation_png`), `speaker_notes`, comprobación de contraste, paleta/fuentes (incl. CJK `EAFONT`), reutilización de plantillas (`open_template`, `content_slide`) y el armazón sin plantilla (`blank_deck`, `title_bar`, `footer`). Impórtalo; no vuelvas a derivar las primitivas.
+- `deckkit.py` — el kit de construcción: ayudantes de texto/formas/componentes (`bullet`, `callout`, `chip`, `arrow`, `modbox`, `hrule`), ayudantes de maquetación/imagen (`columns`/`rows` para paneles divididos y apilados de igual tamaño, `picture`), ecuaciones (`eq_par`, `equation_png`), `speaker_notes`, comprobación de contraste, paleta/fuentes (incl. CJK `EAFONT`), reutilización de plantillas (`open_template`, `content_slide`) y el armazón sin plantilla (`blank_deck`, `title_bar`, `footer`). Impórtalo; no vuelvas a derivar las primitivas.
 - `render_deck.sh` — `.pptx` → un PNG por diapositiva (LibreOffice → PDF → PNG). Multiplataforma; usa un perfil privado de LibreOffice para que los renderizados paralelos o simultáneos no colisionen.
 - `check_env.sh` — verificación previa única de la cadena de herramientas.
 - `anim.py` — inyecta el XML de temporización de builds/animación de PowerPoint que python-pptx no puede escribir.

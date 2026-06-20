@@ -147,7 +147,7 @@ bash ~/.claude/skills/slide-maker/scripts/check_env.sh
 - `SKILL.md` —— 模型遵循的操作说明（步骤 0–6 与各项规则）。
 
 **引擎（`scripts/`）**
-- `deckkit.py` —— 构建套件：文本/形状/组件助手（`bullet`、`callout`、`chip`、`arrow`、`modbox`、`hrule`），版面/图片助手（`columns` 用于等宽分栏面板、`picture`），公式（`eq_par`、`equation_png`），`speaker_notes`，对比度检查，配色/字体（含中日韩 `EAFONT`），模板复用（`open_template`、`content_slide`）以及无模板的版面装饰（`blank_deck`、`title_bar`、`footer`）。直接导入它；别再去重造这些基本件。
+- `deckkit.py` —— 构建套件：文本/形状/组件助手（`bullet`、`callout`、`chip`、`arrow`、`modbox`、`hrule`），版面/图片助手（`columns`/`rows` 用于等宽分栏与堆叠面板、`picture`），公式（`eq_par`、`equation_png`），`speaker_notes`，对比度检查，配色/字体（含中日韩 `EAFONT`），模板复用（`open_template`、`content_slide`）以及无模板的版面装饰（`blank_deck`、`title_bar`、`footer`）。直接导入它；别再去重造这些基本件。
 - `render_deck.sh` —— `.pptx` → 每页一张 PNG（LibreOffice → PDF → PNG）。跨平台；使用一个私有的 LibreOffice 配置文件，使并行/共存的渲染互不冲突。
 - `check_env.sh` —— 工具链的一次性预检。
 - `anim.py` —— 注入 python-pptx 写不了的 PowerPoint 逐步呈现/动画计时 XML。
