@@ -162,6 +162,7 @@ bash ~/.claude/skills/slide-maker/scripts/check_env.sh
 **判断**
 - `agents/content-planner.md` — 建設的なプランナーのブリーフ：素材を深く理解（またはウェブ調査）し、ナラティブの弧とスライドごとのプラン（内容、レイアウト、モーション、目的に合わせたスタイルの画像）を設計する。
 - `agents/critic.md` — 独立した批評者のブリーフ＋ JSON スキーマ。
+- `agents/arbiter.md` — 独立した指摘アービターのブリーフ：高ステークスのデッキで、修正に着手する前に批評の指摘を相互検証し、再レンダー後に修正を確認する。低ステークスでは無効。
 - `references/review-rubrics.md` — 汎用ルーブリック＋目的別オーバーレイ（研究に基づく）。
 - `references/design-principles.md` — その技法と「なぜ」。
 

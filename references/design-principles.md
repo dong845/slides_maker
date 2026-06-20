@@ -190,6 +190,13 @@ as much as the words on it. Design is not optional polish; it is half the job.
   put each label *directly under (or beside) the thing it names* — a label far from the part it
   points to reads as disconnected. Measure the feature's position in the placed image and centre
   the label on it.
+- **Generated images of real things must be factually right.** A generated plate of known
+  subjects that gets relative **size/proportion, count, colour, or arrangement** wrong (two
+  objects drawn equal when one is much bigger; the wrong number or colour) reads as broken to
+  anyone who knows the subject — even on a "decorative" plate. State the facts in the prompt and
+  re-view the result; when the factual relationship *is* the point, a prompted-and-verified plate
+  is fine, or **draw it natively** (deckkit shapes / a chart) for guaranteed control. (See
+  `references/image-generation.md`.)
   If the features are **bunched** so labels would collide, **spread them** — place (or
   regenerate) the image wider/at the band's aspect so each feature has room for its label —
   rather than cramming labels under a clump.

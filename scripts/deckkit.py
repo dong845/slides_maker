@@ -305,7 +305,7 @@ def columns(n=2, *, slide=None, w_in=None, h_in=None, top=1.15, bottom=0.55, mar
     return [(margin + i * (cw + gap), y, cw, h) for i in range(n)]
 
 
-def rows(n=2, *, slide=None, h_in=None, x=None, y=None, w=None, top=1.15, bottom=0.55, gap=None):
+def rows(n=2, *, slide=None, w_in=None, h_in=None, x=None, y=None, w=None, top=1.15, bottom=0.55, gap=None):
     """Return ``n`` equal-**height** row rects ``(x, y, w, h)`` stacked top-to-bottom with
     equal gaps — the vertical counterpart of :func:`columns`.
 
@@ -313,26 +313,30 @@ def rows(n=2, *, slide=None, h_in=None, x=None, y=None, w=None, top=1.15, bottom
     cards) so the gaps — and any ``arrow(..., direction="down")`` connectors you drop between
     them — are **equal by construction** rather than eyeballed. Pass ``x``/``w`` to confine the
     stack to one column (e.g. the left half from ``columns``); they default to a full-width
-    band inset by ``GUTTER``::
+    band inset by ``GUTTER`` (derived from the deck's real width when ``slide=`` is given)::
 
         L, R = dk.columns(2, slide=s)
         top_box, bot_box = dk.rows(2, slide=s, x=L[0], w=L[2], top=1.5, bottom=1.3)
         dk.chip(s, *top_box, "abandon", "used once", STEEL)
-        dk.arrow(s, top_box[0]+top_box[2]/2-0.11, top_box[1]+top_box[3]+gap_mid, 0.22, 0.3,
-                 direction="down")           # sits in the equal gap between the two rows
+        gap_mid = bot_box[1] - (top_box[1] + top_box[3])          # the equal gap between rows
+        dk.arrow(s, top_box[0] + top_box[2] / 2 - 0.11, top_box[1] + top_box[3] + (gap_mid - 0.3) / 2,
+                 0.22, 0.3, direction="down")                     # centred in that gap
         dk.chip(s, *bot_box, "reuse", "flies again", ORANGE)
 
-    Pass ``slide=`` so it matches the deck's real height. Returns ``(x, y, w, h)`` tuples,
+    Pass ``slide=`` so it matches the deck's real size. Returns ``(x, y, w, h)`` tuples,
     top to bottom.
     """
     if slide is not None:
         prs = slide.part.package.presentation_part.presentation
+        if w_in is None:
+            w_in = prs.slide_width / 914400
         if h_in is None:
             h_in = prs.slide_height / 914400
+    w_in = 10.0 if w_in is None else w_in
     h_in = 5.625 if h_in is None else h_in
     gap = GUTTER if gap is None else gap
     x = GUTTER if x is None else x
-    w = (10.0 - 2 * GUTTER) if w is None else w
+    w = (w_in - 2 * GUTTER) if w is None else w
     y = top
     if n < 1:
         raise ValueError("rows(n) needs n >= 1")

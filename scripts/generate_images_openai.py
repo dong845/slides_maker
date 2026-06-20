@@ -115,8 +115,8 @@ def main():
     ap.add_argument("--background", choices=["opaque", "auto"], help="Background mode when supported by the selected model.")
     ap.add_argument("--moderation", choices=["auto", "low"], help="Moderation strictness when supported by the selected model.")
     ap.add_argument("--limit", type=int, help="Generate only the first N manifest entries.")
-    ap.add_argument("--only-missing", action="store_true", help="Skip files that already exist. This is the default behavior.")
-    ap.add_argument("--overwrite", action="store_true", help="Regenerate and overwrite existing files.")
+    ap.add_argument("--overwrite", action="store_true",
+                    help="Regenerate and overwrite existing files (default: skip files that already exist).")
     ap.add_argument("--dry-run", action="store_true", help="Print planned outputs without calling the API.")
     ap.add_argument("--timeout", type=int, default=300, help="Per-request timeout in seconds.")
     ap.add_argument("--retries", type=int, default=2, help="Retries for transient failures.")

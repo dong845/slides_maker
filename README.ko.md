@@ -162,6 +162,7 @@ bash ~/.claude/skills/slide-maker/scripts/check_env.sh
 **판단**
 - `agents/content-planner.md` — 건설적 기획자의 브리프: 자료를 깊이 이해하고(또는 웹 조사), 서사 흐름과 슬라이드별 계획(내용, 레이아웃, 모션, 목적에 맞춘 스타일의 이미지)을 설계합니다.
 - `agents/critic.md` — 독립 비평가의 브리프 + JSON 스키마.
+- `agents/arbiter.md` — 독립 판정자 브리프: 고위험 덱에서 수정 전에 비평 결과를 교차 검증하고, 재렌더 후 수정 사항을 확인합니다. 저위험 덱에서는 비활성.
 - `references/review-rubrics.md` — 보편 루브릭 + 목적별 오버레이 (연구 근거 기반).
 - `references/design-principles.md` — 기술적 노하우와 그 "이유."
 

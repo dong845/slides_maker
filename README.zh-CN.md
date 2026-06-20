@@ -162,6 +162,7 @@ bash ~/.claude/skills/slide-maker/scripts/check_env.sh
 **评判**
 - `agents/content-planner.md` —— 建设性规划者的简报：深入理解素材（或联网检索），再设计叙事弧线与逐页计划（内容、版式、动效、按目的配色的配图）。
 - `agents/critic.md` —— 独立评审的任务简报 + JSON 模式。
+- `agents/arbiter.md` —— 独立的发现仲裁者简报：高风险演示中，在动手修改前对评审发现做交叉验证，并在重渲后核实修复。低风险演示不启用。
 - `references/review-rubrics.md` —— 通用评分表 + 各目的的叠加项（有研究支撑）。
 - `references/design-principles.md` —— 手艺本身，以及背后的“为什么”。
 

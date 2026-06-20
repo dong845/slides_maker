@@ -162,6 +162,7 @@ La entrevista (paso 0, especialmente la P3) encamina la solicitud:
 **Juicio**
 - `agents/content-planner.md` — el briefing del planificador constructivo: comprende el material a fondo (o investiga en la web), luego diseña el arco narrativo y el plan por diapositiva (contenido, maquetación, movimiento, imágenes con estilo acorde al propósito).
 - `agents/critic.md` — el briefing del crítico independiente + el esquema JSON.
+- `agents/arbiter.md` — el briefing del árbitro de hallazgos independiente: en presentaciones de alto riesgo, valida los hallazgos del crítico antes de actuar y verifica las correcciones tras volver a renderizar. Inactivo en bajo riesgo.
 - `references/review-rubrics.md` — rúbrica universal + superposiciones por propósito (fundamentadas en investigación).
 - `references/design-principles.md` — el oficio y el "porqué".
 

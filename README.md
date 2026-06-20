@@ -61,7 +61,7 @@ Every deck flows through seven steps (`SKILL.md` is the authoritative spec):
 | **5 — Render + critic loop** | Render to PNGs and *look*; then an **independent critic subagent** returns JSON (consent / revise + per-slide fixes). Loop until consent. | python-pptx writes blind — overflow/contrast/glyph bugs only show in pixels. You are not the judge of your own work. |
 | **6 — Hand off + iterate** | Show the user, give the folder path, explain editability + the two change-lanes, fold in feedback. | The deck is theirs to own and keep tweaking — safely. |
 
-**The actor–critic loop is the quality engine.** Its *weight* scales to the stakes — one critic for a lab meeting, a 2–3-critic panel with different lenses for a conference, defense, or pitch — but the loop itself is never skipped.
+**The actor–critic loop is the quality engine.** Its *weight* scales to the stakes — one critic for a lab meeting, a 2–3-critic panel with different lenses for a conference, defense, or pitch — but the loop itself is never skipped. For **high-stakes** decks an independent **arbiter** pass then cross-validates the panel's findings before any fix (acting on a phantom flaw is as costly as missing a real one) and re-verifies them after the rebuild; low-stakes decks stay one critic, no arbiter.
 
 ### Two modes
 
@@ -173,6 +173,7 @@ The interview (step 0, Q3 especially) routes the request:
 **Judgement**
 - `agents/content-planner.md` — the constructive planner's brief: understand the material deeply (or web-research), then design the narrative arc + per-slide plan (content, layout, motion, purpose-styled images).
 - `agents/critic.md` — the independent critic's brief + JSON schema.
+- `agents/arbiter.md` — the independent finding-arbiter's brief: high-stakes cross-validation of critic findings before the actor acts, plus fix-verification on re-render. A no-op for low-stakes decks.
 - `references/review-rubrics.md` — universal rubric + per-purpose overlays (research-grounded).
 - `references/design-principles.md` — the craft and the "why."
 

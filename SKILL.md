@@ -411,36 +411,19 @@ Georgia, Consolas), set `deckkit.FONT/MONO/EQFONT` accordingly, and flag any bra
 dependency at hand-off. Equations via `equation_png` are font-independent (rasterised).
 Full list, fallbacks, and tofu recovery in `references/font-guidance.md`.
 
-## Step 3 — Plan the deck (terse, purpose-shaped)
-One idea per slide, in an arc that fits the purpose (a conference talk and a status
-update are ordered differently — let the rubric guide you). **Scale the slide count to
-the time budget** — roughly one slide per talking-minute as a loose anchor: a short talk
-or status update runs ~6–9 slides; a longer lecture, thesis defense, or job talk ~10–20+.
-Keep **one idea per slide** regardless — a longer deck means *more* slides, never a
-denser one. At **~15+ slides**, consider the section fan-out (step 4) to keep a big deck
-coherent. Write each slide's **takeaway** first; bullets are support, not the message.
+## Step 3 — Pace-check the plan, then get approval
+The content-planner's plan (Step 1) already carries the arc and the per-slide spec; this
+step locks it. The standard it must meet: **one idea per slide**, in an arc that fits the
+purpose (a conference talk and a status update are ordered differently — let the rubric
+guide you). **Scale the slide count to the time budget** — ~1 slide per talking-minute as a
+loose anchor: short talk/status ~6–9 slides, lecture/thesis defense/job talk ~10–20+; a
+longer deck means *more* slides, never a denser one. At **~15+ slides**, consider the
+section fan-out (step 4). Each slide's **takeaway** comes first; bullets support it.
 
-Plan each slide's visual source before building: source figure, deterministic chart,
-native diagram, generated visual plate, or **no image**. Generated plates are style
-support, not evidence. **Whether a slide gets a generated image is a matter of taste and
-purpose, not a rule or a quota** — reach for one where your design sense says it will
-*emphasize* a point, make the slide *more engaging*, or help *guide* the audience, and skip
-it where it wouldn't. There's no count to hit in either direction: it's fine for several or
-even consecutive slides to carry a plate when the design wants it, and fine for a long
-stretch to be plain. The only thing to avoid is *thoughtless* use — an image dropped in for
-flourish, to fill space, or that competes with the slide's content. When a plate fits, use
-it for text-free hero imagery, atmosphere, side panels, textures, conceptual scenes, and
-decorative motifs; do **not** use one for source figures, data charts, medical/scientific
-evidence, screenshots, logos, or anything whose content must be traceable. **Derive the
-image style from the deck's purpose + topic** (one coherent art-direction applied across all
-plates — see `references/design-by-purpose.md`), and **propose images for the user to opt
-into — generate nothing until they approve.** For generated plates, read
-`references/image-generation.md` and create a prompt manifest with `scripts/image_prompts.py`
-(from a sub-outline of only the plated slides) so the selected images live inside the deck
-folder and the build stays reproducible. In Codex, prefer the native imagegen tool when
-available. Outside Codex, use `scripts/generate_images_openai.py` with `OPENAI_API_KEY` as an
-optional API fallback, or ask the user to provide externally generated images with the
-manifest filenames.
+Each slide's **visual source** is set in the plan — source figure, chart, native diagram,
+generated plate, or **none**. Both **generated images and motion are a matter of taste and
+purpose, never a quota** (full rules: `references/image-generation.md`, `references/animation.md`):
+generated plates are opt-in, styled to the deck's purpose + topic, and never carry evidence.
 
 **Sanity-check pace against the clock.** After planning, compute `slide_count ÷
 time_minutes`: well over ~1/min for a *spoken* talk means you'll overrun — cut slides or
@@ -543,28 +526,16 @@ A few rules that matter (see `references/design-principles.md`):
   artifact, plot the real distribution from the data — so what you show is what genuinely
   occurs, not a plausible-looking stand-in. Keep generated assets in the deck folder and
   reproducible from the build.
-- **Want atmosphere or a conceptual visual → use image generation by taste and purpose.**
-  Like motion, this is a design call, not a rule: reach for a generated plate where your
-  design sense says it will *emphasize*, *engage*, or *guide* — and skip it where it
-  wouldn't, with no quota in either direction (consecutive plates are fine when the design
-  wants them; a plain stretch is fine too). Avoid only *thoughtless* use — an image dropped
-  in for flourish, to fill space, or that competes with the slide's content (or where a
-  source figure, a real computed artifact, a chart, or plain whitespace serves better).
-  Derive the image **style from the deck's purpose + topic** (one art-direction across all
-  plates), and **propose plates for the user to opt into — generate nothing until they
-  approve.** When a plate fits and the missing image is decorative or
-  conceptual rather than evidentiary, use the agent's image generation skill to create a
-  **text-free visual plate**. Keep all slide words, numbers, labels, charts, equations,
-  citations, UI copy, and logos as editable PowerPoint objects or real source assets. Run
-  `scripts/image_prompts.py` from the deck outline to make prompts + expected filenames,
-  generate/select the images with the native imagegen tool when available, or run
-  `scripts/generate_images_openai.py <manifest>` when the user has configured
-  `OPENAI_API_KEY`. Copy/keep the final assets in `~/Downloads/<deck>/assets/generated/`,
-  and place them with `deckkit.picture(..., fit="cover", alt="")` only for edge-tolerant
-  decorative plates, or `fit="contain"` whenever a subject or edges must stay whole. Always
-  render-check that generated imagery leaves calm space behind text, contains no accidental
-  pseudo-text/fake charts, **and that its key subject isn't cropped out of frame**. Full
-  rules: `references/image-generation.md`.
+- **Generated visual plates (atmosphere / conceptual) — by taste & purpose; full rules in
+  `references/image-generation.md`.** Generate where your design sense says a plate helps (no
+  quota), styled to the deck's purpose+topic, **opt-in only**; never bake words/numbers/labels/
+  charts/logos into a plate (those stay editable objects or real assets). Build prompts with
+  `scripts/image_prompts.py` (a sub-outline of *only* the plated slides), generate with the
+  native imagegen tool (Codex) or `scripts/generate_images_openai.py` (+`OPENAI_API_KEY`); keep
+  assets in `~/Downloads/<deck>/assets/generated/` and place with `deckkit.picture(...)` —
+  `fit="contain"` when a subject/edges must stay whole, `fit="cover"` only for edge-tolerant
+  texture. Render-check: calm space behind text, no pseudo-text/fake charts, subject not cropped,
+  real things factually right.
 - **Speaker notes — put the spoken script in the notes, not on the slide.** For any deck
   the user will *present* (especially a conference talk, defense, or lecture), move the
   full sentences off the slide into speaker notes with `deckkit.speaker_notes(slide, "…")`.
@@ -572,32 +543,15 @@ A few rules that matter (see `references/design-principles.md`):
   (the critic won't see them) but they show in Presenter View and on printed Notes Pages —
   so the user can rehearse without the slide becoming a wall of text. Offer this at
   hand-off; it directly serves the "few words per point" rule.
-- **Spacing.** Leave a `deckkit.GUTTER` (~0.4 in) gap between a figure and any text,
-  callout, or edge — crowding looks amateur. Mind each page's overall layout.
-- **Balanced split layouts — equal panels, equal margins.** When a slide is divided into
-  left/right regions (text + figure, two-up comparison, image + caption) the two regions —
-  *and the white margins flanking them* — should be the **same width** unless you have a
-  deliberate reason otherwise. A left panel and right panel of different widths, or a wider
-  white margin on one side than the other, is a lopsided-slide tell that reads as careless.
-  Don't eyeball each panel's `x`/`w`; derive them from one grid with **`deckkit.columns(n)`**
-  (it returns `n` equal-width rects with symmetric outer margins and equal gutters), then
-  drop content into those rects. If you *intend* an asymmetric split (e.g. a 1/3 text rail
-  beside a 2/3 figure), make it clearly intentional and keep the *outer* margins equal —
-  and **re-view the render** to confirm the two sides look balanced, not accidentally uneven.
-- **Diagrams: arrows follow the flow, spacing is equal.** Point each `deckkit.arrow` the way
-  the flow moves — between **stacked** boxes use `direction="down"`/`"up"`, between
-  side-by-side boxes left/right (a sideways arrow between vertically-stacked blocks is a
-  wrong-direction tell). For a row/column of blocks joined by connectors, make the **gaps and
-  connector lengths equal** — derive blocks from `columns(n, gap=...)` (horizontal) or
-  `rows(n, gap=...)` (vertical stack), and centre each connector in the equal gap rather than
-  eyeballing. Centre a lone glyph/icon (a "?", a number) with the textbox at the box's exact
-  rect, `anchor=MIDDLE`, `align=CENTER`.
-- **Image `fit` — never crop the subject out.** Use `picture(..., fit="contain")` whenever the
-  image's subject or all its parts must stay visible (a whole object, a multi-element scene, a
-  figure); reserve `fit="cover"` for edge-tolerant texture/atmosphere only. If `contain`
-  letterboxes too much, shrink/zoom or regenerate at the frame's aspect ratio — don't crop the
-  subject with `cover`. After placing *any* image, re-view the slide and confirm the subject
-  isn't cut off. (Full rules: `references/design-principles.md`, `references/image-generation.md`.)
+- **Layout & diagrams — full rules in `references/design-principles.md`; the essentials:**
+  keep a `deckkit.GUTTER` (~0.4 in) between elements and clear of the footer; build **balanced
+  split panels** and **equal-gap stacks** from one grid — `columns(n)` (horizontal) / `rows(n)`
+  (vertical), with symmetric outer margins (an intentional asymmetric split still keeps equal
+  outer margins, and don't strand a narrow element in a too-wide column); point
+  `arrow(direction=…)` the way the flow moves (down/up between stacked boxes), keep repeated
+  connectors evenly spaced and adjacent blocks **gapped (never touching)**, and centre a lone
+  glyph in its box; place figures/plates with **`picture(..., fit="contain")`** so the subject
+  is never cropped (`cover` only for edge-tolerant texture). Then run the Step-5 render self-check.
 - **Colour.** Rotate `deckkit.ACCENTS` so diagrams aren't monotone; reserve magenta
   for emphasis. Name the closing slide for its purpose ("Conclusion" for a talk).
 - **Accessibility.** Keep text ≥4.5:1 on its fill (`contrast_ratio`; `chip`/`modbox`
@@ -638,26 +592,15 @@ fights the single-file artifact, and doesn't speed up the parts that actually co
 time. Full workflow (incl. the critic panel + finding-routing) in
 `references/large-deck-orchestration.md`.
 
-**Motion & builds — a matter of taste and purpose, not a rule or a quota.** Reach for a
-build where your design sense says it will *emphasize* a point, make a slide *more
-engaging*, or *guide the audience step by step* — and leave it off where it wouldn't.
-Decide by feel and intent, slide by slide; there's no count to hit in either direction. It
-is completely fine for two or several **consecutive** slides to build when the story wants
-that momentum, and equally fine for a long stretch to be plain. The only thing to avoid is
-*thoughtless* motion — a build (or a flashy entrance) added for flourish that pulls the eye
-off the meaning. Judge each one's intent and effect, never its frequency. Two distinct
-layers, decided separately:
-- **The calm deck-wide transition** is a sensible, low-distraction default: a subtle
-  `slide_transition(s, "fade")` (~0.4–0.5s) applied uniformly across the deck adds
-  continuity without anyone noticing it. Apply it as the default *for the deck*, or omit it
-  for a static/print feel — either is a legitimate choice; decide deliberately and record it.
-- **Click-builds are per-slide — use them where the design calls for it.** A build shines
-  when you want to reveal a **pipeline / multi-stage diagram** one stage at a time, walk
-  through a **multi-part argument**, show **before→after / problem→solution**, or land an
-  **evidence→takeaway** beat — anywhere stepping the reveal *emphasizes* or *guides*. Some
-  slides (a title, a section divider, a single image the audience should take in at once)
-  simply have nothing to pace, so they're plain — not because of a rule, but because a build
-  there would add nothing. Let the slide's purpose and your taste decide.
+**Motion & builds — by taste and purpose, not a quota; full rules in `references/animation.md`.**
+Add a build where your design sense says stepping the reveal will *emphasize*, *engage*, or
+*guide* — and leave it off where it wouldn't (consecutive builds are fine, a long plain stretch
+is fine; the only thing to avoid is *thoughtless* motion added for flourish). Two layers,
+decided separately: **(1)** a calm deck-wide `slide_transition(s, "fade")` is a sensible
+low-distraction default (or omit for a static/print feel — decide deliberately); **(2)
+click-builds** per slide for the clear cases — a **pipeline / multi-stage diagram** revealed a
+stage at a time, a **multi-part argument**, **before→after**, or **evidence→takeaway** — while
+title / divider / single-image slides simply stay plain.
 
 Use `scripts/anim.py` (it injects the PowerPoint timing XML python-pptx can't): draw the
 static scaffold, wrap each reveal-on-click chunk in a `Build.step()`, then

@@ -75,7 +75,9 @@ Score each dimension; cite specific slides.
    section label rather than echo a word the title already leads with**? In **diagrams**, do
    arrows point the way the flow moves (a *sideways* arrow between vertically-stacked boxes is
    wrong), are repeated blocks/connectors **evenly spaced**, and do **adjacent blocks have a
-   visible gap** (never touching)? On **image slides**, is the key subject **whole and
+   visible gap** (never touching)? Does **every shape of a native diagram sit inside its
+   card/panel** with a margin (a box/icon/node poking outside its frame, or an asymmetric
+   off-centre cluster, is a real finding)? On **image slides**, is the key subject **whole and
    uncropped** — not sliced by the
    frame (a figure, product, person, or object cut off so only part of it shows)?
    A `cover`-fit plate that loses its subject is a real finding (fix: `contain`/shrink/regenerate).
