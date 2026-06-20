@@ -39,8 +39,9 @@ by an independent critic panel.
      chrome, and layout constants (copy `references/examples/style_example.py`, tune to
      purpose via `design-by-purpose.md`). Sections never redefine colours or chrome.
 
-2. **Fan out one subagent per section, in parallel** (Agent tool; see
-   `superpowers:dispatching-parallel-agents`). Give each subagent: the comprehension
+2. **Fan out one subagent per section, in parallel** using the host runtime's available
+   multi-agent/subagent tool (in Codex, discover multi-agent tools with `tool_search` if
+   they are not already exposed). Give each subagent: the comprehension
    brief, the full plan, **`style.py`**, **its** section's role + slide takeaways +
    `START_PAGE`, and a one-line summary of the **neighbouring** sections (so seams and
    transitions are clean). Each subagent:

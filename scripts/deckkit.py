@@ -811,7 +811,8 @@ def content_slide(prs, layout_idx, title_txt, size=23, footer="", date="",
 
     NOTE: layout_idx and placeholder types are template-specific — confirm them by
     inspecting the template once (inspect_template.py) and save them to the template's
-    profile.md in ~/.claude/slide-templates/<name>/."""
+    profile.md in the active template registry, e.g. ~/.codex/slide-templates/<name>/
+    for Codex or ~/.claude/slide-templates/<name>/ for Claude Code."""
     s = prs.slides.add_slide(prs.slide_layouts[layout_idx])
     tf = s.shapes.title.text_frame; tf.text = title_txt
     for r in tf.paragraphs[0].runs:

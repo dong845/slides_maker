@@ -49,7 +49,7 @@ Two time sinks compress well: ingesting material/assets, and the critic loop.
   paper's intro/method/results across blind agents; the through-line is one mind's job.
   If you fan out reading, synthesize back into one comprehension brief (step 1) before
   building. Parallelism speeds *gathering*, never *understanding*.
-  (`superpowers:dispatching-parallel-agents`.)
+  Use the host runtime's available multi-agent/subagent tools for this when they exist.
 - **Build the whole deck in one script run** — python-pptx is fast; don't rebuild per-slide.
 - **Scale the critic to stakes** (step 5): one critic for a quick internal deck; the
   multi-critic, multi-round panel only for high-stakes. The loop is non-negotiable;
@@ -269,9 +269,11 @@ units, and code may stay in their original form (that's not "mixing"). Build a
 **mixed/bilingual** deck only if the user asks (or picks it) — and then do it
 systematically (same pairing on every slide). See `references/multilingual.md`.
 
-## Step 1 — Understand the material & plan the deck (dispatch the content-planner)
-**Dispatch an independent content-planner subagent (Agent tool) pointed at
-`agents/content-planner.md` to do this step and Step 3 as one deep pass** — it is the
+## Step 1 — Understand the material & plan the deck (use the content-planner)
+**Use `agents/content-planner.md` for this step and Step 3 as one deep pass** — dispatch
+it through an available multi-agent/subagent tool when the host exposes one (in Codex,
+discover multi-agent tools with `tool_search` if needed), otherwise run the same planner
+brief inline yourself. It is the
 constructive counterpart to the critic/arbiter judges. Give it the interview answers
 (purpose/audience/time, style/language, template
 decision, venue if any), the source material (or "none"), and the craft references
@@ -320,7 +322,7 @@ latest" superlative may be stale by presentation day. Re-verifying a source clai
 inventing — it's fidelity to what's *true now*.
 
 - **No content:** draft an outline from your own expertise, then **ground *and verify*
-  it** with `WebSearch`/`WebFetch` — treat this as a **fact-check, not just framing**.
+  it** with the host's available web search/fetch tools (Codex: use `web.run`) — treat this as a **fact-check, not just framing**.
   List the deck's specific *falsifiable* claims (numbers, dates, names, citations, and
   every "first/largest/state-of-the-art" assertion) and confirm each against a credible
   source before it lands on a slide; fix or cut anything you can't verify, and never
@@ -371,7 +373,7 @@ iterate without clobbering the user's manual edits.
   a `profile.md` under the active template registry so it's reusable next time
   (a registered template's `profile.md` is a fully worked example of this).
   - **Conference template:** if step 0 turned up an official conference template,
-    download it (`WebFetch`/`curl`) and treat it exactly like a user template —
+    download it with the host's web fetch/download tool or `curl` and treat it exactly like a user template —
     inspect it, then build on it so the talk matches the venue's required look and
     aspect ratio.
 
@@ -662,8 +664,8 @@ static slide, never a fix for a cluttered one.
 
 Then run the **actor-critic loop** — this is the quality engine, and the critic is a
 *demanding* judge (see `agents/critic.md`), not a rubber stamp:
-1. **Critique.** Dispatch an independent critic subagent (Agent tool) pointed at
-   `agents/critic.md`, giving it the rendered PNGs, the deck's **purpose + audience**,
+1. **Critique.** Dispatch an independent critic subagent through the host's available
+   multi-agent/subagent tool, pointed at `agents/critic.md`, giving it the rendered PNGs, the deck's **purpose + audience**,
    `references/review-rubrics.md`, the **motion manifest** from step 4 (so it can judge the
    motion *design* it can't see in a static render), **and the source material** (so it can
    verify claims/figures/numbers, not just style). A *separate* agent matters: it judges the

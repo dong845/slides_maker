@@ -12,7 +12,7 @@ kind of document* the moment it's on screen, which earns trust before a word is 
    set the `deckkit` palette constants (`DEEP/BLUE/ACCENTS/...`) and `FONT` to match,
    and apply its layout/chrome guidance in steps 3–4.
 2. **Then ground it in current inspiration.** Tastes and conventions shift, and a
-   stock blue deck looks dated. Do a quick `WebSearch`/`WebFetch` (e.g. "modern
+   stock blue deck looks dated. Do a quick search/fetch with the host's available web tools (e.g. "modern
    conference talk slide design 2026", "clean investor readout deck examples",
    "minimal academic defense slides") and look at 3–5 real, well-regarded examples
    for *this* purpose. Pull concrete ideas — a colour pairing, a title treatment, a
