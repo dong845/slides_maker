@@ -7,6 +7,16 @@ you're free to set the look — tailor the visual system to the **purpose + audi
 chosen in step 0. The goal isn't decoration; it's that the deck *reads as the right
 kind of document* the moment it's on screen, which earns trust before a word is said.
 
+## Shortcut: design-language presets
+For a strong, coherent *look* in one switch, `scripts/presets.py` has named design languages —
+`preset("glassmorphism" | "swiss" | "editorial_paper" | "editorial_report" | "risograph" |
+"memphis")` returns a matched palette + fonts + surface treatment + image-prompt style (and a
+`when` note). Adopt one as the starting language, then **tune it to the purpose + brand below**
+(the preset is not a straitjacket; the user's brand/reference always wins). E.g. a data report →
+`editorial_report` + the `data-viz.md` charts; a launch/portfolio → `glassmorphism` or
+`editorial_paper`; an event → `memphis`/`risograph`. These pair with the generated-template Style
+library (`references/generated-template.md`).
+
 ## How to use this file
 1. Find the purpose below and adopt its **design language** as your starting point —
    set the `deckkit` palette constants (`DEEP/BLUE/ACCENTS/...`) and `FONT` to match,

@@ -126,15 +126,46 @@ For every slide, decide and record:
 - **Content** — the terse points / the actual words, faithful to the source. Few words per
   point; the slide is a visual aid for a speaker, not a script (put the spoken script in
   speaker notes).
-- **Visual source** — exactly one of: a **source figure** (name which one, and that it's
-  used *whole*; note any trim of page margins), a **chart** to generate from real data, a
-  **native diagram** to draw, a **generated plate** (see §6), or **none**. Default to the
-  source's own figures, whole — don't redraw or chop them.
+- **Visual source** — exactly one of: a **source figure** (name which one, used *whole*; note
+  any trim of page margins), a **designed chart** generated from real data (name the *archetype*
+  from §5's selection guide — donut+KPI / dumbbell / slope / dual-axis / Pareto / bubble — not a
+  vague "a chart"), a **native diagram / layout pattern** to draw (quadrant · hub-spoke · timeline ·
+  scorecards · stat-row · before/after · pipeline), a **generated plate** (see §6), or **none**.
+  Default to the source's own figures, whole — don't redraw or chop them.
 - **Layout** — a *concrete* design, not "some bullets and a figure" (see §5).
 - **Motion** and **image** — by taste and purpose (see §6), recorded per slide.
 
-### 5 — Design the layout of each slide (this is half the job)
-Layout is not afterthought polish — decide it deliberately for every slide. Name the
+### 5 — Choose the design that fits the content, then lay it out (this is half the job)
+**First pick the DESIGN form that makes each slide's point land — do not default to a bullet
+list.** The kit is large now, so match it deliberately to the content's *communicative intent*
+(full roster: `references/data-viz.md` for charts, the "Layout patterns" section of
+`design-principles.md`, `scripts/presets.py` for the look). A quick decision guide:
+- **Quantitative / data → pick the chart by the argument, not always a bar.** Part-to-whole + a
+  headline number → donut+KPI; a before→after gap per item → dumbbell; a rank/level change between
+  two points → slope; two trends on different scales → dual-axis; the "vital few" → Pareto; x vs y
+  with a size dimension → bubble+trend. **Single-highlight** the one series that matters and pair a
+  `takeaway_rail`. A simple single comparison/one trend → a plain bar/line is still fine.
+- **A few standout numbers, no trend →** `scorecard` tiles (status/KPI, with ▲/▼ deltas) or
+  `stat_row` (editorial figures) — not a chart, not bullets.
+- **A relationship / structure →** `quadrant` (items on two real axes), `hub_spoke` (one core +
+  peers), `timeline` (chronology / roadmap), `before_after` (two-image compare), a chip pipeline
+  (sequential steps), or a highlighted table (one comparison). A ranked list keyed to a chart →
+  `leaderboard` (same colours as the chart).
+- **Enumerated items / sections →** numbered cards or `big_numeral` wayfinding (reuse the same
+  numeral+accent across TOC / divider / recap) — not a flat bullet list.
+- **A concept / atmosphere →** a whole source figure; else a generated plate or a full-bleed photo
+  under a graduated `scrim_overlay` aimed at the text (§6).
+- **Framing the deck →** a `cover` ↔ `colophon` bookend; a research deck's references → `sources_page`.
+- **The look (whole-deck) →** adopt a design-language `preset` matched to purpose (glassmorphism ·
+  swiss · editorial_paper · editorial_report · risograph · memphis); glass/glow only on a dark base,
+  `offset_shadow` for a print/riso feel, `editorial_header` + a serif for a showcase/report register.
+
+**Bullets are the fallback, not the default** — reserve them for genuinely list-like qualitative
+points with no better structure, and even then prefer cards/`columns`. In the per-slide *Layout*
+column, name the chosen pattern **plus one clause of why it fits this content**, so the choice is
+deliberate and the critic can check design-fits-content.
+
+Then lay it out. Layout is not afterthought polish — decide it deliberately for every slide. Name the
 concrete pattern and the balance:
 - Pick the structure: full-bleed hero figure with an assertion title + one-line caption;
   a **balanced split** (text rail + figure) built with `deckkit.columns(2)` so the two
@@ -150,6 +181,16 @@ concrete pattern and the balance:
   sideways arrow between stacked blocks) — and keep repeated blocks/connectors **evenly
   spaced** (derive from a grid: `columns` for a row, `rows` for a vertical stack; don't
   eyeball). Centre any lone glyph/icon in its box.
+- **No overlap — every pattern is measured, not eyeballed (the more patterns, the more this
+  matters).** Whatever form you pick, place it inside the safe region (`content_band`) and
+  guarantee **no block, text, or image overlaps another or the footer**: figures/charts placed
+  *whole* with a caption gap; `hub_spoke` nodes **and their labels kept fully on-canvas** (shrink
+  the radius if a node would clip); `quadrant`/`timeline`/`stat_row` axis-labels, captions and
+  dividers given real gaps so adjacent ones don't collide; `big_numeral` never wrapping; a chart's
+  `takeaway_rail` in the *other* ~35%, never on top of the plot; glass cards only where they stay
+  legible. Specify the measure-then-place primitives (`content_band`/`vstack`/`bottom_callout`/
+  `measure_*`) and equal grids (`columns`/`rows`). If the content can't fit without crowding, **cut
+  or split the slide — never shrink it to illegible**.
 - **Image fit (per slide).** For every slide with an image, state the **`fit`**: `contain`
   whenever the image's subject or all its parts must stay whole (a whole object, a
   multi-element scene, a figure); `cover` only for edge-tolerant texture/atmosphere. Never plan

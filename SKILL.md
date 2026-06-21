@@ -504,6 +504,25 @@ blocks), and the `measure_*` helpers to know a block's true height BEFORE placin
 sequence — warns if adjacent blocks aren't visibly different; never a gray filler),
 `palette_from_image(path, n)` (extract a **generated template's** palette from its image so
 native content matches it — the bridge for the image-tool template branch),
+`scorecard` / `leaderboard` / `takeaway_rail` (KPI tiles · ranked rows keyed to a chart · the
+"so-what" rail beside a chart — the data-furniture; pair with the chart roster in
+`references/data-viz.md` + `scripts/designed_charts.py`),
+`glass_card` / `glow` / `scrim_overlay` (frosted-glass card · soft radial glow · graduated photo
+scrim — for dark/glassmorphism decks and text-over-photo legibility; built on `box`'s new
+gradient+alpha fill) and `offset_shadow` (hard letterpress/riso shadow),
+`editorial_header` (caps eyebrow + title + hairline), `big_numeral` (oversized index figure,
+marker/ghost — never wraps), `stat_row` (editorial figure+unit+caption row), `quadrant` (2×2 with
+meaningful axes), `hub_spoke` (radial one-core-many-peers), `timeline` (native h/v with one
+highlight), `before_after`/`image_tab`/`photo_triptych` (editorial photo kit), `corner_frame`
+(L-brackets for a sparse closing), and `accent_one` (one-accent discipline — colour only the focal item),
+`cover` / `colophon` (a publication-style cover + a mirrored closing colophon — bookend the deck;
+stronger than a plain title/"Thanks"), `sources_page` (mono numbered references — a research deck's
+colophon), `part_eyebrow` / `page_marker` (tracked-caps mono eyebrow + tiny page marker — route
+chrome through one mono font for a quiet signature), `specimen_card` (rule-on-top card with a giant
+glyph/number specimen — comparing fonts/brands/metrics), `wireframe_grid` + `spec_list` (a
+self-demonstrating annotated grid + mono spec math — for decks ABOUT layout/design/systems),
+`photo_card` (translucent tinted card to hold text on a photo), `backdrop_motif` (faint full-bleed
+grid/texture + accent disc to bookend cover ↔ closer),
 `table` (booktabs data tables — highlight the key row to foreground the authors'
 comparison), `code_block` (monospace code panels with line-highlight),
 `hrule` (table rules), `equation_png` (formal LaTeX-style math via matplotlib) /
@@ -571,7 +590,12 @@ A few rules that matter (see `references/design-principles.md`):
   that makes the comparison obvious rather than typing a wall of figures — generate it
   with matplotlib or another available figure-making workflow — then place the result
   *whole*, with a legend + takeaway, like any other figure. A bare number table is the
-  weakest way to show a trend.
+  weakest way to show a trend. **Pick the chart TYPE that fits the argument, not always a
+  bar** — `references/data-viz.md` has a roster + ready recipes (`scripts/designed_charts.py`:
+  donut+KPI, dumbbell, slope, dual-axis, bubble+trend, Pareto), each **themed to the deck**
+  (pass your palette / `dark=True`), with a **single highlight** on the one series that matters
+  and a `deckkit.takeaway_rail` carrying the "so-what". For 3-6 headline metrics use
+  `deckkit.scorecard` tiles; key a ranked list to a chart with `deckkit.leaderboard`.
 - **Concept needs a domain image → show the real thing, not an abstract icon.** When an
   idea has a concrete visual — a real data sample, a signal/waveform, a chart of the
   actual numbers, a map, a microscopy/medical-image patch, a sample UI, or a *transformed*
@@ -896,6 +920,12 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   `python -m pip install -r requirements.txt` if `check_env.py` reports missing modules.
 - `scripts/anim.py` — inject purposeful PowerPoint builds/animations (click-reveal,
   fade) that python-pptx can't; pair with `references/animation.md`.
+- `scripts/designed_charts.py` — the "designed plots" roster (donut+KPI, dumbbell, slope,
+  dual-axis, bubble+trend, Pareto) — themed, single-highlight matplotlib recipes beyond default
+  bars; pair with `references/data-viz.md`.
+- `scripts/presets.py` — named **design-language presets** (`preset("glassmorphism"|"swiss"|
+  "editorial_paper"|"editorial_report"|"risograph"|"memphis")`): one switch returns a coherent
+  palette + fonts + surface treatment + image-prompt style. Starting languages, not straitjackets.
 - `scripts/assemble.py` — assemble a large deck from parallel-authored section modules
   into one file (robust, no .pptx merge); pair with `references/large-deck-orchestration.md`.
 - `scripts/archetypes.py` — build the same representative slides (cover/bullets/diagram/
@@ -934,6 +964,9 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   "design a clean one" branch (palette/density/layout/chrome tuned to the purpose).
 - `references/image-generation.md` — when and how to use native imagegen for optional
   text-free visual plates without compromising source fidelity or editability.
+- `references/data-viz.md` — designed plots: pick the chart TYPE per argument (donut+KPI,
+  dumbbell, slope, dual-axis, bubble+trend, Pareto), themed + single-highlight + a "so-what"
+  rail; the `designed_charts.py` recipes + the `scorecard`/`leaderboard`/`takeaway_rail` furniture.
 - `references/generated-template.md` — Q1's **"generate a template with an image tool"** branch:
   mini-interview → generate a text-free hero/divider illustration → derive a matching `style.py`
   (palette via `palette_from_image`, motif + component helpers) → feedback gate → skip the

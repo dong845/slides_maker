@@ -23,8 +23,10 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
-from pptx.enum.shapes import MSO_SHAPE
-from pptx.oxml.ns import qn
+from pptx.enum.shapes import MSO_SHAPE, MSO_CONNECTOR
+from pptx.oxml.ns import qn, nsdecls
+from pptx.oxml import parse_xml
+import math
 
 # ---- default professional palette (a neutral blue scheme). NOT tied to any brand —
 # when building on a template, override these with the template's real theme colours.
@@ -225,13 +227,49 @@ def text(slide, x, y, w, h, runs, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP,
 
 
 # ===================================================================== shapes
-def box(slide, x, y, w, h, fill=None, line=None, line_w=1.0, round=False, corners="all", r=None):
+def _grad_fill(shape, stops, angle=90.0, radial=False):
+    """Apply a gradient fill WITH PER-STOP ALPHA to a shape (python-pptx solid fills can't do
+    this). `stops` = list of (pos 0..1, colour as 'RRGGBB'/RGBColor, alpha 0..1). `angle` is the
+    linear direction in degrees (0=→, 90=↓); `radial=True` makes a centre-out radial (for glows).
+    This is the enabler for glass cards, soft glows, and graduated photo scrims."""
+    sp = shape._element.spPr
+    for tag in ("a:noFill", "a:solidFill", "a:gradFill", "a:blipFill", "a:pattFill", "a:grpFill"):
+        e = sp.find(qn(tag))
+        if e is not None:
+            sp.remove(e)
+    gs = "".join(
+        f'<a:gs pos="{int(round(max(0.0,min(1.0,p))*100000))}">'
+        f'<a:srgbClr val="{_hex(c)}"><a:alpha val="{int(round(max(0.0,min(1.0,a))*100000))}"/></a:srgbClr></a:gs>'
+        for (p, c, a) in stops)
+    direction = ('<a:path path="circle"><a:fillToRect l="50000" t="50000" r="50000" b="50000"/></a:path>'
+                 if radial else f'<a:lin ang="{int(round((angle % 360) * 60000))}" scaled="1"/>')
+    el = parse_xml(f'<a:gradFill {nsdecls("a")}><a:gsLst>{gs}</a:gsLst>{direction}</a:gradFill>')
+    geom = sp.find(qn("a:prstGeom"))
+    if geom is None:
+        geom = sp.find(qn("a:custGeom"))
+    ln = sp.find(qn("a:ln"))
+    if geom is not None:
+        geom.addnext(el)
+    elif ln is not None:
+        ln.addprevious(el)
+    else:
+        sp.append(el)
+    return shape
+
+
+def box(slide, x, y, w, h, fill=None, line=None, line_w=1.0, round=False, corners="all", r=None,
+        grad=None, grad_angle=90.0, grad_radial=False):
     """A rectangle. `round=True` rounds all four corners (radius = 8% of the shorter side,
     or `r` inches if given). For a colored HEADER BAND sitting on top of a rounded card,
     use `corners='top'` and pass `r=<the card's corner radius in inches>` so the band's
     curve MATCHES the card — a square band over a rounded card (corners poking out) is the
     tell to avoid. `corners='bottom'` rounds the bottom two. (A thin accent strip can
-    instead be inset by the radius so its square ends fall on the card's straight edge.)"""
+    instead be inset by the radius so its square ends fall on the card's straight edge.)
+
+    `grad` gives a GRADIENT fill with per-stop alpha instead of a solid `fill`: a list of
+    (pos 0..1, colour, alpha 0..1); `grad_angle` sets linear direction (deg), `grad_radial=True`
+    a centre-out radial. Powers glass/glow/scrim — usually via the `glass_card`/`glow`/
+    `scrim_overlay` helpers rather than called directly."""
     if not (round or r is not None or corners != "all"):
         t = MSO_SHAPE.RECTANGLE
     elif corners in ("top", "bottom"):
@@ -239,7 +277,8 @@ def box(slide, x, y, w, h, fill=None, line=None, line_w=1.0, round=False, corner
     else:
         t = MSO_SHAPE.ROUNDED_RECTANGLE
     s = slide.shapes.add_shape(t, Inches(x), Inches(y), Inches(w), Inches(h))
-    if fill is None: s.fill.background()
+    if grad is not None: _grad_fill(s, grad, angle=grad_angle, radial=grad_radial)
+    elif fill is None: s.fill.background()
     else: s.fill.solid(); s.fill.fore_color.rgb = fill
     if line is None: s.line.fill.background()
     else: s.line.color.rgb = line; s.line.width = Pt(line_w)
@@ -252,6 +291,428 @@ def box(slide, x, y, w, h, fill=None, line=None, line_w=1.0, round=False, corner
         if corners == "bottom":
             s.rotation = 180
     return s
+
+
+def glow(slide, cx, cy, w, h, color, alpha=0.5):
+    """A soft radial colour GLOW (centre-out) for depth/atmosphere on a DARK slide — place 1-2
+    off-centre behind glass cards so a flat black slide gets dimensional lighting. Invisible on
+    light decks; don't use there. (cx,cy) is the glow centre in inches."""
+    o = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - w / 2), Inches(cy - h / 2), Inches(w), Inches(h))
+    o.line.fill.background(); o.shadow.inherit = False
+    _grad_fill(o, [(0.0, color, alpha), (1.0, color, 0.0)], radial=True)
+    return o
+
+
+def scrim_overlay(slide, x, y, w, h, *, stops=((0.0, 0.0), (1.0, 0.75)), color="000000", angle=90.0):
+    """A GRADUATED alpha scrim over a photo so overlaid text stays legible WHERE THE TEXT IS,
+    while the image stays bright elsewhere — far better than a flat dark overlay. `stops` =
+    (position, alpha) pairs; aim the gradient toward the text via `angle` (90 = darker at bottom,
+    270 = darker at top). Size the rect to the text's zone, not always the whole slide."""
+    return box(slide, x, y, w, h, grad=[(p, color, a) for (p, a) in stops], grad_angle=angle)
+
+
+def glass_card(slide, x, y, w, h, tint, *, accent=None, r=0.14, rim=1.0):
+    """A frosted-glass card (UI glassmorphism) rebuilt natively in three layers: (1) a low-alpha
+    `tint` gradient body, (2) a white diagonal sheen, (3) a 1px white rim. It only reads as glass
+    on a DARK / glowing / photographic background — pair with `glow()` on a dark base. Optional
+    `accent` adds a colored top header band. Returns the body shape (place content on top)."""
+    body = box(slide, x, y, w, h, round=True, r=r,
+               grad=[(0.0, tint, 0.46), (1.0, tint, 0.20)], grad_angle=120)
+    body.line.color.rgb = WHITE; body.line.width = Pt(rim)
+    sheen = box(slide, x, y, w, h, round=True, r=r,
+                grad=[(0.0, "FFFFFF", 0.20), (0.45, "FFFFFF", 0.05), (1.0, "FFFFFF", 0.0)], grad_angle=120)
+    sheen.line.fill.background()
+    if accent is not None:
+        box(slide, x, y, w, 0.58, corners="top", r=r,
+            grad=[(0.0, accent, 0.95), (1.0, accent, 0.70)], grad_angle=0)
+    return body
+
+
+def offset_shadow(slide, x, y, w, h, fill, *, dx=0.06, dy=0.06, shadow=None,
+                  line=None, line_w=2.0, round=True, r=0.1):
+    """A HARD offset 'sticker' / letterpress shadow (riso / print look): a crisp solid shadow
+    copy behind the shape, offset by (dx,dy) — NOT a soft blur. Returns the top shape so you can
+    place text on it. Use for bold/editorial/retro-print decks; skip in minimal/scientific ones."""
+    sh = shadow if shadow is not None else RGBColor(0x1B, 0x1B, 0x1B)
+    box(slide, x + dx, y + dy, w, h, fill=sh, round=round, r=r)
+    return box(slide, x, y, w, h, fill=fill, line=line, line_w=line_w, round=round, r=r)
+
+
+_GOOD = RGBColor(0x1F, 0x9D, 0x55)   # positive delta (green)
+_BAD = RGBColor(0xE0, 0x3A, 0x2E)    # negative delta (red)
+
+def scorecard(slide, x, y, w, h, label, value, *, delta=None, caption=None, good_up=True,
+              ink=DEEP, accent=BLUE, glass_tint=None):
+    """A KPI scorecard tile: small-caps label · oversized value · colored ▲/▼ delta · tiny
+    caption — the 'current state in numbers' building block. `value`/`label` may be numbers or
+    strings (coerced). `delta` is a string ('+3.2pp' / '-18%'); an unsigned value reads as an
+    increase, so **a sign is required to mark a decrease**. Its colour is auto-set GREEN/RED by
+    direction vs `good_up` (a falling cost with good_up=False is green). `glass_tint` makes it a
+    glass tile (use on dark decks). Lay out 3-6 with columns()."""
+    if glass_tint is not None:
+        glass_card(slide, x, y, w, h, glass_tint); lab_c, val_c, cap_c = WHITE, WHITE, RGBColor(0xCF, 0xD7, 0xE6)
+    else:
+        box(slide, x, y, w, h, fill=WHITE, line=RGBColor(0xE3, 0xE8, 0xEE), line_w=1.0, round=True, r=0.1)
+        box(slide, x, y, 0.1, h, fill=accent, round=True, r=0.05)          # accent spine
+        lab_c, val_c, cap_c = MUTE, ink, MUTE
+    px = x + 0.28
+    text(slide, px, y + 0.22, w - 0.5, 0.3, [[(str(label).upper(), 11, lab_c, True, False)]], space_after=0)
+    text(slide, px, y + 0.5, w - 0.5, 0.8, [[(str(value), 33, val_c, True, False)]], space_after=0)
+    cy = y + 1.32
+    if delta:
+        d = str(delta).strip()
+        up = not d.startswith(("-", "▼"))            # unsigned / '+' = increase; sign required for a decrease
+        dc = _GOOD if (up == good_up) else _BAD
+        text(slide, px, cy, w - 0.5, 0.3, [[(("▲ " if up else "▼ ") + d.lstrip("+-▲▼ "), 12, dc, True, False)]], space_after=0)
+        cy += 0.3
+    if caption:
+        text(slide, px, cy, w - 0.5, 0.4, [[(caption, 10.5, cap_c, False, False)]], space_after=0)
+
+
+def leaderboard(slide, x, y, w, rows, *, row_h=0.5, gap=0.1, ink=DEEP):
+    """Ranked / part-to-whole list keyed to a chart: each row = a colored left swatch (matching a
+    chart wedge/series) + name + right-aligned value (+ optional sub). Pass the SAME colour list
+    you built the chart with so legend and chart stay in sync. rows = [(color, name, value[, sub])]."""
+    cy = y
+    for row in rows:
+        color = row[0]; name = str(row[1]); value = str(row[2])
+        sub = str(row[3]) if len(row) > 3 else None
+        box(slide, x, cy, 0.12, row_h, fill=color, round=True, r=0.04)
+        if sub:                                              # name + sub both stay INSIDE this row
+            text(slide, x + 0.28, cy + 0.02, w - 2.0, row_h * 0.58, [[(name, 13, ink, True, False)]],
+                 anchor=MSO_ANCHOR.BOTTOM, space_after=0)
+            text(slide, x + 0.28, cy + row_h * 0.56, w - 2.0, row_h * 0.42, [[(sub, 9, MUTE, False, False)]], space_after=0)
+        else:
+            text(slide, x + 0.28, cy, w - 2.0, row_h, [[(name, 13, ink, True, False)]],
+                 anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        text(slide, x + w - 1.9, cy, 1.9, row_h, [[(value, 14, ink, True, False)]],
+             align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        cy += row_h + gap
+        hrule(slide, x, cy - gap / 2, w, color=RGBColor(0xE6, 0xE9, 0xEE), weight=0.01)
+    return cy
+
+
+def takeaway_rail(slide, x, y, w, label, hero, body, *, accent=MAGENTA, ink=DEEP, body_c=SLATE):
+    """The narrative 'so-what' rail beside a chart (the ~35% right column): small caps accent
+    label → one restated hero stat → a 2-3 line interpretation. Pair with a chart in the left
+    ~65% (content_band). Every designed chart should carry one of these."""
+    text(slide, x, y, w, 0.3, [[(label.upper(), 11, accent, True, False)]], space_after=0)
+    text(slide, x, y + 0.34, w, 0.9, [[(hero, 34, ink, True, False)]], space_after=0)
+    text(slide, x, y + 1.3, w, 2.0, [[(body, 14, body_c, False, False)]], space_after=0, line_spacing=1.2)
+
+
+# ============================================ layout patterns (editorial / diagram / wayfinding)
+def editorial_header(slide, eyebrow, title, *, x=0.6, y=0.55, w=None, accent=MAGENTA, ink=DEEP,
+                     serif=None, size=28, rule_w=1.2):
+    """Editorial header lockup: a caps eyebrow, a large title, and a short accent hairline beneath.
+    The premium/showcase alternative to title_bar (use a serif `serif=` for an editorial register)."""
+    if w is None:
+        sw, _ = _slide_size(slide); w = sw - 2 * x
+    text(slide, x, y, w, 0.3, [[(eyebrow.upper(), 12, accent, True, False)]], space_after=0)
+    text(slide, x, y + 0.34, w, 0.8, [[(title, size, ink, True, False, serif)]], space_after=0)
+    box(slide, x + 0.02, y + 0.34 + size / 72.0 * 1.18, rule_w, 0.05, fill=accent)
+
+
+def big_numeral(slide, x, y, n, *, mode="marker", color=MAGENTA, size=None, w=None,
+                italic=True, serif="Georgia"):
+    """An oversized index figure as wayfinding/rhythm. mode='marker' (solid accent, ~44pt) for a
+    numbered item; 'ghost' (very large, near-bg) as a watermark behind a title. The box is sized
+    GENEROUSLY WIDE so a short token like '01' / '04' never wraps to two stacked glyphs (the bug
+    seen in the Swiss deck — LibreOffice ignores word-wrap=off, so we prevent it by width)."""
+    s = size or (44 if mode == "marker" else 132)
+    c = color if mode == "marker" else RGBColor(0xE8, 0xE8, 0xE8)
+    if w is None:
+        w = len(str(n)) * s / 72.0 * 1.0 + 0.5     # wide enough that the figure stays one line
+    tb = text(slide, x, y, w, s / 72.0 * 1.35, [[(str(n), s, c, True, italic, serif)]], space_after=0)
+    tb.text_frame.word_wrap = False
+    return tb
+
+
+def stat_row(slide, x, y, w, items, *, ink=DEEP, accent=MAGENTA, serif=None, dividers=True,
+             fig_size=34, label_c=MUTE):
+    """Editorial big-number row: items = [(figure, unit, label), ...] in 2-4 equal columns with
+    optional vertical hairline dividers. For 2-4 standout numbers with no trend to plot."""
+    n = len(items); gap = 0.4; cw = (w - (n - 1) * gap) / n
+    for i, (fig, unit, label) in enumerate(items):
+        cx = x + i * (cw + gap)
+        runs = [(str(fig), fig_size, ink, True, False, serif)]
+        if unit:
+            runs.append((" " + str(unit), fig_size * 0.42, accent, True, False, serif))
+        text(slide, cx, y, cw, 0.7, [runs], space_after=0)
+        text(slide, cx, y + 0.66, cw, 0.4, [[(str(label), 12, label_c, False, False)]], space_after=0)
+        if dividers and i > 0:
+            box(slide, cx - gap / 2, y + 0.06, 0.014, 0.9, fill=RGBColor(0xDD, 0xDD, 0xDD))
+    return y + 1.1
+
+
+def quadrant(slide, x, y, w, h, *, x_labels=("", ""), y_labels=("", ""), gap=0.35, axis_c=MUTE):
+    """A 2×2 matrix whose AXES carry meaning (e.g. frequency × severity). Draws edge axis captions
+    and returns the four cell rects (TL, TR, BL, BR) to fill with cards/scorecards. Use only when
+    items truly classify on two independent dimensions; else use a plain grid. Leave ≈1.4in of left
+    margin (place at x≈1.5) when using `y_labels`, so they sit in the margin without clipping."""
+    cw = (w - gap) / 2; ch = (h - gap) / 2
+    if x_labels[0] or x_labels[1]:
+        text(slide, x, y - 0.32, cw, 0.28, [[(x_labels[0].upper(), 10.5, axis_c, True, False)]], space_after=0)
+        text(slide, x + cw + gap, y - 0.32, cw, 0.28, [[(x_labels[1].upper(), 10.5, axis_c, True, False)]], space_after=0)
+    if y_labels[0] or y_labels[1]:
+        lx = max(0.05, x - 1.35); lw = max(0.5, x - lx - 0.1)
+        text(slide, lx, y + ch * 0.42, lw, 0.3, [[(y_labels[0].upper(), 10.5, axis_c, True, False)]], align=PP_ALIGN.RIGHT, space_after=0)
+        text(slide, lx, y + ch + gap + ch * 0.42, lw, 0.3, [[(y_labels[1].upper(), 10.5, axis_c, True, False)]], align=PP_ALIGN.RIGHT, space_after=0)
+    return [(x, y, cw, ch), (x + cw + gap, y, cw, ch), (x, y + ch + gap, cw, ch), (x + cw + gap, y + ch + gap, cw, ch)]
+
+
+def _connector(slide, x0, y0, x1, y1, color, w=1.5, dash=False):
+    c = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x0), Inches(y0), Inches(x1), Inches(y1))
+    c.line.color.rgb = color; c.line.width = Pt(w); c.shadow.inherit = False
+    if dash:
+        ln = c.line._get_or_add_ln()
+        ln.append(parse_xml(f'<a:prstDash {nsdecls("a")} val="dash"/>'))
+    return c
+
+
+def hub_spoke(slide, cx, cy, radius, center, spokes, *, hub=(1.7, 1.0), node=(1.8, 0.78),
+              accent=BLUE, ink=DEEP, fill=None):
+    """Radial 'one core, many peers' diagram: a hub at (cx,cy) with N spoke cards evenly angled on
+    a circle of `radius`, connectors drawn behind. `center`='label', spokes=['a','b',...] or
+    [(title,sub)]. Use for a platform+modules / metric+drivers; not for sequences (use a pipeline)."""
+    n = len(spokes); pts = []
+    for i in range(n):
+        ang = math.radians(-90 + i * 360.0 / n)
+        pts.append((cx + radius * math.cos(ang), cy + radius * math.sin(ang)))
+    for (sx, sy) in pts:                       # connectors first (behind the nodes)
+        _connector(slide, cx, cy, sx, sy, RGBColor(0xC8, 0xCE, 0xDA), w=1.4, dash=True)
+    for (sx, sy), sp in zip(pts, spokes):
+        title, sub = (sp if isinstance(sp, (tuple, list)) else (sp, ""))
+        chip(slide, sx - node[0] / 2, sy - node[1] / 2, node[0], node[1], title, sub,
+             fill if fill is not None else WHITE, tcolor=ink)
+    chip(slide, cx - hub[0] / 2, cy - hub[1] / 2, hub[0], hub[1], center, "", accent)
+    return pts
+
+
+def timeline(slide, x, y, w, events, *, orientation="h", highlight=None, accent=MAGENTA,
+             ink=DEEP, axis_c=RGBColor(0x9A, 0xA0, 0xAE), h=1.4):
+    """Native timeline. events = [(when, title[, caption]), ...]. orientation='h' (axis L→R, 3-6
+    evenly-weighted events) or 'v' (top→bottom spine, when each event needs 2+ lines). One node is
+    recolored `accent` via `highlight` index. For chronology/roadmaps/evolution — not comparisons."""
+    n = len(events)
+    if orientation == "h":
+        ay = y + 0.2
+        box(slide, x, ay - 0.012, w, 0.024, fill=axis_c)
+        step = w / max(1, n - 1) if n > 1 else 0
+        for i, ev in enumerate(events):
+            ex = x + (i * step if n > 1 else w / 2)
+            when, title = ev[0], ev[1]; cap = ev[2] if len(ev) > 2 else ""
+            em = (highlight is None or i == highlight)
+            dc = accent if em else axis_c
+            box(slide, ex - 0.09, ay - 0.09, 0.18, 0.18, fill=dc, round=True, r=0.09)
+            text(slide, ex - 1.0, ay + 0.18, 2.0, 0.3, [[(str(when), 13, dc, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
+            text(slide, ex - 1.0, ay + 0.5, 2.0, 0.3, [[(title, 12, ink, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
+            if cap:
+                text(slide, ex - 1.1, ay + 0.78, 2.2, 0.5, [[(cap, 10.5, MUTE, False, False)]], align=PP_ALIGN.CENTER, space_after=0)
+    else:
+        ax = x + 0.12
+        box(slide, ax - 0.012, y, 0.024, h, fill=axis_c)
+        step = h / max(1, n)
+        for i, ev in enumerate(events):
+            ey = y + i * step + 0.1
+            when, title = ev[0], ev[1]; cap = ev[2] if len(ev) > 2 else ""
+            em = (highlight is None or i == highlight); dc = accent if em else axis_c
+            box(slide, ax - 0.09, ey - 0.09, 0.18, 0.18, fill=dc, round=True, r=0.09)
+            text(slide, ax + 0.35, ey - 0.16, w - 0.5, 0.3, [[(str(when) + "  ", 13, dc, True, False), (title, 13, ink, True, False)]], space_after=0)
+            if cap:
+                text(slide, ax + 0.35, ey + 0.16, w - 0.5, 0.4, [[(cap, 10.5, MUTE, False, False)]], space_after=0)
+    return y + (h if orientation == "v" else 1.4)
+
+
+def image_tab(slide, x, y, text_str, *, color=DEEP, tcolor=WHITE, size=10.5):
+    """A small solid corner label-tab that belongs to a photo (EXTERIOR / BEFORE / 第一). Place at
+    the image's corner so the label reads as part of it, not floating beside it."""
+    wpt = 0.16 + 0.085 * len(text_str)
+    box(slide, x, y, wpt, 0.32, fill=color)
+    text(slide, x, y, wpt, 0.32, [[(text_str.upper(), size, tcolor, True, False)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def before_after(slide, x, y, w, h, img_a, img_b, label_a="BEFORE", label_b="AFTER", *,
+                 accent=MAGENTA, gap=0.7):
+    """Two equal image cards with corner label-tabs and a connecting accent arrow — for old↔new /
+    v1↔v2 / renovation comparisons (exactly two)."""
+    cw = (w - gap) / 2
+    picture(slide, img_a, x, y, cw, h, fit="cover"); image_tab(slide, x + 0.12, y + 0.12, label_a, color=accent)
+    picture(slide, img_b, x + cw + gap, y, cw, h, fit="cover"); image_tab(slide, x + cw + gap + 0.12, y + 0.12, label_b, color=accent)
+    arrow(slide, x + cw + 0.08, y + h / 2 - 0.13, gap - 0.16, 0.26, color=accent)
+
+
+def photo_triptych(slide, imgs, *, x=0.0, y=1.1, w=None, h=4.4, scrim=False):
+    """Three full-height image columns as one hero band (zero gutter). For one subject with several
+    strong views / a 'scale & grandeur' message. Optional bottom scrim for an overlaid caption."""
+    if w is None:
+        sw, _ = _slide_size(slide); w = sw - 2 * x if x else sw
+    cw = w / 3
+    for i, im in enumerate(imgs[:3]):
+        picture(slide, im, x + i * cw, y, cw, h, fit="cover")
+    if scrim:
+        scrim_overlay(slide, x, y + h - 1.4, w, 1.4, stops=((0.0, 0.0), (1.0, 0.7)), angle=90)
+
+
+def corner_frame(slide, *, corners=("tl", "br"), color=MAGENTA, length=0.9, weight=0.04, inset=0.5):
+    """Decorative L-corner brackets to frame a sparse closing/quote slide so it reads as composed,
+    not unfinished. Use on one slide, not throughout."""
+    sw, sh = _slide_size(slide)
+    for c in corners:
+        if c == "tl":   px, py, hx, vy = inset, inset, inset, inset
+        elif c == "tr": px, py, hx, vy = sw - inset, inset, sw - inset - length, inset
+        elif c == "bl": px, py, hx, vy = inset, sh - inset, inset, sh - inset - length
+        else:           px, py, hx, vy = sw - inset, sh - inset, sw - inset - length, sh - inset - length
+        box(slide, hx, py - weight / 2, length, weight, fill=color)   # horizontal arm
+        box(slide, px - weight / 2, vy, weight, length, fill=color)   # vertical arm
+
+
+def accent_one(items, featured_idx, accent, neutral=RGBColor(0xC2, 0xC6, 0xD2)):
+    """One-accent discipline as a list: return a colour per item with ONLY `featured_idx` in the
+    accent and every other item on `neutral`. Pass to chips/cards/series so the eye goes to the
+    one thing that matters (the Swiss/data decks' restraint). Featured=None → all neutral."""
+    return [accent if (featured_idx is not None and i == featured_idx) else neutral for i in range(len(items))]
+
+
+# ================================== publication templates · editorial chrome · self-demo · texture
+def _set_spc(shape, pts):
+    """Letter-spacing (tracking) in points on every run of a textbox — for tracked caps eyebrows."""
+    for p in shape.text_frame.paragraphs:
+        for r in p.runs:
+            r._r.get_or_add_rPr().set("spc", str(int(pts * 100)))
+    return shape
+
+
+def part_eyebrow(slide, x, y, text_str, *, w=6.0, color=MUTE, font=MONO, size=11, track=1.5):
+    """A small TRACKED caps eyebrow in the chrome (usually mono) font — the editorial/technical
+    'part label'. Route every kicker/eyebrow through one chrome font for a quiet signature."""
+    tb = text(slide, x, y, w, 0.3, [[(text_str.upper(), size, color, True, False, font)]], space_after=0)
+    return _set_spc(tb, track)
+
+
+def page_marker(slide, page, total=None, *, font=MONO, color=MUTE, size=9):
+    """A tiny mono page marker at bottom-right ('03 / 14') — chrome, not content."""
+    sw, sh = _slide_size(slide)
+    label = f"{int(page):02d} / {int(total):02d}" if total else f"{int(page):02d}"
+    text(slide, sw - 1.6, sh - 0.42, 1.2, 0.3, [[(label, size, color, True, False, font)]],
+         align=PP_ALIGN.RIGHT, space_after=0)
+
+
+def cover(slide, title, *, issue_label=None, subtitle=None, mode_caption=None, x=0.7, y=None,
+          accent=MAGENTA, ink=DEEP, bg=None, display=None, chrome=MONO):
+    """A publication-style COVER (issue label + big display title + accent rule + subtitle + a
+    date/mode caption) designed to be mirrored by colophon() as a bookend. Stronger than a plain
+    title slide for editorial/report/zine decks."""
+    sw, sh = _slide_size(slide)
+    if bg is not None:
+        box(slide, 0, 0, sw, sh, fill=bg)
+    yy = (sh / 2 - 1.1) if y is None else y
+    if issue_label:
+        part_eyebrow(slide, x + 0.02, yy - 0.5, issue_label, color=accent, font=chrome)
+    text(slide, x, yy, sw - 2 * x, 1.4, [[(title, 46, ink, True, False, display)]], space_after=2, line_spacing=1.0)
+    box(slide, x + 0.02, yy + 1.5, 1.4, 0.06, fill=accent)
+    if subtitle:
+        text(slide, x, yy + 1.7, sw - 2 * x, 0.5, [[(subtitle, 16, ink, False, False)]], space_after=0)
+    if mode_caption:
+        part_eyebrow(slide, x + 0.02, sh - 0.7, mode_caption, color=MUTE, font=chrome)
+
+
+def colophon(slide, tagline, *, credits=None, tooling=None, x=0.7, accent=MAGENTA, ink=DEEP,
+             bg=None, display=None, chrome=MONO):
+    """A closing COLOPHON mirroring the cover: a payoff tagline + small mono credits/tooling. A
+    stronger close than 'Thanks'; the credits slot doubles as a research deck's sources note."""
+    sw, sh = _slide_size(slide)
+    if bg is not None:
+        box(slide, 0, 0, sw, sh, fill=bg)
+    yy = sh / 2 - 0.9
+    text(slide, x, yy, sw - 2 * x, 1.4, [[(tagline, 40, ink, True, False, display)]], space_after=2, line_spacing=1.0)
+    box(slide, x + 0.02, yy + 1.4, 1.4, 0.06, fill=accent)
+    cy = yy + 1.72
+    if credits:
+        part_eyebrow(slide, x + 0.02, cy, "credits", color=accent, font=chrome)
+        text(slide, x, cy + 0.28, sw - 2 * x, 0.6, [[(credits, 12, ink, False, False, chrome)]], space_after=0)
+        cy += 0.92
+    if tooling:
+        part_eyebrow(slide, x + 0.02, cy, "made with", color=accent, font=chrome)
+        text(slide, x, cy + 0.28, sw - 2 * x, 0.4, [[(tooling, 11, MUTE, False, False, chrome)]], space_after=0)
+
+
+def sources_page(slide, sources, *, title="Sources", cols=2, x=0.7, y=1.4, accent=MAGENTA, ink=DEEP, chrome=MONO):
+    """Render references as mono numbered columns under an accent header — a research deck's
+    colophon / a credible 'where this came from' close."""
+    sw, sh = _slide_size(slide)
+    part_eyebrow(slide, x, 0.6, title, color=accent, font=chrome, size=13)
+    box(slide, x, 1.02, 1.2, 0.05, fill=accent)
+    w = (sw - 2 * x - 0.4 * (cols - 1)) / cols
+    per = (len(sources) + cols - 1) // cols
+    for ci in range(cols):
+        cx = x + ci * (w + 0.4); cy = y
+        for i in range(ci * per, min((ci + 1) * per, len(sources))):
+            text(slide, cx, cy, w, 0.5, [[(f"{i+1:02d}  ", 9, accent, True, False, chrome),
+                                          (sources[i], 9, ink, False, False, chrome)]], space_after=0, line_spacing=1.1)
+            cy += 0.46
+
+
+def specimen_card(slide, x, y, w, h, specimen, label, *, accent=MAGENTA, ink=DEEP, featured=False, serif=None):
+    """A rule-on-top SPEC CARD with a giant specimen (a glyph 'Aa', a monogram, a number) as the
+    hero — for comparing fonts / brands / metrics. The featured card's rule + specimen recolor to
+    the accent. A lighter, more Swiss alternative to a boxed icon-card."""
+    rc = accent if featured else RGBColor(0xDD, 0xDD, 0xDD)
+    sc = accent if featured else ink
+    box(slide, x, y, w, 0.06, fill=rc)                                  # top rule
+    text(slide, x, y + 0.14, w, 0.3, [[(label.upper(), 11, MUTE, True, False)]], space_after=0)
+    text(slide, x, y + 0.5, w, h - 0.6, [[(specimen, 64, sc, True, False, serif)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def wireframe_grid(slide, x, y, w, h, cells, *, cols=4, rows=3, highlight=None, line=None, ink=DEEP, accent=MAGENTA):
+    """A SELF-DEMONSTRATING annotated wireframe — labeled outline cells over a cols×rows grid, for
+    decks ABOUT layout/design/systems (show the scaffolding). cells = [(label, c0, cspan, r0, rspan)];
+    `highlight` recolors one cell. Pair with spec_list() for the 'derived = base × n' math."""
+    ln = line or RGBColor(0xCC, 0xCC, 0xCC)
+    cw = w / cols; ch = h / rows
+    for i in range(cols + 1): box(slide, x + i * cw - 0.005, y, 0.01, h, fill=ln)
+    for j in range(rows + 1): box(slide, x, y + j * ch - 0.005, w, 0.01, fill=ln)
+    for k, (label, c0, cspan, r0, rspan) in enumerate(cells):
+        cx = x + c0 * cw; cy = y + r0 * ch
+        em = (highlight == k)
+        box(slide, cx + 0.04, cy + 0.04, cspan * cw - 0.08, rspan * ch - 0.08,
+            fill=None, line=accent if em else ink, line_w=2 if em else 1)
+        text(slide, cx + 0.12, cy + 0.1, cspan * cw - 0.24, 0.3,
+             [[(label.upper(), 10, accent if em else ink, True, False, MONO)]], space_after=0)
+
+
+def spec_list(slide, x, y, lines, *, font=MONO, color=DEEP, size=12, gap=0.32):
+    """Monospace 'derived = base × n' spec lines — pairs with wireframe_grid for a systems deck."""
+    cy = y
+    for ln in lines:
+        text(slide, x, cy, 6.0, 0.3, [[(ln, size, color, False, False, font)]], space_after=0); cy += gap
+    return cy
+
+
+def photo_card(slide, x, y, w, h, *, role="info", accent=MAGENTA, r=0.1, alpha=0.92):
+    """A translucent tinted card to hold text ON a photo (keeps the image visible behind). `role`:
+    'info' (light), 'primary' (dark), 'accent' (accent tint). Returns the text colour to use on it."""
+    fc, tc = {"info": ("FFFFFF", DEEP), "primary": ("141414", WHITE),
+              "accent": (_hex(accent), WHITE)}.get(role, ("FFFFFF", DEEP))
+    box(slide, x, y, w, h, round=True, r=r, grad=[(0.0, fc, alpha), (1.0, fc, alpha)])
+    return tc
+
+
+def backdrop_motif(slide, *, kind="grid", color=None, spacing=0.6, accent_disc=None,
+                   disc_at=None, disc_r=0.7):
+    """A FAINT full-bleed texture (grid / graph-paper) + optional accent disc, to bookend a deck on
+    its cover and closer as one object. Keep it faint (≈#EEE) so it never fights body content."""
+    sw, sh = _slide_size(slide)
+    c = color or RGBColor(0xEE, 0xEE, 0xEE)
+    n = int(sw / spacing) + 1
+    for i in range(n): box(slide, i * spacing - 0.004, 0, 0.008, sh, fill=c)
+    for j in range(int(sh / spacing) + 1): box(slide, 0, j * spacing - 0.004, sw, 0.008, fill=c)
+    if accent_disc is not None:
+        cx, cy = disc_at or (sw - 1.6, 1.4)
+        o = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - disc_r), Inches(cy - disc_r), Inches(2 * disc_r), Inches(2 * disc_r))
+        o.fill.solid(); o.fill.fore_color.rgb = accent_disc; o.line.fill.background(); o.shadow.inherit = False
 
 
 _ARROW_SHAPE = {"right": MSO_SHAPE.RIGHT_ARROW, "left": MSO_SHAPE.LEFT_ARROW,

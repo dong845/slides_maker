@@ -67,6 +67,42 @@ A bare image grid means nothing to the audience. State what the rows/columns are
 (write your own caption — don't rely on tiny in-figure text), and add a one-line
 TAKEAWAY of what to notice. Without the takeaway, the audience guesses.
 
+## Designed plots — pick the chart per argument
+When *you* make the chart (data, no source figure), don't default to a bar every time: choose the
+chart **type that fits the argument** (part-to-whole → donut; before→after gap → dumbbell; two-point
+rank change → slope; A↑/B↓ tradeoff → dual-axis; vital few → Pareto), **theme it to the deck**,
+**highlight the one series that matters** (everything else neutral grey), and give it a "so-what"
+rail. Full roster + ready recipes in `references/data-viz.md` (`scripts/designed_charts.py`); KPI
+tiles via `deckkit.scorecard`. For a single obvious number use a hero stat, not a chart.
+
+## Layout patterns — reach for the right one (apply dynamically, not always)
+Beyond columns/rows, `deckkit` has purpose-fit patterns; use the one that fits the *content*, and
+don't force any of them:
+- **Hero stats** — `scorecard` tiles (big number + ▲/▼ delta) for a status/KPI readout; `stat_row`
+  for 2-4 standout editorial figures with no trend to plot.
+- **Relationships** — `quadrant` when items classify on two real axes (effort×impact); `hub_spoke`
+  for one centre + peers (platform+modules); `timeline` for chronology/roadmaps (one highlight node).
+- **Wayfinding** — `big_numeral` (ghost watermark / marker) for enumerated content; reuse the SAME
+  numeral+accent on the TOC, the section divider, and the recap so sections are navigable; bookend
+  the deck (cover ↔ closing mirror, `corner_frame` for a sparse closer).
+- **Publication bookend** — for editorial/report/zine decks, open with `cover` (issue label + big
+  display title) and close with a mirrored `colophon` (payoff tagline + credits); `backdrop_motif`
+  (a faint full-bleed grid/texture + accent disc) on *both* frames the deck as one object. For a
+  research deck, `sources_page` renders references as a credible mono colophon.
+- **Editorial register** — `editorial_header` (caps eyebrow + title + accent hairline) and a serif
+  display face for showcase/brand/report decks; a per-slide source line for reports. **3-font roles:**
+  a display face for titles/numbers, ONE monospace **chrome** face for all eyebrows/footers/page
+  markers (`part_eyebrow`/`page_marker`), and a neutral body face — the mono-chrome trick is a quiet
+  signature even in an otherwise plain deck. `specimen_card` (rule + giant glyph) compares fonts/brands.
+- **Self-demonstration** (niche) — for a deck *about* layout/design/systems, render its own grid as
+  the diagram (`wireframe_grid` + `spec_list`'s `derived = base × n` math) — showing the scaffolding
+  adds authority. Don't force it on general business content.
+- **Photography** — full-bleed photo under a graduated `scrim_overlay` (aim it at the text zone, not
+  a flat overlay); `before_after` pairs, `photo_triptych`, `image_tab` corner labels for photo decks.
+- **One-accent discipline** — for a focal-item-per-slide deck, colour ONLY the one element that
+  matters and drop the rest to a neutral grey (`accent_one`); never exceed ~2 saturated hues unless
+  the content is genuinely categorical. Restraint reads as confidence.
+
 ## Tables and equations
 - **A table exists to make one comparison obvious.** Decide what it should compare
   (it follows from the source's message), and make *that* the salient axis — don't

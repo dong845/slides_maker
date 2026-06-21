@@ -111,6 +111,16 @@ Do not just skim for the first few obvious issues. Run these passes:
    > element stranded in dead-white, arrows follow the flow, content centred in its box;
    > **(3) understanding/fidelity** — every number/claim traces to the source (+ claim ledger) and
    > each figure/table's emphasis matches its true carrying element, not a plausible-wrong axis.
+   - **Design fits the content (right form, not bullets-by-default):** with the kit's range, flag a
+     slide whose *form* fights its message — a **bullet list / number table where a designed form
+     would land better**: quantitative data with no chart; 3-6 metrics not shown as `scorecard`
+     tiles; a sequence not drawn as a `timeline`/pipeline; a core-and-peers idea not a `hub_spoke`;
+     a two-axis classification not a `quadrant`; a before→after not a `dumbbell`/`before_after`. Also
+     flag the **wrong chart for the argument** (a bar where part-to-whole wants a donut, a grouped
+     bar where a trend wants a slope/dual-axis). The fix names the better form (see
+     `references/data-viz.md` + the planner's design-selection guide). Conversely, **don't reward a
+     pattern used where it doesn't fit** — a `quadrant` with no real second axis, a `hub_spoke` for a
+     sequence, a `specimen_card`/`wireframe_grid` outside a type/design/systems deck.
    - **Layout:** overflow / clipped text, content occluded or jammed on the footer,
      **two elements overlapping** (a figure/card encroaching on a table or text — check a
      figure placed beside a table isn't covering its last column), misaligned elements, no
@@ -136,6 +146,11 @@ Do not just skim for the first few obvious issues. Run these passes:
      looks like an auto-grown callout pushed into the footer / into the bullets above it,
      prescribe the ROOT-CAUSE fix — switch to `deckkit.bottom_callout()` / `vstack()` /
      `content_band()` — not a one-off `y` nudge**, which only recurs when the wording changes.
+     **With the richer pattern set, check each pattern's own overlap risks:** `hub_spoke` nodes or
+     labels running off-canvas or onto the hub; `quadrant`/`timeline` axis-labels and captions
+     colliding with adjacent cells/nodes; a `stat_row` divider touching its figures; a chart's
+     `takeaway_rail` sitting on the plot instead of the other ~35% — every pattern must stay inside
+     `content_band` with no block/text/image overlapping another.
    - **Diagram connectors:** an arrow pointing the **wrong way for the flow** — most often a
      *sideways* arrow squeezed between two **vertically-stacked** boxes (where it should point
      down/up); and **unequal spacing** of repeated blocks/connectors in a row or column (one
@@ -172,6 +187,9 @@ Do not just skim for the first few obvious issues. Run these passes:
      For **non-Latin (CJK) decks**: any **tofu / missing glyphs** (□) is a blocker; the
      CJK font should be script-appropriate and consistent; emphasis must use weight/
      colour, **not faux-italic** (CJK has no true italic — slanted CJK reads as broken).
+     **A short display token wrapped mid-token** — a big section numeral like "01" broken to
+     a stacked "0"/"1", or an oversized title splitting awkwardly — is a real flaw (fix: widen
+     / auto-size so it stays one line; `deckkit.big_numeral` does this).
    - **Colour:** insufficient contrast (text vs. background — aim ≥4.5:1), meaning
      carried by **colour alone** (e.g. a plot legend distinguished only by hue),
      monotone (one accent everywhere) or clashing/off-brand colour. **In a sequence of
@@ -179,7 +197,17 @@ Do not just skim for the first few obvious issues. Run these passes:
      or near-identical fills (the "first two blocks are the same colour" tell), and a
      **neutral gray dropped in as a category colour** (gray reads as disabled/secondary, so a
      vivid block beside a gray one looks half-finished) — each block should be a distinct,
-     deliberately-contrasted hue (fix: `deckkit.palette(n, ACCENTS)`).
+     deliberately-contrasted hue (fix: `deckkit.palette(n, ACCENTS)`). Conversely, on a
+     **data/report or one-focal-item slide**, flag **>2 saturated hues competing** with no
+     one-accent discipline — the single thing that matters should be the only saturated element,
+     the rest a neutral ramp (fix: `accent_one` / single-highlight charts).
+   - **Designed plots & surface patterns (correct + legible):** a generated chart must
+     **single-highlight** the one series that matters and **carry a stated so-what** (`takeaway_rail`)
+     — a chart with no conclusion, or with every series saturated, is a finding; place it *whole*.
+     **Glassmorphism only on a dark / glowing / photo base** — a glass card on a light slide is
+     near-invisible (flag it); a **photo scrim aimed at the text zone**, not a flat full-slide wash
+     that greys the whole image. Flag a `big_numeral`/`scorecard` value that wrapped or overran, and
+     a `leaderboard` whose swatch colours don't match its paired chart.
    - **Text:** excessive density / wall of bullets, full sentences the audience must
      read while the speaker talks, text that merely duplicates narration.
    - **Thoughtless motion or imagery** *(taste & purpose, judged by intent not count):*

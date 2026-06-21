@@ -156,12 +156,14 @@ The interview (step 0, Q3 especially) routes the request:
 - `SKILL.md` — the operating instructions the model follows (steps 0–6, the rules).
 
 **Engine (`scripts/`)**
-- `deckkit.py` — the build kit: text/shape/component helpers (`bullet`, `callout`, `chip`, `arrow`, `modbox`, `hrule`), layout helpers (`columns`/`rows` for equal split panels & stacks, plus **measure-then-place** primitives — `content_band`, `bottom_callout` (footer-safe, grows up), `vstack` (equal gaps, no overlap, errors on overflow), and the `measure_*` helpers — so collisions surface at build time, not in the render), `picture`, `palette` (distinct, contrast-checked category fills — no gray-as-category), equations (`eq_par`, `equation_png`), `speaker_notes`, contrast check, brand colours/fonts (incl. CJK `EAFONT`), template reuse (`open_template`, `content_slide`) and the no-template chrome (`blank_deck`, `title_bar`, `footer`). Import it; don't re-derive primitives.
+- `deckkit.py` — the build kit: text/shape/component helpers (`bullet`, `callout`, `chip`, `arrow`, `modbox`, `hrule`), layout helpers (`columns`/`rows` for equal split panels & stacks, plus **measure-then-place** primitives — `content_band`, `bottom_callout` (footer-safe, grows up), `vstack` (equal gaps, no overlap, errors on overflow), and the `measure_*` helpers — so collisions surface at build time, not in the render), `picture`, `palette` (distinct, contrast-checked category fills — no gray-as-category), equations (`eq_par`, `equation_png`), `speaker_notes`, contrast check, brand colours/fonts (incl. CJK `EAFONT`), template reuse (`open_template`, `content_slide`) and the no-template chrome (`blank_deck`, `title_bar`, `footer`). Also: **gradient+alpha fills** powering `glass_card`/`glow`/`scrim_overlay`/`offset_shadow` (glassmorphism, soft glows, graduated photo scrims, hard riso shadows); **data furniture** (`scorecard`, `leaderboard`, `takeaway_rail`); **layout patterns** (`editorial_header`, `big_numeral`, `stat_row`, `quadrant`, `hub_spoke`, `timeline`, `before_after`/`image_tab`/`photo_triptych`, `corner_frame`, `accent_one`); and **publication templates/chrome** (`cover`/`colophon`/`sources_page`, `part_eyebrow`/`page_marker`, `specimen_card`, `wireframe_grid`/`spec_list`, `photo_card`, `backdrop_motif`) — each applied dynamically by purpose. Import it; don't re-derive primitives.
 - `install_skill.py` — terminal installer/import helper for Codex and Claude Code skill directories.
 - `requirements.txt` — Python package dependencies for terminal use.
 - `render_deck.sh` — `.pptx` → one PNG per slide (LibreOffice → PDF → PNG). Cross-platform; uses a private LibreOffice profile so parallel/coexisting renders don't collide.
 - `check_env.sh` — one-time preflight for the toolchain.
 - `anim.py` — injects PowerPoint build/animation timing XML python-pptx can't write.
+- `designed_charts.py` — the "designed plots" roster (donut+KPI, dumbbell, slope, dual-axis, bubble+trend, Pareto): themed, single-highlight matplotlib recipes beyond default bars; pair with `references/data-viz.md`.
+- `presets.py` — named **design-language presets** (`glassmorphism`/`swiss`/`editorial_paper`/`editorial_report`/`risograph`/`memphis`): one switch returns a coherent palette + fonts + surface + image-prompt style.
 - `assemble.py` — combine parallel-authored section modules into one deck (no fragile merge).
 - `archetypes.py` — build the same preview slides per direction for the collaborative gate.
 - `image_prompts.py` — create prompt manifests and expected filenames for optional text-free generated visual plates.
@@ -180,7 +182,7 @@ The interview (step 0, Q3 especially) routes the request:
 - `references/design-principles.md` — the craft and the "why."
 
 **Per-scenario references**
-- `design-by-purpose.md` · `image-generation.md` · `generated-template.md` (image-tool template branch) · `animation.md` · `multilingual.md` · `font-guidance.md` · `style-analysis.md` · `redesign-existing-deck.md` · `collaborative-mode.md` · `large-deck-orchestration.md` · `handoff-and-iteration.md`
+- `design-by-purpose.md` · `data-viz.md` (designed plots — pick the chart per argument) · `image-generation.md` · `generated-template.md` (image-tool template branch) · `animation.md` · `multilingual.md` · `font-guidance.md` · `style-analysis.md` · `redesign-existing-deck.md` · `collaborative-mode.md` · `large-deck-orchestration.md` · `handoff-and-iteration.md`
 - `examples/` — worked build script, the shared-style + section-module convention.
 
 **External (not part of the skill)**
