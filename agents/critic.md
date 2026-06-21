@@ -184,6 +184,12 @@ Do not just skim for the first few obvious issues. Run these passes:
      audience; flag it even on a "decorative" plate — the fix is to specify the fact in the
      prompt or **draw it natively** at correct proportions. Also flag a **label not aligned
      under the image feature** it names (a caption sitting away from the part it points to).
+   - **Corner-rounding mismatch:** a **square-cornered image** inside a rounded frame, or sitting
+     among rounded cards/panels (and the reverse — a rounded element on a hard-edged/Swiss deck) —
+     reads as pasted-in. Corner rounding is a deck-wide language: flag mixed squared/rounded corners
+     on a slide; the fix is to match the image's corners to the blocks (`deckkit.picture(round=True)`,
+     radius ≈ the frame's radius minus its border so curves stay concentric). Same tell as a square
+     band over a rounded card.
    - **Text alignment inside filled boxes:** text in a callout / chip / takeaway bar / table
      cell should sit **optically centred** in its box (or intentionally aligned) — text that
      hugs the bottom or top edge, or sits a few px below the vertical middle, reads as a

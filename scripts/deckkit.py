@@ -762,13 +762,35 @@ def arrow_label(slide, x, y, w, h, label, color=BLUE, size=9, lab_c=None, box_w=
 
 
 # ====================================================================== images
-def picture(slide, path, x, y, w, h, fit="contain", alt=None):
+def _round_pic_geom(pic, radius_in, w_in, h_in):
+    """Give a placed picture rounded corners (so an image matches a rounded card/frame around it).
+    `radius_in` is the corner radius in inches, applied to the picture's ACTUAL placed size."""
+    ss = max(0.01, min(w_in, h_in))
+    adj = int(max(0.0, min(0.5, radius_in / ss)) * 100000)
+    g = pic._element.spPr.find(qn('a:prstGeom'))
+    if g is None:
+        return
+    g.set('prst', 'roundRect')
+    av = g.find(qn('a:avLst'))
+    if av is None:
+        av = g.makeelement(qn('a:avLst'), {}); g.append(av)
+    for gd in list(av):
+        av.remove(gd)
+    av.append(av.makeelement(qn('a:gd'), {'name': 'adj', 'fmla': f'val {adj}'}))
+
+
+def picture(slide, path, x, y, w, h, fit="contain", alt=None, round=False, r=None):
     """Place an image in a frame without distorting it.
 
     `fit="contain"` shows the whole image inside the frame, letterboxed by whitespace.
     Use it for source figures, charts, screenshots, and anything whose edges/labels matter.
     `fit="cover"` fills the frame and crops evenly from the long dimension. Use it for
     decorative plates, photo panels, and generated atmosphere where edge crop is acceptable.
+
+    `round=True` (or `r=<inches>`) gives the image ROUNDED corners — match this to the deck's
+    cards/panels so a square photo doesn't sit among rounded blocks (a consistency tell). For an
+    image inside a rounded frame, use a radius ≈ the frame's radius minus the border so the curves
+    stay concentric. Default radius is 8% of the image's shorter side.
 
     Pass `alt` for informative images; pass `alt=""` for decorative plates. Returns the
     picture shape. Requires Pillow for reliable aspect-ratio reads, matching the rest of
@@ -808,6 +830,9 @@ def picture(slide, path, x, y, w, h, fit="contain", alt=None):
     else:
         raise ValueError("fit must be 'contain' or 'cover'")
 
+    if round or r is not None:
+        pwp, php = (pw, ph) if fit == "contain" else (w, h)
+        _round_pic_geom(pic, r if r is not None else 0.08 * min(pwp, php), pwp, php)
     if alt is not None:
         alt_text(pic, alt)
     return pic

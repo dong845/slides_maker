@@ -218,6 +218,13 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   r=<card radius>)`), or **inset** a thin accent strip/bar by the corner radius so its
   square ends land on the card's *straight* edge, not over the rounded corner (deckkit's
   `callout` insets its accent bar this way). Never lay a square block over a rounded one.
+- **Corner rounding is a deck-wide language — keep it consistent, especially for images.** A
+  **square-cornered image** sitting in a rounded frame, or beside rounded cards/panels, is a
+  visible inconsistency (the photo reads as pasted-in). If the deck's blocks are rounded, **round
+  the images to match** — `deckkit.picture(..., round=True)` or `r=<inches>`; for an image inside a
+  rounded frame use a radius ≈ the frame's radius **minus the border** so the curves stay
+  concentric. Conversely, on a hard-edged/Swiss deck keep images square. One radius family across
+  cards, panels, chips, and images — don't mix squared and rounded corners on the same slide.
 - **Connector labels: centred and tight.** A word over an arrow (a verb or transform name —
   e.g. "encode", "train", "merge") should be *centred on the arrow* and sit just above it
   with a small gap — not drifting to one side or floating far above. `deckkit.arrow_label`
