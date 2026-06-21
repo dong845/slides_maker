@@ -104,9 +104,11 @@ memory. In Codex, prefer the registry root `~/.codex/slide-templates/`; in Claud
 prefer `~/.claude/slide-templates/`. If only one exists, use it. A **brand-new user has no footprint**, so do NOT seed a specific domain (e.g.
 don't offer "MRI reconstruction" or any field as a topic just because some *past* deck
 used it) or a prior user's branding — ask the subject **openly** (a genuinely open-ended
-topic is the one place free text beats options) and offer only "provide a template" /
-"design a clean one". Personalizing from a *returning* user's own materials is good and
-encouraged; assuming a domain for someone who gave you nothing is the failure to avoid.
+topic is the one place free text beats options) and offer only the generic template/look
+choices: "provide a template", "design a clean one", and, when a more vivid custom identity
+would fit, "generate a template with an image tool". Personalizing from a *returning* user's
+own materials is good and encouraged; assuming a domain for someone who gave you nothing is
+the failure to avoid.
 
 **Scale the interview to the ask:** a full deck needs
 all four; a genuinely tiny ask (a single slide, a quick infographic) still needs purpose
@@ -184,8 +186,9 @@ the direction gate** (the look is already decided). The four:
         match the template. Save the confirmed template to the registry so it's reusable.
 
    **Never hardcode or assume a specific institution's template.** This skill ships
-   to anyone: a brand-new user has an *empty* registry, so they see only "provide one"
-   or "design a clean one" — no prior user's branding is ever offered to them.
+   to anyone: a brand-new user has an *empty* registry, so they see only generic choices
+   ("provide one", "design a clean one", and optionally "generate a template with an image
+   tool") — no prior user's branding is ever offered to them.
 
 2. **Purpose & audience.** "What's this deck for, and who's the audience?" Offer the
    common cases since the bar differs sharply between them:

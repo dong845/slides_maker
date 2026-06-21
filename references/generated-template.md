@@ -56,7 +56,10 @@ preset + a reference) is fine — just name what you're combining so the choice 
 Generate a **full-bleed, text-free** hero/divider illustration in the chosen style:
 - **Tooling:** native imagegen in Codex; otherwise `scripts/generate_images_openai.py` with
   `OPENAI_API_KEY` (build the prompt with `scripts/image_prompts.py`). Render at the deck's
-  aspect (16:9 → e.g. `1536x864` / `2048x1152`).
+  aspect (16:9 → e.g. `1536x864` / `2048x1152`). In Codex, follow the imagegen skill's
+  built-in save-path policy: generate first, then move/copy the selected output from
+  `$CODEX_HOME/generated_images/...` into this deck's folder before referencing it in
+  `style.py` or a build script.
 - **Prompt craft:** describe the *style + motif vocabulary + palette*, the subject/scene, **"no
   text, no lettering, no logos"**, and **leave a calm, lower-contrast zone** (a corner/band)
   where the title will sit. Ask for the **signature motifs** explicitly (e.g. "scattered Memphis
@@ -65,7 +68,8 @@ Generate a **full-bleed, text-free** hero/divider illustration in the chosen sty
 - Generate **1–2 plates**: a **hero** (cover) and, if the look differs, a **divider** variant.
   A content-slide background is usually just the template's base colour + a few native motifs —
   you rarely need a third image.
-- Keep assets in `~/Downloads/<deck>/assets/generated/`.
+- Keep assets in `~/Downloads/<deck>/assets/generated/`. Never leave a generated template
+  image referenced only from Codex's default generated-images cache or an OS temp folder.
 
 ### 3 — Derive a matching `style.py` (treat the image as a style example)
 Study the generated image the way you'd study a provided style example
@@ -108,9 +112,10 @@ them, and show both. The content slide is essential: it proves the blocks actual
   - Keep the craft rules (one idea/slide, whole figures, contrast, suitable spacing, balanced
     blocks). Then the normal **render + critic loop** — the critic judges whether content
     genuinely fits the template (palette, motifs, components consistent) and stays legible.
-- **Save the confirmed template to the registry** (`~/.claude/slide-templates/<name>/` or the
-  Codex registry): the `style.py`, the generated `assets/`, and a `profile.md` — so it's a
-  reusable choice next time (it shows up under Q1's registered templates).
+- **Save the confirmed template to the registry** (`~/.codex/slide-templates/<name>/` in
+  Codex, or `~/.claude/slide-templates/<name>/` in Claude Code): the `style.py`, the
+  generated `assets/`, and a `profile.md` — so it's a reusable choice next time (it shows up
+  under Q1's registered templates).
 
 ## Legibility & fidelity guardrails (busy styles fight text)
 - **Text-free images, native text on top** — never bake slide copy, numbers, labels, or logos
