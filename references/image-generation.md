@@ -121,27 +121,46 @@ subject to sit well inside the central safe area, away from the edges.
 whole and uncropped — for *every* `picture()`, generated or source. A cropped-out subject is
 the most common generated-image failure; the static render is where you catch it.
 
-## OpenAI API fallback
+## Generating the images — pick the source (don't assume an API key)
 
-In Codex, prefer the native imagegen tool when available. Outside Codex, users can
-generate the same manifest through the OpenAI Images API:
+The skill creates ONE manifest (`scripts/image_prompts.py` → `image_prompt_manifest.json`); any of
+these sources materialize it. **When the host has no native imagegen and no key is already set, ASK
+the user which path** — a Codex / ChatGPT-subscription user may have no API key and shouldn't be
+forced to get one:
 
+**1 · Native host imagegen** — when the skill runs in a host whose agent has a built-in image tool
+(e.g. *inside Codex*), generate directly with that tool: no key, no extra step. This is the free path
+for subscription users — running the skill in Codex gives native image generation.
+
+**2 · Codex CLI (no API key)** — for a Codex/ChatGPT-subscription user in a host *without* native
+imagegen (e.g. Claude Code): shell out to the Codex CLI, which calls Codex's hosted
+`image_generation` tool on the subscription. Needs `codex` installed + logged in (`codex login`).
+```bash
+python scripts/generate_images_codex.py \
+  ~/Downloads/<deck>/assets/generated/image_prompt_manifest.json \
+  --orientation landscape        # hint 16:9 for hero/divider plates
+```
+Runs one `codex exec` per image — the hosted tool's base64 lands in the Codex session rollout
+(`~/.codex/sessions/.../rollout-*.jsonl`); the script decodes it to the PNG and verifies it (with a
+rollout-extraction fallback). Slower than the API (~30–90s/image) but **no key, no per-image cost**.
+
+**3 · OpenAI API key** — works in any host (incl. Claude Code), pay-per-image:
 ```bash
 export OPENAI_API_KEY="sk-..."
-
 python scripts/generate_images_openai.py \
   ~/Downloads/<deck>/assets/generated/image_prompt_manifest.json \
-  --model gpt-image-2 \
-  --size 2048x1152 \
-  --quality medium
+  --model gpt-image-2 --size 2048x1152 --quality medium
 ```
 
-The script saves each output to the manifest path, such as `slide-01.png`. By default it
-skips existing files; pass `--overwrite` to regenerate. Use `--dry-run` to preview what
-would be generated without calling the API.
+Both scripts share the manifest format and the `--out-dir` / `--limit` / `--overwrite` / `--dry-run`
+flags, save each output to the manifest path (e.g. `slide-01.png`), and skip existing files by default.
 
-Do not paste API keys into prompts, slide text, source files, or manifests. Keep the key in
-the environment (`OPENAI_API_KEY`) or the user's normal secret manager.
+> **The two-choice prompt.** When generation is needed and the host has no native imagegen, present
+> **(A) provide an OpenAI API key** (script 3) or **(B) use the Codex CLI** (script 2 — their
+> subscription, no key), and run the matching script. Never assume a key exists.
+
+Do not paste API keys into prompts, slide text, source files, or manifests. Keep the key in the
+environment (`OPENAI_API_KEY`) or the user's normal secret manager. The Codex path needs no key.
 
 ## Real subjects must be factually right
 

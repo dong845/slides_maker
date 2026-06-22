@@ -168,7 +168,8 @@ The interview (step 0, Q3 especially) routes the request:
 - `assemble.py` — combine parallel-authored section modules into one deck (no fragile merge).
 - `archetypes.py` — build the same preview slides per direction for the collaborative gate.
 - `image_prompts.py` — create prompt manifests and expected filenames for optional text-free generated visual plates.
-- `generate_images_openai.py` — optional OpenAI Images API fallback: reads `image_prompt_manifest.json` and writes `slide-XX.png` files when `OPENAI_API_KEY` is set.
+- `generate_images_openai.py` — optional OpenAI Images API path: reads `image_prompt_manifest.json` and writes `slide-XX.png` files when `OPENAI_API_KEY` is set.
+- `generate_images_codex.py` — **no-API-key** alternative for Codex/ChatGPT-subscription users: shells out to `codex exec` (hosted `image_generation` tool), decodes the image from the Codex session rollout, and writes the same manifest's files. Offer it as the second image-gen choice when there's no key.
 - `inspect_template.py` — print a template's layouts/placeholders/logos.
 - `extract_pdf.py` — pull a **figure or table** *out* of a source PDF: `figures`/`figure`/`autofig` **auto-detect and crop them precisely from the paper** (per-kind caption convention so figures-below and tables-above both localise; snap-to-content; page chrome — running heads/folios — excluded; a borderless-table text-bbox fallback; and a **post-render pixel self-check** that flags / auto-corrects a clipped edge or bled-in caption), plus manual page/region/embedded-image extraction.
 - `crop_helper.py` — operate on an image *by looking, not guessing*: `grid` (ruler overlay), `crop`/`--snap`, `trim` (snap-to-content; removes background without clipping a legend/axis, light or dark bg), `panel` (reassemble chosen columns/rows of a dense comparison grid).
