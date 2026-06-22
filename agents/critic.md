@@ -136,7 +136,12 @@ Do not just skim for the first few obvious issues. Run these passes:
      one side than the other (when no asymmetry is clearly intended) — reads as careless;
      flag it. **A large dead-white band in a panel** — a narrow element (a timeline, a thin
      chart, a short list) stranded in a too-wide column, leaving a big empty strip beside it —
-     is also a finding (fix: narrow that column or centre the element). **A figure centred in
+     is also a finding (fix: narrow that column or centre the element). **A large EMPTY REGION on
+     the slide as a whole** — content huddled in one corner / the top third, a wide empty band down
+     a side or across the bottom, a blank quadrant — reads as half-finished; flag it (fix: enlarge
+     the content/figure to use the space, add the supporting element, redistribute the blocks, or
+     merge/cut a too-thin slide). Also flag **uneven gaps between repeated/adjacent blocks** (one
+     gap visibly larger than its neighbours — derive from `columns`/`rows`/`vstack`). **A figure centred in
      its half *and* the side text pushed to the far edge** — leaving white on the figure's outer
      edge AND a big dead gap between figure and text — is the same imbalance (fix: anchor the
      figure to its margin, pull the text in to one gutter). **Suitable space on all four sides:**
@@ -202,6 +207,10 @@ Do not just skim for the first few obvious issues. Run these passes:
      Also flag **叠字 — glyphs visibly overlapping or colliding** (bad tracking / a too-narrow box
      squeezing CJK), and an **awkward line break (断句)** — a title or term split at a meaningless
      point (mid-word / between a number and its unit) — give the box more room or rebreak the line.
+     **Orphaned punctuation (avoid 头尾):** a line that **starts** with closing punctuation
+     (`。，、！？：；）" `) or **ends** with an opening one, or — the ugliest tell — a **lone
+     punctuation mark sitting alone on its own row**. Fix: widen the box / nudge the size / rebreak
+     so the mark stays with its character (also applies to a stray Latin ")" or "." wrapping alone).
      **A short display token wrapped mid-token** — a big section numeral like "01" broken to
      a stacked "0"/"1", or an oversized title splitting awkwardly — is a real flaw (fix: widen
      / auto-size so it stays one line; `deckkit.big_numeral` does this).
@@ -229,8 +238,10 @@ Do not just skim for the first few obvious issues. Run these passes:
      against the motion manifest plus the slides — a click-build or a generated plate that
      doesn't *emphasize / engage / guide*, that distracts, or is added for flourish or
      "consistency"; a plate where a source figure / real computed artifact / chart / plain
-     whitespace would serve better; or plates that don't share one purpose-fitting
-     art-direction. Also flag the opposite — a clear pipeline / multi-part / evidence→takeaway
+     whitespace would serve better; a plate that **doesn't help the audience understand** the slide
+     (decoration, not comprehension); or one whose **style is off — not aligned with the deck's
+     topic/content or its template/brand look** (a plate that reads pasted-in from another deck, or
+     clashes with the palette/style). Also flag the opposite — a clear pipeline / multi-part / evidence→takeaway
      beat left plain where a build would have helped. **Do not** flag a slide for being plain,
      or a deck for having several or *consecutive* builds/plates — frequency is a legitimate
      design choice, not a flaw.

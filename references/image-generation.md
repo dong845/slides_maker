@@ -32,6 +32,13 @@ build-by-build.
 
 ## When to use image generation
 
+**Two gates before you generate any image: (1) does it help the audience UNDERSTAND or feel this
+specific slide's point** — clearer shown than told, the real thing they should picture, atmosphere
+that frames a section — *not* decoration or space-filler; **and (2) does its design align with the
+deck** — topic, content, and the **template/brand/style** (palette, the generated-template look, or
+a mimicked style) so it reads as part of *this* deck, not pasted in. Feed the deck's palette + art
+direction into the prompt. If either gate fails, use real/native assets or plain whitespace instead.
+
 Use the agent's native image generation skill when a slide would benefit from:
 
 - a text-free hero image, atmospheric background, or side-panel photo/illustration;

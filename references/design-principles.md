@@ -187,6 +187,22 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   box (the deckkit `chip`/`callout` helpers bake this in; for boxes you draw yourself,
   inset text ~0.15 in from the edges, more at the top of a titled card). Cramped text
   touching a rounded corner reads as unfinished even when nothing overflows.
+- **No large empty region — fill the slide, balanced.** A slide that's mostly blank (content
+  huddled in one corner or the top third, a wide empty band down a side or across the bottom) reads
+  as unfinished — don't ship it. Fix it: **enlarge the figure/content to use the space, add the
+  supporting element the point actually needs, or redistribute the blocks** so the content occupies
+  the slide evenly. If a slide genuinely has too little to fill it, **merge or cut it** (an
+  over-full deck wants *more* slides, never emptier ones). Whitespace is a *deliberate* breathing
+  tool around content — not a large leftover void.
+- **Mind the gaps between blocks — even and intentional.** Equal gaps between repeated/adjacent
+  blocks (cards, chips, rows, list items) — derive them from `columns`/`rows`/`vstack`, never
+  eyeball; one gap visibly larger than its neighbours reads as careless. Adjacent blocks always need
+  a **visible, consistent** gap — never touching, never wildly uneven.
+- **Read the whole slide as one composition (the overview test).** After building, step back from
+  the render and take the slide in as a whole: is it balanced top-to-bottom and left-to-right, is
+  attention led to one focal point, do the blocks line up on a clean grid, is the space used well?
+  A slide can pass every *local* check and still look **off** as a gestalt — a lopsided mass, a
+  drifting focal point, an empty quadrant. Fix the overall impression, not only the parts.
 - **Don't crowd the title's accent rule.** `title_bar` draws a short accent underline below
   the title. When you add a subtitle / definition line under it, leave a clear gap *below the
   rule* before the subline (and start the body a step below that) — a sub-line jammed against

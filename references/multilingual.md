@@ -93,6 +93,14 @@ and tell the user which font the deck expects.
   at a meaningless point** (mid-term, or between a number and its unit) — widen the box or rebreak.
 - **No 叠字 (overlapping glyphs).** If glyphs visibly collide/overlap, the box is too narrow or the
   tracking is off — widen the box or fix spacing; never squeeze CJK to fit.
+- **No orphaned punctuation (避头尾 / kinsoku).** A line must not **start** with closing punctuation
+  (`。， 、！？：；）》】" '`) and must not **end** with an opening one (`（《【" '`); and never leave a
+  **lone punctuation mark on its own row** (a trailing `。`/`，` pushed to the next line is the ugly
+  tell). PowerPoint/Keynote apply East-Asian line-break rules automatically *if the run carries an
+  EA font* — so always set `EAFONT` (not Arial) — but a too-tight box can still strand a mark. Fix by
+  **widening the box / lowering the size a touch / rebreaking the line** so punctuation stays attached
+  to its character; for a hard case, hand-place the break. Same idea in Latin: don't let a lone ")" or
+  "." wrap to its own line.
 - **Density.** A CJK character carries more meaning per glyph, so terse points matter even
   more — resist the temptation to fill the line just because it fits.
 - **Numbers / Latin terms** inside CJK text render in `FONT` (the latin font) — choose a

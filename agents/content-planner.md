@@ -218,11 +218,13 @@ not by counting:
   deck-wide fade transition is a fine, low-distraction default for continuity. (A slide must
   still read correctly fully-built — a build layers on a correct static slide, never fixes a
   cluttered one.) See `animation.md`.
-- **Generated images** — for the slides where your design sense says a visual plate would
-  genuinely strengthen the slide (a hero image, atmosphere, a conceptual scene), **propose
-  it — do not assume it ships.** The user decides whether to actually generate. Never put a
-  generated image where evidence belongs (source figures, data charts, screenshots, logos,
-  anything traceable stays real). **When a plate has a subject, plan it so the subject stays
+- **Generated images — add one only where it helps the audience UNDERSTAND or feel the content,
+  never as decoration or filler.** First decide *which specific slides/parts* actually benefit: a
+  concept that's clearer **shown than told**, the real thing the audience should picture, or
+  atmosphere that frames a section — not every slide, and not "to fill space." For those, **propose
+  it — do not assume it ships** (the user decides whether to generate). State in the plan *why* that
+  slide earns an image (what it makes clearer). Never put a generated image where evidence belongs
+  (source figures, data charts, screenshots, logos, anything traceable stays real). **When a plate has a subject, plan it so the subject stays
   whole** — note the `fit` (usually `contain`) and prompt for the subject centred with margin
   so a crop can't cut it (the subject reduced to a sliver = the failure to avoid). **For real,
   known subjects, note the facts the generator gets wrong** — relative sizes/proportions (when
@@ -231,12 +233,15 @@ not by counting:
   the visual, a prompted-and-verified generated plate is fine, or **draw it natively** (deckkit
   shapes / a chart) for guaranteed control — just never plan to ship an unverified one. See
   `image-generation.md`.
-- **Image style is part of the design — derive it from purpose + topic.** Decide **one
-  coherent art-direction for the whole deck** (palette, medium, mood, level of realism,
-  motif, where to leave calm space for text) that fits *this* purpose and subject — e.g. a
-  clinical/scientific talk reads restrained, precise, desaturated; a startup pitch reads
-  bold, vivid, editorial; a humanities lecture reads warm and textured. Apply that same
-  direction to every plate you propose so they read as one family. Record the art-direction
+- **Image style is part of the design — align it with topic, content, AND the deck's template/
+  style.** Decide **one coherent art-direction for the whole deck** (palette, medium, mood, level of
+  realism, motif, where to leave calm space for text) that fits *this* purpose and subject **and
+  matches the deck's visual language** — the template/brand colours, or the chosen style (e.g. a
+  generated-template's look, or a style example being mimicked) — so a plate reads as *part of the
+  deck*, not pasted in from elsewhere. A clinical/scientific talk reads restrained, precise,
+  desaturated; a startup pitch bold, vivid, editorial; a humanities lecture warm and textured; a
+  glassmorphism/Memphis/riso deck's plates must carry that same look. Pull the deck's palette into
+  the prompt. Apply that one direction to every plate you propose so they read as one family. Record the art-direction
   once in the plan; the user approves it with the images.
 
 ## Output — the deck plan
