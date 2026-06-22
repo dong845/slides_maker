@@ -33,7 +33,17 @@ These criteria are grounded in established presentation research, not invented:
 ## Universal rubric
 Score each dimension; cite specific slides.
 
-1. **One idea per slide.** Does each slide carry a single, identifiable point? Two
+> **Scope the density dimensions by DELIVERY MODE first.** Items 1 (one-idea), 3 (cognitive-load /
+> few-words), and "from a normal viewing distance" assume a **presented** deck where a speaker
+> narrates. For a **read-alone** deck (leave-behind, pre-read, reference / appendix) or a **fixed
+> surface** (poster, single-slide infographic), denser self-contained slides with fuller prose are
+> *correct, not a flaw* — judge density against the deck's **stated density mode / purpose**, never
+> the talk default; do **not** flag legitimate read-alone density as "wall of text." Set the
+> legibility floor by the **medium** (back-of-room for a talk, screen for a webinar, arm's-length /
+> print for a read-alone or poster). What never relaxes in any mode: results legibility (≥4.5:1, no
+> clipped figures), source fidelity, no overlap.
+
+1. **One idea per slide** *(presented default)*. Does each slide carry a single, identifiable point? Two
    messages on one slide = split it. Title should state that point (ideally an
    assertion, e.g. "Only the warp needs to be 3D", not a topic like "Method").
 2. **Results legibility.** This is the one people get wrong most. Can the audience

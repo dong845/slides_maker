@@ -101,8 +101,10 @@ and tell the user which font the deck expects.
   **widening the box / lowering the size a touch / rebreaking the line** so punctuation stays attached
   to its character; for a hard case, hand-place the break. Same idea in Latin: don't let a lone ")" or
   "." wrap to its own line.
-- **Density.** A CJK character carries more meaning per glyph, so terse points matter even
-  more — resist the temptation to fill the line just because it fits.
+- **Density.** A CJK character carries more meaning per glyph, so for a **presented** deck terse
+  points matter even more — resist filling the line just because it fits. *(A read-alone / reference
+  CJK deck may run denser like any read-alone deck — then lean on `line_spacing` 1.1–1.2 and the
+  kinsoku guidance above; see `design-principles.md` "Delivery mode".)*
 - **Numbers / Latin terms** inside CJK text render in `FONT` (the latin font) — choose a
   Latin font that pairs cleanly with the CJK one (Calibri/Arial with most sans CJK).
 

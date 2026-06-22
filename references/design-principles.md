@@ -1,13 +1,29 @@
 # Design principles — why these slides look the way they do
 
-The recurring failure mode in research progress decks is treating a slide like a
-page of notes: long run-on sentences, vague phrasing ("improving the system by
-optimizing the approach"), and figures dropped in with no explanation. The audience can't
-read a paragraph and listen at the same time, so the slide competes with the
-speaker instead of supporting them.
+These rules are tuned to the **default deck — a visual aid backing a live speaker**, where the
+recurring failure is treating a slide like a page of notes (long run-on sentences, vague phrasing,
+figures dropped in with no explanation): the audience can't read a paragraph and listen at once, so
+the slide competes with the speaker instead of supporting them. For that deck, everything below
+follows from one idea: **a slide is a visual aid, not a document** — optimize for "understood in a
+few seconds." But first know the *delivery mode*, because the density rules flex with it.
 
-Everything below follows from one idea: **a slide is a visual aid, not a
-document.** Optimize for "understood in a few seconds."
+## Delivery mode — scope the density rules to how the deck is consumed
+**Before applying the rules below, know how the deck will be consumed** (the interview captures it):
+- **Presented (spoken)** — a speaker narrates; the slide shows the *phrase*, the speaker says the
+  *sentence*. **The default.** One-idea-per-slide, few-words, big "read-from-the-back" type, "more
+  slides not denser," and "spoken prose lives in speaker notes" all apply *here*.
+- **Read-alone** (leave-behind, pre-read, emailed status, reference / appendix deck) — **no speaker**,
+  so each slide must carry the sentence a speaker would otherwise say: **self-contained, complete
+  lines and legitimately denser slides are the deliverable, not a flaw**; size type to arm's-length
+  reading (not a projector); structure for scanning/jumping over a single linear narrative.
+- **Fixed surface** (poster, single-slide infographic, one-pager) — one canvas, the **count can't
+  grow**: organise density into clear regions/columns with strong hierarchy (you can't "add a
+  slide"); read distance is poster-near or on-screen, not back-of-room.
+
+So where a rule below says "one idea," "few words," "from the back," or "more slides," read it as the
+**presented default** and flex it for read-alone / fixed-surface decks per the above. What **never**
+flexes (every mode): contrast, no overlap, fidelity to the source, clear hierarchy, no tofu, one
+consistent visual system.
 
 ## Tell a story — especially the opening
 A deck should pull the audience along, not list facts. The motivation/opening is
@@ -17,11 +33,16 @@ filled → (next slide) our idea.* Use a short visual progression (a few chips w
 arrows, a numbered build) so the audience feels the logic, and end the setup on a
 crisp **hook** — the open question your work answers. Name the concrete problems you
 aim to solve; that's what makes a method feel necessary rather than arbitrary. Every
-later slide should answer a question the previous one raised.
+later slide should answer a question the previous one raised. *(This is for a **linearly-delivered**
+deck — a talk, pitch, or readout. A **reference/leave-behind** deck is consulted non-linearly: make
+each slide stand alone and be findable — clear titles, navigable structure — over a single arc.)*
 
 ## One idea per slide
 Decide the single takeaway before writing anything. Title states the point;
-the body supports it. If a slide needs two takeaways, it's two slides.
+the body supports it. If a slide needs two takeaways, it's two slides. *(Presented default — a
+read-alone **reference** deck, a **poster** panel, or a single-slide **infographic** may legitimately
+carry several related points; there the unit of "one idea" is the clearly-delineated **region**, not
+the whole surface.)*
 
 ## Few words per point
 Points should be phrases, not sentences — often 2–5 words. Good:
@@ -33,7 +54,10 @@ Bad (what to fix):
 - "We tried several configurations on the staging dataset, running the full pipeline
   with retries enabled (the queue is the bottleneck); 1. pick the first batch ..."
 
-The speaker says the sentence; the slide shows the phrase.
+The speaker says the sentence; the slide shows the phrase. **This assumes a speaker** — for a
+**read-alone** deck (leave-behind, pre-read, reference, poster) there is no one to say the sentence,
+so the slide must carry it: write complete, self-sufficient lines, not telegraphic 2–5-word fragments
+the reader can't reconstruct. Terseness is a *presented*-deck target, not a universal one.
 
 ## Diagrams over text
 A relationship is clearer drawn than described. For structure you are creating from
@@ -191,9 +215,11 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   huddled in one corner or the top third, a wide empty band down a side or across the bottom) reads
   as unfinished — don't ship it. Fix it: **enlarge the figure/content to use the space, add the
   supporting element the point actually needs, or redistribute the blocks** so the content occupies
-  the slide evenly. If a slide genuinely has too little to fill it, **merge or cut it** (an
-  over-full deck wants *more* slides, never emptier ones). Whitespace is a *deliberate* breathing
-  tool around content — not a large leftover void.
+  the slide evenly. If a slide genuinely has too little to fill it, **merge or cut it** (a presented
+  deck that's over-full wants *more* slides, never emptier ones). Whitespace is a *deliberate*
+  breathing tool around content — not a large leftover void. *(On a **fixed surface** — poster,
+  single-slide infographic, one-pager — you can't "add a slide": organise the density into clear
+  regions/columns with strong hierarchy instead; the no-large-void rule still holds within the canvas.)*
 - **Mind the gaps between blocks — even and intentional.** Equal gaps between repeated/adjacent
   blocks (cards, chips, rows, list items) — derive them from `columns`/`rows`/`vstack`, never
   eyeball; one gap visibly larger than its neighbours reads as careless. Adjacent blocks always need
@@ -351,8 +377,11 @@ anyway:
 - **Logical reading order & real text.** Keep titles in the title placeholder, use real
   text (not text baked into an image), and order content top-to-bottom / left-to-right so
   assistive tech follows the intended flow.
-- **Legible type sizes** — body large enough to read from the back (see the size floor
-  here and in the rubric); accessibility and back-of-room legibility are the same fix.
+- **Legible type sizes — set the floor by the medium.** For a **projected talk**, body large enough
+  to read from the back (~18pt+; titles ~28pt+). For a **webinar** size up (the slide is shrunk in a
+  video window); for a **read-alone** deck read at arm's length, or a **poster/infographic**,
+  secondary type can run smaller and denser — the floor is "comfortably legible at *this* deck's read
+  distance," not "back of a hall." Whatever the floor, contrast (≥4.5:1) never relaxes.
 
 ## Visual hierarchy
 - High-contrast titles (white on a colored band, or dark on white) — readable at a

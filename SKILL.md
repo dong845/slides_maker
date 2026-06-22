@@ -260,7 +260,10 @@ the direction gate** (the look is already decided). The four:
    purpose):
    - *Minimal / diagram-heavy* (**recommended default**) — a few words per point, a
      diagram/figure carrying each idea; what lets an audience follow a *speaker*.
-   - *Moderate text* · *dense / detailed* (only for a read-alone leave-behind).
+   - *Moderate text* · *dense / detailed* — for any **read-without-a-speaker** artifact: a
+     leave-behind, an emailed/reference/appendix deck, a board pre-read, a **poster**, or a
+     single-slide **infographic**. There fuller, self-contained text is the deliverable, not a flaw
+     (this sets the deck's **delivery mode** — see `references/design-principles.md` "Delivery mode").
    - **"Mimic an example I'll provide"** — the user hands over a deck (or slides /
      PDF / screenshots) whose **visual style they want imitated**. Different from a
      *template* (Q1): you do NOT build on it or inherit its logos — you reproduce its
@@ -455,12 +458,15 @@ Full list, fallbacks, and tofu recovery in `references/font-guidance.md`.
 
 ## Step 3 — Pace-check the plan, then get approval
 The content-planner's plan (Step 1) already carries the arc and the per-slide spec; this
-step locks it. The standard it must meet: **one idea per slide**, in an arc that fits the
-purpose (a conference talk and a status update are ordered differently — let the rubric
-guide you). **Scale the slide count to the time budget** — ~1 slide per talking-minute as a
-loose anchor: short talk/status ~6–9 slides, lecture/thesis defense/job talk ~10–20+; a
-longer deck means *more* slides, never a denser one. At **~15+ slides**, consider the
-section fan-out (step 4). Each slide's **takeaway** comes first; bullets support it.
+step locks it. The standard it must meet: **one idea per slide** *(for a presented deck — a
+read-alone / reference / poster deck legitimately packs more per surface; see `design-principles.md`
+"Delivery mode")*, in an arc that fits the purpose (a conference talk and a status update are ordered
+differently — let the rubric guide you). **For a spoken deck, scale the slide count to the time
+budget** — ~1 slide per talking-minute as a loose anchor: short talk/status ~6–9 slides,
+lecture/thesis defense/job talk ~10–20+; a longer spoken deck means *more* slides, never a denser
+one. *(A **read-alone / fixed-surface** deck has no talking-minute budget — its scope is set by
+content completeness, and deliberate density is fine, not a defect to split away.)* At **~15+
+slides**, consider the section fan-out (step 4). Each slide's **takeaway** comes first; bullets support it.
 
 Each slide's **visual source** is set in the plan — source figure, chart, native diagram,
 generated plate, or **none**. Both **generated images and motion are a matter of taste and
@@ -619,13 +625,15 @@ A few rules that matter (see `references/design-principles.md`):
   `fit="contain"` when a subject/edges must stay whole, `fit="cover"` only for edge-tolerant
   texture. Render-check: calm space behind text, no pseudo-text/fake charts, subject not cropped,
   real things factually right.
-- **Speaker notes — put the spoken script in the notes, not on the slide.** For any deck
-  the user will *present* (especially a conference talk, defense, or lecture), move the
+- **Speaker notes — for a PRESENTED deck, put the spoken script in the notes, not on the slide.**
+  For any deck the user will *present* (especially a conference talk, defense, or lecture), move the
   full sentences off the slide into speaker notes with `deckkit.speaker_notes(slide, "…")`.
   The slide shows the phrase; the notes hold what the presenter says. Notes don't render
   (the critic won't see them) but they show in Presenter View and on printed Notes Pages —
   so the user can rehearse without the slide becoming a wall of text. Offer this at
-  hand-off; it directly serves the "few words per point" rule.
+  hand-off; it directly serves the "few words per point" rule. **For a read-alone deck there is no
+  presenter** — the explanatory prose belongs **on the slide** (a reader won't open the notes), so
+  keep the sentences visible there rather than hiding them in notes.
 - **Layout & diagrams — full rules in `references/design-principles.md`; the essentials:**
   keep a `deckkit.GUTTER` (~0.4 in) between elements and clear of the footer; build **balanced
   split panels** and **equal-gap stacks** from one grid — `columns(n)` (horizontal) / `rows(n)`

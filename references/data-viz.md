@@ -44,7 +44,10 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
   control (e.g. a glass/Memphis deck where even a themed matplotlib plot would clash) or for
   diagram-like "charts" (hub-and-spoke, a flow/Sankey, an annotated timeline) that are really
   layout. Keep them measure-then-place so they slot into a `content_band`.
-- Either way: **whole chart, legible from the back, one message, one highlight, a takeaway.**
+- Either way: **whole chart, legible at the deck's read distance, one message, one highlight, a
+  takeaway.** ("From the back of the room" is the floor for a *presented* deck; for a **read-alone /
+  reference** chart, size to arm's-length reading and it's fine to keep more series labelled — there's
+  no narrator to point at the rest. Direct labels + colour-blind safety are universal regardless.)
 
 ## Native data furniture (deckkit)
 - `scorecard(slide, x,y,w,h, label, value, delta=, caption=, good_up=, glass_tint=)` — a KPI tile

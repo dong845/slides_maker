@@ -17,6 +17,31 @@ For a strong, coherent *look* in one switch, `scripts/presets.py` has named desi
 `editorial_paper`; an event → `memphis`/`risograph`. These pair with the generated-template Style
 library (`references/generated-template.md`).
 
+## Reach for the new modules — by purpose (every purpose benefits, not just design-forward ones)
+The recently-added kit — designed charts (`data-viz.md`), KPI/stat furniture, layout patterns,
+publication chrome, surface effects, `presets.py` — serves **all** purposes; match it like this.
+None are mandatory: pick what the *content* needs, and keep it **restrained for sober purposes**.
+
+| Purpose | Preset to start | Modules that fit |
+|---|---|---|
+| Research meeting · thesis defense | `swiss` (minimal, one-accent) | designed charts with **single-highlight** + `takeaway_rail` for results; `big_numeral` for numbered contributions; `sources_page` for refs; `accent_one` restraint |
+| Work status · stakeholder / investor readout | `editorial_report` | `scorecard` KPI tiles (value + ▲/▼ delta) & `stat_row` hero numbers; `leaderboard`; designed charts (the one comparison that matters); `timeline` roadmap; section dividers |
+| Conference talk · job talk · webinar | projection/screen-grade (no heavy preset) | designed **plots** over tables; `timeline`/`hub_spoke` for way-finding & the program map; `big_numeral` section nav; `cover`/dividers |
+| Product / pitch · launch | `glassmorphism` or `editorial_paper` | `scorecard`/`stat_row` hero metrics; `before_after`; photo kit (`photo_triptych`/`image_tab`); `cover` ↔ `colophon` bookend; bold CTA |
+| Teaching / lecture | warm, light scheme | `quadrant`/`hub_spoke`/`timeline` concept diagrams; `before_after`; `accent_one` to encode one idea |
+| Event · culture · marketing | `memphis` / `risograph` | `offset_shadow` stickers, bold motifs, designed plots |
+| Editorial / brand / portfolio / report | `editorial_paper` / `editorial_report` | `editorial_header`, `big_numeral`, `photo_triptych`, `cover`/`colophon`, `sources_page` |
+| **Read-alone** leave-behind / reference / pre-read *(no speaker)* | match the host purpose's look | **fuller, self-contained text** (NOT few-words), `sources_page` + appendix, `table` for dense reference, scannable headings/titles; judge by **completeness**, not slide count |
+| **Fixed surface** — poster / single-slide infographic | `swiss`/`editorial` (or bold for an event) | one canvas → **multi-region hierarchy** (`columns`/`rows`/`quadrant`), larger headline, designed plots; build at the real size with `blank_deck(w_in, h_in)` |
+
+**Delivery mode flexes density** (`design-principles.md` "Delivery mode"): a **read-alone /
+reference / poster** deck is read without a speaker, so it legitimately carries **more text per
+surface** than a spoken deck — don't thin it to talk-density.
+**Surface effects gate by medium, not purpose:** `glass_card`/`glow`/`scrim_overlay` need a
+dark/photographic base (product/tech/launch) — skip them on a light research, readout, or webinar
+deck. And the universal craft holds for every purpose: charts single-highlight + a takeaway, role-based fonts,
+consistent corners/colours, no orphaned punctuation, no large blank.
+
 ## How to use this file
 1. Find the purpose below and adopt its **design language** as your starting point —
    set the `deckkit` palette constants (`DEEP/BLUE/ACCENTS/...`) and a **role-based font

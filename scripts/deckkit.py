@@ -6,8 +6,10 @@ from scratch when they have none (blank_deck + title_bar/footer). Import this fr
 a small per-deck build script rather than copy-pasting primitives every time.
 A brand-free worked example lives at references/examples/build_example_generic.py.
 
-Design intent (see references/design-principles.md):
-  - terse, few-word points — the slide is a visual aid, not a document
+Design intent (see references/design-principles.md — these are the PRESENTED-deck defaults; a
+read-alone / reference / poster deck legitimately runs denser, so flex by delivery mode):
+  - terse, few-word points for a SPOKEN deck (a visual aid, not a document); a read-alone deck
+    carries the fuller sentence a speaker would otherwise say
   - native diagrams (boxes + arrows) over walls of text
   - a clear title per slide; results figures always get a legend + a takeaway
 
@@ -1360,8 +1362,10 @@ def table(slide, x, y, w, rows, col_w=None, header=True, highlight=None,
     under the header, and a bottom rule, so it reads like a paper table. Returns the bottom
     y so the caller keeps a GUTTER below it.
 
-    NOTE: keep cells terse — it's a slide, not a spreadsheet. A cell long enough to wrap
-    past `row_h` will grow the row, so verify the render. For a *trend*, prefer a chart
+    NOTE: on a *presented* slide keep cells terse and highlight one row — it's a slide, not a
+    spreadsheet. A **read-alone reference / appendix** table can legitimately be denser (more rows,
+    smaller `row_h`, per-column rules) since the reader studies it without a narrator. A cell long
+    enough to wrap past `row_h` will grow the row, so verify the render. For a *trend*, prefer a chart
     (`equation_png`/matplotlib or a dedicated figure-making workflow, if available);
     a table is for exact values."""
     ncol = max(len(r) for r in rows)

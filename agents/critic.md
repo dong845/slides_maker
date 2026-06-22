@@ -80,8 +80,11 @@ Do not just skim for the first few obvious issues. Run these passes:
      table foreground the comparison the authors make (baseline vs the proposed
      thing), not a distracting one? A faithful-looking but mis-emphasised result means
      the author didn't fully understand the material — flag it.
-   - *The target audience member,* sitting at the back of the room: can they read every
-     figure and verify every headline from there? Do they know the jargon yet?
+   - *The target audience member,* **at this deck's read distance** (back of the room for an
+     in-person talk; a shrunk window for a webinar; arm's-length on a screen or print for a
+     read-alone / reference / poster deck): can they read every figure and verify every headline from
+     there? Do they know the jargon yet? — and for a **read-alone** deck (no speaker), is each slide
+     **self-sufficient**, carrying the explanation a presenter would otherwise narrate?
    - *Design & layout:* whole figures (not partial-cropped or hand-redrawn); a figure
      that *is* the point given the slide; gutters between figure and text; a real
      **bottom margin** (nothing jammed on the footer); **no text spilling its box**;
@@ -232,8 +235,11 @@ Do not just skim for the first few obvious issues. Run these passes:
      near-invisible (flag it); a **photo scrim aimed at the text zone**, not a flat full-slide wash
      that greys the whole image. Flag a `big_numeral`/`scorecard` value that wrapped or overran, and
      a `leaderboard` whose swatch colours don't match its paired chart.
-   - **Text:** excessive density / wall of bullets, full sentences the audience must
-     read while the speaker talks, text that merely duplicates narration.
+   - **Text** *(scope by delivery mode):* for a **presented** deck — excessive density / wall of
+     bullets, full sentences the audience must read while the speaker talks, text that merely
+     duplicates narration. For a **read-alone** deck (leave-behind / reference / poster) there is no
+     narration to duplicate and fuller self-contained prose is *correct* — judge density against the
+     deck's stated density mode, and **don't flag legitimate read-alone density as a wall of text**.
    - **Thoughtless motion or imagery** *(taste & purpose, judged by intent not count):*
      against the motion manifest plus the slides — a click-build or a generated plate that
      doesn't *emphasize / engage / guide*, that distracts, or is added for flourish or
