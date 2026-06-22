@@ -172,10 +172,10 @@ the direction gate** (the look is already decided). The four:
         reference images / a logo / mood material**. Then **tailor the chosen style** to the
         scenario + brand before generating (the preset is a starting language, not a straitjacket).
      2. **Generate the template** — a **text-free** full-bleed hero/divider illustration in that
-        style with a calm zone for the title (native imagegen in Codex; else **ask the user: Codex
-        CLI `scripts/generate_images_codex.py` — no key, their subscription — or an OpenAI key
-        `scripts/generate_images_openai.py`**; see `references/image-generation.md`), then **derive a
-        matching `style.py`**: pull the
+        style with a calm zone for the title (**no API key needed** — auto-detect: native imagegen in
+        Codex → else the **Codex CLI** `scripts/generate_images_codex.py` if `codex` is installed →
+        OpenAI `scripts/generate_images_openai.py` only as a fallback; see
+        `references/image-generation.md`), then **derive a matching `style.py`**: pull the
         palette straight from the image with `deckkit.palette_from_image(...)` and define the
         template's motif + component helpers, so **native content reuses the same colours,
         decorations, and card/heading treatments** (this is what makes inserted blocks fit).
@@ -625,8 +625,10 @@ A few rules that matter (see `references/design-principles.md`):
   quota), styled to the deck's purpose+topic, **opt-in only**; never bake words/numbers/labels/
   charts/logos into a plate (those stay editable objects or real assets). Build prompts with
   `scripts/image_prompts.py` (a sub-outline of *only* the plated slides), then generate by the
-  available source — native imagegen (Codex); else **ask: Codex CLI `generate_images_codex.py`
-  (no key) or OpenAI `generate_images_openai.py` (+`OPENAI_API_KEY`)** (see `image-generation.md`); keep
+  **auto-detected** source — **no API key needed**: native imagegen (Codex) → else the **Codex CLI**
+  `generate_images_codex.py` if `codex` is installed (no key) → OpenAI `generate_images_openai.py`
+  (+`OPENAI_API_KEY`) only as a fallback if neither exists. Use what's present and say so; ask only if
+  none is available (see `image-generation.md`); keep
   assets in `~/Downloads/<deck>/assets/generated/` and place with `deckkit.picture(...)` —
   `fit="contain"` when a subject/edges must stay whole, `fit="cover"` only for edge-tolerant
   texture. Render-check: calm space behind text, no pseudo-text/fake charts, subject not cropped,
@@ -958,13 +960,13 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   data) for each candidate direction, for collaborative mode's direction gate.
 - `scripts/image_prompts.py` — create text-free image generation prompt manifests and
   expected filenames for optional slide visual plates.
-- `scripts/generate_images_openai.py` — optional OpenAI Images API path that reads
-  `image_prompt_manifest.json` and writes the selected `slide-XX.png` files when
-  `OPENAI_API_KEY` is configured; native Codex imagegen remains preferred in Codex.
-- `scripts/generate_images_codex.py` — **no-API-key** alternative for Codex/ChatGPT-subscription
-  users: shells out to `codex exec` (the hosted `image_generation` tool), decodes the image from the
-  Codex session rollout, and writes the same manifest's `slide-XX.png` files. Same manifest + flags
-  as the OpenAI script. Offer it as the second of the two image-gen choices when no key is set.
+- `scripts/generate_images_codex.py` — **no-API-key** image generation (the default outside a
+  native-imagegen host): shells out to `codex exec` (the hosted `image_generation` tool), decodes the
+  image from the Codex session rollout, and writes the manifest's `slide-XX.png` files. Auto-detected
+  when `codex` is installed/logged-in; prompts are passed verbatim. **No key, no per-image cost.**
+- `scripts/generate_images_openai.py` — **fallback** OpenAI Images API path (only when neither native
+  imagegen nor `codex` is available): reads `image_prompt_manifest.json` and writes `slide-XX.png`
+  when `OPENAI_API_KEY` is set. Same manifest + flags as the Codex script.
 - `scripts/extract_deck.py` — pull text/tables/figures OUT of an existing deck (the
   redesign path), so a rebuild reuses the user's real content and figures.
 - `scripts/extract_pdf.py` — pull a figure OUT of a source PDF/paper as a clean PNG.

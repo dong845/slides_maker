@@ -121,30 +121,29 @@ subject to sit well inside the central safe area, away from the edges.
 whole and uncropped — for *every* `picture()`, generated or source. A cropped-out subject is
 the most common generated-image failure; the static render is where you catch it.
 
-## Generating the images — pick the source (don't assume an API key)
+## Generating the images — auto-detect the source (no API key needed)
 
-The skill creates ONE manifest (`scripts/image_prompts.py` → `image_prompt_manifest.json`); any of
-these sources materialize it. **When the host has no native imagegen and no key is already set, ASK
-the user which path** — a Codex / ChatGPT-subscription user may have no API key and shouldn't be
-forced to get one:
+The skill creates ONE manifest (`scripts/image_prompts.py` → `image_prompt_manifest.json`); in the
+common cases image generation needs **no API key**. **Detect what's available, use it, and just say
+which — don't prompt the user to choose a path, and don't ask for a key by default.** Preference order:
 
-**1 · Native host imagegen** — when the skill runs in a host whose agent has a built-in image tool
-(e.g. *inside Codex*), generate directly with that tool: no key, no extra step. This is the free path
-for subscription users — running the skill in Codex gives native image generation.
+**1 · Native host imagegen** — if the host's agent has a built-in image tool (e.g. running *inside
+Codex*), generate directly with it. No key, no extra step.
 
-**2 · Codex CLI (no API key)** — for a Codex/ChatGPT-subscription user in a host *without* native
-imagegen (e.g. Claude Code): shell out to the Codex CLI, which calls Codex's hosted
-`image_generation` tool on the subscription. Needs `codex` installed + logged in (`codex login`).
+**2 · Codex CLI** — the default outside a native-imagegen host (e.g. in Claude Code): if the `codex`
+CLI is installed and logged in (check `which codex`; `codex login` once), shell out to it — it calls
+Codex's hosted `image_generation` tool on the user's subscription. **No key.** Just proceed.
 ```bash
 python scripts/generate_images_codex.py \
   ~/Downloads/<deck>/assets/generated/image_prompt_manifest.json \
   --orientation landscape        # hint 16:9 for hero/divider plates
 ```
-Runs one `codex exec` per image — the hosted tool's base64 lands in the Codex session rollout
+One `codex exec` per image — the hosted tool's base64 lands in the Codex session rollout
 (`~/.codex/sessions/.../rollout-*.jsonl`); the script decodes it to the PNG and verifies it (with a
-rollout-extraction fallback). Slower than the API (~30–90s/image) but **no key, no per-image cost**.
+rollout-extraction fallback). ~30–90s/image; no key, no per-image cost.
 
-**3 · OpenAI API key** — works in any host (incl. Claude Code), pay-per-image:
+**3 · OpenAI API key — optional fallback, only if neither of the above is available.** Do **not**
+request a key when native imagegen or `codex` is present.
 ```bash
 export OPENAI_API_KEY="sk-..."
 python scripts/generate_images_openai.py \
@@ -155,12 +154,13 @@ python scripts/generate_images_openai.py \
 Both scripts share the manifest format and the `--out-dir` / `--limit` / `--overwrite` / `--dry-run`
 flags, save each output to the manifest path (e.g. `slide-01.png`), and skip existing files by default.
 
-> **The two-choice prompt.** When generation is needed and the host has no native imagegen, present
-> **(A) provide an OpenAI API key** (script 3) or **(B) use the Codex CLI** (script 2 — their
-> subscription, no key), and run the matching script. Never assume a key exists.
+> **Detection-first; ask only when stuck.** Pick native → Codex CLI → API key by what's installed,
+> proceed, and tell the user which you used (one line). **Only ask** when *none* is available — then
+> point them to `codex login` (no key) or, as a last resort, an `OPENAI_API_KEY`. Never block on a
+> choice when a working path is already present.
 
-Do not paste API keys into prompts, slide text, source files, or manifests. Keep the key in the
-environment (`OPENAI_API_KEY`) or the user's normal secret manager. The Codex path needs no key.
+Do not paste API keys into prompts, slide text, source files, or manifests. Keep any key in the
+environment (`OPENAI_API_KEY`). The native and Codex paths need no key.
 
 ## Real subjects must be factually right
 

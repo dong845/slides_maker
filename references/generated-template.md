@@ -54,13 +54,14 @@ preset + a reference) is fine — just name what you're combining so the choice 
 
 ### 2 — Generate the template image(s)
 Generate a **full-bleed, text-free** hero/divider illustration in the chosen style:
-- **Tooling — pick the source, don't assume an API key** (build the prompt with
-  `scripts/image_prompts.py`; full guidance in `references/image-generation.md`): **(1)** native
-  imagegen when the host has it (inside Codex — free, no key); **(2)** the **Codex CLI**
-  `scripts/generate_images_codex.py --orientation landscape` (Codex/ChatGPT subscription, **no key**
-  — shells `codex exec`, decodes the hosted image from the session rollout); **(3)** the OpenAI API
-  `scripts/generate_images_openai.py` with `OPENAI_API_KEY` (any host, pay-per-image). **When the
-  host has no native imagegen, ASK the user: API key (3) or Codex CLI (2)?** Render at the deck's
+- **Tooling — auto-detect the source, no API key needed** (build the prompt with
+  `scripts/image_prompts.py`; full guidance in `references/image-generation.md`). Use what's present,
+  in order: **(1)** native imagegen when the host has it (inside Codex — free, no key); **(2)** else
+  the **Codex CLI** `scripts/generate_images_codex.py --orientation landscape` if `codex` is installed
+  (Codex/ChatGPT subscription, **no key** — shells `codex exec`, decodes the hosted image from the
+  session rollout); **(3)** else, only as a fallback, the OpenAI API `scripts/generate_images_openai.py`
+  with `OPENAI_API_KEY`. **Don't prompt the user to choose or ask for a key when (1) or (2) is
+  available — just use it and say which; ask only if none exists.** Render at the deck's
   aspect (16:9 → e.g. `1536x864` / `2048x1152`). In Codex's native path, follow its save-path policy:
   generate first, then move/copy the selected output from `$CODEX_HOME/generated_images/...` into
   this deck's folder before referencing it in `style.py` or a build script.
