@@ -232,7 +232,10 @@ Do not just skim for the first few obvious issues. Run these passes:
      box width (a touch wider/narrower) or lightly reword so the last line gains company / fills
      toward its end. Most common on 2–3-line bodies and long titles.
    - **Typography:** text too small to read from the back (callout/caption/figure
-     labels — see the size floor in `design-principles.md`), inconsistent fonts/sizes.
+     labels — see the size floor in `design-principles.md`), inconsistent fonts/sizes. **One font for
+     the whole deck** reads flat — expect a **role pairing** (a DISPLAY title face vs FONT body, +MONO
+     chrome; for CJK an EADISPLAY title vs EAFONT body); flag a display face that merely duplicates the
+     body, or a clashing/too-many-font mix.
      For **non-Latin (CJK) decks**: any **tofu / missing glyphs** (□ / 缺字) is a blocker; the
      CJK font should be script-appropriate and consistent; emphasis must use weight/
      colour, **not faux-italic** (CJK has no true italic — slanted CJK reads as broken).

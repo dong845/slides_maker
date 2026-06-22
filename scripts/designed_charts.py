@@ -60,6 +60,8 @@ def _numlabel(v):
 
 def donut_kpi(out, segments, center_value, center_label, *, palette=None, dark=False, figsize=(5.2, 4.0)):
     """Part-to-whole donut with a headline KPI in the hole. segments = [(label, value), ...]."""
+    if not segments:
+        raise ValueError("donut_kpi needs at least one segment")
     plt, ink, grid, muted = _mpl(dark)
     labels = [s[0] for s in segments]; vals = [s[1] for s in segments]
     pal = list(palette) if palette else ["#5B4BE0", "#00A6A6", "#F2A03D", "#E0529C", "#1B7A3D"]
@@ -122,6 +124,8 @@ def slope(out, series, *, palette=None, dark=False, highlight=None, t0="", t1=""
 def dual_axis(out, x, left, right, *, left_label="", right_label="", palette=None, dark=False,
               left_fmt="{:g}", right_fmt="{:g}", figsize=(6.8, 4.0)):
     """Two trends on different scales — the classic 'A rises while B falls' tradeoff."""
+    if not x or not left or not right:
+        raise ValueError("dual_axis needs non-empty x, left, right")
     plt, ink, grid, muted = _mpl(dark)
     pal = list(palette) if palette else ["#1F9D55", "#E0529C"]
     c1 = pal[0]; c2 = pal[1] if len(pal) > 1 else "#E0529C"   # single-colour palette → contrasting 2nd hue

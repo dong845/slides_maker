@@ -151,6 +151,18 @@ Score each dimension; cite specific slides.
    *consecutive* plates, or for using none — frequency is a design choice. (Fidelity
    violations — readable text, fake charts/labels/logos, or a generated image standing in for
    evidence — are blockers under item 10, not this one.)
+12b. **Designed charts, data furniture & typeset math** *(when the deck builds its own charts or uses
+   the data-viz / publication helpers).* Is the chart **type chosen to fit the argument** (not a bar
+   where a part-to-whole wants a donut, nor a grouped bar where a trend wants a slope/dual-axis), with
+   a **single highlight** on the one series that matters and a stated **so-what** (`takeaway_rail`),
+   placed **whole** and legible at the deck's read distance? Do `scorecard`/`change_stat` **▲/▼ deltas
+   / before→after** carry the **right polarity** (green for the genuinely-good direction)? Are
+   **formulas typeset** (`equation_png`), **never cropped bitmaps** — transcribed from a paper or
+   *derived faithfully from code* (a code-derived formula must express what the code computes)? And do
+   the surface/furniture patterns hold — **glass only on a dark base**, **cards in a row one height**,
+   **type pairing** (a DISPLAY title face vs FONT body; for CJK, EADISPLAY title vs EAFONT body — not
+   one font everywhere), no text spilling past a card? Most of these are also caught deterministically
+   by `scripts/lint_deck.py`.
 
 ## Severity scale
 - **blocker** — undermines the deck's purpose (e.g. results illegible at a

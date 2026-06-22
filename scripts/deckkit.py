@@ -287,9 +287,9 @@ def box(slide, x, y, w, h, fill=None, line=None, line_w=1.0, round=False, corner
     s = slide.shapes.add_shape(t, Inches(x), Inches(y), Inches(w), Inches(h))
     if grad is not None: _grad_fill(s, grad, angle=grad_angle, radial=grad_radial)
     elif fill is None: s.fill.background()
-    else: s.fill.solid(); s.fill.fore_color.rgb = fill
+    else: s.fill.solid(); s.fill.fore_color.rgb = _as_rgb(fill)
     if line is None: s.line.fill.background()
-    else: s.line.color.rgb = line; s.line.width = Pt(line_w)
+    else: s.line.color.rgb = _as_rgb(line); s.line.width = Pt(line_w)
     s.shadow.inherit = False
     if t != MSO_SHAPE.RECTANGLE:
         adj = (r / min(w, h)) if r is not None else 0.08
@@ -383,7 +383,7 @@ def leaderboard(slide, x, y, w, rows, *, row_h=0.5, gap=0.1, ink=DEEP):
     you built the chart with so legend and chart stay in sync. rows = [(color, name, value[, sub])]."""
     cy = y
     for row in rows:
-        color = row[0]; name = str(row[1]); value = str(row[2])
+        color = row[0]; name = str(row[1]); value = str(row[2]) if len(row) > 2 else ""
         sub = str(row[3]) if len(row) > 3 else None
         box(slide, x, cy, 0.12, row_h, fill=color, round=True, r=0.04)
         if sub:                                              # name + sub both stay INSIDE this row
@@ -413,11 +413,17 @@ def takeaway_rail(slide, x, y, w, label, hero, body, *, accent=MAGENTA, ink=DEEP
 def editorial_header(slide, eyebrow, title, *, x=0.6, y=0.55, w=None, accent=MAGENTA, ink=DEEP,
                      serif=None, size=28, rule_w=1.2):
     """Editorial header lockup: a caps eyebrow, a large title, and a short accent hairline beneath.
-    The premium/showcase alternative to title_bar (use a serif `serif=` for an editorial register)."""
+    The premium/showcase alternative to title_bar. The title uses the **DISPLAY** face by default
+    (falls back to FONT), and EADISPLAY for CJK; pass `serif=` to override per call."""
     if w is None:
         sw, _ = _slide_size(slide); w = sw - 2 * x
+    disp = serif if serif is not None else (DISPLAY or FONT)
     text(slide, x, y, w, 0.3, [[(eyebrow.upper(), 12, accent, True, False)]], space_after=0)
-    text(slide, x, y + 0.34, w, 0.8, [[(title, size, ink, True, False, serif)]], space_after=0)
+    tb = text(slide, x, y + 0.34, w, 0.8, [[(title, size, ink, True, False, disp)]], space_after=0)
+    if EADISPLAY:
+        for p in tb.text_frame.paragraphs:
+            for r in p.runs:
+                _apply_ea(r, EADISPLAY)
     box(slide, x + 0.02, y + 0.34 + size / 72.0 * 1.18, rule_w, 0.05, fill=accent)
 
 
@@ -430,7 +436,8 @@ def big_numeral(slide, x, y, n, *, mode="marker", color=MAGENTA, size=None, w=No
     s = size or (44 if mode == "marker" else 132)
     c = color if mode == "marker" else RGBColor(0xE8, 0xE8, 0xE8)
     if w is None:
-        w = len(str(n)) * s / 72.0 * 1.0 + 0.5     # wide enough that the figure stays one line
+        sw, _ = _slide_size(slide)
+        w = min(len(str(n)) * s / 72.0 * 1.0 + 0.5, sw - x - 0.1)   # wide enough to stay one line, but on-canvas
     tb = text(slide, x, y, w, s / 72.0 * 1.35, [[(str(n), s, c, True, italic, serif)]], space_after=0)
     tb.text_frame.word_wrap = False
     return tb
@@ -440,8 +447,11 @@ def stat_row(slide, x, y, w, items, *, ink=DEEP, accent=MAGENTA, serif=None, div
              fig_size=34, label_c=MUTE):
     """Editorial big-number row: items = [(figure, unit, label), ...] in 2-4 equal columns with
     optional vertical hairline dividers. For 2-4 standout numbers with no trend to plot."""
+    if not items:
+        return y
     n = len(items); gap = 0.4; cw = (w - (n - 1) * gap) / n
-    for i, (fig, unit, label) in enumerate(items):
+    for i, item in enumerate(items):
+        fig, unit, label = item if len(item) == 3 else (item[0], "", item[1])  # unit is optional
         cx = x + i * (cw + gap)
         runs = [(str(fig), fig_size, ink, True, False, serif)]
         if unit:
@@ -531,6 +541,9 @@ def timeline(slide, x, y, w, events, *, orientation="h", highlight=None, accent=
     n = len(events)
     if orientation == "h":
         ay = y + 0.2
+        sw, _sh = _slide_size(slide)
+        def _lx(cx, lw):                                  # keep a centered label box on-canvas
+            return max(0.05, min(cx - lw / 2, sw - lw - 0.05))
         box(slide, x, ay - 0.012, w, 0.024, fill=axis_c)
         step = w / max(1, n - 1) if n > 1 else 0
         for i, ev in enumerate(events):
@@ -539,10 +552,10 @@ def timeline(slide, x, y, w, events, *, orientation="h", highlight=None, accent=
             em = (highlight is None or i == highlight)
             dc = accent if em else axis_c
             box(slide, ex - 0.09, ay - 0.09, 0.18, 0.18, fill=dc, round=True, r=0.09)
-            text(slide, ex - 1.0, ay + 0.18, 2.0, 0.3, [[(str(when), 13, dc, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
-            text(slide, ex - 1.0, ay + 0.5, 2.0, 0.3, [[(title, 12, ink, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
+            text(slide, _lx(ex, 2.0), ay + 0.18, 2.0, 0.3, [[(str(when), 13, dc, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
+            text(slide, _lx(ex, 2.0), ay + 0.5, 2.0, 0.3, [[(title, 12, ink, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
             if cap:
-                text(slide, ex - 1.1, ay + 0.78, 2.2, 0.5, [[(cap, 10.5, MUTE, False, False)]], align=PP_ALIGN.CENTER, space_after=0)
+                text(slide, _lx(ex, 2.2), ay + 0.78, 2.2, 0.5, [[(cap, 10.5, MUTE, False, False)]], align=PP_ALIGN.CENTER, space_after=0)
     else:
         ax = x + 0.12
         box(slide, ax - 0.012, y, 0.024, h, fill=axis_c)
@@ -655,7 +668,12 @@ def cover(slide, title, *, issue_label=None, subtitle=None, mode_caption=None, x
 def colophon(slide, tagline, *, credits=None, tooling=None, x=0.7, accent=MAGENTA, ink=DEEP,
              bg=None, display=None, chrome=MONO):
     """A closing COLOPHON mirroring the cover: a payoff tagline + small mono credits/tooling. A
-    stronger close than 'Thanks'; the credits slot doubles as a research deck's sources note."""
+    stronger close than 'Thanks'; the credits slot doubles as a research deck's sources note.
+    `credits`/`tooling` may be a string or a list (joined with ' · ')."""
+    if isinstance(credits, (list, tuple)):
+        credits = " · ".join(map(str, credits))
+    if isinstance(tooling, (list, tuple)):
+        tooling = " · ".join(map(str, tooling))
     sw, sh = _slide_size(slide)
     if bg is not None:
         box(slide, 0, 0, sw, sh, fill=bg)
@@ -696,7 +714,7 @@ def specimen_card(slide, x, y, w, h, specimen, label, *, accent=MAGENTA, ink=DEE
     sc = accent if featured else ink
     box(slide, x, y, w, 0.06, fill=rc)                                  # top rule
     text(slide, x, y + 0.14, w, 0.3, [[(label.upper(), 11, MUTE, True, False)]], space_after=0)
-    text(slide, x, y + 0.5, w, h - 0.6, [[(specimen, 64, sc, True, False, serif)]],
+    text(slide, x, y + 0.5, w, max(0.3, h - 0.6), [[(specimen, 64, sc, True, False, serif)]],
          align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
 
 
@@ -704,6 +722,8 @@ def wireframe_grid(slide, x, y, w, h, cells, *, cols=4, rows=3, highlight=None, 
     """A SELF-DEMONSTRATING annotated wireframe — labeled outline cells over a cols×rows grid, for
     decks ABOUT layout/design/systems (show the scaffolding). cells = [(label, c0, cspan, r0, rspan)];
     `highlight` recolors one cell. Pair with spec_list() for the 'derived = base × n' math."""
+    if cols < 1 or rows < 1:
+        raise ValueError("wireframe_grid needs cols >= 1 and rows >= 1")
     ln = line or RGBColor(0xCC, 0xCC, 0xCC)
     cw = w / cols; ch = h / rows
     for i in range(cols + 1): box(slide, x + i * cw - 0.005, y, 0.01, h, fill=ln)
@@ -824,7 +844,10 @@ def picture(slide, path, x, y, w, h, fit="contain", alt=None, round=False, r=Non
     picture shape. Requires Pillow for reliable aspect-ratio reads, matching the rest of
     deckkit's image/equation helpers.
     """
+    import os
     from PIL import Image
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"picture(): image not found: {path} — generate it first, or fix the path")
     with Image.open(path) as im:
         iw, ih = im.size
     if iw <= 0 or ih <= 0:
@@ -1329,6 +1352,10 @@ def hrule(slide, x, y, w, color=MUTE, weight=0.012):
 # ================================================================= tables & code
 def _hex(c):
     return c if isinstance(c, str) else str(c)   # RGBColor.__str__ -> 'RRGGBB'
+
+def _as_rgb(c):
+    """Accept a colour as an RGBColor OR an 'RRGGBB' hex string (one convention everywhere)."""
+    return RGBColor.from_string(c) if isinstance(c, str) else c
 
 def _clear_table_style(tbl):
     """Strip PowerPoint's default banded-blue table theme so WE control every fill and

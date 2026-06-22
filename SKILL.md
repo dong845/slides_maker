@@ -426,8 +426,11 @@ than the current working directory, so `python /path/to/build_<deck>.py` works f
   it consistent chrome with `deckkit.title_bar()` / `deckkit.footer()`. **Don't just
   accept deckkit's default blue — design the look to fit the purpose.** Read
   `references/design-by-purpose.md` for a per-purpose design language (palette mood,
-  density, layout, chrome) and set the `deckkit` palette constants + `FONT` to match,
-  then do a quick web-search for current, well-regarded examples of *this kind* of
+  density, layout, chrome) and set the `deckkit` palette constants + a **role-based font
+  pairing** (`DISPLAY` title face + `FONT` body + `MONO`; add `EADISPLAY`+`EAFONT` for CJK) to
+  match — or adopt a one-switch **`scripts/presets.py`** `preset(name)` (glassmorphism / swiss /
+  editorial_paper / editorial_report / risograph / memphis: palette + fonts + surface + image-prompt)
+  and tune it — then do a quick web-search for current, well-regarded examples of *this kind* of
   deck and adapt concrete ideas. A status update should read as crisp and corporate,
   a defense as sober and formal, a lecture as warm and clear — the design should
   signal the right kind of document before a word is read.
@@ -749,11 +752,11 @@ or a missing glyph only show up in the image. Fix mechanical issues and re-rende
 LibreOffice + the python deps and prints the fix for anything missing.)
 
 **Then run the layout lint** — `python scripts/lint_deck.py <deck.pptx>` — a cheap, deterministic
-check that flags **off-slide overflow, text overflowing the card behind it (text taller than its
-card), two solid blocks/images overlapping (neither contained), and footer collisions**: exactly the
-failures the eye misses (a callout tucked under a panel; a 2-line body hanging below a card sized for
-one). Fix every finding, re-render, and re-lint to clean before handing to the critic. It's a safety
-net for the no-overlap / fits-its-box rules, **not** a
+check that flags **off-slide overflow, text overflowing the card behind it, uneven card heights in a
+row, two solid blocks/images overlapping (neither contained), footer collisions, whole-page-image
+(editability), and orphan/empty slides**: exactly the failures the eye misses (a callout tucked under
+a panel; a 2-line body hanging below a card sized for one). Fix every finding, re-render, and re-lint
+to clean before handing to the critic. It's a safety net for the no-overlap / fits-its-box rules, **not** a
 replacement for looking (it can't judge crop, balance, legibility, or fidelity).
 
 **Render self-check — scan EVERY slide for these before handing to the critic** (they're

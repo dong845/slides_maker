@@ -90,7 +90,11 @@ def _frac_inside(a, b):
 
 
 def lint(path):
-    prs = Presentation(path)
+    try:
+        prs = Presentation(path)
+    except Exception:
+        print(f"lint_deck: cannot open '{path}' (missing or not a .pptx)", file=sys.stderr)
+        sys.exit(2)
     sw, sh = prs.slide_width / EMU, prs.slide_height / EMU
     total = 0
     for si, slide in enumerate(prs.slides):
@@ -114,6 +118,11 @@ def lint(path):
                 a, b = sol[i], sol[j]
                 ix, iy = _inter(a, b)
                 if ix > TOL and iy > TOL and _frac_inside(a, b) < CONTAIN and _frac_inside(b, a) < CONTAIN:
+                    # skip a hard offset-shadow / sticker pair: same size, offset by a few pt (intentional)
+                    same_size = abs(a["w"] - b["w"]) < 0.06 and abs(a["h"] - b["h"]) < 0.06
+                    tiny_offset = abs(a["l"] - b["l"]) < 0.18 and abs(a["t"] - b["t"]) < 0.18
+                    if same_size and tiny_offset:
+                        continue
                     finds.append(f"OVERLAP {round(ix,2)}x{round(iy,2)}in  {a['st']}'{a['txt']}' x {b['st']}'{b['txt']}'")
         # 3) footer collision: a solid block over a bottom text label
         footers = [s for s in bx if s["text"] and s["t"] > sh - 0.6 and not s["bg"]]
