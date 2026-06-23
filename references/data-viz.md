@@ -29,7 +29,12 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
    skip the highlight. Never let a chart use >2 saturated hues unless it's genuinely categorical.
 2. **Theme it to the deck.** Pass the deck's palette (`palette=ACCENTS`, or pull from a generated
    template with `palette_from_image`) and `dark=True` for a dark deck, so the chart looks built-in,
-   not pasted. Charts render on a transparent background, so they sit on any slide fill.
+   not pasted. Charts render on a transparent background, so they sit on any slide fill. **On a CJK
+   (Chinese/Japanese/Korean) deck, pass `font="<your deckkit.EAFONT>"`** so chart labels render real
+   glyphs, not tofu (matplotlib uses its first resolvable font for *all* text, so the CJK face must
+   lead — the recipes handle this when you pass `font`). If no CJK font is installed, keep chart text
+   Latin/numeric and label the categories with `deckkit.text()` around the chart (the `equation_png`
+   fallback). This applies to **any-language** deck, not just English.
 3. **Carry a "so-what".** Split the slide ~**65% chart / ~35% narrative rail** and add a
    `deckkit.takeaway_rail(label, hero_stat, body)` — a small caps label, the one restated number,
    and a 2-3 line interpretation. A chart without a stated conclusion makes the audience guess.

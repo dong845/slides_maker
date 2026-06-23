@@ -57,12 +57,12 @@ build there would add nothing. Never animate for flourish, for "consistency" wit
 built slides, or to fill a slide that feels plain — fix the layout instead.
 
 ## Animated GIFs / looping results — insert the GIF, don't freeze it
-When a result is a GIF (a looping animation, a time-resolved/4D sequence, a training run),
-**embed the GIF itself** — never extract one frame and show that. `add_picture` embeds the
-real animated GIF (verified: GIF89a + all frames preserved, content-type image/gif), and
-**PowerPoint and Keynote loop it automatically in slideshow**. For time-resolved /
-dynamic results the *motion is the result* (e.g. a physics simulation over time, a
-rotating 3D model, a before/after loop) — a static frame discards what you're showing.
+When a result is a GIF (a product-UI demo loop, an app walkthrough, a looping data viz, a
+time-resolved/4D sequence, a training run), **embed the GIF itself** — never extract one frame and
+show that. `add_picture` embeds the real animated GIF (verified: GIF89a + all frames preserved,
+content-type image/gif), and **PowerPoint and Keynote loop it automatically in slideshow**. When
+the *motion is the result* (e.g. a UI flow in a pitch, an interaction in a teaching deck, a physics
+simulation, a rotating 3D model, a before/after loop) — a static frame discards what you're showing.
 ```python
 s.shapes.add_picture("results/demo_loop.gif", Inches(x), Inches(y), height=Inches(h))
 ```

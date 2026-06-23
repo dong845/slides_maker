@@ -1308,7 +1308,7 @@ def equation_png(latex_lines, out_path, color="FFFFFF", fontsize=28, dpi=300, ma
       'cm'        — Computer Modern, the classic LaTeX look (default; formal & elegant)
       'stixsans' / 'dejavusans' — upright SANS math, to sit better next to a sans deck
       'stix'      — Times-like serif math
-    Pick 'cm' for an academic/defense feel; a sans set to match a crisp corporate deck.
+    Pick 'cm' for a formal/classical feel (academic, defense, any serif deck); a sans set to match a crisp corporate deck.
     `color` is an RRGGBB hex string (a leading '#' is tolerated; e.g. '202A37' for dark
     text on a light deck, 'FFFFFF' for light text on a dark panel).
 

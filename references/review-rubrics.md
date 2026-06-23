@@ -27,6 +27,7 @@ These criteria are grounded in established presentation research, not invented:
   - [Product description / pitch](#product-description--pitch)
   - [Thesis / committee defense](#thesis--committee-defense)
   - [Teaching / instructional](#teaching--instructional)
+  - [Conference / research poster](#conference--research-poster-single-large-canvas-not-a-slide-sequence)
 
 ---
 
@@ -45,7 +46,9 @@ Score each dimension; cite specific slides.
 
 1. **One idea per slide** *(presented default)*. Does each slide carry a single, identifiable point? Two
    messages on one slide = split it. Title should state that point (ideally an
-   assertion, e.g. "Only the warp needs to be 3D", not a topic like "Method").
+   assertion, not a topic label — e.g. "Churn dropped 12% after the redesign" (status),
+   "Switching saves you 4 hours a week" (pitch), or "Only the warp needs to be 3D" (research) — not
+   a bare topic like "Results" or "Method"). This applies to every purpose, not just research.
 2. **Results legibility.** This is the one people get wrong most. Can the audience
    *actually see* the evidence from a normal viewing distance — figures large
    enough, key differences pointed at, in-figure labels readable? A results slide
@@ -378,6 +381,17 @@ understand and remember.
   at a time); worked examples; recap/checkpoints; analogies for hard concepts;
   consistent notation.
 - **Red flags:** too much at once; no examples; assuming prerequisites not given.
+
+## Conference / research poster *(single large canvas, not a slide sequence)*
+*Audience:* people walking the hall, scanning many posters. *They want:* to grasp the one result in
+seconds, then read deeper if hooked. Judge the **whole canvas as one composition**, not per-slide.
+- **Weight heavily:** a clear **reading path** through regions (title → takeaway → method → results →
+  conclusion); **one focal result** sized to dominate; **self-contained completeness** (no speaker to
+  narrate); readability at **arm's-length / print** (generous type, high contrast); the title states
+  the finding, not the topic.
+- **Red flags:** a wall of uniform body text; no visual hierarchy between regions; a buried headline;
+  type sized for a screen, not a printed A0; the per-slide arc rules applied as if it were a deck.
+  (Density relaxes per the fixed-surface mode; results legibility never does.)
 
 ---
 

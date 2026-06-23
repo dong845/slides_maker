@@ -8,9 +8,15 @@ the user's references always win. Apply one like:
 
     from presets import preset
     p = preset("glassmorphism")
-    deckkit.FONT = p["font"]; INK = p["ink"]; ACCENTS = p["accents"]; BG = p["bg"]
+    deckkit.FONT = p["font"]; deckkit.DISPLAY = p["display"]; deckkit.MONO = p["mono"]
+    INK = p["ink"]; ACCENTS = p["accents"]; BG = p["bg"]
+    # For a CJK (Chinese/Japanese/Korean) deck, ALSO set the East-Asian slot, or the Latin face
+    # (e.g. "Arial Black") tofus on CJK glyphs:
+    deckkit.EAFONT = p["ea"]; deckkit.EADISPLAY = p["ea_display"]
     # build glass cards on a BG-filled slide lit by deckkit.glow(...), per p["surface"]
 
+Each preset carries Latin faces (`font`/`display`/`mono`) AND a CJK fallback pair (`ea`/`ea_display`,
+sensible defaults to adjust per script — the JP/KR equivalents are in references/multilingual.md).
 `image_prompt` is the prefix to feed the generated-template image route (references/
 generated-template.md) so generated plates match the chosen language. Pair with the Style library
 in references/generated-template.md and the per-purpose guidance in references/design-by-purpose.md.
@@ -24,6 +30,7 @@ PRESETS = {
         "bg": C("0A0E27"), "ink": C("F2F5FC"), "muted": C("AEB7CC"),
         "accents": [C("5B8DEF"), C("3DDDFC"), C("A26BFA"), C("FB7185"), C("4ADE80")],
         "font": "Arial", "display": "Arial", "mono": "Consolas",
+        "ea": "Noto Sans CJK SC", "ea_display": "PingFang SC",
         "surface": "glass_card (tint+sheen+rim) on a BG-filled slide lit by 1-2 glow()s; KPI tiles "
                    "use scorecard(glass_tint=); white headline keyword in the accent.",
         "image_prompt": "dark atmospheric gradient background, deep navy to violet, soft neon color "
@@ -34,6 +41,7 @@ PRESETS = {
         "mood": "International Typographic Style — grid, restraint, one red",
         "bg": C("FFFFFF"), "ink": C("111111"), "muted": C("777777"),
         "accents": [C("E2231A")], "font": "Arial", "display": "Arial", "mono": "Consolas",
+        "ea": "Noto Sans CJK SC", "ea_display": "PingFang SC",
         "surface": "strict flush-left columns(), hairline rules, big type-scale ratio, generous "
                    "whitespace; spend the ONE red on the single focal item (accent_one); ghost "
                    "numerals for enumerated grids.",
@@ -45,6 +53,7 @@ PRESETS = {
         "mood": "luxury magazine — warm paper, serif, gold, big photography",
         "bg": C("FAF6EE"), "ink": C("1C1A17"), "muted": C("8A8275"),
         "accents": [C("B58A2E"), C("CBB46A")], "font": "Arial", "display": "Georgia", "mono": "Consolas",
+        "ea": "Noto Serif CJK SC", "ea_display": "Songti SC",
         "surface": "editorial_header (caps eyebrow + serif title + hairline); full-bleed photos under "
                    "scrim_overlay; big italic Georgia numerals (big_numeral); stat_row for figures; "
                    "photos carry all saturation, chrome stays neutral.",
@@ -56,6 +65,7 @@ PRESETS = {
         "mood": "serious dark briefing — FT/Bloomberg gravitas, one-red discipline",
         "bg": C("0E0E12"), "ink": C("ECECEF"), "muted": C("8C8C97"),
         "accents": [C("E0392B"), C("D9A441")], "font": "Arial", "display": "Georgia", "mono": "Consolas",
+        "ea": "Noto Serif CJK SC", "ea_display": "Songti SC",
         "surface": "serif display headlines + caps kicker over a hairline; a designed chart per slide "
                    "(designed_charts) with single-highlight + takeaway_rail; per-slide source line; "
                    "roman-numeral section dividers; atmospheric orb image ONLY on dividers.",
@@ -67,7 +77,7 @@ PRESETS = {
         "mood": "indie print zine — 2-color riso, halftone, hard offset shadows",
         "bg": C("F3ECD9"), "ink": C("1B2A4A"), "muted": C("6B7280"),
         "accents": [C("FF4D8D"), C("F5B301"), C("1B2A4A")], "font": "Arial", "display": "Arial Black",
-        "mono": "Consolas",
+        "mono": "Consolas", "ea": "PingFang SC", "ea_display": "Heiti SC",
         "surface": "offset_shadow 'sticker' cards/numbers/headlines (hard, not soft); mono chrome "
                    "(eyebrows/footers/page-markers); full-bleed duotone halftone illustrations.",
         "image_prompt": "two-color risograph halftone print, navy + fluorescent pink on cream paper, "
@@ -79,6 +89,7 @@ PRESETS = {
         "bg": C("FCF2D8"), "ink": C("1A1A17"), "muted": C("9A9384"),
         "accents": [C("F76302"), C("0548C5"), C("E2342B"), C("1B7A3D"), C("F6BE1A")],
         "font": "Arial", "display": "Arial Black", "mono": "Consolas",
+        "ea": "PingFang SC", "ea_display": "Heiti SC",
         "surface": "cream bg; rounded cards with colored header bands (auto-contrast label); dark "
                    "emphasis bands; scattered Memphis motifs (dots/zigzags/triangles) as margin accents.",
         "image_prompt": "Memphis / New Wave 80s-90s flat illustration, bold black outlines, squiggles "

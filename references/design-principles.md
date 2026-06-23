@@ -45,10 +45,10 @@ carry several related points; there the unit of "one idea" is the clearly-deline
 the whole surface.)*
 
 ## Few words per point
-Points should be phrases, not sentences — often 2–5 words. Good:
-- "Latency dropped 40%"
-- "Cache = single source of truth"
-- "Retry only on timeout"
+Points should be phrases, not sentences — often 2–5 words (in any domain). Good:
+- "Latency dropped 40%" · "Churn down 12%" · "Saves 4 hours a week"
+- "Cache = single source of truth" · "One owner per metric"
+- "Retry only on timeout" · "Photosynthesis needs light"
 
 Bad (what to fix):
 - "We tried several configurations on the staging dataset, running the full pipeline
@@ -61,8 +61,9 @@ the reader can't reconstruct. Terseness is a *presented*-deck target, not a univ
 
 ## Diagrams over text
 A relationship is clearer drawn than described. For structure you are creating from
-scratch (a pipeline, a state machine, a module map with no source figure), prefer native
-shapes (boxes + arrows via deckkit) over bullet lists. But see the next rule first.
+scratch — a pipeline or state machine, but equally a process/workflow, an org or market map, a
+concept taxonomy, a timeline — prefer native shapes (boxes + arrows via deckkit) over bullet lists.
+But see the next rule first.
 
 ## Build native, editable objects — never a flattened slide
 Every slide is **real PowerPoint objects** — live text boxes, shapes, tables — that the user can
@@ -457,7 +458,9 @@ anyway:
   gaps equal; (2) on a CJK deck, a **full-width space (`　`, ~1 em) on one side and an ASCII
   space on the other** (a common mistake) — use the *same* space character, same width, on both sides.
 - Name the closing slide for its purpose — an academic talk ends on **"Conclusion"**,
-  not "Take home"; a status update might end on "Next steps".
+  not "Take home"; a status update might end on "Next steps". Use the label **in the deck's
+  language** (a Chinese deck closes on **结论 / 总结 / 下一步**, not the English word) — the rule is
+  register-appropriate naming, not the English string.
 - Generous whitespace. A slightly empty slide reads as confident; a packed one
   reads as a data dump.
 

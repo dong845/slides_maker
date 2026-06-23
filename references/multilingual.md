@@ -8,11 +8,12 @@ all handle non-Latin text. The deck won't break. The things that make it look *g
 ## One language, consistently (the default)
 
 **A deck is written in ONE language throughout** — every title, bullet, callout, label,
-axis, footer, and the closing slide. The most common failure when building from source
-material in another language (e.g. an English-speaking user + a Chinese codebase, or a
-Chinese paper presented to an English user) is a deck that drifts: English headings over
-Chinese bullets, one slide in the wrong language, a stray translated-vs-untranslated mix.
-Pick the **target language** (step 0) and hold it across the whole deck.
+axis, footer, and the closing slide. This applies to every purpose, not just research. The most
+common failure when building from source material in another language — an English-speaking PM
+making a status deck from a Chinese vendor's docs, a product team localizing a pitch, an
+English-speaking user + a Chinese codebase, or a Chinese paper presented to an English audience — is a
+deck that drifts: English headings over Chinese bullets, one slide in the wrong language, a stray
+translated-vs-untranslated mix. Pick the **target language** (step 0) and hold it across the whole deck.
 
 - **Decide the target language explicitly.** Default to the language the *user* is
   writing in. **When the source material's language differs from the user's**, or it's

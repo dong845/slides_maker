@@ -558,7 +558,7 @@ A few rules that matter (see `references/design-principles.md`):
   *prefer* the whole figure even when it's dense (it's the artifact they know and trust), so
   when a figure feels too busy, your *first* move is to give it a whole slide — large, with an
   **assertion title + a one-line caption** pointing attention to the part that matters (e.g.
-  "rightmost column is Ours") — not to crop it down. Reach for cropping only to (a) **trim**
+  "the orange line is this quarter", or "rightmost column is ours") — not to crop it down. Reach for cropping only to (a) **trim**
   surrounding page header / caption / whitespace, or (b) lift **one cleanly-separable
   sub-figure** that genuinely stands alone. Chopping a multi-panel figure into a few columns
   *loses context and changes what the authors showed* — do it only when the whole is truly
@@ -671,7 +671,7 @@ A few rules that matter (see `references/design-principles.md`):
   distinct fills and **warns if any two adjacent blocks aren't visibly different**; never reuse a
   hue for adjacent blocks and **never use a neutral gray as a category colour** (gray reads as
   disabled, not a category — it makes a coloured row look half-finished). Name the closing slide
-  for its purpose ("Conclusion" for a talk).
+  for its purpose, in the deck's language ("Conclusion" for an English talk; 结论/总结 on a Chinese deck).
 - **Accessibility.** Keep text ≥4.5:1 on its fill (`contrast_ratio`; `chip`/`modbox`
   auto-pick a readable text colour) and never encode meaning by colour alone. Set
   **alt-text** on every informative figure — `deckkit.alt_text(shape, "one-line
@@ -692,9 +692,10 @@ A few rules that matter (see `references/design-principles.md`):
   a typeset one is crisp at any zoom and on-brand.
   - **From a paper → transcribe** the formula precisely (don't alter symbols/indices).
   - **From code/other material → derive** the formula the code implements (a loss, update rule,
-    metric, transform) when the content-planner judges it shows the idea more directly than prose —
-    great for **lab meetings**. It must be a *correct* expression of what the code computes (verify
-    against the code), not an invented or wrongly-simplified one.
+    metric, transform, a pricing/unit-economics calc) when the content-planner judges it shows the
+    idea more directly than prose — useful for **any code-sourced technical deck** (lab meeting,
+    defense, conference method talk, teaching, an eng status readout). It must be a *correct*
+    expression of what the code computes (verify against the code), not invented or wrongly-simplified.
   - Either way the **fidelity rule applies** — verify the rendered math against the source.
   `extract_pdf.py` is for figures/tables; formulas go through `equation_png`.
 - **One language.** Keep the whole deck in the chosen target language — don't drift

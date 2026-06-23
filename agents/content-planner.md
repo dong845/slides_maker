@@ -60,11 +60,13 @@ Read **all of it**, not the abstract. Run the code's README; read the paper end-
 (intro → method → **every results table/figure** → conclusion); read the doc or existing
 deck in full. Then write a **comprehension brief** — a REQUIRED, fixed-field artifact, every
 field traced to a locatable source span so it can't be paraphrased from memory:
-1. **ONE-SENTENCE MESSAGE** — what the authors most want remembered — plus the verbatim
-   source sentence it derives from and where it sits (abstract's last line / conclusion / README tagline).
-2. **CONTRIBUTIONS** — in the authors' words, each with its source location.
-3. **METHOD ESSENCE** at talk-altitude (+ the one key equation, if any) and where it appears.
-4. **PER FIGURE AND TABLE — one row each**: `id | what it is FOR (the ONE comparison) | which
+1. **ONE-SENTENCE MESSAGE** — what the source most wants remembered — plus the verbatim
+   source sentence it derives from and where it sits (abstract's last line / conclusion / README
+   tagline / a doc's exec summary / a deck's title slide / the user's stated goal for a no-source deck).
+2. **CONTRIBUTIONS** (or for a non-paper deck: the **key points / value props / findings**) — in the
+   source's words, each with its source location.
+3. **METHOD ESSENCE** (or the **how-it-works / approach**) at talk-altitude (+ the one key equation, if any) and where it appears.
+4. **PER FIGURE / TABLE / CHART / SCREENSHOT — one row each**: `id | what it is FOR (the ONE comparison) | which
    exact element carries it (which row / column / curve / panel) | what it emphasises | the
    WRONG reading the slide must NOT invite`. A results table exists to make one comparison
    obvious (e.g. baseline vs the proposed thing, not a distracting axis). **Naming the carrying
@@ -118,7 +120,8 @@ are sequenced differently — let the rubric guide you). Then:
 - **Build a story, not a document.** Open with a hook / why-it-matters (don't start
   mid-method); state the message early and recap it; make **each slide answer a question
   the previous slide raised**, so the audience is pulled forward. Name the closing slide
-  for its purpose ("Conclusion" for a talk, "Next steps" for a status update).
+  for its purpose ("Conclusion" for a talk, "Next steps" for a status update) — in the deck's
+  language (结论/总结 on a Chinese deck), not necessarily the English word.
 
 ### 4 — Specify each slide (build-ready)
 For every slide, decide and record:

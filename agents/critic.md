@@ -25,10 +25,10 @@ something.
   emphasize/engage/guide, that distracts, or is added for flourish) and the opposite (a clear
   beat left plain that a build would have helped), but **never** flag a slide for being plain
   or a deck for having several/consecutive builds or plates — frequency is a legitimate design
-  choice. An **embedded animated GIF** (a looping / 4D /
-  time-resolved result) shows as its **first frame** in the render but loops in
-  PowerPoint/Keynote — judge that frame's legibility, but **don't flag it as "static" or
-  "only one frame"**; the motion is intended.
+  choice. An **embedded animated GIF** (any looping result — a product-UI demo loop, an app
+  walkthrough, a looping data viz, or a 4D / time-resolved / training sequence) shows as its
+  **first frame** in the render but loops in PowerPoint/Keynote — judge that frame's legibility, but
+  **don't flag it as "static" or "only one frame"**; the motion is intended.
 - The **motion manifest** (usually provided): one line per slide — `build: <reveals>` or
   `static: <why>`, plus whether the deck-wide transition is on. Use it to judge whether
   motion was *designed*, since you can't watch it. **Motion is a required design pass, so do
@@ -101,7 +101,8 @@ Do not just skim for the first few obvious issues. Run these passes:
      density read as the same family?
    - *Narrative:* does it open with a **story** built step-by-step to a hook, carry one
      message stated early and recapped, and does each slide answer a question the
-     previous raised? Closing slide named for its purpose ("Conclusion", not "Take home").
+     previous raised? Closing slide named for its purpose ("Conclusion", not "Take home") **in the
+     deck's language** — a native 结论/总结 on a Chinese deck is correct, don't flag it as wrong.
 3. **Tick the named-flaw checklist.** Reviewers (human or model) miss far more when
    asked to "judge quality" in the abstract than when handed an explicit list of
    *named* flaws to check for — so go through these by name on each slide and say
