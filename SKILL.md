@@ -159,34 +159,19 @@ the direction gate** (the look is already decided). The four:
      - *Picks design-one* → build a single look shaped to purpose, as above.
      This offer is **skippable, never forced** — a brand-new from-scratch deck is exactly
      when showing options pays off, but a user in a hurry can decline in one click.
-   - *Generate a template with an image tool* → **a bespoke visual identity created with the
-     image tool** (a styled hero/divider illustration) and then reproduced natively so every
-     content block fits it — for a vivid, designed deck (a launch, a festival/event, a brand
-     deck, a playful pitch) where a clean default look isn't enough. **Follow
-     `references/generated-template.md`** — the short version:
-     1. **Gather what the look needs** (one extra mini-interview *now*, before generating): the
-        **scenario/topic** and any **brand colours**; **seed the look from the Style library** in
-        `generated-template.md` (proven styles — Memphis (the sample's), Swiss, Art Deco,
-        Vaporwave, Editorial, Risograph, …) by offering the **3–4 best-fit as options** (+
-        "describe your own" / "I'll provide a reference"); and invite the user to **drop in
-        reference images / a logo / mood material**. Then **tailor the chosen style** to the
-        scenario + brand before generating (the preset is a starting language, not a straitjacket).
-     2. **Generate the template** — a **text-free** full-bleed hero/divider illustration in that
-        style with a calm zone for the title (**no API key needed** — in Codex, use the native
-        imagegen tool call directly and save/copy the selected bitmap into the deck folder; outside a
-        native-imagegen host, fall back to the **Codex CLI** `scripts/generate_images_codex.py` if `codex` is installed →
-        OpenAI `scripts/generate_images_openai.py` only as a fallback; see
-        `references/image-generation.md`), then **derive a matching `style.py`**: pull the
-        palette straight from the image with `deckkit.palette_from_image(...)` and define the
-        template's motif + component helpers, so **native content reuses the same colours,
-        decorations, and card/heading treatments** (this is what makes inserted blocks fit).
-     3. **Render a sample** (the cover + one real content slide) and **ask for feedback**:
-        > **🔴 CHECKPOINT** — show the generated template (hero + a sample content slide) and get the user's OK; iterate (regenerate the image / tune the palette/motifs) until they confirm.
-     4. After confirm, **the look is decided — so SKIP the 3-direction gate** (and any style
-        step); continue the rest of the interview (purpose, audience, source, language) normally.
-     5. Build to it: **dividers/cover use the generated image(s)** (native title on top),
-        **content slides are built natively in the derived `style.py`** so blocks/bullets/cards
-        match the template. Save the confirmed template to the registry so it's reusable.
+   - *Generate a template with an image tool* → **a bespoke visual identity** — a styled, **text-free**
+     hero/divider illustration, then reproduced natively so every content block fits it — for a vivid,
+     designed deck (launch, event, brand, playful pitch) where a clean default isn't enough. **Follow
+     `references/generated-template.md`**: a mini-interview *now* (scenario + brand colours; **seed from
+     its Style library**, offering the 3–4 best-fit as options + "describe your own"/"a reference") →
+     generate the text-free hero with a calm title zone (**no key** — native imagegen in Codex, else
+     `generate_images_codex.py`; see `image-generation.md`) → **derive a matching `style.py`** (palette
+     via `deckkit.palette_from_image`, motif + component helpers, so native blocks match) → render the
+     cover + one real content slide and gate it:
+     > **🔴 CHECKPOINT** — show the hero + a sample content slide; iterate until the user confirms.
+     Then **the look is decided — SKIP the 3-direction gate**, finish the interview normally, and build
+     (image cover/dividers with native title on top; content built natively in `style.py`); save the
+     confirmed template to the registry.
 
    **Never hardcode or assume a specific institution's template.** This skill ships
    to anyone: a brand-new user has an *empty* registry, so they see only generic choices
@@ -503,52 +488,33 @@ back to the planner rather than building on a shallow read.
 > **🔴 CHECKPOINT** — show the deck plan (brief + ledger first) and get the user's OK (including the image opt-in) before building.
 
 ## Step 4 — Build with deckkit
-Write a small per-deck build script that imports `scripts/deckkit.py` rather than
-re-deriving primitives. Helpers: `content_slide`/`title_bar` (a clear title),
-`columns` (equal-width split panels with symmetric margins — use it for *any* left/right
-or N-up layout so the two sides and their flanking white space come out the same width),
-`picture` (place a figure/plate without distorting it — `fit="contain"` keeps edges,
-`fit="cover"` crops to fill), `bullet`, `callout` (auto-grows to fit), `arrow`,
-`chip` (pipelines), `modbox`,
-`content_band(slide)` (the SAFE rect below the title and above the footer — ask for it
-instead of hardcoding "above the footer" y-values), `bottom_callout(slide, x, w, label, body)`
-(a footer-SAFE bottom takeaway — measures itself, anchors to the bottom band, grows UP, so it
-can never collide with the footer; **use this for every bottom callout** instead of a
-hand-picked low `y`), `vstack(slide, x, y, w, blocks, bottom=…)` (measured vertical packer —
-**equal gaps + no overlap guaranteed by construction**, raises at build time if content
-overflows the band; pass `(measure_callout(...)/measure_bullets(...)/measure_text(...), draw)`
-blocks), and the `measure_*` helpers to know a block's true height BEFORE placing it,
-`palette(n, ACCENTS)` (n **distinct, contrast-checked** category fills for a chip/card/stage
-sequence — warns if adjacent blocks aren't visibly different; never a gray filler),
-`palette_from_image(path, n)` (extract a **generated template's** palette from its image so
-native content matches it — the bridge for the image-tool template branch),
-`scorecard` / `leaderboard` / `takeaway_rail` (KPI tiles · ranked rows keyed to a chart · the
-"so-what" rail beside a chart — the data-furniture; pair with the chart roster in
-`references/data-viz.md` + `scripts/designed_charts.py`),
-`change_stat` (a `before → after` change stat with the AFTER value emphasized large and **vertically
-centred** with the small before+arrow — avoids the baseline-mix where a small arrow/prefix sinks
-below a big number),
-`glass_card` / `glow` / `scrim_overlay` (frosted-glass card · soft radial glow · graduated photo
-scrim — for dark/glassmorphism decks and text-over-photo legibility; built on `box`'s new
-gradient+alpha fill) and `offset_shadow` (hard letterpress/riso shadow),
-`editorial_header` (caps eyebrow + title + hairline), `big_numeral` (oversized index figure,
-marker/ghost — never wraps), `stat_row` (editorial figure+unit+caption row), `quadrant` (2×2 with
-meaningful axes), `hub_spoke` (radial one-core-many-peers), `timeline` (native h/v with one
-highlight), `before_after`/`image_tab`/`photo_triptych` (editorial photo kit), `corner_frame`
-(L-brackets for a sparse closing), and `accent_one` (one-accent discipline — colour only the focal item),
-`cover` / `colophon` (a publication-style cover + a mirrored closing colophon — bookend the deck;
-stronger than a plain title/"Thanks"), `sources_page` (mono numbered references — a research deck's
-colophon), `part_eyebrow` / `page_marker` (tracked-caps mono eyebrow + tiny page marker — route
-chrome through one mono font for a quiet signature), `specimen_card` (rule-on-top card with a giant
-glyph/number specimen — comparing fonts/brands/metrics), `wireframe_grid` + `spec_list` (a
-self-demonstrating annotated grid + mono spec math — for decks ABOUT layout/design/systems),
-`photo_card` (translucent tinted card to hold text on a photo), `backdrop_motif` (faint full-bleed
-grid/texture + accent disc to bookend cover ↔ closer),
-`table` (booktabs data tables — highlight the key row to foreground the authors'
-comparison), `code_block` (monospace code panels with line-highlight),
-`hrule` (table rules), `equation_png` (formal LaTeX-style math via matplotlib) /
-`eq_par` (quick editable inline math), `contrast_ratio` (check a text colour against
-its fill clears ~4.5:1 before you commit to it). If the user gave a **style example** (Q4),
+Write a small per-deck build script that imports `scripts/deckkit.py` (don't re-derive primitives;
+full signatures + behaviour are in its docstrings). The helper set, by job:
+- **Chrome:** `title_bar`/`content_slide`, `footer`, `editorial_header` (caps eyebrow + title +
+  hairline), `part_eyebrow`/`page_marker` (mono eyebrow + page marker).
+- **Safe layout — measure or anchor, never hand-pick a y:** `columns`/`rows` (equal split panels with
+  symmetric margins), `content_band` (the SAFE rect below title / above footer), **`bottom_callout`**
+  (footer-safe bottom takeaway — anchors to the band, grows UP, can't collide), **`vstack(…, bottom=)`**
+  (measured stack: equal gaps + no overlap by construction, errors at build time on overflow) with the
+  `measure_callout/measure_bullets/measure_text` helpers, `picture` (`fit="contain"` keeps edges /
+  `"cover"` crops). *(These exist so you never hardcode a low `y` — the recurring overlap/footer bug.)*
+- **Text & blocks:** `bullet`, `callout` (auto-grows), `chip`, `modbox`, `arrow`, `table` (highlight
+  the key row), `code_block`, `hrule`.
+- **Colour:** `palette(n, ACCENTS)` (n distinct, contrast-checked fills — warns on adjacent same-hue;
+  never a gray filler), `palette_from_image` (match a generated template's palette), `accent_one`
+  (one-accent discipline), `contrast_ratio` (verify ≥~4.5:1 before committing).
+- **Data furniture & charts:** `scorecard`/`leaderboard`/`takeaway_rail`, `change_stat` (baseline-
+  centred before→after), `stat_row`, `big_numeral`; **editable native charts** `native_chart` /
+  `native_dual_axis` / `native_donut` / `native_pareto` / `native_bubble`, plus the raster recipes in
+  `scripts/designed_charts.py` — pick per `references/data-viz.md`.
+- **Diagrams / patterns:** `quadrant`, `hub_spoke`, `timeline`, `before_after`/`image_tab`/
+  `photo_triptych`, `wireframe_grid`+`spec_list`, `corner_frame`, `photo_card`, `backdrop_motif`.
+- **Surface (dark / glass / print):** `glass_card`/`glow`/`scrim_overlay` (gradient+alpha fill),
+  `offset_shadow` (hard letterpress/riso shadow).
+- **Publication & math:** `cover`/`colophon` (bookend the deck), `sources_page`, `specimen_card`;
+  `equation_png` (LaTeX-style math) / `eq_par` (inline).
+
+If the user gave a **style example** (Q4),
 build to your **style brief** of it — match its palette/accents, density, title
 treatment, and figure/table/equation motifs (override the deckkit defaults to suit).
 A few rules that matter (see `references/design-principles.md`):
@@ -642,24 +608,17 @@ A few rules that matter (see `references/design-principles.md`):
     is not enough on a busy plot. **(c) Always view the rendered PNG** and fix anything that looks off
     (aliasing, clipped labels, an occluding legend, a squished aspect) — a wrong-looking plot misleads
     even when the math is right.
-- **Generated visual plates (atmosphere / conceptual) — by taste & purpose; full rules in
-  `references/image-generation.md`.** Generate where your design sense says a plate helps (no
-  quota), styled to the deck's purpose+topic, **opt-in only**; never bake words/numbers/labels/
-  charts/logos into a plate (those stay editable objects or real assets). **Each plate must be
-  *highly topical* — depict THIS slide's actual subject, not a generic "fancy" image that could sit on
-  any slide** (name what it shows; if you can't, cut it). **And place plates consistently — never a
-  one-off generated *header* on a single body slide** (title chrome is `title_bar`'s; a content plate
-  goes full-bleed / side-panel / inline, with one role+art-direction across the plated slides). Build prompts with
-  `scripts/image_prompts.py` (a sub-outline of *only* the plated slides), then generate by the
-  **auto-detected** source — **no API key needed**: native imagegen (Codex tool call, then save/copy
-  the bitmap into the deck folder) → else the **Codex CLI**
-  `generate_images_codex.py` if `codex` is installed (no key) → OpenAI `generate_images_openai.py`
-  (+`OPENAI_API_KEY`) only as a fallback if neither exists. Use what's present and say so; ask only if
-  none is available (see `image-generation.md`); keep
-  assets in `~/Downloads/<deck>/assets/generated/` and place with `deckkit.picture(...)` —
-  `fit="contain"` when a subject/edges must stay whole, `fit="cover"` only for edge-tolerant
-  texture. Render-check: calm space behind text, no pseudo-text/fake charts, subject not cropped,
-  real things factually right.
+- **Generated visual plates (atmosphere / conceptual) — by taste & purpose, opt-in; full mechanics in
+  `references/image-generation.md`.** Generate where it genuinely helps (no quota), styled to the deck;
+  **never bake words/numbers/labels/charts/logos into a plate** (those stay editable objects / real
+  assets). **Each plate must be *highly topical* — depict THIS slide's actual subject, not a generic
+  "fancy" image that could sit on any slide** (name what it shows, else cut). **Place plates
+  consistently — never a one-off generated *header* on a single body slide** (title chrome is
+  `title_bar`'s; a content plate goes full-bleed / side-panel / inline, one role + art-direction across
+  the plated slides). Generate with **no key** (auto-detect: native imagegen → `generate_images_codex.py`
+  → OpenAI fallback; build the manifest with `image_prompts.py`), keep assets in
+  `~/Downloads/<deck>/assets/generated/`, place with `deckkit.picture(fit="contain"|"cover")`, and
+  render-check (calm space behind text, no pseudo-text/fake charts, subject whole, real things right).
 - **Speaker notes — for a PRESENTED deck, put the spoken script in the notes, not on the slide.**
   For any deck the user will *present* (especially a conference talk, defense, or lecture), move the
   full sentences off the slide into speaker notes with `deckkit.speaker_notes(slide, "…")`.
@@ -1003,102 +962,28 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   deck (research the venue); **never** let the deck drift between languages.
 
 ## Files
-- `scripts/deckkit.py` — import this; build helpers for both template & blank decks.
-- `scripts/inspect_template.py` — print a template's layouts/placeholders/logos.
-- `scripts/render_deck.py` — pptx → one PNG per slide for the verify + critic loop. The
-  real, cross-platform implementation (macOS / Linux / WSL / native Windows): finds
-  LibreOffice on PATH or in OS-specific install locations (incl. `C:\Program Files\…`),
-  or set `SOFFICE`. `render_deck.sh` is a thin bash shim that forwards to it.
-- `scripts/lint_deck.py` — deterministic layout lint on a built `.pptx`: flags off-slide
-  overflow, solid block/image overlaps (neither contained — ignores intentional layering), and
-  footer collisions. Run after rendering, before the critic; exits non-zero on findings.
-- `scripts/check_env.py` — one-time preflight; verifies LibreOffice + python deps and
-  prints the exact fix for anything missing. Run it if a render ever fails. `check_env.sh`
-  is a thin bash shim that forwards to it. On native Windows run the `.py` directly.
-- `scripts/install_skill.py` — terminal installer/import helper; copies this skill into
-  `~/.codex/skills/slide-maker`, `~/.claude/skills/slide-maker`, or both.
-- `requirements.txt` — Python package dependencies for terminal use; install with
-  `python -m pip install -r requirements.txt` if `check_env.py` reports missing modules.
-- `scripts/anim.py` — inject purposeful PowerPoint builds/animations (click-reveal,
-  fade) that python-pptx can't; pair with `references/animation.md`.
-- `scripts/designed_charts.py` — the "designed plots" roster (donut+KPI, dumbbell, slope,
-  dual-axis, bubble+trend, Pareto) — themed, single-highlight matplotlib recipes beyond default
-  bars (raster PNGs; pass `font=` for CJK); pair with `references/data-viz.md`.
-- `deckkit.native_chart` / `native_dual_axis` / `native_donut` / `native_pareto` / `native_bubble` —
-  **editable** native PowerPoint charts (line/column/bar, two-scale dual-axis, doughnut+KPI, Pareto,
-  bubble; slope = a 2-point line): click-to-edit, **any-language-safe (no tofu)**. Prefer over the
-  raster `designed_charts` for non-Latin decks or when the user will edit the chart — `designed_charts`
-  is then only for dumbbell or a deliberate matplotlib look (`references/data-viz.md`).
-- `scripts/presets.py` — named **design-language presets** (`preset("glassmorphism"|"swiss"|
-  "editorial_paper"|"editorial_report"|"risograph"|"memphis")`): one switch returns a coherent
-  palette + fonts + surface treatment + image-prompt style. Starting languages, not straitjackets.
-- `scripts/assemble.py` — assemble a large deck from parallel-authored section modules
-  into one file (robust, no .pptx merge); pair with `references/large-deck-orchestration.md`.
-- `scripts/archetypes.py` — build the same representative slides (cover/bullets/diagram/
-  data) for each candidate direction, for collaborative mode's direction gate.
-- `scripts/image_prompts.py` — create text-free image generation prompt manifests and
-  expected filenames for optional slide visual plates.
-- `scripts/generate_images_codex.py` — **no-API-key** image generation (the default outside a
-  native-imagegen host; inside Codex, prefer the native imagegen tool call): shells out to `codex exec` (the hosted `image_generation` tool), decodes the
-  image from the Codex session rollout, and writes the manifest's `slide-XX.png` files. Auto-detected
-  when `codex` is installed/logged-in; prompts are passed verbatim. **No key, no per-image cost.**
-- `scripts/generate_images_openai.py` — **fallback** OpenAI Images API path (only when neither native
-  imagegen nor `codex` is available): reads `image_prompt_manifest.json` and writes `slide-XX.png`
-  when `OPENAI_API_KEY` is set. Same manifest + flags as the Codex script.
-- `scripts/extract_deck.py` — pull text/tables/figures OUT of an existing deck (the
-  redesign path), so a rebuild reuses the user's real content and figures.
-- `scripts/extract_pdf.py` — pull a figure OUT of a source PDF/paper as a clean PNG.
-  **`figures`/`figure`/`autofig` auto-detect and crop figures precisely from the paper**
-  (caption-anchored + snap-to-content, with `⚠ CHECK` flags) — the primary "crop from the
-  paper" path; `page`/`crop`/`images` are the manual fallback.
-- `scripts/crop_helper.py` — work on an image *by looking, not guessing*: `grid` overlays a
-  labelled ruler to read a crop box off, `crop` (`--snap`) cuts it, `trim` snaps any image to
-  its content (removes background, never clips a legend/axis — light or dark bg), and `panel`
-  reassembles chosen columns/rows out of a dense comparison grid (keeping headers + labels).
-- `scripts/export_notes.py` — export a deck's speaker notes to a plain-text rehearsal
-  script (`python scripts/export_notes.py deck.pptx`); offer it at hand-off.
-- `agents/content-planner.md` — the constructive planner's brief: understand the material
-  deeply (or web-research when there's none), then design the narrative arc + a build-ready
-  per-slide plan (takeaway, content, visual source, layout, motion, proposed image with a
-  purpose-derived style). Dispatched in Step 1; its plan is the Step 3 checkpoint.
-- `agents/critic.md` — the independent critic's brief + output JSON schema.
-- `agents/arbiter.md` — the independent finding-arbiter's brief + per-finding verdict
-  JSON; high-stakes cross-validation of critic findings before the actor acts, plus
-  fix-verification on re-render. A no-op for low-stakes decks.
-- `agents/openai.yaml` — Codex-facing display metadata and default prompt for installed
-  skill lists/chips.
-- `references/design-principles.md` — the craft / the "why".
-- `references/review-rubrics.md` — universal + per-purpose review criteria.
-- `references/style-analysis.md` — how to study & reproduce a style example (Q4).
-- `references/design-by-purpose.md` — per-purpose design language for the
-  "design a clean one" branch (palette/density/layout/chrome tuned to the purpose).
-- `references/image-generation.md` — when and how to use native imagegen for optional
-  text-free visual plates without compromising source fidelity or editability.
-- `references/data-viz.md` — designed plots: pick the chart TYPE per argument (donut+KPI,
-  dumbbell, slope, dual-axis, bubble+trend, Pareto), themed + single-highlight + a "so-what"
-  rail; the `designed_charts.py` recipes + the `scorecard`/`leaderboard`/`takeaway_rail` furniture.
-- `references/generated-template.md` — Q1's **"generate a template with an image tool"** branch:
-  mini-interview → generate a text-free hero/divider illustration → derive a matching `style.py`
-  (palette via `palette_from_image`, motif + component helpers) → feedback gate → skip the
-  direction gate → build content natively so blocks fit the generated look; save to the registry.
-- `references/font-guidance.md` — pick portable fonts, avoid tofu, recover from missing
-  fonts; brand-font and CJK pointers.
-- `references/animation.md` — when/why to animate, craft rules, and how to add
-  purposeful click-builds with `scripts/anim.py`.
-- `references/large-deck-orchestration.md` — when/how to parallelize a big deck by
-  section (shared style module + assembly + critic panel); the default is single-author.
-- `references/collaborative-mode.md` — the opt-in, checkpoint-gated mode (direction →
-  outline → draft); pair with `scripts/archetypes.py`.
-- `references/multilingual.md` — non-Latin decks (CJK fonts via `deckkit.EAFONT`,
-  CJK typography, portability, RTL limits).
-- `references/examples/style_example.py`, `section_example.py` — the shared-style +
-  section-module convention for the fan-out path.
-- `references/redesign-existing-deck.md` — the redesign path: diagnose the user's own
-  deck first, confirm scope, then rebuild reusing their content/figures.
-- `references/handoff-and-iteration.md` — what to tell the user at delivery (the deck is
-  editable; the build script is the source of truth) and how to iterate after delivery
-  WITHOUT overwriting their manual edits.
-- `references/examples/build_example_generic.py` — a brand-free worked build script.
-- `~/.codex/slide-templates/` / `~/.claude/slide-templates/` — the **user's** personal
-  template registry for Codex / Claude Code respectively (NOT part of this skill); read it
-  for template choices, write new profiles to the active host's registry. Empty for a new user.
+**Scripts** (`scripts/`):
+- `deckkit.py` — the build helpers (template & blank decks), **incl. the editable native charts**
+  (`native_chart`/`native_dual_axis`/`native_donut`/`native_pareto`/`native_bubble` — click-to-edit,
+  any-language-safe); the build's source of truth. Full signatures in its docstrings.
+- `render_deck.py` — pptx → one PNG per slide (verify + critic loop); finds LibreOffice cross-platform
+  or set `SOFFICE` (`.sh` is a shim). `check_env.py` — preflight if a render fails. `inspect_template.py`
+  — a template's layouts/placeholders/logos. `requirements.txt` / `install_skill.py` — deps / installer.
+- `lint_deck.py` — deterministic layout lint (off-slide overflow · block/image collision [containment
+  excluded] · footer-zone intrusion · text-past-card · uneven rows); run after render, before critic;
+  non-zero on findings. `smoke_deckkit.py` — regression guard for the helpers.
+- `anim.py` — PowerPoint click-builds/transitions (pair `references/animation.md`).
+- `designed_charts.py` — raster matplotlib chart recipes (use only for dumbbell or a deliberate
+  look — prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
+  design-language presets (glassmorphism/swiss/editorial_paper/editorial_report/risograph/memphis).
+- `image_prompts.py` (build the prompt manifest) → `generate_images_codex.py` (no-key, Codex CLI) /
+  `generate_images_openai.py` (API fallback). `archetypes.py` (direction-gate previews) ·
+  `assemble.py` (assemble a sectioned deck) · `export_notes.py` (notes → rehearsal script).
+- `extract_pdf.py` (crop a figure from a PDF — `figures`/`figure`/`autofig` auto-detect, `page`/`crop`
+  manual) · `crop_helper.py` (crop/trim/panel **by looking, not guessing**) · `extract_deck.py` (pull
+  content out of an existing deck — the redesign path).
+**Agents** (`agents/`): `content-planner.md` (Step-1 deep-understand + the build-ready per-slide plan; the Step-3 checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `openai.yaml` (Codex display metadata).
+
+**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why") · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
+
+**Registry** (NOT part of the skill): `~/.codex/slide-templates/` (Codex) · `~/.claude/slide-templates/` (Claude Code) — the user's saved templates; read for choices, write new `profile.md`s to the active host. Empty for a new user.
