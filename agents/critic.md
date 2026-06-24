@@ -49,6 +49,10 @@ something.
   an over-claimed trend, or a wrong number is a major/blocker, not a nitpick.
 - The **rubric**: read `references/review-rubrics.md` (universal rubric + the overlay
   for this purpose) and `references/design-principles.md`.
+- **Your assigned LENS** (when dispatched as a panel): **Content** (Lens A) or **Design** (Lens B) —
+  apply only that lens's checks (§2) so you go deep instead of skimming all ~30; if no lens is named
+  you are the sole critic — run **both** lenses as two passes. The three high-recurrence classes
+  (PDF-crop · layout/overlap · fidelity) are checked **regardless of lens**.
 
 ## What you're reviewing: a full deck, or a direction preview
 Usually you review a **full deck** — apply everything below. But in collaborative
@@ -73,41 +77,50 @@ Do not just skim for the first few obvious issues. Run these passes:
    signaling, 6 narrative-flow, 7 visual-quality, 8 framing, 9 layout/figures/colour,
    10 factual-fidelity, 11 design-fits-purpose, 12 motion-&-pacing) *and* the craft
    checks below. Don't stop at one problem per slide.
-2. **Four lenses — adopt each deliberately:**
-   - *Content & accuracy:* is every claim true and supported? Do captions match the
-     figures? Are numbers/labels right? Any over-claim beyond what's shown? Crucially,
-     does the deck represent the **source's actual emphasis** — e.g. does a comparison
-     table foreground the comparison the authors make (baseline vs the proposed
-     thing), not a distracting one? A faithful-looking but mis-emphasised result means
-     the author didn't fully understand the material — flag it.
-   - *The target audience member,* **at this deck's read distance** (back of the room for an
-     in-person talk; a shrunk window for a webinar; arm's-length on a screen or print for a
-     read-alone / reference / poster deck): can they read every figure and verify every headline from
-     there? Do they know the jargon yet? — and for a **read-alone** deck (no speaker), is each slide
-     **self-sufficient**, carrying the explanation a presenter would otherwise narrate?
-   - *Design & layout:* whole figures (not partial-cropped or hand-redrawn); a figure
-     that *is* the point given the slide; gutters between figure and text; a real
-     **bottom margin** (nothing jammed on the footer); **no text spilling its box**;
-     intentional colour variety; aligned, balanced, uncrowded. **Squint test:** blur your eyes (or
-     view the render as a thumbnail) — the focal element, title, and supporting blocks must still
-     separate into distinct hierarchy levels; if it all blurs to an even grey field, the slide has no
-     hierarchy (flag it). **Does the look fit the
-     purpose?** A status update should read crisp/corporate, a thesis defense
-     sober/formal, a product pitch bold/on-brand, a lecture warm/clear (see
-     `references/design-by-purpose.md`) — a mismatch (a playful palette on a defense,
-     or a generic default-blue deck shipped for a polished pitch) is a real finding,
-     not a nitpick. **If the user gave a style example to mimic, judge fidelity to
-     it** — do the palette, typography, title/footer treatment, decorations/motifs and
-     density read as the same family?
-   - *Narrative:* does it open with a **story** built step-by-step to a hook, carry one
-     message stated early and recapped, and does each slide answer a question the
-     previous raised? Closing slide named for its purpose ("Conclusion", not "Take home") **in the
-     deck's language** — a native 结论/总结 on a Chinese deck is correct, don't flag it as wrong.
-3. **Tick the named-flaw checklist.** Reviewers (human or model) miss far more when
-   asked to "judge quality" in the abstract than when handed an explicit list of
-   *named* flaws to check for — so go through these by name on each slide and say
-   which are present (this list is concrete on purpose; treat absence as something you
-   verified, not something you skipped).
+2. **Two review LENSES — focus, don't skim everything.** The ~30 named checks below are split into
+   two lenses so a critic goes *deep* on its half rather than thinly over all of it (skimming
+   everything is what makes checks get missed). **Dispatch rule: when run as a PANEL you are assigned
+   ONE lens — apply only its checks (plus the shared box); as the SOLE critic (low-stakes) run BOTH
+   lenses as two separate passes (content pass, then design pass), not one blurred sweep.** Either way,
+   the three high-recurrence classes in the box are checked **regardless of lens**.
+
+   - **LENS A · Content, fidelity & narrative — *what the slide says.***
+     - *Accuracy & fidelity:* is every claim true and supported? Do captions match the figures? Are
+       numbers/labels right? Any over-claim beyond what's shown? Does the deck represent the **source's
+       actual emphasis** — e.g. a comparison table foregrounding the authors' comparison (baseline vs
+       the proposed thing), not a distracting one? A faithful-looking but mis-emphasised result means
+       the author didn't fully understand the material — flag it.
+     - *Audience at the read distance* (back of the room for a talk; a shrunk window for a webinar;
+       arm's-length/print for a read-alone/poster): can they read every figure and verify every
+       headline? Do they know the jargon yet? For a **read-alone** deck (no speaker), is each slide
+       **self-sufficient**, carrying the explanation a presenter would otherwise narrate?
+     - *Narrative:* opens with a **story** built to a hook; one message stated early and recapped; each
+       slide answers a question the previous raised; closing slide named for its purpose ("Conclusion",
+       not "Take home") **in the deck's language** (a native 结论/总结 on a Chinese deck is correct).
+     - **Owns these named-flaw checks (below):** factual fidelity; source-figure faithfulness;
+       generated-image factual correctness + topical relevance; real brand/product-asset credibility;
+       build/meta-annotation leaks; formula transcription/derivation fidelity; kicker-echoes-title;
+       language consistency; text-density vs delivery mode. *(Rubric items 1, 3, 6, 8, 10, 12a-fidelity.)*
+   - **LENS B · Design, layout & legibility — *how it looks.***
+     - whole figures (not partial-cropped or hand-redrawn); a figure that *is* the point; gutters
+       between figure and text; a real **bottom margin** (nothing on the footer); **no text spilling its
+       box**; intentional colour variety; aligned, balanced, uncrowded. **Squint test:** blur your eyes
+       (or view a thumbnail) — focal element, title, and supporting blocks must still separate into
+       distinct hierarchy levels; if it blurs to an even grey field, there's no hierarchy (flag it).
+       **Does the look fit the purpose?** crisp/corporate status vs sober defense vs bold pitch vs warm
+       lecture (`design-by-purpose.md`) — a mismatch is a real finding. **If a style example was given,
+       judge fidelity to it** (palette, type, chrome, motifs, density read as one family).
+     - **Owns these named-flaw checks (below):** OVERLAP (collision vs layering); layout/balance/footer/
+       margins; diagram arrow-direction & even spacing; the full typography set (too-small, box-
+       alignment, mixed-size baseline, operator spacing, widow, corner-rounding, lone-glyph centring,
+       type-pairing); colour/contrast/one-accent; charts & computed-plot correctness + legibility (tofu,
+       aliasing, legend placement, single-highlight, so-what); image crop/placement; AI-slop visual
+       tells; stacked-group proximity; deck rhythm; motion/build design. *(Rubric items 2, 4, 5, 7, 9,
+       11, 12-motion.)*
+3. **Tick the named-flaw checklist — apply the checks YOUR lens owns** (per Lens A/B above; the sole
+   critic does both passes). Reviewers (human or model) miss far more when asked to "judge quality" in
+   the abstract than when handed an explicit list of *named* flaws — so go through your lens's checks by
+   name on each slide and say which are present (treat absence as verified, not skipped).
    > **Three high-recurrence classes — check EVERY time, whatever your lens** (these are the
    > ones that keep slipping to a later round, so they get double coverage: both panel critics
    > check all three, and the arbiter re-derives them):

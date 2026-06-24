@@ -51,9 +51,9 @@ Two time sinks compress well: ingesting material/assets, and the critic loop.
   building. Parallelism speeds *gathering*, never *understanding*.
   Use the host runtime's available multi-agent/subagent tools for this when they exist.
 - **Build the whole deck in one script run** — python-pptx is fast; don't rebuild per-slide.
-- **Scale the critic to stakes** (step 5): one critic for a quick internal deck; the
-  multi-critic, multi-round panel only for high-stakes. The loop is non-negotiable;
-  its *weight* is what you tune.
+- **Scale the critic to stakes** (step 5): two focused **lens** critics (content · design) even for a
+  quick deck; the larger multi-critic + arbiter, multi-round panel for high-stakes. The loop is
+  non-negotiable; its *weight* is what you tune.
 
 **Two modes.** *Auto* (default): interview, then build and run the critic loop to a high
 bar yourself. *Collaborative* (opt-in — when the user wants to see options or approve as
@@ -860,14 +860,19 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
    ("consent"/"revise"), per-slide `findings` (severity + concrete fix), strengths.
    - **Scale the critic to the stakes — and run it as a panel** (this is the main
      speed lever):
-     - *Low-stakes* (research/lab meeting, work status update, teaching) → **one
-       critic** is enough.
+     - *Low-stakes* (research/lab meeting, work status update, teaching) → **two FOCUSED lens
+       critics in parallel** — one **Lens A (content · fidelity · narrative)** and one **Lens B
+       (design · layout · legibility)** per `agents/critic.md` §2, each applying **only its lens**
+       (plus the shared high-recurrence box). Two focused agents catch far more than one generalist
+       wading through all ~30 checks, at the same wall-clock; **skip the arbiter pass** for low-stakes.
      - *High-stakes* (conference, academic job talk / faculty interview, thesis
        defense, exec/stakeholder/pitch) → dispatch a
-       **panel of 2–3 critics in parallel with different lenses** (content/accuracy,
-       design/layout, back-of-room audience), then **merge and de-dup** their findings —
-       independent reviewers catch far more than one, in parallel at no extra
-       wall-clock. **Scale the panel *within* high-stakes by length & scope, not just
+       **panel of 2–3 critics in parallel, each assigned ONE lens** from `critic.md` §2 (Lens A
+       content/fidelity, Lens B design/layout, + optionally a back-of-room/audience pass), then **merge
+       and de-dup** their findings — independent, *focused* reviewers catch far more than one, in
+       parallel at no extra wall-clock. **Each critic reads `critic.md` but applies only its assigned
+       lens, so no single agent carries the whole ~30-check brief** (the load split that prevents
+       missed checks). **Scale the panel *within* high-stakes by length & scope, not just
        purpose:** a short single-paper talk (e.g. a ~10-min conference oral) takes the
        **light** end — 2 critics, and **skip the arbiter pass** below; a long, career-
        defining deck (a 45-min job talk, thesis defense, or investor pitch) earns the
@@ -895,7 +900,7 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
        hurts** is promoted with the arbiters' *better* fix, not dropped. The exact
        promote/discard rule lives in `references/review-rubrics.md` so it stays
        consistent. Net effect: the actor fixes real flaws, not phantoms. **Low-stakes
-       skips all of this** — one critic, one consent, unchanged.
+       skips the arbiter/confirmation machinery** — just the two focused lens critics, merge, one consent.
 2. **Decide.** Stop as soon as `verdict == "consent"` (the critic would present it
    as-is) — not merely when the last round's issues are fixed. Cap the rounds by
    stakes so the loop converges fast: **low-stakes ≈ up to 2 rounds, high-stakes up
