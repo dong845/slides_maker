@@ -13,6 +13,26 @@ understand or follow, cut it.**
 slide's `<p:timing>` XML). The model: draw your static base, then wrap each
 reveal-on-click chunk in a build step.
 
+**The bread-and-butter build = reveal bullets / blocks ONE BY ONE ("appear").** This is the
+animation to reach for by default on a content slide with several points or blocks: each click brings
+in the next bullet/card/stage as you talk to it, so the audience isn't reading point 4 while you're on
+point 1. It's done by putting **each item in its own `step()`** (deckkit draws each bullet as its own
+shapes, so one `bullet()` call per item works):
+```python
+from anim import Build
+b = Build(s)
+title_bar(s, "...")                       # static base — always visible
+yb = 1.6
+with b.step(): yb = bullet(s, 0.6, yb, 8.8, [("First point", "…")])   # click 1
+with b.step(): yb = bullet(s, 0.6, yb, 8.8, [("Second point", "…")])  # click 2
+with b.step(): yb = bullet(s, 0.6, yb, 8.8, [("Third point", "…")])   # click 3
+with b.step(): bottom_callout(s, 0.6, 8.8, "TAKEAWAY", "…")           # click 4 — the punchline last
+b.apply(effect="appear")                  # or "fade" for a soft one-by-one
+```
+`effect="appear"` (instant) or `"fade"` (soft) — both reveal one item per click; pick by taste. The
+same pattern reveals **cards, pipeline stages, quadrant cells, or a final callout** one at a time. This
+in-slide reveal — **not** a slide-to-slide transition — is what "add animation" means.
+
 ## When a build genuinely helps
 **Actively scan each (presented) slide's layout against this list** — animate the ones whose shape
 fits, leave the rest plain. The recurring build-friendly layouts:
@@ -57,33 +77,68 @@ build there would add nothing. Never animate for flourish, for "consistency" wit
 built slides, or to fill a slide that feels plain — fix the layout instead.
 
 ## Animated GIFs / looping results — insert the GIF, don't freeze it
-When a result is a GIF (a product-UI demo loop, an app walkthrough, a looping data viz, a
-time-resolved/4D sequence, a training run), **embed the GIF itself** — never extract one frame and
-show that. `add_picture` embeds the real animated GIF (verified: GIF89a + all frames preserved,
-content-type image/gif), and **PowerPoint and Keynote loop it automatically in slideshow**. When
-the *motion is the result* (e.g. a UI flow in a pitch, an interaction in a teaching deck, a physics
-simulation, a rotating 3D model, a before/after loop) — a static frame discards what you're showing.
-```python
-s.shapes.add_picture("results/demo_loop.gif", Inches(x), Inches(y), height=Inches(h))
-```
-- Size and place it like any figure (whole, with a legible deck-font label + takeaway).
-- The render (LibreOffice → PNG) and the static critic see only the **first frame** — that
-  is expected; the GIF still loops in the delivered `.pptx`. Tell the user in the hand-off
-  that the animation plays in PowerPoint/Keynote.
-- Two GIFs side by side (e.g. before vs after, baseline vs improved) makes a strong before/after that
-  *moves* — both loop together.
-- Keep file size sane: prefer the source GIF; if you generate one, palette-optimize it.
+When a result is a GIF, **embed the GIF itself** — never extract one frame and show that. When the
+*motion is the result*, a static frame discards what you're showing. This comes up across **every
+kind of deck**: a product/UI demo loop or app walkthrough (pitch / product), an interaction or
+worked animation (teaching), a looping data viz, a 4D / time-resolved / cine sequence, an
+optimisation or training-run trajectory, a simulation, segmentation-over-time, or a rotating 3D
+model (research / status / conference). Whenever the user hands you a GIF, treat it as live content,
+not a still.
 
-## The calm deck-wide transition is a separate, low-distraction choice
-Separate from click-builds, a subtle **slide-to-slide transition** applied across the
-whole deck (`slide_transition(s, "fade")` on each slide, ~0.4–0.5s) adds polish and
-continuity without anyone noticing it — a uniform fade is the one motion that's always fine
-to apply broadly (it never distracts). So it's a reasonable **default-on** choice — but
-applying it deck-wide *or* omitting it for a static/print feel are both legitimate; just
-decide deliberately and record the choice in the motion manifest. It's independent of builds:
-use it on a deck whose individual slides are otherwise static, and combine it with
-click-builds on the few slides that warrant them. Keep it calm (fade/none); avoid
-theatrical transitions (cube, push, morph-everywhere).
+**Use `deckkit.gif()`** — a GIF-aware wrapper over `picture()`. It places the GIF **whole and
+undistorted** (`fit="contain"` — a square cine clip is never stretched to 16:9; the original bytes are
+embedded so every frame survives and **PowerPoint / Keynote loop it in slideshow**), sets alt-text,
+**warns on a heavy file** (a big cine GIF bloats the `.pptx` and stutters live — palette-optimise /
+downsample), and **warns if it's a single still** (use `picture()` then). Size and place it like any
+figure — whole, on a grid, with a legible deck-font label.
+```python
+import deckkit as dk
+L, R = dk.columns(2, slide=s)                 # GIF beside its quant panel — a balanced split
+dk.gif(s, "results/cine_recon.gif", *R, alt="4D cine reconstruction, one cardiac cycle")
+```
+
+### Make the FIRST frame representative — it's what everything-but-slideshow shows
+A `.gif` loops only in **slideshow**. In the editor, in a **PDF/print export**, in the LibreOffice
+render, and to the static critic, the GIF shows its **first frame** — and a GIF has no separate
+poster frame (the first frame *is* the poster). A cine / 4D / training-run GIF that **starts on a
+blank, black, or "loading" frame** therefore looks *broken* everywhere except live playback. So:
+- **Check it:** `deckkit.gif_poster(path, "first.png", frame="first")` writes frame 0 — *view it*. If
+  it's blank/unrepresentative, ask the user for (or regenerate) a GIF that **starts on a meaningful
+  frame** (e.g. end-diastole for a cardiac loop, the trained state for a training run).
+- **Give the critic a real still:** `gif_poster(path, "rep.png", frame="auto")` picks the
+  highest-content frame — hand that to the critic / use it as a static fallback for a print export, so
+  legibility is judged on a frame that actually shows the result, not the blank lead-in.
+- **Fidelity (time-resolved data):** don't misrepresent the dynamics — don't drop frames that change
+  the result's meaning or speed it up so a transient reads wrong. The loop must show what truly happens.
+
+### Integrate it as content (not a floating clip) — CRAP still applies
+- **GIF-as-hero:** when the loop is the slide's result, make it the **hero** (Contrast) — large, with
+  an **assertion title** and a one-line **"what to watch"** caption pointing attention ("watch the
+  artifact resolve", "ours = right panel"), exactly like a figure caption.
+- **Beside its evidence:** pair the GIF with a static quant panel — a metrics table, a `scorecard`, a
+  legend, or bullets — in a `columns(2)` split so the motion and the numbers read together.
+- **Before/after & small multiples:** two GIFs side by side (baseline vs improved, two variants) loop
+  together and make a moving comparison; a small grid of related loops (multiple views, runs, or cases)
+  reads well for any audience — keep each whole and watch total file size.
+- **Hand-off note:** tell the user the animation **plays in slideshow** (PowerPoint: Slide Show;
+  Keynote: Play) and shows a still in edit/print — and that the first frame is what a PDF export uses.
+
+## The slide-to-slide transition is SECONDARY — never a substitute for builds
+> ⚠️ **The #1 animation mistake: slapping `slide_transition(s, "fade")` on every slide and calling it
+> "animated."** A deck-wide fade is invisible polish at best — it does **nothing** to control attention
+> or pace, it does **not** make bullets or blocks appear one at a time, and applying it reflexively to
+> all slides is the *lazy* default to avoid. **It is NOT the animation that matters.** The animation that
+> matters is the in-slide **appear/build** (the section above): revealing bullets/blocks **one by one**
+> on click so the audience follows you. **Put your animation effort there, not into transitions.**
+
+The slide-to-slide transition is a genuinely separate, *optional* choice — a subtle fade
+(`slide_transition(s, "fade")`, ~0.4–0.5s) can add quiet continuity, but it is **off the critical
+path**: a deck with **no** transition and good per-slide builds is far better than a deck with a fade
+on every slide and no builds. So: decide it once, deliberately, and **don't treat "added fade
+transitions" as having animated the deck** — that box is ticked by the appear-builds. If you do use a
+transition keep it calm (fade/none, never cube/push/morph-everywhere), and record it in the motion
+manifest as one line (`transition: fade` / `transition: none`) — distinct from the per-slide
+`build:`/`static:` lines that carry the real work.
 
 ## Record a motion manifest (so the critic can judge what it can't see)
 A static render — and the critic reviewing it — can't watch a reveal sequence. So as you

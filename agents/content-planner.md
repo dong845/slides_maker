@@ -137,7 +137,10 @@ For every slide, decide and record:
   from a written source (a paper's formula → mark "transcribe to `equation_png`", **never** a cropped
   image of the PDF formula) or *derived* from code/other materials (see below), a **generated plate**
   (see §6), or **none**. Default to the source's own figures, whole — don't redraw or chop them; but
-  **formulas are the exception — re-typeset them, don't crop them.**
+  **formulas are the exception — re-typeset them, don't crop them.** When a slide carries an equation,
+  note in the spec that it's typeset at **content size** (glyphs ≈ body, consistent across slides — not
+  blown up to fill the slide unless the equation *is* the slide's hero) with **every variable in math
+  format** (italic + real sub/superscript), *including* a lone inline variable in prose.
 - **Form a formula from code when it shows the content better.** When the source is **code** (or other
   non-paper material — a repo, a config, a notebook), and a slide's point is a *mathematical
   relationship the code implements* — a loss/objective, an update or optimisation rule, a metric, a
@@ -173,6 +176,14 @@ list.** The kit is large now, so match it deliberately to the content's *communi
   `leaderboard` (same colours as the chart).
 - **Enumerated items / sections →** numbered cards or `big_numeral` wayfinding (reuse the same
   numeral+accent across TOC / divider / recap) — not a flat bullet list.
+- **Many IDENTICAL-except-index units → show the PATTERN, never N duplicate blocks.** Whenever many
+  units differ only by an index — in any domain (parallel model units / stacked layers, K service
+  replicas or nodes, an M-model ensemble, N teams running one playbook, repeated pipeline stages) —
+  repeating the same content N times adds zero information and buries the message. Plan `repeat_row` —
+  2–3 representatives + `…` + the Nth + a `×N` badge, with the **shared detail said once** (one caption
+  stating what each unit does) — and make the **flow the units feed into** (how they fan out and then
+  combine/aggregate) the slide's hero. Only enumerate all N when each unit is genuinely *distinct* or N
+  is small (≲4).
 - **A concept / atmosphere →** a whole source figure; else a generated plate or a full-bleed photo
   under a graduated `scrim_overlay` aimed at the text (§6).
 - **Framing the deck →** a `cover` ↔ `colophon` bookend; a research deck's references → `sources_page`.
@@ -196,6 +207,28 @@ the builder can't retrofit rhythm. See `design-principles.md` "Deck-level rhythm
 
 Then lay it out. Layout is not afterthought polish — decide it deliberately for every slide. Name the
 concrete pattern and the balance:
+
+**Run the C.R.A.P. pass on every slide's layout** (Contrast · Repetition · Alignment · Proximity — Robin
+Williams' four principles; full statement in `design-principles.md` "The C.R.A.P. framework"). This is
+the planner's layout lens — for each slide, decide and record how the layout satisfies all four:
+- **Contrast** — you already named the ONE hero (above); now make it *win* by a visible margin: a clear
+  size step (title > sub-heading > body, ~1.4–1.8×; hero figure/numeral dominant), one accent for the
+  emphasis, **≤2 text font families** (a display + a body — serif+sans or two well-paired sans; a mono
+  for code and a CJK face don't count as extra style fonts), and shape (a
+  chip/band/card) to set the key element apart. The slide must pass the squint test — if it blurs to an
+  even grey field, there's no contrast; push the hero or cut.
+- **Repetition (DECK-LEVEL — yours to own)** — only you see every slide, so *you* are responsible for
+  the repeated identity system: specify it once and reuse it on every slide — the same title chrome,
+  accent palette, font pairing, bullet/marker style, footer, divider treatment, and any signature motif
+  or wayfinding numeral. Call out in the plan the elements that must repeat, so the deck reads as one
+  designed thing, not slide-by-slide invention. (Repeat the *system*; vary the *protagonist* — the
+  deck-rhythm check above.)
+- **Alignment** — every element on a shared grid, placed by a measured primitive
+  (`columns`/`rows`/`vstack`/`content_band`), never an eyeballed coordinate; edges line up across the
+  slide (and ideally slide-to-slide — title baseline, content top, footer all in the same place).
+- **Proximity** — group what's related, separate what isn't, using space: the gap *between* groups
+  clearly larger than the gap *within* one (≥ ~1.5–2×), so structure is legible without boxes or rules.
+The bullets below are the concrete techniques for each of these — name the pattern and the balance:
 - Pick the structure: full-bleed hero figure with an assertion title + one-line caption;
   a **balanced split** (text rail + figure) built with `deckkit.columns(2)` so the two
   sides and their flanking margins are **equal**; a centered equation; a pipeline of chips;
@@ -242,9 +275,17 @@ not by counting:
 - **The only thing to avoid is *thoughtless* use** — motion added for flourish that pulls
   the eye off the meaning, or an image that competes with the content or just fills space.
   Judge the *intent and effect* of each one, never its frequency.
-- **Builds — actively check each slide's LAYOUT against this repertoire, and animate the ones that
-  fit (only those).** Don't leave builds off by neglect: for every slide, ask "does stepping the
-  reveal *guide* or *emphasise* here?" The recurring build-friendly shapes:
+- **Builds — plan in-slide "APPEAR" reveals (bullets/blocks one by one), NOT slide transitions.** The
+  animation that matters — and the one to plan in the Motion column — is a per-slide **appear build**:
+  each click brings in the next **bullet, card, stage, cell, or the final callout** so the audience
+  follows the speaker. 🔴 **Do NOT plan "fade transitions on every slide" as the deck's animation** —
+  that's the lazy, useless default; a deck-wide transition is at most an optional, secondary polish
+  choice and is *not* what "animate this" means. **Actively check each slide's LAYOUT against the
+  repertoire below and plan an appear-build on the ones that fit (only those).** Don't leave builds off
+  by neglect: for every multi-point/multi-block slide, ask "does revealing these one at a time *guide*
+  or *emphasise* here?" The recurring build-friendly shapes:
+  - **A multi-point bullet list / set of cards** → reveal each **point/card one per click** (the
+    bread-and-butter appear build) so no one reads point 4 while you're on point 1.
   - **A flow/pipeline of blocks joined by arrows** → reveal each stage **with its arrow** on click,
     narrating the flow one step at a time. *(A multi-block-with-arrows slide is the canonical signal
     to animate — don't ship it as a static dump.)*
@@ -253,10 +294,22 @@ not by counting:
   - **Evidence → takeaway** → show the support, reveal the takeaway/callout last.
   - **Layered data / a chart with an annotation** → baseline first, then the comparison on top.
   - **Quadrant / matrix · timeline · step-cards** → reveal the cells / nodes / steps in order.
-  - **A result that IS motion** (a training run, a 4D/time-resolved or rotating sequence) → embed the
-    **GIF**, not a frozen frame (it loops in PowerPoint/Keynote). See `animation.md`.
-  Record each build **concretely** in the Motion column (what reveals, in what order, on click). A
-  subtle deck-wide fade transition is a fine low-distraction default for continuity.
+  - **A result that IS motion** (a training run, a 4D/time-resolved/cine or rotating sequence, a
+    segmentation-over-time, a sim) → embed the **GIF**, not a frozen frame (`deckkit.gif()`; it loops
+    in PowerPoint/Keynote). Comes up in **any deck** — a product/UI demo (pitch), an interaction
+    (teaching), a data-viz loop, a simulation or time-resolved/cine result (research/status); whenever
+    the user provides a loop, it's often the slide's result. Plan it like a figure: often the slide's **hero** (large, assertion title + a one-line *"what to watch"*
+    caption), or in a `columns(2)` split **beside its quant panel** (metrics/scorecard/legend); two
+    GIFs side-by-side for before/after. **Flag the first frame:** a GIF shows its *first frame* in the
+    render, in a PDF/print export, and in edit view (it animates only in slideshow), so the plan must
+    note the GIF should **start on a representative frame** (not a blank/loading one) — verify with
+    `deckkit.gif_poster(..., frame="first")`. Don't misrepresent the dynamics (no meaning-changing
+    frame drops/speed-ups). See `animation.md`.
+  Record each build **concretely** in the Motion column — *what* reveals, in *what order*, on click
+  (e.g. `appear: bullet 1 → bullet 2 → bullet 3 → takeaway`), so the actor can implement it directly
+  with `anim.py`. The optional deck-wide transition, if any, is a **separate** one-line note
+  (`transition: fade`/`none`) — never a stand-in for the per-slide appear builds, and never applied
+  reflexively to all slides as "the animation."
   **No quota, both directions:** a whole deck with *no* builds is fine when nothing has steps to pace
   — but don't *miss* a pipeline/multi-part/before-after that clearly wants one; equally never animate
   a title, divider, single-idea slide, a scan-all-at-once comparison, or a **read-alone/poster** deck

@@ -889,6 +889,103 @@ def picture(slide, path, x, y, w, h, fit="contain", alt=None, round=False, r=Non
     return pic
 
 
+def gif_poster(path, out_png=None, frame="first"):
+    """Extract ONE representative frame of an animated GIF to a PNG — for the render/critic
+    (which see only a static image) and as a check on what the deck shows when NOT in slideshow.
+
+    Why this matters: a `.gif` placed on a slide loops only in **slideshow**. In the editor,
+    in a PDF/print export, in the LibreOffice render, and to the static critic, the GIF shows
+    its **first frame**. A cine / 4D / training-run GIF often starts on a blank, black, or
+    "loading" frame — so the slide looks broken everywhere except live playback. Use this to
+    SEE that frame and verify it reads:
+
+      `frame="first"` (default) — frame 0, i.e. exactly what the static views show. View it; if
+        it's blank/unrepresentative, get a source GIF that *starts* on a meaningful frame (there
+        is no separate poster-frame for GIFs in pptx — the first frame IS the poster).
+      `frame="auto"` — the frame with the most visual content (highest pixel variance), i.e. a
+        good representative still to hand the critic for a legibility judgement.
+      `frame="middle"` or an int index — a specific frame.
+
+    Returns the output PNG path (defaults to `<gif>.<frame>.png`). Pillow-based; raises if the
+    file isn't a readable (animated) image.
+    """
+    import os
+    from PIL import Image, ImageSequence
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"gif_poster(): file not found: {path}")
+    frames = []
+    with Image.open(path) as im:
+        for fr in ImageSequence.Iterator(im):
+            frames.append(fr.convert("RGB").copy())
+    if not frames:
+        raise ValueError(f"gif_poster(): no frames read from {path}")
+    if frame == "first":
+        idx = 0
+    elif frame == "middle":
+        idx = len(frames) // 2
+    elif frame == "auto":
+        # most visual content = largest per-channel variance (skips blank/loading frames)
+        def score(fr):
+            stat = fr.resize((64, 64))
+            px = list(stat.getdata())
+            n = len(px)
+            mean = [sum(c) / n for c in zip(*px)]
+            return sum((c - mean[i]) ** 2 for p in px for i, c in enumerate(p))
+        idx = max(range(len(frames)), key=lambda i: score(frames[i]))
+    else:
+        idx = int(frame)
+    idx = max(0, min(idx, len(frames) - 1))
+    if out_png is None:
+        base, _ = os.path.splitext(path)
+        out_png = f"{base}.{frame if isinstance(frame, str) else 'f%d' % idx}.png"
+    frames[idx].save(out_png)
+    return out_png
+
+
+def gif(slide, path, x, y, w, h, *, fit="contain", alt=None, max_mb=8.0, warn=True):
+    """Place an **animated GIF** as live content — it stays animated and loops in PowerPoint /
+    Keynote slideshow. Use for any result whose *motion is the point*: a cine / 4D / time-resolved
+    sequence, a segmentation-over-time, an optimisation/training trajectory, a rotating 3D model,
+    a UI/interaction loop, a physics sim.
+
+    This is a thin, GIF-aware wrapper over `picture()`: it places the GIF **whole and undistorted**
+    (`fit="contain"` — preserves the real aspect, never stretches a square cine clip to 16:9; the
+    original file bytes are embedded so EVERY frame survives), sets alt-text, and adds two checks
+    that catch the real failure modes:
+      • **size/perf** — warns if the file exceeds `max_mb` (a heavy cine GIF bloats the .pptx and
+        can stutter live; palette-optimise / downsample fps or dimensions if so);
+      • **animation** — warns if the file is a *single-frame* GIF (then it's just a still — use
+        `picture()`), and reports the frame count.
+    It does NOT rasterise the GIF (that would freeze it). Pair with `gif_poster()` to verify the
+    first frame (what the render / a PDF export shows) is representative, and label it with a deck-
+    font caption + a one-line "what to watch" like any figure. Returns the picture shape.
+    """
+    import os
+    from PIL import Image, ImageSequence
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"gif(): file not found: {path} — fix the path or generate it first")
+    n_frames = 1
+    try:
+        with Image.open(path) as im:
+            n_frames = getattr(im, "n_frames", 1)
+    except Exception:
+        pass
+    if warn:
+        mb = os.path.getsize(path) / 1e6
+        if mb > max_mb:
+            print(f"gif(): WARNING {os.path.basename(path)} is {mb:.1f} MB (> {max_mb} MB) — "
+                  f"palette-optimise or downsample fps/size so the .pptx stays light and plays smoothly.")
+        if n_frames <= 1:
+            print(f"gif(): WARNING {os.path.basename(path)} has 1 frame — it's a still, not an "
+                  f"animation; use picture() instead.")
+    if fit == "cover":
+        # cover crops each frame's edges — rarely right for a scientific GIF; allow but flag.
+        if warn:
+            print("gif(): note fit='cover' crops the GIF's edges every frame — use 'contain' unless "
+                  "the GIF is edge-tolerant texture.")
+    return picture(slide, path, x, y, w, h, fit=fit, alt=alt)
+
+
 def columns(n=2, *, slide=None, w_in=None, h_in=None, top=1.15, bottom=0.55, margin=None, gap=None):
     """Return ``n`` equal-width content-column rects ``(x, y, w, h)`` with **symmetric**
     outer margins and equal gutters between columns.
@@ -1272,6 +1369,65 @@ def chip(slide, x, y, w, h, title, sub, fill, tcolor=None):
     # generous side padding so text never crowds the rounded edge
     text(slide, x + 0.13, y, w - 0.26, h, runs, align=PP_ALIGN.CENTER,
          anchor=MSO_ANCHOR.MIDDLE, space_after=1, line_spacing=0.98)
+
+
+def repeat_row(slide, x, y, w, h, n, label_fmt="{i}", *, sub="", show=2, fill=BLUE,
+               gap=0.3, ellipsis="…", badge=True, caption=None, caption_c=None,
+               tcolor=None):
+    """Show N identical-except-index parallel units as a **pattern**, NOT N duplicate cards.
+
+    The anti-pattern this prevents: rendering many units that are identical except for an index as
+    N full blocks (e.g. 8 "unit k / <same caption>" cards) — repeating the same content N× adds zero
+    information, eats the whole canvas, and buries the actual message. Instead this draws ``show``
+    representative chips (``label_fmt.format(i=1..show)``), an **ellipsis** cell, the **Nth** chip,
+    and a ``× N`` badge — and states the shared detail common to every unit **once** (``caption``,
+    defaulting to ``sub``) centered under the row.
+
+    Domain-agnostic — use whenever units differ only by an index and N is large: parallel
+    model/compute units (attention heads, stacked layers), service replicas / nodes / microservices,
+    an M-model ensemble, N regional teams running one playbook, repeated pipeline stages, any long
+    set of same-shaped items. ``label_fmt`` uses ``{i}`` for the index, e.g. ``"head {i}"`` →
+    "head 1", "head 2", or ``"replica {i}"`` / ``"L{i}"``. When N is small (``n <= show + 2``) it
+    just draws all N chips (no ellipsis/badge) — showing every one is fine there. Build the *flow*
+    the units feed into (how they combine/aggregate) below the returned y; that structure, not the
+    enumeration of clones, is the slide's real content.
+
+    Returns the **bottom y** of the group (row + shared caption) in inches — anchor the next
+    element (a down-arrow, the combine/aggregate block) there.
+    """
+    badge_w = 0.66 if (badge and n > show + 2) else 0.0
+    if n <= show + 2:                                   # small N → just show them all
+        labels = [label_fmt.format(i=i) for i in range(1, n + 1)]
+        cells = [("chip", lbl) for lbl in labels]
+    else:
+        cells = [("chip", label_fmt.format(i=i)) for i in range(1, show + 1)]
+        cells.append(("ellipsis", ellipsis))
+        cells.append(("chip", label_fmt.format(i=n)))
+    avail = w - (badge_w + gap if badge_w else 0.0)
+    ncell = len(cells)
+    cw = (avail - gap * (ncell - 1)) / ncell
+    for k, (kind, val) in enumerate(cells):
+        cx = x + k * (cw + gap)
+        if kind == "chip":
+            chip(slide, cx, y, cw, h, val, "", fill, tcolor=tcolor)
+        else:                                            # ellipsis — a glyph, no box
+            text(slide, cx, y, cw, h, [[(val, 26, MUTE, True, False)]],
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    if badge_w:                                          # the "× N" count badge at the right
+        bh = min(h, 0.5)
+        by = y + (h - bh) / 2
+        bx = x + avail + gap
+        box(slide, bx, by, badge_w, bh, fill=fill, round=True)
+        bc = WHITE if contrast_ratio(WHITE, fill) >= contrast_ratio(DEEP, fill) else DEEP
+        text(slide, bx, by, badge_w, bh, [[("× %d" % n, 16, bc, True, False)]],
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    cap = caption if caption is not None else sub
+    bottom = y + h
+    if cap:                                              # shared detail — stated ONCE
+        text(slide, x, bottom + 0.1, w, 0.34, [[(cap, 12.5, caption_c or MUTE, False, False)]],
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.TOP, space_after=0)
+        bottom += 0.44
+    return bottom
 
 
 def modbox(slide, x, y, w, h, role, fname, fill, tcolor=None, check=False):

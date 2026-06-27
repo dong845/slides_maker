@@ -58,9 +58,9 @@ Two time sinks compress well: ingesting material/assets, and the critic loop.
 **Two modes.** *Auto* (default): interview, then build and run the critic loop to a high
 bar yourself. *Collaborative* (opt-in — when the user wants to see options or approve as
 you go, or for a brand-defining deck): build behind cheap **gates** — pick a *direction*
-(2–3 styles shown as real rendered archetypes) → approve the *outline* → build the rest.
-The critic captures *quality*; the gates capture *preference*. Offer it in one line;
-never force it. See `references/collaborative-mode.md` (+ `scripts/archetypes.py`).
+(2–3 styles shown as archetype slides in **one HTML preview link**) → approve the *outline*
+→ build the rest. The critic captures *quality*; the gates capture *preference*. Offer it in
+one line; never force it. See `references/collaborative-mode.md` (+ `scripts/archetypes_html.py`).
 
 **🔴 CHECKPOINT convention.** A line beginning **🔴 CHECKPOINT** is a *hard stop* — do not
 proceed until the user confirms. Honor every one; they guard the moments where guessing
@@ -144,18 +144,21 @@ the direction gate** (the look is already decided). The four:
      (recommended)"** and **"just design one and go."**
      - *Picks the 3 directions* → run **Gate A** of `references/collaborative-mode.md`
        with **3 *differentiated* directions** (distinct light/dark, warm/cool, serif/sans —
-       not three shades of one idea), each a style module rendered by
-       `scripts/archetypes.py` into the **same** representative slides (cover / points+
-       callout / diagram / data), quick-critic each, then collect the pick + knobs. Present
-       the pick as **A / B / C plus a fourth "D — describe your own" option**: if the user
-       picks D, they *type the look they have in mind* (a reference, a brand, a mood, a
-       constraint) and you **synthesize a fourth direction from that description** — build it
-       as a style module, render the same archetypes, and show it alongside (iterate until
-       they consent), rather than forcing one of your three guesses. The three are only your
-       opening proposals; the author's own intention always outranks them. The
-       chosen/synthesized module becomes the deck's `style.py`. **Once they pick, delete the
-       throwaway preview decks + rejected modules** (keep only the chosen style), then build
-       the full deck in it — don't leave demo options littering Downloads.
+       not three shades of one idea), each captured as a **design-token set** (palette +
+       portable fonts + motif) and rendered by `scripts/archetypes_html.py` into **ONE
+       self-contained HTML page** showing all three in the **same** representative slides
+       (cover / points+callout / diagram / data). **Hand the user the single `file://…
+       directions.html` link** to open in a browser, review side-by-side, and pick from — no
+       local pptx samples. Collect the pick + knobs. Present the pick as **A / B / C plus a
+       fourth "D — describe your own" option**: if the user picks D, they *type the look they
+       have in mind* (a reference, a brand, a mood, a constraint) and you **synthesize a fourth
+       direction from that description** — regenerate the HTML link and show it alongside
+       (iterate until they consent), rather than forcing one of your three guesses. The three
+       are only your opening proposals; the author's own intention always outranks them. On the
+       pick, the chosen token-set becomes the deck's `style.py` — then **render ONE real slide
+       in it to confirm fidelity** before building. **Once they pick, delete the throwaway
+       `_directions/` preview files + rejected token-sets** (keep only the chosen style), then
+       build the full deck in it — don't leave demo files littering Downloads.
      - *Picks design-one* → build a single look shaped to purpose, as above.
      This offer is **skippable, never forced** — a brand-new from-scratch deck is exactly
      when showing options pays off, but a user in a hurry can decline in one click.
@@ -274,8 +277,9 @@ the direction gate** (the look is already decided). The four:
      offer 3 directions as described in Q1's design-one branch above; (b) any other case
      where the user is **unsure on style** or it's a **brand-defining / high-stakes** deck →
      offer **2–3 directions** as a lighter opt-in. Either way it's the same machinery
-     (collaborative mode Gate A, `references/collaborative-mode.md` + `scripts/archetypes.py`):
-     real rendered archetype slides the user picks from before the full build. **Skippable,
+     (collaborative mode Gate A, `references/collaborative-mode.md` + `scripts/archetypes_html.py`):
+     **one HTML link** showing the archetype slides per direction, which the user opens and picks
+     from before the full build. **Skippable,
      never forced.** A *provided* template **or a generated template** (Q1's image-tool branch)
      means the look is already decided — **don't offer the gate** in those cases.
 
@@ -427,8 +431,8 @@ than the current working directory, so `python /path/to/build_<deck>.py` works f
     you built last time). Range widely across decks — warm vs cool, **light vs dark**,
     serif vs sans, minimal vs bold, restrained vs vivid; `design-by-purpose.md` gives a
     starting mood per purpose, but pick a *distinct, concrete* look within it. Unsure or
-    brand-defining? Show 2–3 rendered direction archetypes and let the user pick
-    (collaborative mode, `scripts/archetypes.py`). Sameness across decks is the failure to
+    brand-defining? Show 2–3 direction archetypes in **one HTML preview link** and let the user
+    pick (collaborative mode, `scripts/archetypes_html.py`). Sameness across decks is the failure to
     avoid; the only constant is the craft (contrast, hierarchy, one idea per slide).
 
 **Fonts for non-Latin languages (Chinese / Japanese / Korean)** — applies to both
@@ -497,7 +501,9 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
   (footer-safe bottom takeaway — anchors to the band, grows UP, can't collide), **`vstack(…, bottom=)`**
   (measured stack: equal gaps + no overlap by construction, errors at build time on overflow) with the
   `measure_callout/measure_bullets/measure_text` helpers, `picture` (`fit="contain"` keeps edges /
-  `"cover"` crops). *(These exist so you never hardcode a low `y` — the recurring overlap/footer bug.)*
+  `"cover"` crops), `gif` (animated GIF, undistorted + size/still warnings) + `gif_poster` (extract the
+  first/representative frame to verify what the render & PDF export show). *(These exist so you never
+  hardcode a low `y` — the recurring overlap/footer bug.)*
 - **Text & blocks:** `bullet`, `callout` (auto-grows), `chip`, `modbox`, `arrow`, `table` (highlight
   the key row), `code_block`, `hrule`.
 - **Colour:** `palette(n, ACCENTS)` (n distinct, contrast-checked fills — warns on adjacent same-hue;
@@ -508,7 +514,9 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
   `native_dual_axis` / `native_donut` / `native_pareto` / `native_bubble`, plus the raster recipes in
   `scripts/designed_charts.py` — pick per `references/data-viz.md`.
 - **Diagrams / patterns:** `quadrant`, `hub_spoke`, `timeline`, `before_after`/`image_tab`/
-  `photo_triptych`, `wireframe_grid`+`spec_list`, `corner_frame`, `photo_card`, `backdrop_motif`.
+  `photo_triptych`, `wireframe_grid`+`spec_list`, `corner_frame`, `photo_card`, `backdrop_motif`,
+  `repeat_row` (N identical-except-index units as representatives + `…` + `×N`, shared detail said
+  once — never N duplicate blocks).
 - **Surface (dark / glass / print):** `glass_card`/`glow`/`scrim_overlay` (gradient+alpha fill),
   `offset_shadow` (hard letterpress/riso shadow).
 - **Publication & math:** `cover`/`colophon` (bookend the deck), `sources_page`, `specimen_card`;
@@ -565,13 +573,21 @@ A few rules that matter (see `references/design-principles.md`):
     compact figure. View the result to confirm the kept headers still line up — this is also
     a fidelity check (you can read each cell's numbers and confirm they're faithful). When the
     user provides the *original* source images/PDFs, prefer working from those.
-- **Animated results (GIF / looping animations) → insert the GIF itself**, never reduce
-  it to a single frame. `s.shapes.add_picture(path_to.gif, ...)` embeds the real animated
-  GIF; PowerPoint and Keynote **loop it in slideshow**. For time-resolved / 4D / dynamic
-  results that motion *is* the result — a frozen frame throws away the point. Size it like any
-  figure; the render and critic see only the first frame (expected — note it for the
-  user), and it plays in the delivered deck. (For *built* GIFs you generate, optimize
-  the palette/size so the file stays reasonable.)
+- **Animated results (GIF / looping animations) → insert the GIF itself with `deckkit.gif()`**,
+  never reduce it to a single frame. It embeds the real animated GIF (every frame preserved;
+  PowerPoint and Keynote **loop it in slideshow**), places it **whole and undistorted** (`contain` —
+  a square cine clip is never stretched), sets alt-text, and **warns on a heavy file** (a big cine GIF
+  bloats the `.pptx` and stutters live) or a single-frame still. For time-resolved / 4D / cine /
+  training-run results — in **any deck** (a product/UI demo in a pitch, an interaction in teaching, a
+  data-viz loop, a simulation or time-resolved result in a research/status deck) — a frozen frame
+  throws away the point. Integrate it like a figure: often the slide's **hero** (assertion
+  title + a one-line *"what to watch"* caption), or beside its quant panel in a `columns(2)` split;
+  two GIFs for before/after. **The first frame matters:** the render, the static critic, a **PDF/print
+  export**, and edit view all show frame 0 (a GIF has no separate poster) — so verify it's
+  representative with `deckkit.gif_poster(path, "first.png", frame="first")` and, if it's a blank /
+  black / loading frame, get a GIF that *starts* on a meaningful frame; `frame="auto"` extracts a
+  representative still to hand the critic. Don't misrepresent the dynamics (no meaning-changing frame
+  drops/speed-ups). Tell the user at hand-off that it animates in **slideshow** (still in edit/print).
 - **Data but no figure yet → make the chart, don't dump numbers.** If the source gives
   raw data (a CSV, a metrics table, logged numbers) but no plot, turn it into the chart
   that makes the comparison obvious rather than typing a wall of figures — generate it
@@ -664,6 +680,25 @@ A few rules that matter (see `references/design-principles.md`):
   glyph size stays consistent across slides. Use **`eq_par()`** (`N()/SUP()/SUB()`)
   only for trivial inline math or when matplotlib is unavailable. **Never** paste
   Unicode super/subscripts (ᴴ ᵀ ᵣ) — the display font may lack them and render tofu.
+  - **Size the formula to the CONTENT text, not to fill the slide.** A formula's glyph
+    height should read like the deck's **body/content** size — *never* blown up to span
+    the slide width (which oversizes every glyph and breaks the title→content hierarchy),
+    never shrunk illegible. On the 10×5.625 canvas, set `equation_png`'s placed **height**
+    so a single-line equation lands ≈ **0.22–0.32 in** (≈ body text); scale *height* (not
+    width-to-fit) and keep the *same* target height across every equation in the deck so
+    they're visually consistent. The formula may be larger **only when it IS the slide's
+    hero** (a method slide whose one point is the equation) — otherwise it sits at content
+    size. Always confirm in the render that the formula glyphs aren't bigger than the slide
+    title's letters.
+  - **Even a single variable or symbol uses math format — and stays editable.** Any
+    variable/symbol that appears in running text or a bullet (e.g. *x*, *λ*, *σ*, `Aᵀ`,
+    *R*(*x*)) must be set in **proper math style** — italic variable + real sub/superscript
+    — not typed as plain upright body letters and never as Unicode super/subscripts. For one
+    or two inline symbols use **`eq_par()`/native runs** so the symbol stays **click-editable**
+    and inherits the surrounding body size; reach for `equation_png` for a full expression.
+    Keep the LaTeX source for every `equation_png` in the build script (it's a raster, so
+    "editing" means re-rendering from the script) — that is what keeps formulas reproducible
+    and adjustable on a later iteration.
 - **Formulas → TYPESET math (`equation_png`), never a cropped image.** Unlike a figure or table
   (cropped *whole* from the PDF with `extract_pdf.py`), a needed equation is **re-typeset**: write it
   as LaTeX and render with `equation_png()` (or `eq_par()` for simple inline). A cropped formula
@@ -702,21 +737,28 @@ fights the single-file artifact, and doesn't speed up the parts that actually co
 time. Full workflow (incl. the critic panel + finding-routing) in
 `references/large-deck-orchestration.md`.
 
-**Motion & builds — by taste and purpose, not a quota.**
-Add a build where your design sense says stepping the reveal will *emphasize*, *engage*, or
-*guide* — and leave it off where it wouldn't (consecutive builds are fine, a long plain stretch
-is fine; the only thing to avoid is *thoughtless* motion added for flourish). Two layers,
-decided separately: **(1)** a calm deck-wide `slide_transition(s, "fade")` is a sensible
-low-distraction default (or omit for a static/print feel — decide deliberately); **(2)
-click-builds** per slide for the clear cases — a **pipeline / multi-stage diagram** revealed a
-stage at a time, a **multi-part argument**, **before→after**, or **evidence→takeaway** — while
-title / divider / single-image slides simply stay plain.
+**Motion & builds — the animation that matters is in-slide "appear" builds, NOT slide transitions.**
+🔴 **Do not "animate" a deck by putting a fade transition on every slide — that adds nothing and is the
+lazy mistake to avoid.** What "add animation" means here is **revealing bullets / blocks one at a time
+on click** (an *appear* build) so the audience follows the speaker instead of reading ahead. The two
+layers are **not** equal:
+- **(1) In-slide appear builds — THE real work; default to considering one on every multi-point content
+  slide.** Reveal each **bullet, card, pipeline stage, quadrant cell, or the final takeaway callout**
+  one per click. Reach for it wherever stepping the reveal will *emphasize*, *engage*, or *guide* — a
+  multi-point list, a **pipeline / multi-stage diagram** (stage at a time), a **multi-part argument**,
+  **before→after**, **evidence→takeaway**. Leave title / divider / single-image / scan-all-at-once
+  slides plain. By taste, not a quota (consecutive builds fine, a plain stretch fine) — the failure is
+  *thoughtlessness*: either no build where one would clearly help, or motion for flourish.
+- **(2) Slide-to-slide transition — optional, secondary, off the critical path.** A calm deck-wide
+  `slide_transition(s, "fade")` is *allowed* but never the point; a deck with **no** transition and good
+  appear-builds beats one with a fade on every slide and no builds. Decide it once; **don't count
+  "added transitions" as having animated the deck.**
 
-Use `scripts/anim.py` (it injects the PowerPoint timing XML python-pptx can't): draw the
-static scaffold, wrap each reveal-on-click chunk in a `Build.step()`, then
-`apply(effect="fade")` — subtle fade, one idea per click, scaffold always visible. A slide
-must still read correctly fully-built (for print/PDF) — builds layer on a correct static
-slide, never fix a cluttered one. See `references/animation.md` for craft rules and usage.
+Use `scripts/anim.py`: draw the static scaffold, wrap **each reveal-on-click chunk** in a `Build.step()`
+(one bullet/block per step → they appear one by one), then `apply(effect="appear")` (instant) or
+`"fade"` (soft). Recipe in `references/animation.md` ("bread-and-butter build"). A slide must still read
+correctly **fully-built** (for print/PDF) — builds layer on a correct static slide, never fix a
+cluttered one.
 
 **Record a one-line motion manifest** as you go — for each slide, `build: <what reveals,
 in order>` or `static: <why nothing to pace>`, plus whether the deck-wide transition is on.
@@ -764,9 +806,20 @@ critic round — full rationale in `references/design-principles.md`):
   narrow element; a **figure beside text is anchored to its margin (not centred-and-far-
   stranded)** with the text one gutter away; repeated blocks/connectors evenly spaced; grid-
   aligned, nothing lopsided.
-- **Block padding** — text inside a chip/card/callout hugs the box with a **modest, balanced**
-  top/bottom margin (middle-anchored; not floating in a tall box, not cramped). A short card
-  must not leave a white strip at the bottom.
+- **Block padding & no inflated filler** — text inside a chip/card/callout hugs the box with a
+  **modest, balanced** top/bottom margin (middle-anchored; not floating in a tall box, not cramped).
+  A short card must not leave a white strip at the bottom. **No oversized block faking a full slide:**
+  a single short line of small font swimming in a big box is a placeholder tell — either *add real
+  content* to fill it or *shrink the box to hug the text* and use the freed space; never inflate a
+  container to cover a gap.
+- **Font hierarchy (content < title)** — body/content/callout/label text is **visibly smaller** than
+  the slide title (clear step between levels, ~1.4–1.8×); no body, formula, or chip label set as large
+  as (or larger than) the title. The only thing that may exceed body size is a deliberate **hero**
+  element (the one big numeral or the slide-defining equation) — and even it stays below the title.
+- **Formula sized to content** — every equation's glyphs read at ≈ **body size** (not blown up to fill
+  the slide width, not illegibly shrunk), and **consistent across slides** (same placed height); any
+  inline variable/symbol is in **math format** (italic, real sub/superscript), never plain body letters
+  or Unicode super/subscripts.
 - **Footer collision / overlap** — no block crosses into the footer band and no two stacked
   blocks overlap. If one does, the cause is almost always a hand-picked `y` for an auto-growing
   callout/stack — fix it by switching to `bottom_callout()` / `vstack()` / `content_band()`, not
@@ -947,6 +1000,17 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   "(AI-generated)", "(placeholder)", "(draft)", "generated by…", TODO/FIXME. Slide text is the
   audience's content, never a note about how it was made; that goes in code comments or the hand-off.
 - **Never let stacked groups blur together** — the gap between groups must beat the gap within a group.
+- **Never leave a slide awkwardly empty, and never fake fullness with an oversized block** — fill space
+  by **enriching the content** (add the detail/example/figure the point deserves) or enlarging the hero;
+  never inflate a card/callout around a single short line of small font to cover a gap (shrink the box
+  to hug its text instead).
+- **Never set content text as large as (or larger than) the slide title** — body/callout/formula/label
+  must be visibly smaller than the title; only a deliberate hero numeral/equation may exceed body size,
+  and it still stays below the title.
+- **Never oversize a formula or leave a variable in plain text** — size every equation to ≈ body text
+  (consistent across slides, not blown up to fill the slide width), and set even a lone inline variable
+  in math format (italic + real sub/superscript), keeping the LaTeX in the build script so it stays
+  reproducible/editable.
 - **Never act as your own final critic** — an independent critic must consent; **never ship
   a partially-rendered or contested-blocker deck silently** (surface the disagreement).
 - **Never clobber the user's hand-edits** — reconcile before regenerating over their file.
@@ -980,13 +1044,15 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   look — prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
   design-language presets (glassmorphism/swiss/editorial_paper/editorial_report/risograph/memphis).
 - `image_prompts.py` (build the prompt manifest) → `generate_images_codex.py` (no-key, Codex CLI) /
-  `generate_images_openai.py` (API fallback). `archetypes.py` (direction-gate previews) ·
-  `assemble.py` (assemble a sectioned deck) · `export_notes.py` (notes → rehearsal script).
+  `generate_images_openai.py` (API fallback). `archetypes_html.py` (direction-gate previews as
+  **one HTML link**; `archetypes.py` is the older pptx-render variant + the post-pick one-slide
+  fidelity confirm) · `assemble.py` (assemble a sectioned deck) · `export_notes.py` (notes →
+  rehearsal script).
 - `extract_pdf.py` (crop a figure from a PDF — `figures`/`figure`/`autofig` auto-detect, `page`/`crop`
   manual) · `crop_helper.py` (crop/trim/panel **by looking, not guessing**) · `extract_deck.py` (pull
   content out of an existing deck — the redesign path).
 **Agents** (`agents/`): `content-planner.md` (Step-1 deep-understand + the build-ready per-slide plan; the Step-3 checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `openai.yaml` (Codex display metadata).
 
-**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why") · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
+**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
 
 **Registry** (NOT part of the skill): `~/.codex/slide-templates/` (Codex) · `~/.claude/slide-templates/` (Claude Code) — the user's saved templates; read for choices, write new `profile.md`s to the active host. Empty for a new user.

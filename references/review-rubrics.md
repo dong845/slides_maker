@@ -73,7 +73,16 @@ Score each dimension; cite specific slides.
    evidence → so-what)? Are there gaps or non-sequiturs between slides?
 7. **Visual quality.** Contrast (text vs. background — aim for ≥4.5:1, so light-grey
    text on white or low-contrast figure labels are flags), consistency (fonts, colors,
-   alignment), whitespace (not crammed, not awkwardly empty), no overflow/clipping. Is
+   alignment), whitespace (not crammed, not awkwardly empty), no overflow/clipping.
+   **Font hierarchy:** is the **content/body text visibly smaller than the slide title**
+   (a clear step, ~1.4–1.8×)? Body, callout, formula, or chip-label text set as large as or
+   larger than the title is a real finding (only a deliberate *hero* numeral/equation may exceed
+   body size, and it still stays below the title). **Awkwardly-empty slide:** is a large region
+   left blank (content in one corner/the top third, a wide dead band)? The fix the critic should
+   call for is **enrich the content** (add the detail/example/sub-point/figure the point deserves)
+   or enlarge the hero — *not* shipping it sparse, and **not** inflating an oversized block around a
+   single short line to fake fullness (a small-font one-liner swimming in a big box is a placeholder
+   tell — flag it). Is
    any meaning carried by **colour alone** (a plot legend or status distinguished only
    by hue)? Pair it with a label/shape/marker so it survives projection and colour-blind
    viewers. And **none of the named AI-slop tells** (full-screen gradient wash, emoji titles,
@@ -149,12 +158,18 @@ Score each dimension; cite specific slides.
    reveal sequence, so judge the *design*, not the playback). The two failures to flag are
    both about *thoughtlessness*: (a) **thoughtless motion** — a build (or flashy entrance)
    that doesn't emphasize, engage, or guide, that distracts, or that is added for flourish or
-   for "consistency"; and (b) a **missed beat** — a slide that is clearly a pipeline /
-   multi-stage diagram, a multi-part argument, or an evidence→takeaway shown all at once,
-   where a step-by-step build would clearly have helped the audience follow, left plain for no
-   reason (typically major for a *presented* talk, minor for read-alone). Also: a calm
-   **deck-wide transition** is a sensible default — its absence with no stated reason is a
-   minor finding. **Do not** flag a slide for being plain, or a deck for having "too few" or
+   for "consistency"; and (b) a **missed beat** — a slide where revealing the points/blocks
+   **one by one (an appear build)** would clearly have helped the audience follow, left plain for
+   no reason. Scale the severity to how much the build helps: a **pipeline / multi-stage diagram, a
+   multi-part argument building to a conclusion, or an evidence→takeaway** dumped all at once is
+   typically *major* for a presented talk (the all-at-once version genuinely confuses); a plain
+   **multi-point bullet list** that would merely read better stepped is at most *minor* (plain lists
+   are often perfectly fine — don't force a build on every list). Minor-to-none for read-alone decks
+   (no one clicks them). **The motion that counts is the in-slide appear build — NOT the
+   slide-to-slide transition.** A deck-wide fade is at most optional secondary polish, never the
+   point: **flag the lazy pattern** of a fade transition on every slide standing in for real
+   animation (especially with build-candidate slides left un-built) — that's "motion done" theatre,
+   a finding, not a pass. (Conversely, *absence* of a transition is **not** a finding.) **Do not** flag a slide for being plain, or a deck for having "too few" or
    even several *consecutive* built slides — that's a legitimate design choice; "plain,
    because nothing to pace here" is a valid answer, and so is "built, because this beat needed
    guiding." A cluttered *final built* state is a layout finding, not a motion one — animation
@@ -175,7 +190,11 @@ Score each dimension; cite specific slides.
    placed **whole** and legible at the deck's read distance? Do `scorecard`/`change_stat` **▲/▼ deltas
    / before→after** carry the **right polarity** (green for the genuinely-good direction)? Are
    **formulas typeset** (`equation_png`), **never cropped bitmaps** — transcribed from a paper or
-   *derived faithfully from code* (a code-derived formula must express what the code computes)? And do
+   *derived faithfully from code* (a code-derived formula must express what the code computes)? Are
+   formulas **sized to the body text** (glyphs ≈ content size and consistent across slides — not blown
+   up to span the slide width, which oversizes the glyphs past the title, nor shrunk illegible), and is
+   **every variable/symbol in math format** (italic, real sub/superscript) — *including a lone inline
+   variable* — never plain body letters or Unicode super/subscripts? And do
    the surface/furniture patterns hold — **glass only on a dark base**, **cards in a row one height**,
    **type pairing** (a DISPLAY title face vs FONT body; for CJK, EADISPLAY title vs EAFONT body — not
    one font everywhere), no text spilling past a card? Most of these are also caught deterministically

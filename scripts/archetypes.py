@@ -17,6 +17,11 @@ and optionally ACCENTS (a list, for diagram variety) and ACCENT2.
 
 Previews render with the real pptx -> PNG pipeline (render_deck.sh), so WHAT THE USER
 APPROVES IS WHAT SHIPS — the chosen direction's style module becomes the deck's style.py.
+
+NOTE: the direction gate now shows directions as ONE HTML link via `archetypes_html.py`
+(faster, shareable, no LibreOffice). This pptx variant remains useful for the **post-pick
+fidelity confirmation** — after the user picks a direction in the HTML page, render the chosen
+style's archetypes (or one real slide) here to confirm the pptx matches before the full build.
 """
 import importlib.util
 import os

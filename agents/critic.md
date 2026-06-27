@@ -26,19 +26,35 @@ something.
   beat left plain that a build would have helped), but **never** flag a slide for being plain
   or a deck for having several/consecutive builds or plates — frequency is a legitimate design
   choice. An **embedded animated GIF** (any looping result — a product-UI demo loop, an app
-  walkthrough, a looping data viz, or a 4D / time-resolved / training sequence) shows as its
-  **first frame** in the render but loops in PowerPoint/Keynote — judge that frame's legibility, but
-  **don't flag it as "static" or "only one frame"**; the motion is intended.
-- The **motion manifest** (usually provided): one line per slide — `build: <reveals>` or
-  `static: <why>`, plus whether the deck-wide transition is on. Use it to judge whether
-  motion was *designed*, since you can't watch it. **Motion is a required design pass, so do
-  check it** (rubric dimension "Motion & pacing"): flag a deck-level process issue if the
-  manifest is **absent**, or if it shows no builds and no deck-wide transition **with no
-  stated reason**. Do **not** flag an intentionally plain/static deck just because it has no
-  motion; the question is whether the choice was made thoughtfully. And per
-  slide, flag a clear **build-candidate you can see in the pixels** — a multi-stage
-  pipeline/diagram, a multi-part argument, or an evidence→takeaway slide — that the manifest
-  marks `static` with no good reason, suggesting it would land better revealed step by step.
+  walkthrough, a looping data viz, or a 4D / time-resolved / cine / training sequence) shows as its
+  **first frame** in the render but loops in PowerPoint/Keynote — **don't flag it as "static" or "only
+  one frame"** (the motion is intended). DO judge: **(a)** is that **first frame representative** — not
+  blank, black, or a "loading" frame? (the first frame is what the render, a PDF export, and edit view
+  all show, since a GIF has no separate poster — a blank lead-in is a real flaw: ask for a GIF that
+  starts on a meaningful frame, or verify with a representative `gif_poster(...)` still); **(b)** is the
+  GIF **whole and undistorted** (not stretched off-aspect — use `gif()`/`contain`) and integrated like a
+  figure (assertion title + a "what to watch" caption, on a grid, beside its quant panel if paired) —
+  not a floating clip.
+- The **motion manifest** (usually provided): one line per slide — `build: <reveals>` (an in-slide
+  appear reveal) or `static: <why>`, plus a *separate* one-line `transition:` note. Use it to judge
+  whether motion was *designed*, since you can't watch it. **The motion that counts is the in-slide
+  APPEAR build (bullets/blocks revealed one by one) — NOT the slide-to-slide transition.** So:
+  - **A deck-wide fade transition does NOT count as "motion designed."** Flag the lazy pattern
+    explicitly: a deck that has a **fade transition on every slide but no appear-builds**, especially
+    when build-candidate slides exist — that's transitions used as a substitute for real animation, and
+    it's a finding, not "motion done." (A transition on every slide *with no builds anywhere* is the
+    classic tell.)
+  - Flag a deck-level process issue if the manifest is **absent**, or if it shows **no appear-builds**
+    on a deck that clearly has build-candidate slides, with no stated reason. (A genuinely build-free
+    deck — all titles/dividers/one-idea/scan-at-once/read-alone — is fine *when reasoned*.)
+  Do **not** flag an intentionally plain/static deck just because it has no motion; the question is
+  whether the choice was made thoughtfully. And per slide, flag a clear **build-candidate you can see
+  in the pixels** — a multi-point bullet list, a multi-stage pipeline/diagram, a multi-part argument, or
+  an evidence→takeaway slide — that the manifest marks `static` with no good reason, suggesting it would
+  land better with its points/blocks revealed one by one (an appear build). **Scale severity:** a
+  structural beat dumped all at once (pipeline, argument-to-a-conclusion, evidence→takeaway) is up to
+  *major* for a presented talk; a plain bullet list that would merely read better stepped is at most
+  *minor* — don't force a build on every list (plain lists are often fine).
   Calibrate: a title/section/one-idea slide *should* be static (don't flag those), most
   individual slides stay static, and "designed to be static for reason X" is a valid answer —
   you're enforcing that the decision was *made*, not that everything animates. If no manifest
@@ -102,6 +118,15 @@ Do not just skim for the first few obvious issues. Run these passes:
        build/meta-annotation leaks; formula transcription/derivation fidelity; kicker-echoes-title;
        language consistency; text-density vs delivery mode. *(Rubric items 1, 3, 6, 8, 10, 12a-fidelity.)*
    - **LENS B · Design, layout & legibility — *how it looks.***
+     - **Diagnose layout with the C.R.A.P. lens** (`design-principles.md` "The C.R.A.P. framework") — the
+       same four principles the planner designed to, so findings name a shared cause: **Contrast** (does
+       one element pop, clear size/weight/colour steps, ≤2 *text* fonts (a mono for code / a CJK face
+       don't count), no underline-for-emphasis — or does it
+       blur to an even grey field?), **Repetition** (do title chrome / accent / fonts / footer / motif
+       repeat so the deck reads as one designed thing — flag a slide that breaks the system), **Alignment**
+       (is everything on a shared grid, or is something off-grid/eyeballed?), **Proximity** (are related
+       items grouped and unrelated ones separated, inter-group gap > intra-group?). A slide that feels
+       "off" usually violates one — name which.
      - whole figures (not partial-cropped or hand-redrawn); a figure that *is* the point; gutters
        between figure and text; a real **bottom margin** (nothing on the footer); **no text spilling its
        box**; intentional colour variety; aligned, balanced, uncrowded. **Squint test:** blur your eyes
@@ -111,12 +136,13 @@ Do not just skim for the first few obvious issues. Run these passes:
        lecture (`design-by-purpose.md`) — a mismatch is a real finding. **If a style example was given,
        judge fidelity to it** (palette, type, chrome, motifs, density read as one family).
      - **Owns these named-flaw checks (below):** OVERLAP (collision vs layering); layout/balance/footer/
-       margins; diagram arrow-direction & even spacing; the full typography set (too-small, box-
-       alignment, mixed-size baseline, operator spacing, widow, corner-rounding, lone-glyph centring,
-       type-pairing); colour/contrast/one-accent; charts & computed-plot correctness + legibility (tofu,
-       aliasing, legend placement, single-highlight, so-what); image crop/placement; AI-slop visual
-       tells; stacked-group proximity; deck rhythm; motion/build design. *(Rubric items 2, 4, 5, 7, 9,
-       11, 12-motion.)*
+       margins; **large empty region / oversized filler block**; diagram arrow-direction & even spacing;
+       the full typography set (too-small, **font hierarchy: content < title**, box-alignment, mixed-size
+       baseline, operator spacing, widow, corner-rounding, lone-glyph centring, type-pairing); **formula
+       sizing-to-content + variables in math format**; colour/contrast/one-accent; charts & computed-plot
+       correctness + legibility (tofu, aliasing, legend placement, single-highlight, so-what); image
+       crop/placement; AI-slop visual tells; stacked-group proximity; deck rhythm; motion/build design.
+       *(Rubric items 2, 4, 5, 7, 9, 11, 12-motion.)*
 3. **Tick the named-flaw checklist — apply the checks YOUR lens owns** (per Lens A/B above; the sole
    critic does both passes). Reviewers (human or model) miss far more when asked to "judge quality" in
    the abstract than when handed an explicit list of *named* flaws — so go through your lens's checks by
@@ -147,6 +173,15 @@ Do not just skim for the first few obvious issues. Run these passes:
      `references/data-viz.md` + the planner's design-selection guide). Conversely, **don't reward a
      pattern used where it doesn't fit** — a `quadrant` with no real second axis, a `hub_spoke` for a
      sequence, a `specimen_card`/`wireframe_grid` outside a type/design/systems deck.
+   - **Duplicated content — N identical blocks where the content only repeats (real flaw, flag it):**
+     a row/grid of many full blocks that are **identical except for an index/label** — same in any
+     domain (parallel model units / stacked layers, service replicas or nodes, an M-model ensemble,
+     repeated teams or pipeline stages). Repeating the same words N times conveys nothing beyond "there
+     are N," wastes the whole canvas, and buries the message. The fix: show the **pattern** — 2–3
+     representatives + `…` + the Nth + a `×N` badge (`repeat_row`), say the shared detail **once**, and
+     make the **flow the units feed into** (how they combine/aggregate) the hero. (Showing all N is fine
+     only when each unit is genuinely *distinct*, or N is small ≲4.) This is *also* the wrong way to
+     fill an empty row — cloning a block to occupy space compounds duplication with filler.
    - **Overlap — check this carefully, pair by pair; overlap is UNACCEPTABLE.** Scan each slide and
      test every pair of distinct blocks against the ONE distinction: a **collision** — two *separate*
      blocks intersecting with **neither containing the other** (a card over a table/figure, a band or
@@ -176,9 +211,15 @@ Do not just skim for the first few obvious issues. Run these passes:
      chart, a short list) stranded in a too-wide column, leaving a big empty strip beside it —
      is also a finding (fix: narrow that column or centre the element). **A large EMPTY REGION on
      the slide as a whole** — content huddled in one corner / the top third, a wide empty band down
-     a side or across the bottom, a blank quadrant — reads as half-finished; flag it (fix: enlarge
-     the content/figure to use the space, add the supporting element, redistribute the blocks, or
-     merge/cut a too-thin slide). Also flag **uneven gaps between repeated/adjacent blocks** (one
+     a side or across the bottom, a blank quadrant — reads as half-finished; flag it (fix, in order:
+     **enrich the content** — add the detail/example/sub-point/figure the point deserves so the slide
+     earns its space with substance — then enlarge the figure/hero or redistribute the blocks; only
+     merge/cut a slide that's still too thin after enriching). **An oversized block faking fullness** —
+     a card/callout/panel stretched tall or wide around a *single short line of small font*, padding
+     space instead of saying more — is a real flaw of the same family (the dead giveaway: small text
+     swimming in a big box). The fix is **never** to inflate a container: either *add real content* to
+     fill it, or *shrink the box to hug its text* and use the freed space for another element or a
+     balanced margin. A block's size must be earned by its content. Also flag **uneven gaps between repeated/adjacent blocks** (one
      gap visibly larger than its neighbours — derive from `columns`/`rows`/`vstack`). **Uneven card
      heights in a row** — sibling cards on the same row at **different heights** (one taller because
      its text wrapped to more lines) reads as ragged; they must share ONE height (size the row to the
@@ -215,6 +256,13 @@ Do not just skim for the first few obvious issues. Run these passes:
      one side instead of optically centred). On a **CJK deck**, an off-centre large mark is
      usually a *full-width* punctuation glyph (`？！。`), which sits left-of-centre in its
      advance — the fix is the **ASCII** form, not re-centring (see `multilingual.md`).
+   - **Font hierarchy — content must read SMALLER than the slide title:** body / bullet / callout /
+     chip-label text set as large as (or larger than) the slide title flattens the hierarchy and reads
+     as amateur — there must be a clear size step (title > sub-heading > body > caption, ~1.4–1.8×).
+     Flag any slide where the content text looks the same size as or bigger than its title. The *only*
+     thing that may exceed body size is a deliberate **hero** element (the one big numeral or a
+     slide-defining equation) — and even it stays below the title. Easy to verify in the render: if a
+     body/formula/label glyph is as tall as the title's letters, it's a finding.
    - **Title accent crowded:** a subtitle/definition line jammed against the title's accent
      rule with no breathing gap.
    - **Kicker echoes the title:** the small eyebrow/kicker above the title repeats a word the
@@ -232,6 +280,14 @@ Do not just skim for the first few obvious issues. Run these passes:
      source. (Figures and tables are cropped whole; formulas are not.) If a formula was **derived from
      code**, sanity-check it expresses what the code actually computes — flag an invented or
      wrongly-simplified equation.
+   - **Formula sized wrong, or a variable left in plain text:** the equation's glyphs should read at
+     ≈ **body/content size** and be **consistent across slides** — flag a formula **blown up to span
+     the slide width** (oversizing every glyph past the title — breaks the font hierarchy) or shrunk
+     illegible (only a deliberate hero equation may exceed body size, still below the title). Also flag
+     any **variable/symbol set as plain upright body text** instead of math format — *including a lone
+     inline variable* (*x*, *λ*, `Aᵀ`, *R*(*x*)) — and any **Unicode super/subscript** (ᴴ ᵀ ᵣ, tofu
+     risk): every variable must be italic math with real sub/superscripts (`eq_par`/native runs inline,
+     `equation_png` for a full expression).
    - **Generated image is factually wrong about a real subject:** a generated plate of real,
      known things that gets a *visible fact* wrong — wrong **relative sizes/proportions** (two
      things drawn the wrong size relative to each other, e.g. a person as tall as a building),

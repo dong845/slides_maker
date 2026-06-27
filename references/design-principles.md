@@ -177,6 +177,36 @@ don't force any of them:
 The overall layout of a slide — margins, alignment, balance, whitespace — matters
 as much as the words on it. Design is not optional polish; it is half the job.
 
+### The C.R.A.P. framework — the four principles every layout obeys
+Robin Williams' four foundational design principles (Contrast, Repetition, Alignment, Proximity)
+are the organizing lens for *all* the layout rules below — use them as a named checklist when you
+design a slide and when you critique one. Each maps onto rules this skill already enforces:
+- **Contrast — make the important element pop; lead the eye.** Create a *visible* difference between
+  levels so the slide isn't an even grey field: **size** (title clearly larger than body — see "Visual
+  hierarchy"; ~1.4–1.8× steps), **weight/colour** (one accent for emphasis, ≥4.5:1 contrast), **font**
+  (a display face distinct from the body face — **≤2 *text* families**, often serif + sans but two
+  well-paired sans is fine; a **mono for code** and a **CJK face on a CJK deck** are functional, not
+  extra style fonts; emphasise with
+  bold/italic, **never underline**, which clutters), and **shape** (a chip/card/band to set one thing
+  apart). Contrast is *intentional and balanced* — too much reads as chaos, too little blends together.
+  This is the **squint test** and "invest unevenly (one element at 120%)" rules below.
+- **Repetition — repeat identity markers so the deck reads as ONE designed thing.** Reuse the same
+  *system* on every slide: title chrome, accent palette, font pairing, bullet/marker style, footer,
+  section-divider treatment, and any signature motif or numeral system. Repetition is what "brands" a
+  deck and makes a long one feel unified rather than templated-at-random — it is largely a **deck-level**
+  (planner) responsibility, since only a whole-deck view can keep the system consistent. (See
+  "Deck-level rhythm" — repetition of the *system*, deliberate variation of the *protagonist*.)
+- **Alignment — every element sits on a shared grid, intentionally; nothing is placed by eye.** A clear
+  alignment makes a slide read as organized; a single off-grid element reads as messy. Derive positions
+  from `columns`/`rows`/`vstack`/`content_band` so edges line up — never hand-pick a coordinate. (See
+  "Balanced split layouts", "measure or anchor, never hand-pick a y".)
+- **Proximity — group related items; separate unrelated ones with space.** What belongs together sits
+  together; the gap *between* groups is clearly larger than the gap *within* one, so the eye parses the
+  structure without lines or boxes. (See "Group by proximity — inter-group gap ≥ ~1.5–2× intra-group".)
+A slide that satisfies all four — one element pops (C), it uses the deck's repeated system (R),
+everything aligns to a grid (A), and related things are grouped (P) — is almost always well-laid-out;
+a slide that feels "off" usually violates one of them, so name *which* when diagnosing.
+
 **The governing rule is *suitable space* — the right degree.** Every element should leave a
 comfortable margin on **all four sides**: never crowd an edge (top / bottom / left / right) and
 never strand a large dead gap either. Too tight reads as cramped; too loose reads as
@@ -252,13 +282,48 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   touching a rounded corner reads as unfinished even when nothing overflows.
 - **No large empty region — fill the slide, balanced.** A slide that's mostly blank (content
   huddled in one corner or the top third, a wide empty band down a side or across the bottom) reads
-  as unfinished — don't ship it. Fix it: **enlarge the figure/content to use the space, add the
-  supporting element the point actually needs, or redistribute the blocks** so the content occupies
-  the slide evenly. If a slide genuinely has too little to fill it, **merge or cut it** (a presented
-  deck that's over-full wants *more* slides, never emptier ones). Whitespace is a *deliberate*
-  breathing tool around content — not a large leftover void. *(On a **fixed surface** — poster,
-  single-slide infographic, one-pager — you can't "add a slide": organise the density into clear
-  regions/columns with strong hierarchy instead; the no-large-void rule still holds within the canvas.)*
+  as unfinished — don't ship it. **Default fix: ENRICH the content** — add the supporting detail,
+  example, sub-point, caption, mini-diagram, or data the point actually deserves so the slide earns
+  its space with *substance*. Then, secondarily, **enlarge the figure/hero element** or **redistribute
+  the blocks** so the content occupies the slide evenly. Only if a slide genuinely has too little to
+  say — even after enriching — **merge or cut it** (a presented deck that's over-full wants *more*
+  slides, never emptier ones). Whitespace is a *deliberate* breathing tool around content — not a
+  large leftover void. *(On a **fixed surface** — poster, single-slide infographic, one-pager — you
+  can't "add a slide": organise the density into clear regions/columns with strong hierarchy instead;
+  the no-large-void rule still holds within the canvas.)*
+- **Never inflate an oversized block to *fake* a full slide.** Filling space means more *content*,
+  not a bigger empty *container*. The anti-pattern: a huge card/callout/panel holding a single short
+  line of small text, stretched tall or wide just to cover a gap — it reads as a placeholder, not a
+  finished block (small font swimming in a big box is the dead giveaway). Two correct fixes, never the
+  inflate: **(a)** if the point deserves more, *add real content* to the block (a second line, a
+  figure, a sub-list) so the box is genuinely full; **(b)** if it's a one-liner, **shrink the box to
+  hug the text** (per "Blocks hug their text") and use the freed space for another element or a
+  balanced margin. A block's size must be *earned by its content* — never a one-line label in a block
+  sized for a paragraph.
+- **Depict multiplicity, don't DUPLICATE it — show the pattern, not N copies of the same content.**
+  When a slide has many units that are **identical except for an index/label**, do **not** render all
+  N as full blocks. Repeating the same words N times adds **zero information**, eats the whole canvas,
+  and *buries the actual message* — the audience re-reads the same label N times instead of grasping
+  the structure. This pattern shows up in *any* domain: parallel compute/model units (N attention
+  heads, N stacked layers, K service replicas, an M-model ensemble), repeated infrastructure (12
+  identical microservices, a rack of identical nodes), repeated process/org units (N regional teams
+  running the same playbook, N identical pipeline stages), or a long set of same-shaped items. Smart
+  depiction:
+  - **Representatives + ellipsis + count.** Show 2–3 representative units, then `…`, then the last one,
+    and state the total — e.g. `unit 1 · unit 2 · … · unit N` with a **`× N`** badge — so "there are N
+    of these in parallel" is read at a glance. (A single card with a stacked-shadow "deck of cards"
+    look, or a `×N` multiplier, works too.)
+  - **Say the shared detail ONCE.** The content common to every unit (whatever each one *does*) belongs
+    in **one** caption under the group, or on the *representative* only — never copied into every block.
+  - **Spend the saved space on what actually differs / what matters** — almost always the *structure or
+    flow* the multiplicity feeds into (how the parallel units fan out and then combine/aggregate), not
+    the enumeration of clones. Make that flow the slide's hero.
+  - **When to show all N instead:** only when each unit has **genuinely distinct content** (different
+    labels, values, or roles), or N is small (≲4) *and* showing every one is the point. Identical-
+    except-index + large N ⇒ abstract it. This is also the *right* fix for a too-empty row — fill it
+    with the real flow/structure, **never** by cloning a block to occupy space (that compounds both the
+    filler and the duplication faults). Plan this with `deckkit.repeat_row()` (representatives + `…` +
+    `×N` + one shared caption).
 - **Overlap vs layering — the one distinction, so "no overlap" and "layer glass on a glow" never
   conflict.** Two definitions, applied everywhere (rules, lint, critic):
   - **Collision = two SEPARATE blocks intersecting, neither contained in the other** (a card over a
@@ -479,6 +544,15 @@ anyway:
   glance, consistent across slides. Keep text-vs-background contrast high (≈4.5:1 or
   better); light-grey body on white or pale labels on a tint fail from the back row.
 - Body 16–18 pt; don't shrink text to fit — cut text instead.
+- **Content text must be visibly SMALLER than the slide title — never equal, never larger.**
+  The size order is fixed: slide **title** > section/sub-heading > **body/content** > caption/fine
+  print. A body or callout set as large as (or larger than) the title flattens the hierarchy and
+  reads as amateur — the eye can't tell the headline from the supporting text. Keep a clear step
+  between levels (e.g. title ~24–30 pt, body ~16–18 pt on this canvas — a ~1.4–1.8× ratio), and that
+  includes **equations, big numerals, and chip/card labels**: an equation or a stat value may be the
+  slide's hero and so *can* exceed body size, but a *supporting* formula or label sits at content size,
+  still below the title. Check it in the render: if any body/formula/label glyph is as tall as the
+  title's letters, shrink it.
 - **Mind the canvas scale when judging sizes.** The deck is built on a 10 × 5.625 in
   canvas (75% of the standard 13.33 in), so every point size is ~¾ of its
   standard-deck equivalent: 16 pt here ≈ 21 pt on a normal deck, and a 12.5 pt callout
