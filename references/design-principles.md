@@ -147,6 +147,22 @@ don't force any of them:
   adds authority. Don't force it on general business content.
 - **Photography** — full-bleed photo under a graduated `scrim_overlay` (aim it at the text zone, not
   a flat overlay); `before_after` pairs, `photo_triptych`, `image_tab` corner labels for photo decks.
+- **Image-text composition patterns — reach past the default 50/50 split.** A richer vocabulary for
+  pairing an image with text (pick by *what the image is for*, then keep it consistent):
+  - **Side panel + bleed** — image on one side **bleeding off the slide edge** (no margin on the outer
+    edge), text in a flush column on the other; dynamic, gives the image presence without shrinking it.
+  - **Full-bleed + floating text** — image fills the slide, text sits in a calm zone over a
+    `scrim_overlay` aimed at it (a corner, a band) — for an atmospheric opener or section divider.
+  - **Faded large title over imagery** — a low-contrast/large display title overlapping a soft
+    background image (an ink wash, a texture) — editorial, literary; keep the image quiet so type wins.
+  - **Colour-block quadrant** — 2×2 (or 1×N) of solid colour panels, each a category with a short
+    label + figure/icon; bold, scannable (use `palette(n)`, one hue per block — never gray filler).
+  - **Inset / framed image** — a smaller image in a `corner_frame` or `photo_card` with a caption rail
+    beside it, for a figure that supports rather than dominates.
+  - **Image grid / contact sheet** — N small images on a strict grid (one gutter, equal cells) for a
+    montage/montage-of-examples; label each consistently.
+  Whichever you pick, keep the subject **whole** (`picture(fit="contain")` unless edge-tolerant), the
+  text one gutter clear, and the same pattern across sibling slides.
 - **One-accent discipline** — for a focal-item-per-slide deck, colour ONLY the one element that
   matters and drop the rest to a neutral grey (`accent_one`); never exceed ~2 saturated hues unless
   the content is genuinely categorical. Restraint reads as confidence.

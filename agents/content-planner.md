@@ -171,15 +171,55 @@ For every slide, decide and record:
 - **Motion** and **image** — by taste and purpose (see §6), recorded per slide.
 
 ### 5 — Choose the design that fits the content, then lay it out (this is half the job)
-**First pick the DESIGN form that makes each slide's point land — do not default to a bullet
-list.** The kit is large now, so match it deliberately to the content's *communicative intent*
-(full roster: `references/data-viz.md` for charts, the "Layout patterns" section of
-`design-principles.md`, `scripts/presets.py` for the look). A quick decision guide:
+
+**Step A — establish the deck's DESIGN LANGUAGE first (the atmosphere).** Before any per-slide choice,
+decide ONE coherent look for the whole deck — *this* is what makes a deck feel designed like a pro
+sample instead of a default template, and it's the planner's call to make once and hold. Pick a
+**`preset`** (`scripts/presets.py`) matched to purpose + mood; the full menu + when-to-use is in
+**`references/design-gallery.md`**:
+> minimal/typographic → `swiss` · light luxury magazine → `editorial_paper` · FT/Bloomberg **dark**
+> data → `editorial_report` · premium SaaS/launch → `glassmorphism` · playful → `memphis` · zine/DIY →
+> `risograph` · newspaper/annual-report → `brutalist` · engineering schematic → `blueprint` ·
+> AI/infra/eng **dark** → `dark_tech` · MBB strategy/board → `consulting` · Chinese ink → `ink_wash` ·
+> 传统色 heritage → `eastern_traditional` · dark fashion/luxury → `luxury_dark` · memorial/exhibition →
+> `museum_memorial`.
+- **Name the bias and beat it** (`design-by-purpose.md`): don't reflex to the safe light/minimal/blue
+  default — range across light↔dark, warm↔cool, serif↔sans, restrained↔bold to fit *this* purpose; a
+  custom look is fine. Record the **palette · type pairing · surface · one signature motif** once, in
+  the deck-level decisions, so every slide inherits it (CRAP Repetition).
+- **Then plan the cross-cutting "atmosphere" moves** that recur in every strong deck (the polish pass —
+  `design-gallery.md`): pick the few that **fit the register** (these are NOT universal — match the move
+  to the look) and apply them *consistently* —
+  - a **semantic colour contract** (bind one hue to each concept — navy=structure, green=good,
+    red=risk — and reuse it on headings/icons/badges/table-cells/chart-series; `semantic-color-contract.md`)
+    — for technical / data / consulting decks; on a chaptered editorial deck bind the hue to the *section* instead;
+  - **action titles + `insight_banner`** — for a readout / consulting / exec deck (a full-sentence conclusion
+    + a one-line so-what bar);
+  - **`bilingual_lockup`** headlines (heavy CJK/serif + tracked Latin strap) — only on a genuine **CN/EN**
+    deck; a **mono-中文** literary deck wants a plain CJK headline, *not* a bolted-on English/pinyin strap;
+  - a **`gradient_rule`** brand signature, **`ghost_numeral`** wayfinding, and **light/dark pacing**
+    (quiet light pages punctuated by occasional **full-bleed dark section dividers** with a giant numeral
+    + chapter title, bilingual on a CN/EN deck) — for **dark-tech / editorial-dark / consulting / report**
+    registers;
+  - **East-Asian register instead (`ink_wash` / `eastern_traditional`):** a black full-bleed divider and a
+    bilingual strap *fight* a warm-paper 留白 look — use a **`seal` + `cjk_numeral` (壹贰叁) divider, generous
+    留白, and an ink-wash plate** as the atmosphere (`east-asian-aesthetic.md`), not the dark/bilingual moves;
+  - **on-brand photography** — run stray colour photos through `image_fx.duotone`/`grayscale` so they
+    don't fight the accent (riso / brutalist / ink / luxury / museum).
+  These are *taste, not a checklist* — choose what serves the purpose **and the chosen preset's register**,
+  then commit to them deck-wide. *(The icon family + image art-direction join this design language too —
+  set in §6.)*
+
+**Step B — per slide, pick the FORM that makes the point land — do not default to a bullet list.**
+Match the kit to the content's *communicative intent* (charts → `data-viz.md`; layout patterns &
+components → `design-principles.md` + the component catalogue in `design-gallery.md`). A decision guide:
 - **Quantitative / data → pick the chart by the argument, not always a bar.** Part-to-whole + a
   headline number → donut+KPI; a before→after gap per item → dumbbell; a rank/level change between
   two points → slope; two trends on different scales → dual-axis; the "vital few" → Pareto; x vs y
-  with a size dimension → bubble+trend. **Single-highlight** the one series that matters and pair a
-  `takeaway_rail`. A simple single comparison/one trend → a plain bar/line is still fine.
+  with a size dimension → bubble+trend; a **value bridge / reallocation (A→B, budget shift, walk from
+  start to end)** → a *waterfall* — there's no native waterfall yet, so build it from a before/after
+  `segmented_bar` or per-step `change_stat`/`dumbbell` (and flag it). **Single-highlight** the one series
+  that matters and pair a `takeaway_rail`. A simple single comparison/one trend → a plain bar/line is fine.
 - **A few standout numbers, no trend →** `scorecard` tiles (status/KPI, with ▲/▼ deltas) or
   `stat_row` (editorial figures) — not a chart, not bullets.
 - **A relationship / structure →** `quadrant` (items on two real axes), `hub_spoke` (one core +
@@ -196,14 +236,34 @@ list.** The kit is large now, so match it deliberately to the content's *communi
   stating what each unit does) — and make the **flow the units feed into** (how they fan out and then
   combine/aggregate) the slide's hero. Only enumerate all N when each unit is genuinely *distinct* or N
   is small (≲4).
+- **A process / architecture / dataflow / flowchart →** the **diagram kit** (`node` + `connector`, or
+  `flow_chain` for a pipeline) — rebuild it from rounded-rect/pill/circle nodes joined by connectors with
+  **stroke semantics** (solid=required · dashed=optional · dotted=feedback), promoting exactly ONE node
+  to `hub`. On a **dark** deck, host the figure in a bright `diagram_island` ("Figure N"). A *nested /
+  containment* framework (core→ring→ring) → `concentric_rings`; specific fixed shapes still use
+  `hub_spoke`/`quadrant`/`timeline`. (This is the most-used technical device in the sample decks — never
+  ship an architecture as a static screenshot or a bullet list.)
+- **A numbered process / sequence of steps →** `step_list` (vertical numbered spine, or horizontal
+  connected pills with an accented terminal/current step) — not a flat numbered bullet list.
+- **A conclusion / recommendation (readout, consulting, exec) →** make the **title a full-sentence
+  ACTION TITLE** (the conclusion, not a topic label) and add an **`insight_banner`** (the one-line
+  so-what bar under it). The evidence on the slide supports that stated conclusion.
+- **Trade-offs / pros & cons →** `tradeoff_list` (green + / red −); **a level / intensity / maturity →**
+  `dot_meter` (●●○); **part-to-whole inline →** `segmented_bar` (cumulative 100%). Cheap, legible
+  micro-viz instead of prose or a heavyweight chart.
+- **A quote / argument →** `pull_quote` (italic serif + big quote-mark + attribution) and a `standfirst`
+  gloss under a headline — **but on a CJK deck** a classical line wants **large KaiTi/Songti + 留白 + a
+  `seal`**, not the italic-serif treatment (CJK has no true italic; `east-asian-aesthetic.md`); **a
+  closing / call to action →** `cta_button` / `cta_pair`; **a spec / recipe / parameters →** `spec_card`
+  (mono key→value placard); **a word-equation headline** (ZINE = MAGAZINE, A ≠ B) → `concept_equation`
+  (distinct from `equation_png`, which is for real LaTeX *math*).
 - **A concept / atmosphere →** a whole source figure; else a generated plate or a full-bleed photo
   under a graduated `scrim_overlay` aimed at the text (§6).
-- **Framing the deck →** a `cover` ↔ `colophon` bookend; a research deck's references → `sources_page`.
-- **The look (whole-deck) →** adopt a design-language `preset` matched to purpose (glassmorphism ·
-  swiss · editorial_paper · editorial_report · risograph · memphis); glass/glow only on a dark base,
-  `offset_shadow` for a print/riso feel, `editorial_header` + a serif for a showcase/report register.
-  Choose it by **naming the bias and beating it** (don't reflex to the safe light/minimal/blue-ish
-  default) — see `design-by-purpose.md` "Name the bias, then beat it" and the deck-level decision below.
+- **Framing the deck →** a `cover` ↔ `colophon` bookend; a research deck's references → `sources_page`;
+  a museum/heritage deck → a `catalogue_frame` + `year_badge` chronology; an East-Asian deck → a `seal`
+  + `cjk_numeral` markers (`east-asian-aesthetic.md`).
+- **(The whole-deck *look* was chosen in Step A — every per-slide form here inherits that preset's
+  palette/type/surface; don't re-decide the style per slide.)**
 
 **Bullets are the fallback, not the default** — reserve them for genuinely list-like qualitative
 points with no better structure, and even then prefer cards/`columns`. In the per-slide *Layout*
@@ -229,12 +289,11 @@ the planner's layout lens — for each slide, decide and record how the layout s
   for code and a CJK face don't count as extra style fonts), and shape (a
   chip/band/card) to set the key element apart. The slide must pass the squint test — if it blurs to an
   even grey field, there's no contrast; push the hero or cut.
-- **Repetition (DECK-LEVEL — yours to own)** — only you see every slide, so *you* are responsible for
-  the repeated identity system: specify it once and reuse it on every slide — the same title chrome,
-  accent palette, font pairing, bullet/marker style, footer, divider treatment, and any signature motif
-  or wayfinding numeral. Call out in the plan the elements that must repeat, so the deck reads as one
-  designed thing, not slide-by-slide invention. (Repeat the *system*; vary the *protagonist* — the
-  deck-rhythm check above.)
+- **Repetition (DECK-LEVEL — yours to own)** — the **design language you set in Step A** (palette, type
+  pairing, title chrome, footer, divider treatment, signature motif, wayfinding numeral) must **repeat on
+  every slide** — only you see the whole deck, so *you* enforce it. Call out in the plan the elements that
+  must repeat, so the deck reads as one designed thing, not slide-by-slide invention. (Repeat the
+  *system*; vary the *protagonist* — the deck-rhythm check above.)
 - **Alignment** — every element on a shared grid, placed by a measured primitive
   (`columns`/`rows`/`vstack`/`content_band`), never an eyeballed coordinate; edges line up across the
   slide (and ideally slide-to-slide — title baseline, content top, footer all in the same place).
@@ -401,15 +460,20 @@ builder can execute. Include:
    matches what the source stresses. These are not optional preamble — they are the evidence
    the rest of the plan stands on, and the Step-3 checkpoint reviews them first; a brief with
    empty/hedged/untraced fields or a ledger with shipped `verified?=N` rows is not ready.
-2. **Deck-level decisions** — the narrative arc in one line; slide count vs. time budget
-   (with the pace check); the **look/palette/style for the purpose, chosen by naming the default
-   pull and beating it** (span a bold / neutral / quiet direction, pick what the purpose wants — not
-   the reflex middle — anchored to a concrete named exemplar, e.g. a clean product-doc look, an
-   editorial-newspaper look, a Swiss-poster look); the deck's **rhythm** — the planned sequence of
-   visual protagonists (e.g. cover → diagram → chart → photo → big-number → divider) and the
-   colour/density pacing (mostly-light with deliberate dark-divider/accent beats; dense slides spaced
-   by airy one-idea breaths) so the deck reads as a paced sequence, not one template repeated; the
-   deck's **image art-direction** (even if no images are proposed yet); the deck-wide transition choice.
+2. **Deck-level decisions** — a short bulleted block (the user approves it at a glance):
+   - **Arc & pace:** the narrative arc in one line; slide count vs. time budget (with the pace check).
+   - **Design language (Step A):** the chosen **`preset`** (or a custom look), named by *beating the
+     default pull* (span bold / neutral / quiet — pick what the purpose wants, not the reflex middle —
+     anchored to a concrete exemplar, e.g. `consulting`/MBB, `dark_tech`, `editorial_report`, a
+     Swiss-poster look), with its **palette · type pairing · surface · signature motif**.
+   - **Atmosphere / polish moves** committed deck-wide (only those that fit the register): e.g. a
+     semantic-colour contract + concept→hue map · action-titles + `insight_banner` · `bilingual_lockup` ·
+     `gradient_rule` · `ghost_numeral` · light/dark pacing + dark section dividers · `seal`+`cjk_numeral`+
+     留白 for an ink deck · on-brand `duotone`/`grayscale` photos.
+   - **Rhythm:** the planned sequence of visual protagonists (e.g. cover → diagram → chart → photo →
+     big-number → divider) and the colour/density pacing (deliberate dark-divider/accent beats; dense
+     slides spaced by airy one-idea breaths) so the deck reads as a paced sequence, not one template repeated.
+   - **Image art-direction** (even if no images are proposed yet) and the deck-wide **transition** choice.
 3. **Per-slide plan** — a row per slide:
 
    | # | Takeaway | Content (terse) | Visual source | Layout | Motion | Image (proposed?) |

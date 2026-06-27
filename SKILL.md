@@ -540,6 +540,20 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
   `offset_shadow` (hard letterpress/riso shadow).
 - **Publication & math:** `cover`/`colophon` (bookend the deck), `sources_page`, `specimen_card`;
   `equation_png` (LaTeX-style math) / `eq_par` (inline).
+- **East-Asian (CJK) accents:** `seal` (vermilion chop/印章 stamp — the one red accent on an ink deck),
+  `cjk_numeral` (壹·贰·叁 section markers vs Latin "01"). See `references/east-asian-aesthetic.md`.
+- **Diagram kit (general flowcharts):** `node` + `connector` (+ `flow_chain`) — any architecture from
+  rounded-rect/pill/circle nodes + connectors with **stroke semantics** (solid=required · dashed=optional
+  · dotted=feedback), exactly one `hub`; `diagram_island` (bright figure panel on a dark slide);
+  `concentric_rings` (nested framework); `step_list` (numbered process, vertical/horizontal).
+- **Editorial / consulting furniture:** `insight_banner` (so-what bar), `bilingual_lockup` (CJK+tracked
+  Latin headline), `highlight` (inline `<k>keyword</k>` recolour), `ghost_numeral` (faint watermark
+  ordinal), `concept_equation` (ZINE=MAGAZINE word-equation), `pull_quote`/`standfirst`, `cta_button`/
+  `cta_pair`, `status_stamp`/`corner_tab`, `spec_card`, `year_badge`, `gradient_rule` (2-stop brand rule),
+  `catalogue_frame` (double-line specimen frame — museum/eastern presets).
+- **Micro-viz:** `dot_meter` (●●○), `tradeoff_list` (+/−), `segmented_bar` (cumulative 100%).
+- **Photo on-brand (`scripts/image_fx.py`):** `duotone` / `grayscale` so a colour photo doesn't fight
+  the accent (riso/brutalist/ink/luxury/museum), then `picture(fit="cover")`.
 
 If the user gave a **style example** (Q4),
 build to your **style brief** of it — match its palette/accents, density, title
@@ -1075,7 +1089,11 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
 - `anim.py` — PowerPoint click-builds/transitions (pair `references/animation.md`).
 - `designed_charts.py` — raster matplotlib chart recipes (use only for dumbbell or a deliberate
   look — prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
-  design-language presets (glassmorphism/swiss/editorial_paper/editorial_report/risograph/memphis).
+  design-language presets (glassmorphism · swiss · editorial_paper · editorial_report · risograph ·
+  memphis · brutalist · blueprint · ink_wash · eastern_traditional · **consulting** (MBB action-title) ·
+  **dark_tech** (engineering dark + diagram-island) · **luxury_dark** · **museum_memorial**; ink_wash/
+  eastern_traditional → `references/east-asian-aesthetic.md`; the full style+component catalogue →
+  `references/design-gallery.md`).
 - `image_prompts.py` (build the prompt manifest) → `generate_images_codex.py` (no-key, Codex CLI) /
   `generate_images_openai.py` (API fallback). `archetypes_html.py` (direction-gate previews as
   **one HTML link**; `archetypes.py` is the older pptx-render variant + the post-pick one-slide
@@ -1084,11 +1102,13 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
 - `icons.py` — fetch an open-licensed SVG icon (Tabler/Lucide/Phosphor/Simple…), recolor to the deck
   palette, rasterize to a transparent PNG (`icon_png(spec, out, color, px)`); pair with
   `deckkit.icon`/`icon_card`. See `references/icons.md`.
+- `image_fx.py` — `duotone(img, ink_a, ink_b)` / `grayscale(img)` — preprocess a colour photo to the
+  deck's ink so it doesn't fight the accent (riso/brutalist/ink/luxury/museum). See `design-gallery.md`.
 - `extract_pdf.py` (crop a figure from a PDF — `figures`/`figure`/`autofig` auto-detect, `page`/`crop`
   manual) · `crop_helper.py` (crop/trim/panel **by looking, not guessing**) · `extract_deck.py` (pull
   content out of an existing deck — the redesign path).
 **Agents** (`agents/`): `content-planner.md` (Step-1 deep-understand + the build-ready per-slide plan; the Step-3 checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `openai.yaml` (Codex display metadata).
 
-**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
+**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
 
 **Registry** (NOT part of the skill): `~/.codex/slide-templates/` (Codex) · `~/.claude/slide-templates/` (Claude Code) — the user's saved templates; read for choices, write new `profile.md`s to the active host. Empty for a new user.

@@ -932,6 +932,53 @@ def icon_card(slide, x, y, w, h, png, title, body="", *, fill=None, line=None,
     return y + h
 
 
+def cjk_numeral(n, style="formal"):
+    """CJK numeral string for n (1–99) — for East-Asian section markers (壹·贰·叁 …).
+    style='formal' (壹贰叁肆伍陆柒捌玖拾, 大写) or 'simple' (一二三…). Use as a numeral marker on an
+    ink/traditional CJK deck instead of Latin "01/02" (see references/east-asian-aesthetic.md)."""
+    d = "〇一二三四五六七八九" if style == "simple" else "〇壹贰叁肆伍陆柒捌玖"
+    ten = "十" if style == "simple" else "拾"
+    n = int(n)
+    if n < 0 or n > 99:
+        return str(n)
+    if n < 10:
+        return d[n]
+    if n < 20:
+        return ten + (d[n - 10] if n > 10 else "")
+    return d[n // 10] + ten + (d[n % 10] if n % 10 else "")
+
+
+def seal(slide, x, y, size, char, *, fill=None, tcolor=None, shape="square",
+         rounded=True, border=True):
+    """A red SEAL / chop stamp with a 1–2 char CJK mark — the signature East-Asian accent
+    (印章). Filled vermilion square with a light char by default (阴文); on a warm-paper ink
+    deck it's the single spot of red. `shape="circle"` for a round seal; `border=True` adds the
+    classic thin inner rule. Pass `fill` to override the seal colour, `tcolor` the char colour.
+    Keep it SMALL (≈0.45–0.8 in) and use ONE per slide — it's a signature, not a sticker.
+    Set deckkit.EADISPLAY (e.g. 'KaiTi') so the mark renders in a brush face, not tofu."""
+    f = fill if fill is not None else RGBColor(0xA5, 0x2A, 0x2A)
+    tc = tcolor if tcolor is not None else RGBColor(0xF5, 0xF1, 0xE8)
+    if shape == "circle":
+        sh = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(size), Inches(size))
+        sh.fill.solid(); sh.fill.fore_color.rgb = f; sh.line.fill.background()
+    else:
+        box(slide, x, y, size, size, fill=f, round=rounded, r=0.1 * size)
+    if border:
+        inset = 0.1 * size
+        if shape == "circle":
+            b = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x + inset), Inches(y + inset),
+                                       Inches(size - 2 * inset), Inches(size - 2 * inset))
+            b.fill.background(); b.line.color.rgb = tc; b.line.width = Pt(1.0)
+        else:
+            box(slide, x + inset, y + inset, size - 2 * inset, size - 2 * inset,
+                fill=None, line=tc, line_w=1.0, round=rounded, r=0.08 * size)
+    fs = max(10, int(size * 72 * (0.42 if len(char) > 1 else 0.5)))
+    fam = EADISPLAY or EAFONT or DISPLAY or FONT
+    text(slide, x, y, size, size, [[(char, fs, tc, True, False, fam)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0, line_spacing=0.9)
+    return x + size
+
+
 def gif_poster(path, out_png=None, frame="first"):
     """Extract ONE representative frame of an animated GIF to a PNG — for the render/critic
     (which see only a static image) and as a check on what the deck shows when NOT in slideshow.
@@ -2098,3 +2145,442 @@ def alt_text(shape, description):
         if not cNvPr.get("title"):
             cNvPr.set("title", description[:120])
     return shape
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════
+# Design-pattern components mined from professional sample decks (ppt-master gallery).
+# See references/design-gallery.md + semantic-color-contract.md for when/why.
+# ════════════════════════════════════════════════════════════════════════════════════════
+
+def _blend(c, other, t):
+    """Blend RGBColor c toward `other` by fraction t (0..1). For tints / faint watermarks."""
+    if isinstance(c, str):
+        c = RGBColor.from_string(c.lstrip("#"))
+    if isinstance(other, str):
+        other = RGBColor.from_string(other.lstrip("#"))
+    return RGBColor(*(int(round(a + (b - a) * t)) for a, b in zip(c, other)))
+
+
+def highlight(s, size, base_c, accent_c, *, key_bold=True, font=None):
+    """Split a string with <k>…</k> tags into a text() RUN PARAGRAPH where tagged spans are
+    recolored to `accent_c` (and bolded). Gives a sentence/headline a scannable second layer —
+    recolor exactly ONE phrase per headline, a few per body line.
+        text(s, x,y,w,h, [highlight("the <k>one phrase</k> that matters", 16, INK, ACCENT)])
+    Returns a list of run tuples (a single paragraph)."""
+    import re
+    runs = []
+    for i, seg in enumerate(re.split(r"<k>(.*?)</k>", s)):
+        if not seg:
+            continue
+        key = (i % 2 == 1)
+        runs.append((seg, size, accent_c if key else base_c, key and key_bold, False, font) if font
+                    else (seg, size, accent_c if key else base_c, key and key_bold, False))
+    return runs
+
+
+def node(slide, x, y, w, h, label, *, shape="roundrect", fill=None, line=None, line_w=1.4,
+         tcolor=None, sub="", dashed=False, hub=False, accent=None):
+    """One diagram NODE (box/connector kit — the general architecture/flowchart builder).
+    `shape`='roundrect'|'rect'|'pill'|'circle'. By default a thin-outline pale node; `hub=True`
+    promotes it to a SOLID accent fill (the ONE focal node — keep every other node thin-outline,
+    exactly one hub). `dashed=True` marks an optional/inferred node. Returns the node's CENTER
+    (cx, cy) in inches so connector() can join it. Pair with connector() + the stroke-semantics
+    convention (solid=required · dashed=optional · dotted=feedback)."""
+    acc = accent if accent is not None else BLUE
+    ln = line if line is not None else acc
+    sh = {"pill": MSO_SHAPE.ROUNDED_RECTANGLE, "roundrect": MSO_SHAPE.ROUNDED_RECTANGLE,
+          "rect": MSO_SHAPE.RECTANGLE, "circle": MSO_SHAPE.OVAL}.get(shape, MSO_SHAPE.ROUNDED_RECTANGLE)
+    o = slide.shapes.add_shape(sh, Inches(x), Inches(y), Inches(w), Inches(h))
+    o.shadow.inherit = False
+    if hub:
+        o.fill.solid(); o.fill.fore_color.rgb = acc; o.line.fill.background()
+        tc = tcolor if tcolor is not None else (WHITE if contrast_ratio(WHITE, acc) >= contrast_ratio(DEEP, acc) else DEEP)
+    else:
+        o.fill.solid(); o.fill.fore_color.rgb = WHITE
+        o.line.color.rgb = ln; o.line.width = Pt(line_w)
+        tc = tcolor if tcolor is not None else DEEP
+    if dashed and not hub:
+        el = o.line._get_or_add_ln(); el.append(parse_xml(f'<a:prstDash {nsdecls("a")} val="dash"/>'))
+    if shape == "pill":
+        try: o.adjustments[0] = 0.5
+        except Exception: pass
+    runs = [[(label, 13, tc, True, False)]]
+    if sub:
+        runs.append([(sub, 9.5, _blend(tc, WHITE, 0.25) if hub else MUTE, False, False, MONO)])
+    text(slide, x + 0.06, y, w - 0.12, h, runs, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+         space_after=1, line_spacing=0.96)
+    return (x + w / 2, y + h / 2)
+
+
+def connector(slide, p0, p1, *, style="solid", color=None, width=1.5, label="", arrow=True,
+              label_c=None):
+    """Join two node points (cx,cy tuples from node()) with a connector. `style`='solid'
+    (required) | 'dashed' (optional) | 'dotted' (feedback/inferred) — the stroke SEMANTICS that
+    make a technical diagram readable. `label` = an on-shaft mono edge label (centred at midpoint).
+    `arrow=True` adds an arrowhead at p1."""
+    col = color if color is not None else MUTE
+    c = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(p0[0]), Inches(p0[1]),
+                                   Inches(p1[0]), Inches(p1[1]))
+    c.line.color.rgb = col; c.line.width = Pt(width); c.shadow.inherit = False
+    if style in ("dashed", "dotted"):
+        ln = c.line._get_or_add_ln()
+        ln.append(parse_xml(f'<a:prstDash {nsdecls("a")} val="{"dash" if style == "dashed" else "sysDot"}"/>'))
+    if arrow:
+        ln = c.line._get_or_add_ln()
+        ln.append(parse_xml(f'<a:tailEnd {nsdecls("a")} type="triangle" w="med" len="med"/>'))
+    if label:
+        mx, my = (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2
+        text(slide, mx - 0.8, my - 0.16, 1.6, 0.3, [[(label, 9, label_c or col, False, False, MONO)]],
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    return c
+
+
+def flow_chain(slide, x, y, w, h, labels, *, accent=None, gap=None, subs=None, hub_idx=None,
+               vertical=False):
+    """Convenience over node()+connector(): a CHAIN of nodes joined by arrows (a pipeline).
+    `labels` = list of node titles; `subs` optional same-length sub-labels; `hub_idx` promotes
+    one node to the solid accent. Horizontal by default; `vertical=True` stacks + down-arrows.
+    Returns the list of node centers."""
+    acc = accent if accent is not None else BLUE
+    n = len(labels); g = gap if gap is not None else 0.34
+    centers = []
+    if vertical:
+        nh = (h - g * (n - 1)) / n
+        for i, lab in enumerate(labels):
+            ny = y + i * (nh + g)
+            c = node(slide, x, ny, w, nh, lab, sub=(subs[i] if subs else ""),
+                     hub=(i == hub_idx), accent=acc)
+            if i: connector(slide, (x + w / 2, ny - g + 0.02), (x + w / 2, ny - 0.02), color=_blend(acc, WHITE, 0.3))
+            centers.append(c)
+    else:
+        nw = (w - g * (n - 1)) / n
+        for i, lab in enumerate(labels):
+            nx = x + i * (nw + g)
+            c = node(slide, nx, y, nw, h, lab, sub=(subs[i] if subs else ""),
+                     hub=(i == hub_idx), accent=acc)
+            if i: connector(slide, (nx - g + 0.02, y + h / 2), (nx - 0.02, y + h / 2), color=_blend(acc, WHITE, 0.3))
+            centers.append(c)
+    return centers
+
+
+def step_list(slide, x, y, w, items, *, orientation="vertical", accent=None, ink=None,
+              body_c=None, numeral_style="arabic", active_idx=None, gap=None):
+    """A NUMBERED process / step list. items = [(title, body), …]. orientation='vertical'
+    (numbered spine, title+body rows) or 'horizontal' (connected pill steps with arrows).
+    `numeral_style`='arabic'|'pad2' (01) |'cjk'. `active_idx` accents one step (terminal/current).
+    Returns the bottom y (vertical)."""
+    acc = accent if accent is not None else BLUE
+    ic = ink if ink is not None else DEEP
+    bc = body_c if body_c is not None else SLATE
+    def numr(i):
+        if numeral_style == "cjk": return cjk_numeral(i + 1)
+        if numeral_style == "pad2": return f"{i + 1:02d}"
+        return str(i + 1)
+    if orientation == "horizontal":
+        n = len(items); g = gap if gap is not None else 0.3
+        cw = (w - g * (n - 1)) / n
+        for i, (title, body) in enumerate(items):
+            cx = x + i * (cw + g); on = (active_idx == i)
+            d = 0.5
+            box(slide, cx + cw / 2 - d / 2, y, d, d, fill=acc if on else WHITE,
+                line=None if on else acc, line_w=1.4, round=True, r=d / 2)
+            tc = (WHITE if contrast_ratio(WHITE, acc) >= contrast_ratio(DEEP, acc) else DEEP) if on else acc
+            text(slide, cx + cw / 2 - d / 2, y, d, d, [[(numr(i), 15, tc, True, False)]],
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+            if i: connector(slide, (cx - g + 0.02, y + d / 2), (cx - 0.02, y + d / 2), color=_blend(acc, WHITE, 0.4))
+            text(slide, cx, y + d + 0.12, cw, 0.34, [[(title, 13, ic, True, False)]], align=PP_ALIGN.CENTER, space_after=0)
+            if body:
+                text(slide, cx, y + d + 0.46, cw, 0.5, [[(body, 11, bc, False, False)]], align=PP_ALIGN.CENTER, space_after=0)
+        return y + d + 1.0
+    # vertical
+    g = gap if gap is not None else 0.2
+    cy = y
+    for i, (title, body) in enumerate(items):
+        d = 0.42; on = (active_idx == i)
+        box(slide, x, cy, d, d, fill=acc if (on or active_idx is None) else _blend(acc, WHITE, 0.0),
+            round=True, r=d / 2)
+        tc = WHITE if contrast_ratio(WHITE, acc) >= contrast_ratio(DEEP, acc) else DEEP
+        text(slide, x, cy, d, d, [[(numr(i), 14, tc, True, False)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        text(slide, x + d + 0.18, cy - 0.02, w - d - 0.18, 0.32, [[(title, 14.5, ic, True, False)]], space_after=0)
+        bh = 0.3
+        if body:
+            text(slide, x + d + 0.18, cy + 0.3, w - d - 0.18, 0.6, [[(body, 11.5, bc, False, False)]], space_after=0, line_spacing=1.02)
+            bh = 0.62
+        cy += max(d, bh) + g
+    return cy
+
+
+def ghost_numeral(slide, x, y, w, h, text_str, *, color=None, bg=None, opacity=0.12, font=None,
+                  align=PP_ALIGN.LEFT):
+    """A giant FAINT index/ordinal/year numeral sitting BEHIND content as silent wayfinding +
+    texture (8–18% strength). Draw it FIRST (behind the card/title). The **bg-aware successor to
+    `big_numeral(mode='ghost')`** — it blends `color` toward `bg` by (1-opacity), so unlike that
+    light-only watermark it works on a DARK deck too (pass the deck's `bg`). For a *foreground* hero
+    figure use `big_numeral` / `stat_row` instead. No alpha needed."""
+    c = _blend(color if color is not None else MUTE, bg if bg is not None else WHITE, 1 - opacity)
+    sz = int(min(h * 72 * 1.05, 220))
+    text(slide, x, y, w, h, [[(str(text_str), sz, c, True, False, font or DISPLAY or FONT)]],
+         align=align, anchor=MSO_ANCHOR.MIDDLE, space_after=0, line_spacing=0.9)
+
+
+def insight_banner(slide, x, y, w, body, *, label="INSIGHT", fill=None, accent=None,
+                   tcolor=None, h=0.62):
+    """The consulting 'so-what' BANNER — a full-width dark rounded bar under a slide's action
+    title carrying the one-sentence implication (label caps in accent + the sentence). Returns
+    bottom y."""
+    f = fill if fill is not None else DEEP
+    acc = accent if accent is not None else GOLD
+    tc = tcolor if tcolor is not None else WHITE
+    box(slide, x, y, w, h, fill=f, round=True)
+    box(slide, x, y + 0.1, 0.06, h - 0.2, fill=acc)
+    runs = [(label + "   ", 11, acc, True, False), (body, 13.5, tc, False, False)]
+    text(slide, x + 0.28, y, w - 0.5, h, [runs], anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    return y + h
+
+
+def bilingual_lockup(slide, x, y, w, zh, en, *, zh_size=30, en_size=11, ink=None, accent=None,
+                     rule=True, zh_font=None, en_font=None, anchor_top=True):
+    """A CJK (or any) heavy display headline auto-paired with a wide-tracked ALL-CAPS Latin/pinyin
+    strap line beneath — the most universal 'instantly professional' lockup. Optional short accent
+    rule between. Returns bottom y."""
+    ic = ink if ink is not None else DEEP
+    acc = accent if accent is not None else MAGENTA
+    tb = text(slide, x, y, w, 0.7, [[(zh, zh_size, ic, True, False, zh_font or EADISPLAY or DISPLAY or FONT)]], space_after=0)
+    eaface = zh_font or EADISPLAY      # CJK glyphs render from <a:ea> — set the DISPLAY face there too
+    if eaface:
+        for p in tb.text_frame.paragraphs:
+            for r in p.runs:
+                _apply_ea(r, eaface)
+    yy = y + zh_size / 72.0 + 0.12
+    if rule:
+        box(slide, x + 0.02, yy, 0.9, 0.035, fill=acc); yy += 0.14
+    text(slide, x + 0.01, yy, w, 0.3,
+         [[(" ".join(en.upper()) if len(en) < 26 else en.upper(), en_size, MUTE, True, False, en_font or FONT)]],
+         space_after=0)
+    return yy + 0.3
+
+
+def concept_equation(slide, x, y, w, h, terms, *, op="=", accent=None, ink=None, highlight_idx=None,
+                     term_size=30, op_size=34, font=None):
+    """A word-EQUATION headline device (not LaTeX math): big display terms joined by oversized
+    accent operators — 'ZINE = MAGAZINE', 'A ≠ B ≠ C', '城府 = 压表现 × 稳胜负 × 延迟满足'. `op` is the
+    joiner ('='|'≠'|'×'|'+'|'→'); `highlight_idx` recolors one term to the accent. Centred row."""
+    acc = accent if accent is not None else MAGENTA
+    ic = ink if ink is not None else DEEP
+    runs = []
+    for i, t in enumerate(terms):
+        runs.append((t, term_size, acc if i == highlight_idx else ic, True, False, font or DISPLAY or FONT))
+        if i < len(terms) - 1:
+            runs.append(("  " + op + "  ", op_size, acc, True, False, font or DISPLAY or FONT))
+    tb = text(slide, x, y, w, h, [runs], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    eaface = font or EADISPLAY        # honor the CJK display face for any CJK terms
+    if eaface:
+        for p in tb.text_frame.paragraphs:
+            for r in p.runs:
+                _apply_ea(r, eaface)
+    return y + h
+
+
+def cta_button(slide, x, y, w, h, label, *, variant="primary", accent=None, tcolor=None,
+               arrow=True, mono=False):
+    """A call-to-action button: filled `variant='primary'` (accent fill) or `variant='secondary'`
+    (outline). Optional trailing → arrow / mono command label. Use on closing/cover masters."""
+    acc = accent if accent is not None else BLUE
+    if variant == "primary":
+        box(slide, x, y, w, h, fill=acc, round=True, r=min(h / 2, 0.16))
+        tc = tcolor if tcolor is not None else (WHITE if contrast_ratio(WHITE, acc) >= contrast_ratio(DEEP, acc) else DEEP)
+    else:
+        box(slide, x, y, w, h, fill=None, line=acc, line_w=1.4, round=True, r=min(h / 2, 0.16))
+        tc = tcolor if tcolor is not None else acc
+    lab = label + ("  →" if arrow else "")
+    text(slide, x, y, w, h, [[(lab, 13, tc, True, False, MONO if mono else None)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def cta_pair(slide, x, y, w, h, primary, secondary, *, accent=None, gap=0.2):
+    """Primary (filled) + secondary (outline) CTA buttons side by side, equal height."""
+    bw = (w - gap) / 2
+    cta_button(slide, x, y, bw, h, primary, variant="primary", accent=accent)
+    cta_button(slide, x + bw + gap, y, bw, h, secondary, variant="secondary", accent=accent)
+
+
+def status_stamp(slide, x, y, text_str, *, color=None, size=0.95, rotation=-12):
+    """A rotated state STAMP ('SOLD OUT', 'CONFIDENTIAL') — a bordered caps mark attached to a
+    card/footer. Independent of the CJK `seal`."""
+    c = color if color is not None else MAGENTA
+    sh = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(size * 1.7), Inches(size * 0.5))
+    sh.fill.background(); sh.line.color.rgb = c; sh.line.width = Pt(1.6); sh.rotation = rotation
+    sh.shadow.inherit = False
+    text(slide, x, y, size * 1.7, size * 0.5, [[(text_str.upper(), 13, c, True, False)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    return sh
+
+
+def corner_tab(slide, card_x, card_y, card_w, label, *, fill=None, tcolor=None, w=1.6, h=0.32):
+    """A 'RECOMMENDED' / 'MOST POPULAR' tab sitting ON the top edge of a card (centred on it). Its
+    bottom meets the card's top edge so it reads as attached WITHOUT overlapping into the card (no
+    false overlap lint). Build the card first, then call this with the card's x/y/w."""
+    f = fill if fill is not None else MAGENTA
+    tc = tcolor if tcolor is not None else WHITE
+    bx = card_x + card_w / 2 - w / 2
+    ty = card_y - h            # bottom edge meets the card top — attached, not overlapping
+    box(slide, bx, ty, w, h, fill=f, round=True, r=h / 2)
+    text(slide, bx, ty, w, h, [[(label.upper(), 9.5, tc, True, False)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def concentric_rings(slide, cx, cy, layers, *, accent=None, ink=None, r0=1.6, ring=0.62):
+    """A nested-containment / synthesis diagram (core → ring → ring) with leader labels — for a
+    qualitative framework (e.g. CMT 色彩·材质·纹理). layers = [outer…inner] labels."""
+    acc = accent if accent is not None else GOLD
+    ic = ink if ink is not None else DEEP
+    n = len(layers)
+    for i in range(n):
+        r = r0 - i * ring
+        col = _blend(acc, WHITE, 0.75 - 0.22 * i)
+        o = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - r), Inches(cy - r), Inches(2 * r), Inches(2 * r))
+        o.fill.solid(); o.fill.fore_color.rgb = col; o.line.color.rgb = acc; o.line.width = Pt(1.2); o.shadow.inherit = False
+    for i, lab in enumerate(layers):
+        r = r0 - i * ring
+        ly = cy - r + ring / 2 if i < n - 1 else cy
+        text(slide, cx - 1.3, ly - 0.16, 2.6, 0.32, [[(lab, 13 if i < n - 1 else 14, ic, True, False)]],
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def pull_quote(slide, x, y, w, quote, *, attribution="", accent=None, ink=None, serif=None, size=20):
+    """An italic-serif PULL QUOTE with an oversized accent quote-mark and attribution — turns a
+    statement into an argument. Returns bottom y."""
+    acc = accent if accent is not None else MAGENTA
+    ic = ink if ink is not None else DEEP
+    f = serif or DISPLAY or "Georgia"
+    text(slide, x, y - 0.1, 0.7, 0.7, [[("“", 54, acc, True, False, f)]], space_after=0)
+    text(slide, x + 0.05, y + 0.5, w, 1.4, [[(quote, size, ic, False, True, f)]], space_after=2, line_spacing=1.1)
+    yy = y + 0.5 + (size / 72.0) * 1.1 * (1 + len(quote) // max(1, int(w * 9))) + 0.2
+    if attribution:
+        text(slide, x + 0.05, yy, w, 0.3, [[("— " + attribution, 12, MUTE, False, False)]], space_after=0)
+        yy += 0.3
+    return yy
+
+
+def standfirst(slide, x, y, w, text_str, *, ink=None, serif=None, size=15):
+    """An italic-serif STANDFIRST / dekker — the one-line editorial gloss under a headline.
+    Returns bottom y."""
+    text(slide, x, y, w, 0.5, [[(text_str, size, ink if ink is not None else SLATE, False, True, serif or DISPLAY or "Georgia")]],
+         space_after=0, line_spacing=1.05)
+    return y + size / 72.0 * 1.05 + 0.1
+
+
+def dot_meter(slide, x, y, n, total, *, accent=None, off=None, d=0.13, gap=0.07):
+    """A ●●○ complexity/level meter — n filled of `total` dots."""
+    acc = accent if accent is not None else BLUE
+    of = off if off is not None else _blend(acc, WHITE, 0.72)
+    for i in range(total):
+        box(slide, x + i * (d + gap), y, d, d, fill=acc if i < n else of, round=True, r=d / 2)
+
+
+def tradeoff_list(slide, x, y, w, plus, minus, *, pos=None, neg=None, recommended=False):
+    """A +/− trade-off list: green '+' pros and red '−' cons. plus/minus = lists of strings."""
+    pc = pos if pos is not None else GREEN
+    nc = neg if neg is not None else RGBColor(0xD0, 0x3A, 0x2E)
+    cy = y
+    for sign, col, items in (("+", pc, plus), ("−", nc, minus)):
+        for it in items:
+            text(slide, x, cy, 0.3, 0.28, [[(sign, 14, col, True, False)]], space_after=0)
+            text(slide, x + 0.32, cy, w - 0.32, 0.3, [[(it, 12, SLATE, False, False)]], space_after=0)
+            cy += 0.3
+    return cy
+
+
+def segmented_bar(slide, x, y, w, h, parts, *, labels=None, accents=None, show_pct=True):
+    """A cumulative 100% SEGMENTED bar. parts = list of values (auto-normalised). Distinct hues.
+    Returns bottom y."""
+    tot = sum(parts) or 1
+    cols = accents or palette(len(parts), ACCENTS)
+    cx = x
+    for i, v in enumerate(parts):
+        seg = w * v / tot
+        box(slide, cx, y, seg, h, fill=cols[i], round=False)
+        if show_pct and seg > 0.5:
+            tc = WHITE if contrast_ratio(WHITE, cols[i]) >= contrast_ratio(DEEP, cols[i]) else DEEP
+            lab = (labels[i] + " " if labels else "") + f"{round(100 * v / tot)}%"
+            text(slide, cx, y, seg, h, [[(lab, 10.5, tc, True, False)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        cx += seg
+    return y + h
+
+
+def year_badge(slide, x, y, text_str, *, fill=None, tcolor=None, w=0.95, h=0.4):
+    """A small year/date PILL badge (anchors chronology on timelines/cards)."""
+    f = fill if fill is not None else GOLD
+    tc = tcolor if tcolor is not None else (WHITE if contrast_ratio(WHITE, f) >= contrast_ratio(DEEP, f) else DEEP)
+    box(slide, x, y, w, h, fill=f, round=True, r=h / 2)
+    text(slide, x, y, w, h, [[(str(text_str), 12, tc, True, False)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def spec_card(slide, x, y, w, h, rows, *, ink=None, accent=None, fill=None, title=""):
+    """A mono key→value PLACARD (Rendering / Palette / Layout; a CAD title-block) that documents a
+    figure/layout as a recipe. rows = [(key, value), …]."""
+    ic = ink if ink is not None else DEEP
+    box(slide, x, y, w, h, fill=fill if fill is not None else LIGHT, line=_blend(ic, WHITE, 0.82), line_w=1.0, round=True)
+    cy = y + 0.16
+    if title:
+        text(slide, x + 0.18, cy, w - 0.36, 0.3, [[(title.upper(), 10.5, accent if accent is not None else MAGENTA, True, False, MONO)]], space_after=0)
+        cy += 0.32
+    for k, v in rows:
+        text(slide, x + 0.18, cy, w * 0.42, 0.26, [[(str(k).upper(), 9.5, MUTE, False, False, MONO)]], space_after=0)
+        text(slide, x + w * 0.44, cy, w * 0.54 - 0.18, 0.26, [[(str(v), 10.5, ic, True, False, MONO)]], space_after=0)
+        cy += 0.28
+    return y + h
+
+
+def diagram_island(slide, x, y, w, h, *, caption="", bezel=None, fill=None, cap_c=None, pad=0.3):
+    """A bright rounded device-bezel PANEL hosting a flowchart/figure on a DARK slide (the 'white
+    island' move). Draw the island, then build your diagram inside the returned inner rect. Adds an
+    optional 'Figure N' caption below."""
+    bz = bezel if bezel is not None else WHITE
+    f = fill if fill is not None else WHITE
+    box(slide, x, y, w, h, fill=bz, round=True, r=0.14)
+    inner = (x + pad, y + pad, w - 2 * pad, h - 2 * pad)
+    if f != bz:
+        box(slide, *inner, fill=f, round=True, r=0.08)
+    if caption:
+        text(slide, x, y + h + 0.08, w, 0.3, [[(caption, 11, cap_c if cap_c is not None else MUTE, False, False)]],
+             align=PP_ALIGN.CENTER, space_after=0)
+    return inner
+
+
+def gradient_rule(slide, x, y, w, c0, c1, *, h=0.05, angle=0):
+    """A thin two-stop GRADIENT rule (navy→emerald, amber→blue) — a brand signature under a title
+    or along an edge."""
+    sh = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
+    sh.line.fill.background(); sh.shadow.inherit = False
+    sh.fill.gradient()
+    try:
+        stops = sh.fill.gradient_stops
+        stops[0].color.rgb = c0 if not isinstance(c0, str) else RGBColor.from_string(c0.lstrip("#"))
+        stops[0].position = 0.0
+        stops[1].color.rgb = c1 if not isinstance(c1, str) else RGBColor.from_string(c1.lstrip("#"))
+        stops[1].position = 1.0
+        sh.fill.gradient_angle = angle
+    except Exception:
+        sh.fill.solid(); sh.fill.fore_color.rgb = c0 if not isinstance(c0, str) else RGBColor.from_string(c0.lstrip("#"))
+    return sh
+
+
+def catalogue_frame(slide, *, inset=0.32, gap=0.06, color=None, line_w=1.0, slide_obj=None,
+                    w_in=None, h_in=None):
+    """A thin DOUBLE-LINE full-bleed frame inset from the slide edges — the printed-specimen /
+    exhibition-catalogue look (pair with the museum_memorial / eastern presets). Draw it as a
+    background element (before content). Reads the slide's real size when possible."""
+    if w_in is None or h_in is None:
+        s = slide_obj or slide
+        try:
+            prs = s.part.package.presentation_part.presentation
+            w_in = prs.slide_width / 914400 if w_in is None else w_in
+            h_in = prs.slide_height / 914400 if h_in is None else h_in
+        except Exception:
+            w_in = 10.0 if w_in is None else w_in
+            h_in = 5.625 if h_in is None else h_in
+    c = color if color is not None else GOLD
+    for k in (0, gap):
+        box(slide, inset + k, inset + k, w_in - 2 * (inset + k), h_in - 2 * (inset + k),
+            fill=None, line=c, line_w=line_w)

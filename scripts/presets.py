@@ -96,6 +96,115 @@ PRESETS = {
                         "zigzags dots triangles, vivid colors on cream, no text, calm title zone",
         "when": "events, festivals, launches, culture decks wanting energy.",
     },
+    "brutalist": {
+        "mood": "brutalist newspaper / annual report — heavy rules, raw type, ink-red-white",
+        "bg": C("FFFFFF"), "ink": C("111111"), "muted": C("3A3A3A"),
+        "accents": [C("C8102E")], "font": "Arial", "display": "Arial Black", "mono": "Consolas",
+        "ea": "Heiti SC", "ea_display": "Heiti SC",
+        "surface": "multi-column NEWSPAPER grid with THICK black rules/borders (heavy hrule, boxed "
+                   "tables with bold borders); ALL-CAPS condensed headlines (Arial Black / Impact); "
+                   "Consolas mono for data/labels; the ONE red for a single emphasis; big raw "
+                   "numerals; high density, flush-left, NO rounded corners, NO soft shadows.",
+        "image_prompt": "high-contrast black and white halftone / newsprint photo, stark, one red "
+                        "overprint, no text",
+        "when": "annual report, manifesto, data-journalism with attitude, bold tech/culture decks.",
+    },
+    "blueprint": {
+        "mood": "engineering / academic blueprint — schematic line-work on deep navy, one warm accent",
+        "bg": C("0A1B38"), "ink": C("EAF2FF"), "muted": C("8FA6C4"),
+        "accents": [C("46B4E8"), C("F1764E")], "font": "Arial", "display": "Arial", "mono": "Consolas",
+        "ea": "Heiti SC", "ea_display": "Heiti SC",
+        "surface": "deep-navy panels, cyan schematic line-work (thin rules, node/connector motifs, a "
+                   "faint blueprint frame/grid), mono eyebrow chrome; build architecture/pipeline "
+                   "diagrams from boxed nodes + arrows; reserve the ONE coral accent for the focal "
+                   "path/result. Native tables + typeset equations sit on the dark panels.",
+        "image_prompt": "technical blueprint schematic, thin cyan line-work on deep navy, grid, nodes "
+                        "and connectors, engineering drawing, no text, calm title zone",
+        "when": "technical/method talks, architecture, agents/AI/engineering, paper-reading decks.",
+    },
+    "ink_wash": {
+        "mood": "Chinese ink editorial (藏拙) — warm paper, ink black, one seal red, KaiTi serif",
+        "bg": C("F5F1E8"), "ink": C("1A1A1A"), "muted": C("8B8680"),
+        "accents": [C("A52A2A"), C("5C5852")], "font": "PingFang SC", "display": "KaiTi", "mono": "Consolas",
+        "ea": "PingFang SC", "ea_display": "KaiTi",
+        "surface": "warm-paper bg, large KaiTi/Songti CJK display, ink-black body; ONE seal-red accent "
+                   "as a chop/seal stamp (deckkit.seal) + CJK numeral section markers (壹贰叁, via "
+                   "deckkit.cjk_numeral); hairline rules, generous margins, dark label-chips for "
+                   "emphasis, a restrained ink-wash motif. Calm, literary, lots of breathing room.",
+        "image_prompt": "minimal Chinese ink-wash (shuimo) painting, soft mountains / a branch, warm "
+                        "rice-paper texture, muted, one vermilion seal mark, vast empty space, no text",
+        "when": "Chinese cultural / literary / brand / humanities decks; any 中文 editorial register.",
+    },
+    "eastern_traditional": {
+        "mood": "Eastern traditional-colour narrative — warm paper, ochre-gold + sage, KaiTi",
+        "bg": C("F7F2E8"), "ink": C("3A3530"), "muted": C("7A7068"),
+        "accents": [C("C99E62"), C("6F8F75"), C("A52A2A")], "font": "PingFang SC", "display": "KaiTi", "mono": "Consolas",
+        "ea": "PingFang SC", "ea_display": "KaiTi",
+        "surface": "warm-paper bg with a TRADITIONAL Chinese colour palette (ochre-gold 赭 + sage 竹青 + "
+                   "vermilion 朱); KaiTi/Songti display, refined body; colour-name swatches, seal "
+                   "stamps (deckkit.seal), vertical-text accents, ink-wash motifs. The colours "
+                   "themselves carry the story (e.g. a 传统色 / plant-dye palette).",
+        "image_prompt": "traditional East-Asian artwork, warm earth pigments — ochre, sage green, "
+                        "vermilion — on aged paper, botanical / landscape motif, muted, no text",
+        "when": "traditional-culture, heritage, colour/material, plant-dye, museum/exhibition CN decks.",
+    },
+    "consulting": {
+        "mood": "top-tier (MBB) strategy deck — white, action titles, navy insight banners, semantic 5-colour",
+        "bg": C("FFFFFF"), "ink": C("1A2B45"), "muted": C("5A6B82"),
+        "accents": [C("1A2B45"), C("1F8A70"), C("C9A227"), C("C0492E"), C("64748B")],
+        "font": "Arial", "display": "Arial", "mono": "Consolas",
+        "ea": "Microsoft YaHei", "ea_display": "Microsoft YaHei",
+        "surface": "clean white; every title is a full-sentence ACTION TITLE (the conclusion), paired "
+                   "with a deckkit.insight_banner (navy 'so-what' bar) under it; a navy->emerald "
+                   "gradient_rule along the top; a SEMANTIC 5-colour contract (navy=structure, "
+                   "emerald=good/opportunity, gold=brand/highlight, coral=risk/gap, slate=neutral) "
+                   "propagated to headings/badges/table-columns/chart-series; scorecard tiles, "
+                   "step_list roadmaps, quadrant/matrix; a small CONFIDENTIAL footer status_stamp.",
+        "image_prompt": "clean corporate abstract, soft navy and emerald geometric, lots of white "
+                        "space, professional, no text",
+        "when": "strategy proposals, board/exec readouts, consulting, business cases.",
+    },
+    "dark_tech": {
+        "mood": "calm near-black engineering — semantic accents on navy, white 'diagram islands', mono brand",
+        "bg": C("0C1320"), "ink": C("E8EDF5"), "muted": C("8A96AC"),
+        "accents": [C("4F9CF5"), C("33C2A6"), C("F2A33C"), C("E0556E"), C("A98BF0")],
+        "font": "Arial", "display": "Arial", "mono": "Consolas",
+        "ea": "Microsoft YaHei", "ea_display": "Microsoft YaHei",
+        "surface": "near-black canvas; build flowcharts/figures inside a bright deckkit.diagram_island "
+                   "(white device-bezel panel + 'Figure N' caption) so diagrams read on dark; header "
+                   "master = tick + tracked mono eyebrow + bold H1 + amber->blue gradient_rule; a "
+                   "terminal '>_' / mono brand voice; multi-colour SEMANTIC accents (one hue per "
+                   "concept) on the node/connector diagram kit; insight callouts with an accent left bar.",
+        "image_prompt": "dark engineering schematic ambience, deep navy, faint circuit / node mesh, "
+                        "cool glow, no text, calm title zone",
+        "when": "AI/ML, infra, agents, developer-tool, eng-blog and safety decks (dark, technical).",
+    },
+    "luxury_dark": {
+        "mood": "dark luxury editorial — near-black, ONE metallic accent, photography supplies the colour",
+        "bg": C("0A0A0A"), "ink": C("F5F0EB"), "muted": C("9E9690"),
+        "accents": [C("C9A96E"), C("8B7355")], "font": "Arial", "display": "Georgia", "mono": "Consolas",
+        "ea": "Microsoft YaHei", "ea_display": "Songti SC",
+        "surface": "warm near-black; a SINGLE champagne/brass accent carried only through gold serif "
+                   "numerals, kickers and hairlines; full-bleed photography spreads supply all colour "
+                   "(use duotone/grayscale on stray photos so nothing competes); bilingual_lockup "
+                   "covers; thin masthead/issue chrome; generous negative space, restrained, premium.",
+        "image_prompt": "high-end fashion/editorial photography mood, deep shadow, warm champagne "
+                        "highlight, luxurious, minimal, no text",
+        "when": "fashion, luxury brand, premium product, gallery/awards — tone over data.",
+    },
+    "museum_memorial": {
+        "mood": "midnight-navy memorial / exhibition — brass-gold accents, archival duotone, serif gravitas",
+        "bg": C("0E1A2B"), "ink": C("ECE6D8"), "muted": C("8B93A3"),
+        "accents": [C("C5A253"), C("6E8CA8")], "font": "Arial", "display": "Georgia", "mono": "Consolas",
+        "ea": "Microsoft YaHei", "ea_display": "Songti SC",
+        "surface": "deep midnight-navy gradient ground; brass-gold serif headings + hairlines; archival "
+                   "photos as duotone (navy+gold); a thin double-line catalogue_frame inset from edges; "
+                   "year_badge chronology; a serif gold 'monument' closing line; quiet, reverent, "
+                   "exhibition-catalogue cadence (works in EN or 中文).",
+        "image_prompt": "archival sepia/duotone photograph mood, midnight navy and brass gold, museum "
+                        "exhibition lighting, dignified, no text",
+        "when": "memorial, history/heritage, museum exhibition, biography, retrospective decks.",
+    },
 }
 
 

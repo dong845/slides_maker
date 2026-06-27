@@ -352,6 +352,16 @@ Do not just skim for the first few obvious issues. Run these passes:
      **data/report or one-focal-item slide**, flag **>2 saturated hues competing** with no
      one-accent discipline — the single thing that matters should be the only saturated element,
      the rest a neutral ramp (fix: `accent_one` / single-highlight charts).
+   - **Semantic colour contract (when the deck binds hue→meaning):** if a deck colour-codes concepts
+     (navy=structure, green=good, red=risk, amber=brand, or a per-section accent), flag any slide that
+     **breaks the contract** — the same concept in a different hue, or one hue carrying two meanings
+     (a green "risk" cell, a brand colour reused for a warning). Colour must mean the same thing
+     deck-wide (`references/semantic-color-contract.md`). Well-bound semantic colour is *good* — don't
+     flag it as "too many hues."
+   - **Action titles (consulting / readout decks):** flag a slide whose title is a **topic label**
+     ("Customer Retention") where the purpose wants a **full-sentence conclusion** ("Only 19% of
+     customers return — a critical retention gap"), and the missing one-line implication banner
+     (`insight_banner`). This is a content+design finding for strategy/board/exec decks.
    - **Designed plots & surface patterns (correct + legible):** a generated chart must
      **single-highlight** the one series that matters and **carry a stated so-what** (`takeaway_rail`)
      — a chart with no conclusion, or with every series saturated, is a finding; place it *whole*.
