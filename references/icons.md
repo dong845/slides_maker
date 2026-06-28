@@ -5,9 +5,11 @@ badly they make it look *worse* (a mismatched zoo, decorative clutter, the same 
 in titles). The whole value is **consistency**: a coherent icon family is an *identity system*
 (CRAP "Repetition"), and a single icon gives a block a focal point (CRAP "Contrast"). Get those
 two right and icons read as "designed"; get them wrong and they read as AI-slop.
-**But whether to use an icon family at all is scenario-dependent.** The 7 jobs below are
-*content-driven*; the *dosage* is gated by **register, delivery, and preset** (see "Scenario fit").
-Some decks should use **no icon family at all** — they have a native device instead.
+**Icons fit ANY topic — never excluded by subject or preset; what's scenario-dependent is the STYLE
+and the AMOUNT.** The 7 jobs below are *content-driven*; the *style* (family/weight/treatment) and
+*dosage* are tuned to the **register, delivery, and preset** (see "Scenario fit"). Even a deck with a
+strong native device (a seal, photography) can carry a **style-matched** icon alongside it — the choice
+is *which style and how many*, not *whether*.
 
 ## Design them yourself, or fetch them? — FETCH, from one open-licensed family
 **Do not hand-draw an icon set.** Hand-/AI-drawn icons come out inconsistent — varying stroke
@@ -28,8 +30,9 @@ no library icon fits; even then match the deck's stroke language.)
 | `heroicons:` (+ `-solid`) | corporate line/solid | MIT | enterprise / stakeholder |
 | `simple:` | **brand / tech logos** (GitHub, Python, AWS…) | CC0 | representing actual products/tech |
 
-**Some presets take NO icon family** (see *Scenario fit* below) — pick a family only after
-confirming the preset is icon-native, not as a reflex on every deck.
+**There's a fitting icon style for ANY deck** — the families above span line / thin / rounded / sharp /
+filled / duotone (Phosphor alone has 6 weights), so icons are never excluded by topic: you **match the
+style and dose** to the register (see *Scenario fit* below), you don't decide *whether* icons are allowed.
 
 Mixing two *content* families on one deck is a consistency tell — don't. (Exception: a `simple:`
 brand logo can sit alongside your one content family, since logos are their own category.)
@@ -59,54 +62,49 @@ dk.icon_card(s, *col, p, "Analytics", "Track what matters", accent=dk.ACCENT, di
 - **Offline / exact-name unknown:** pass a **local `.svg` path** to `icon_png()` instead of a spec
   (the user can drop an SVG in), or check the library's site for the exact kebab-case name.
 
-## Scenario fit — dosage by register, delivery & preset (decide BEFORE you pick a family)
-The 7 jobs are **content-driven**; the **dosage** is **scenario-driven**. Two gates run first.
+## Scenario fit — MATCH the style & dose to the register (icons fit ANY topic)
+**Icons are available on *every* deck — never excluded by topic or preset.** The libraries are vast and
+stylistically diverse (outline · thin/light · rounded · sharp · filled · duotone · hand/brush, plus
+brand logos — Phosphor alone ships 6 weights; Tabler/Lucide/Heroicons/Iconoir/Feather add more), so a
+*fitting* icon style exists for any register, from a brutalist annual report to a delicate ink-wash
+deck. The discipline is **choosing the right STYLE and the right amount** — NOT deciding *whether* icons
+are allowed. The real failure modes are a **mismatched style** (a chunky SaaS line-icon grid stapled
+onto a delicate ink/luxury deck) or **decoration** (an icon that does no job) — never icons per se.
+Two questions, in order:
 
-**Gate 1 — register & delivery (purpose).** The DEFAULT on sober / figure-dominated decks is *no icons*.
+**A) Dosage — by register & delivery.** Match the AMOUNT and the JOBS to the register (always within
+the rule-of-thumb + ≤5-per-card-group + the no-evidence-slide carve-out):
 
-| register / context | icon dosage | what carries it instead |
-|---|---|---|
-| Thesis / committee defense | **none** (default) | numbered contributions (`big_numeral`), typographic hierarchy, whole figures/tables; status via a sober chip / bold text — not an alert/star icon |
-| Conference talk · lab meeting · job-talk **deep-result** slides | **none–sparingly**; only structural #1 (long arc) / #3 (inside a diagram) / #4 (diagram entity) | a larger hero figure + whitespace; ghost/numeral wayfinding; an annotation box/arrow on the figure for "look here" |
-| Job talk — **program-map & dividers** | **moderate**, concentrated here (#1 + #3 on the program colour) | on deep-result slides the annotated figure carries it — no icon; let program colour do the wayfinding |
-| Research **poster** | **sparingly** — small region-header marks (Method/Results) + diagram-entity marks; **always text-labelled** (no speaker); never competing with the focal result | large typographic region headers; enlarge the focal figure (a poster has no "sparse area" to anchor) |
-| Company / stakeholder / **exec readout** | **strong but restrained** — #1 dividers, #3 ≤5 category cards, #7 status | **stat furniture** (`scorecard`/`change_stat`/status chips) on KPI tiles — **not** an icon per tile. A status icon + status hue + label encodes state **colour-blind-safely** (a sanctioned use) |
-| Product / **sales pitch** | **strong** — #2 ≤5 benefit cards, #1 dividers | the **real full-colour logo** on a proof/partner slide — never a recolored `simple:` look-alike |
-| **Investor** pitch | **sparingly** — #1 arc dividers only; NOT #2/#3 on stat slides | `stat_row`/`big_numeral`/`scorecard`/`leaderboard`; real headshots; a quadrant for competition |
-| **Webinar** / online | **moderate** — #1 agenda spine; use a heavier weight + `disc=` and stay in the central safe area so it reads when shrunk in a video window | a larger text label where an icon would be sub-legible |
-| **Teaching** / lecture | **strong** — #1 per concept-stage, #3 per-concept hue, #2 ≤5 distinct, #5 distinct-action steps | **split** a long list across slides (≤5 cards each) or a numbered `step_list`; subtract for sparse slides — don't anchor every one |
-| **General** (no strong purpose) | **content-driven** — scan per slide; `tabler` default, `phosphor` for a teaching register | fix by subtraction where no job is present |
+| register / context | dosage |
+|---|---|
+| Product / sales pitch · teaching · webinar · general | **strong** — category/benefit/step cards, section & wayfinding marks, status flags |
+| Company / stakeholder / **exec readout** | **strong but restrained** — dividers, ≤5 category cards, status; NOT one icon per KPI tile (let `scorecard`/`change_stat` carry the number) |
+| Conference · lab meeting · job talk · **thesis defense** | **minimal & structural** — wayfinding on a long arc, a category / diagram-entity mark inside a figure; keep icons OFF the deep-result/evidence slides and don't dress a contributions slide with them (a sober room reads a *cute* icon as padding — but a clean structural mark is fine, not forbidden) |
+| Research **poster** | **sparingly**, always text-labelled, never competing with the focal result |
 
-Hard carve-out (any purpose): **no icon on an evidence slide** — a slide whose hero is a source
-figure, results table, or typeset equation. The icon competes with the thing the audience came to
-read; icons live on structural / navigation / framework slides, not on the result.
+Hard carve-out (any register): **no icon on an evidence slide** — a slide whose hero is a source
+figure, results table, or typeset equation (it competes with the result). And keep the **`simple:`
+brand-logo rule:** the real full-colour logo on a proof/partner slide, never a recolored look-alike.
+**On an icon-native, category-rich deck, shipping ZERO icons is a MISS, not restraint** — the
+consistency device is exactly what the register is reaching for.
 
-**Gate 2 — preset (style).** Before picking a family, check the active preset. If it is an AVOID
-preset, do **not** staple on an icon family — reach for the device named.
+**B) Style — match the family/weight/treatment to the preset.** Every preset *can* carry icons; pick a
+style that belongs (the wrong **weight** is the flaw, not the icon):
+- `dark_tech` / `consulting` / `glassmorphism` / `blueprint` → crisp **line / sharp** icons — the
+  obvious fit; **actively use them** on category-rich content (`blueprint`: line, not filled).
+- `swiss` → minimal, **mono or the one accent**, sparing.
+- `memphis` / `risograph` → **bold / filled** marks flattened to the 2-ink / accent palette.
+- `editorial_report` → restrained **monochrome** marks.
+- `editorial_paper` / `luxury_dark` → a **fine hairline / thin** icon in the one accent, used sparingly
+  — photography still leads; a *heavy* icon feels cheap here, a *delicate* one is on-brand.
+- `museum_memorial` → a fine, **archival-weight** mark alongside `year_badge` / `duotone`.
+- `ink_wash` / `eastern_traditional` → the **`seal` + `cjk_numeral` stay the signature**; a generic SaaS
+  line-icon *grid* still clashes (the machine-translated-template tell), but a **thin / brush-like mark
+  recolored to ink**, used sparingly, composes fine — match the brush aesthetic, don't staple a Tabler grid.
 
-- **FIT — icon-native:** `dark_tech`, `consulting`, `glassmorphism`, `blueprint` (**line only** —
-  filled clashes with the schematic), `swiss` (**sparingly, mono or the one red**, not colour-coded-per-category).  **On a FIT preset whose content is full of icon-able structure** — agent-loop stages, a small set
-  of named patterns, tools/memory/protocols, production layers, lifecycle phases — **actively plan an
-  icon family; don't merely *allow* one.** Label each category / section / entity / step with its
-  metaphor (jobs #1/#3/#4/#5). Shipping ZERO icons on an icon-native preset over category-rich content
-  is a *miss*, not restraint — the consistency device is exactly what the register is reaching for.
-  (Still bounded by the rule-of-thumb + the ≤5-per-card-group count — this is "label the real
-  categories", never one-per-bullet or decoration.)
-- **CONSTRAINED:** `memphis` / `risograph` — only **bold/filled marks flattened to the 2-ink / accent
-  palette**, and prefer the preset's native motifs; `editorial_report` — at most **one restrained
-  monochrome wayfinding mark on dividers**, no icon-card grids.
-- **AVOID — use the native device:**
-  - `ink_wash` · `eastern_traditional` → `deckkit.seal` + `cjk_numeral` (a Tabler/Lucide card grid is
-    the same machine-translated-template tell as emoji, in vector form).
-  - `editorial_paper` · `luxury_dark` → full-bleed photography + serif/italic numerals + hairlines +
-    restraint ("icons feel cheap" here — they multiply an accent the preset keeps to one).
-  - `museum_memorial` → `year_badge` chronology + archival `duotone` + `catalogue_frame`.
-  - `brutalist` → heavy rules + blocky/filled marks at the rule weight + big raw numerals
-    (quality-mark 5's "filled for bold" does NOT mean reach for the icon library here).
-
-Cross-cutting: any **photography-and-restraint** preset (light or dark luxury, museum,
-editorial_report) treats decorative chrome as *cheapening* — reach for photography, serif/italic
-numerals, hairlines, duotone, not an icon family.
+The native devices above (seal, photography, `year_badge`) **lead and compose with** a style-matched
+icon — they are never a reason to ship *zero* icons. When in doubt, pick the lightest/cleanest weight
+that still reads, and use fewer.
 
 ## The jobs an icon does — when to reach for one (the "why", + the rule-of-thumb)
 **Core principle: an icon must REDUCE cognitive load, not decorate.** Reach for one only when it does
@@ -169,11 +167,12 @@ metaphor (a lightbulb for "idea" on every slide). Also HURT: an icon on **every 
 stat tile** (a number is the focal point — the icon beside it is decoration); an icon on an
 **evidence slide** (figure / results table / equation hero — it competes with the result); **every
 slide the same icon-card grid** (the deck-rhythm "one template repeated" flaw — vary the protagonist:
-chart / diagram / photo / plain breath); and **register-wrong** icons — well-crafted, colour-coded
-icons used decoratively on a **sober, figure-dominated academic deck** (defense, conference/results,
-lab meeting, job-talk deep results) or on an **AVOID preset** (see Scenario fit), where the fix is to
-remove them and let the figure / numbered structure / native device carry the slide.
-Icons are seasoning — a few, consistent, purposeful.
+chart / diagram / photo / plain breath); **style-MISMATCHED** icons — the wrong *weight/treatment* for
+the register (a chunky generic SaaS grid on a delicate `editorial_paper`/`luxury_dark`/`ink_wash` deck;
+a filled icon on `blueprint`) — where the fix is **restyle / use fewer / let the native device lead**,
+NOT remove icons by topic; and **decorative** icons on a sober, figure-dominated slide (defense /
+results / lab meeting) where a clean *structural* mark would be fine but dressing-up is not.
+Icons are seasoning — a few, consistent, purposeful — but available on **any** deck in the right style.
 **Never** substitute emoji or ✅/🚀/🔥 for real icons (that's an AI-slop tell, see design-principles).
 
 ## What makes icons look GOOD — five qualities (from real well-iconned decks)

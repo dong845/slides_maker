@@ -142,11 +142,13 @@ Score each dimension; cite specific slides.
    judge the five quality marks (`icons.md`) — semantic fit, one coherent family, per-category
    colour-coding, contrast, and consistent size/position; a mismatched zoo, one-per-bullet clutter, or a
    decorative icon that does no job (fails the rule-of-thumb — *what is this / does / why pay attention*)
-   is a finding. **Also judge scenario fit (Scenario fit, `icons.md`):** an SVG icon family on a
-   photography/restraint, East-Asian/heritage, or brutalist preset — or icons used decoratively on a
-   sober, figure-dominated academic deck (defense / conference-results / lab meeting) — is a finding
-   **even if the five marks pass** (design-fits-purpose, item 11); the deck should use that preset's
-   native device (seal/`cjk_numeral`, photography + serif numerals, `year_badge`/duotone, heavy rules).
+   is a finding. **Also judge STYLE-fit (Scenario fit, `icons.md`):** icons fit *any* topic — judge the
+   *style match*, not their presence. An icon whose **weight/treatment fights the preset** (a chunky,
+   generic line-icon grid on a delicate `editorial_paper`/`luxury_dark`/`ink_wash`/`museum_memorial`
+   deck; a filled icon on `blueprint`) — or an icon used **decoratively** on a sober, figure-dominated
+   deck — is a finding even if the five marks pass (item 11); the fix is **restyle / fewer**, with the
+   native device (seal/`cjk_numeral`, photography, `year_badge`/duotone) leading and *composing with* a
+   matched icon, not forbidding one.
    **Conversely** — on an **icon-FIT preset** (`dark_tech` / `consulting` / `glassmorphism` / `blueprint`)
    whose content is category/step-rich (named patterns, pipeline stages, tools/memory/protocols,
    production/feature layers) — **shipping ZERO icons is itself a finding** (a miss, not restraint:

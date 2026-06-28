@@ -89,8 +89,9 @@ polish. Calm, low-chrome, content-forward.
   short equation. Show the *actual* figures/tables from your work, annotated.
 - **Layout/chrome:** minimal footer, small section kicker, generous whitespace. No
   title slide theatrics. Date/iteration tag helps (it's a progress checkpoint).
-- **Icons:** default **off** (low-chrome working deck) — at most a repeated-entity mark inside the
-  recurring architecture diagram; a status chip beats a status icon (see `icons.md` Scenario fit).
+- **Icons:** **minimal & structural** (low-chrome working deck) — a repeated-entity mark inside the
+  recurring diagram or a category mark; keep them off the result slides; a status chip often beats a
+  status icon. A style-matched family still fits — just sparing (see `icons.md` Scenario fit).
 - **Signature:** "what changed since last time" framing; open questions slide.
 
 ## Work status update to a manager / team
@@ -116,8 +117,9 @@ an official template or venue norms, those override this section.
   Every results figure gets a legend + a one-line takeaway.
 - **Layout/chrome:** large type (titles ~28pt+, body ~18pt+), big figures, lots of
   air. Respect the venue's aspect ratio (16:9 vs 4:3) and any title-slide format.
-- **Icons:** default **off** — only diagram-entity shorthand or one consistent wayfinding mark on a
-  long arc (skip it if numeral wayfinding already does the job); never on a results/figure slide.
+- **Icons:** **minimal & structural** — diagram-entity shorthand or one consistent wayfinding mark on a
+  long arc (skip it if numeral wayfinding already does the job); never on a results/figure slide. A
+  style-matched, sparing family is fine — not off by rule.
 - **Signature:** a clear arc (problem → method → result → so-what); a memorable
   closing message slide named "Conclusion".
 
@@ -191,9 +193,10 @@ authoritative, but still legible as a talk.
   of text. Plan for backup/appendix slides for Q&A.
 - **Layout/chrome:** clear numbered structure, consistent section dividers, visible
   contribution framing. Institution colours if the user has them.
-- **Icons:** default **none** — an expert reads a cute icon on a contributions/method slide as
-  padding (a credibility hit). Carry structure with the numbered contributions (`big_numeral`) and
-  typographic hierarchy; the only defensible icon is a neutral entity mark inside a diagram node.
+- **Icons:** **minimal & structural** — a clean wayfinding/section mark or a neutral entity mark in a
+  diagram node is fine; keep DECORATIVE icons off contributions/method/results (an expert reads a *cute*
+  icon there as padding — a credibility hit). Carry the core structure with numbered contributions
+  (`big_numeral`) + typographic hierarchy; restrained matched icons, not zero by rule.
 - **Signature:** contributions slide stated plainly; limitations + future work owned
   honestly; an appendix of defensible detail.
 

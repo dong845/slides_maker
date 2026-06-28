@@ -420,17 +420,17 @@ Do not just skim for the first few obvious issues. Run these passes:
      is decoration, flag it. Well-used icons (one coherent family, semantic fit, colour-coded per
      category, good contrast, small, consistent, each doing a job) are *good* — don't flag those. Emoji or ✅/🚀/🔥 used
      **as** icons is the AI-slop tell above, not an icon.
-   - **Register-/preset-inappropriate icon PRESENCE (design-fits-purpose, item 11):** the checks above
-     judge icons-done-badly when present; this one judges *whether they belong at all*. On a
-     photography/restraint or East-Asian/heritage preset (`editorial_paper`, `luxury_dark`,
-     `museum_memorial`, `editorial_report`, `ink_wash`, `eastern_traditional`) or a `brutalist` deck,
-     the **presence** of an SVG icon family is itself a finding regardless of execution — expect the
-     native device (seal/`cjk_numeral`, photography, `year_badge`/duotone, heavy rules). Likewise on a
-     **sober, figure-dominated academic deck** (defense, conference/results, lab meeting, job-talk deep
-     results), decorative icons are a finding even when well-crafted; the fix is to remove them and let
-     the figure / numbered structure carry the slide. On `blueprint`, a **filled** icon (vs line) is a
-     finding; an icon on **every KPI/stat tile** or on an **evidence slide** is a finding
-     (`icons.md` Scenario fit).
+   - **Icon STYLE-MISMATCH for the preset (design-fits-purpose, item 11):** icons are NOT excluded by
+     topic — the flaw is a *mismatched style*, not their presence (the libraries are diverse enough to
+     fit any register). Flag an icon whose **weight/treatment fights the aesthetic**: a chunky/generic
+     SaaS line-icon grid on a delicate `editorial_paper` / `luxury_dark` / `museum_memorial` / `ink_wash`
+     / `eastern_traditional` deck (expect a fine hairline / archival / thin-or-brush mark recolored to
+     the ink, used sparingly **alongside** the native device — seal/`cjk_numeral`, photography,
+     `year_badge`); a **filled** icon on `blueprint` (line, not filled); a decorative icon dressing a
+     **sober, figure-dominated** slide (defense / results / lab meeting) where a clean *structural* mark
+     is fine but decoration is not. The fix is **restyle / resize / use fewer** (or let the native device
+     lead), NOT "remove all icons". An icon on **every KPI/stat tile** or on an **evidence slide**
+     remains a finding (`icons.md` Scenario fit).
    - **Icon ABSENCE on an icon-FIT preset (the inverse — flag a MISS):** the converse of the check
      above. On an **icon-native preset** (`dark_tech`, `consulting`, `glassmorphism`, `blueprint`[line])
      whose content is **category/step-rich** (named patterns, pipeline stages, tools/memory/protocols,

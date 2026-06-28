@@ -462,12 +462,15 @@ not by counting:
   deep-result slides) do **NOT** scan for icon jobs by default — plan icons only where a structural job
   (#1 long-arc wayfinding, #3 diagram colour-coding, #4 repeated-entity shorthand) clearly earns it,
   never #6 to fill a results/method slide (enlarge the figure or add whitespace), and never an icon on
-  every KPI/scorecard/stat tile (use `scorecard`/status chips). *Gate 2 (preset):* on `ink_wash` /
-  `eastern_traditional` / `luxury_dark` / `museum_memorial` / `editorial_paper` / `brutalist` /
-  `editorial_report` do **NOT** plan an SVG icon family — plan the **native device** instead (`seal` +
-  `cjk_numeral`; photography + serif numerals; `year_badge` + `duotone`; heavy rules + big numerals).
-  Only plan an icon family on icon-native presets (`dark_tech`, `consulting`, `glassmorphism`,
-  `blueprint` [line-only], `swiss` [sparing/mono], `memphis`/`riso` [bold/flattened]).
+  every KPI/scorecard/stat tile (use `scorecard`/status chips). *Gate 2 (preset = STYLE-match, never
+  exclusion):* icons fit **any** preset — the libraries are diverse enough to match any register — so
+  plan the icon **style/weight** to the aesthetic, never drop icons by topic: `dark_tech`/`consulting`/
+  `glassmorphism`/`blueprint` → crisp **line** (actively use); `swiss` → mono/sparing; `memphis`/`riso`
+  → bold/filled flattened to the palette; `editorial_report` → restrained monochrome; `editorial_paper`/
+  `luxury_dark` → a **fine hairline** mark in the one accent, sparingly; `museum_memorial` →
+  archival-weight alongside `year_badge`/`duotone`; `ink_wash`/`eastern_traditional` → the `seal` +
+  `cjk_numeral` lead, but a **thin/brush mark recolored to ink** can supplement (just not a generic
+  Tabler card *grid*). The native devices **compose with** a matched icon, they don't replace it.
   On those icon-native presets, **flip from permission to intent when the content is icon-able**: if the
   deck has clear category / section / entity / step structure (agent-loop stages, a handful of named
   patterns, tools/memory/protocols, production layers), **actively plan an icon family and assign each

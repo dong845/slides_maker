@@ -714,8 +714,9 @@ A few rules that matter (see `references/design-principles.md`):
   icon + label + tint — not one global accent), **contrast** (bright on dark / saturated on light, a
   `disc=` tile if needed), **consistent** family/size/position across siblings (size **≤ the title**,
   ≈0.32–0.5 in), and **style matching the deck** (outline vs filled). **Always pair an icon with a text
-  label.** Cache in `~/Downloads/<deck>/assets/icons/`. Skip them entirely rather than ship a mismatched
-  zoo or one-per-bullet clutter.
+  label.** Cache in `~/Downloads/<deck>/assets/icons/`. **Icons fit any topic** — the libraries are
+  diverse enough to match any register, so **match the style/weight and use fewer**, rather than ship a
+  mismatched zoo or one-per-bullet clutter (the flaw is wrong-style/decoration, not icons by subject).
 - **Speaker notes — for a PRESENTED deck, put the spoken script in the notes, not on the slide.**
   For any deck the user will *present* (especially a conference talk, defense, or lecture), move the
   full sentences off the slide into speaker notes with `deckkit.speaker_notes(slide, "…")`.
