@@ -679,9 +679,12 @@ A few rules that matter (see `references/design-principles.md`):
   → OpenAI fallback; build the manifest with `image_prompts.py`), keep assets in
   `~/Downloads/<deck>/assets/generated/`, place with `deckkit.picture(fit="contain"|"cover")`, and
   render-check (calm space behind text, no pseudo-text/fake charts, subject whole, real things right).
-- **SVG icons — ONE coherent open-licensed family, recolored, used with restraint (full rules in
-  `references/icons.md`).** Icons label categories/sections/cards and give a block a focal point — but
-  **don't hand-draw a set** (inconsistent = amateur) and don't sprinkle them as decoration. **Fetch from
+- **SVG icons — ONE coherent open-licensed family, recolored, used with restraint (full rules — the
+  jobs icons do, the rule-of-thumb, + five quality marks — in `references/icons.md`).** An icon must
+  **reduce cognitive load, not decorate**: use one only where it does a real job (label a section /
+  category, mark a repeated entity, guide reading order, anchor a sparse slide, flag status) and it
+  passes the **rule-of-thumb** — answers *what is this / what does it do / why pay attention* before the
+  words; else cut it. **Don't hand-draw a set** (inconsistent = amateur) and don't sprinkle them as decoration. **Fetch from
   one family** (Tabler/Lucide/Phosphor MIT-ISC; `simple:` CC0 for brand/tech logos) via
   `scripts/icons.py` `icon_png(spec, out, color=ACCENT)` — it fetches, **recolors to the deck palette**,
   and rasterizes to a transparent PNG (python-pptx can't embed SVG reliably; rasterizing renders the

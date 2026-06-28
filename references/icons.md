@@ -49,6 +49,40 @@ dk.icon_card(s, *col, p, "Analytics", "Track what matters", accent=dk.ACCENT, di
 - **Offline / exact-name unknown:** pass a **local `.svg` path** to `icon_png()` instead of a spec
   (the user can drop an SVG in), or check the library's site for the exact kebab-case name.
 
+## The jobs an icon does — when to reach for one (the "why", + the rule-of-thumb)
+**Core principle: an icon must REDUCE cognitive load, not decorate.** Reach for one only when it does
+a real *job* — a recognition shortcut the audience reads **before** the words. The recurring jobs (scan
+each slide for these; most decks use two or three, not all):
+
+1. **Label a section / wayfinding** — a per-section mark reused on each divider so the audience always
+   knows where they are (method = `tabler:settings`, results = `chart-line`, conclusion = `flag`). One
+   icon per section, repeated deck-wide — this is the strongest, lowest-risk use.
+2. **Turn a SHORT list of DISTINCT attributes into scannable cards** — when each item is its *own*
+   concept (Fast · Accurate · Easy → `bolt` · `target` · `thumb-up`), a category icon per card speeds
+   the scan (`icon_card`). **⚠ This is NOT "an icon on every bullet":** it applies to a *few* (≤~5)
+   genuinely distinct categories, each a different idea — a long or homogeneous bullet list gets noise,
+   not help (see Hurt). The test: would each item still need its *own* picture if you removed the text?
+3. **Separate categories / build hierarchy** — in a multi-category layout (Input · Training · Eval ·
+   Output) an icon per category, **colour-coded** (quality mark 2), makes the grouping legible at a
+   glance; colour + icon together encode "which group".
+4. **Stand in for a repeated entity** — a recurring concrete noun (dataset, database, user, cloud,
+   model, GPU) gets ONE consistent icon reused everywhere it appears (esp. in diagram nodes), instead of
+   re-typing the word; the icon becomes the deck's shorthand for that thing.
+5. **Guide reading order** — icons paired with numbers/arrows in a sequence (Analyze → Process →
+   Result) cue the path (`step_list`, or `flow_chain` with an icon per node).
+6. **Anchor a sparse slide** — ONE large, on-topic icon (or a simple illustration / a thin divider)
+   balances an empty slide better than enlarging the text. This is the *sanctioned* way to fill space —
+   it composes with the "don't inflate a block / don't oversize body text to fake fullness" rule: a
+   single focal icon is legit; a blown-up paragraph is not.
+7. **Flag status / importance** — a meaning-bearing mark for warning / key idea / contribution /
+   recommendation (`alert-triangle` · `bulb` · `star` · `circle-check`), used **sparingly** so it stays
+   a signal, not wallpaper.
+
+**The rule-of-thumb — apply to EVERY icon before it ships.** It must answer at least one of:
+**(1) What is this? · (2) What does it do? · (3) Why should I pay attention?** — *before* the audience
+reads the text. If an icon answers **none** of the three, it is decoration, not communication → **cut
+it.** (This is the single test that separates a designed icon system from AI-slop sprinkle.)
+
 ## When icons HELP vs HURT
 **Help** (use): a **row of feature/category/section cards** each marked by an icon; a **section
 divider** or wayfinding mark reused per section; a **brand/tech logo** (`simple:`) to name a real
@@ -106,5 +140,6 @@ A good icon slide gets ALL of these right; getting one wrong is what makes icons
 One family · **semantic fit** (metaphor matches the content) · **colour-coded per category** (each
 category its own hue from `palette(n)`, carried by the icon + label + tint) · **contrast** against the
 background (bright on dark / saturated on light, disc if needed) · small (≤ title) · **consistent
-size/position/treatment** across siblings · style matches the deck (outline vs filled) · labels
-something (not decoration) · text always present · assets cached in the deck folder.
+size/position/treatment** across siblings · style matches the deck (outline vs filled) · **does a job**
+(passes the rule-of-thumb — answers *what is this / what does it do / why pay attention*; else cut) ·
+text always present · assets cached in the deck folder.

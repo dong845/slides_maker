@@ -408,8 +408,10 @@ Do not just skim for the first few obvious issues. Run these passes:
      dark / saturated on light, disc if needed); **mismatched families** or **outline-mixed-with-filled**
      across siblings; **inconsistent** size/position across sibling cards; an **oversized** icon (larger
      than the title); a **decorative** icon that labels nothing or **one-per-bullet** clutter; an **icon
-     with no text label**. Well-used icons (one coherent family, semantic fit, colour-coded per
-     category, good contrast, small, consistent) are *good* — don't flag those. Emoji or ✅/🚀/🔥 used
+     with no text label**. The decoration test is the **rule-of-thumb** (`icons.md`): every icon must
+     answer *what is this / what does it do / why pay attention* before the words — one that answers none
+     is decoration, flag it. Well-used icons (one coherent family, semantic fit, colour-coded per
+     category, good contrast, small, consistent, each doing a job) are *good* — don't flag those. Emoji or ✅/🚀/🔥 used
      **as** icons is the AI-slop tell above, not an icon.
    - **Build/meta annotation leaked onto a slide (BLOCKER):** any text describing *how the slide was
      made* rather than its content — e.g. "（可点击编辑的原生图表）"/"(editable native chart)",

@@ -441,8 +441,17 @@ not by counting:
   glassmorphism/Memphis/riso deck's plates must carry that same look. Pull the deck's palette into
   the prompt. Apply that one direction to every plate you propose so they read as one family. Record the art-direction
   once in the plan; the user approves it with the images.
-- **Icons — propose ONE coherent family where they genuinely label, never as decoration (rules +
-  five quality marks in `references/icons.md`).** Where a slide has **category/feature/section/step
+- **Icons — propose ONE coherent family where an icon does a real JOB, never as decoration (the jobs +
+  rule-of-thumb + five quality marks in `references/icons.md`).** An icon must **reduce cognitive load,
+  not decorate** — scan each slide for the recurring jobs it can do: **(1)** a reused **section /
+  wayfinding** mark, **(2)** a **short list of distinct attributes** turned into scannable cards, **(3)**
+  **category separation / hierarchy** (colour-coded), **(4)** a **repeated entity** (dataset, user,
+  model) given one shorthand icon, **(5)** **guiding reading order** in a step sequence, **(6)**
+  **anchoring a sparse slide** with one large on-topic icon (the sanctioned way to fill space, not
+  blown-up text), **(7)** **flagging status/importance** (warning, key idea, contribution) sparingly.
+  Apply the **rule-of-thumb** to every icon you plan: it must answer *what is this / what does it do /
+  why pay attention* before the words — if it answers none, it's decoration, so drop it. Where a slide
+  has **category/feature/section/step
   cards**, a recurring section mark, or a real **brand/tech product** to name, plan icons from a
   *single* open-licensed family (Tabler/Lucide/Phosphor; `simple:` for logos) — the upper-left-of-card
   (`icon_card`) or centred-top-of-step-card pattern is the default. For each card, name the **specific

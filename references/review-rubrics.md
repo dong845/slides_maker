@@ -136,8 +136,9 @@ Score each dimension; cite specific slides.
    members) shown as *N duplicate blocks* is a flaw — expect the **pattern** (2–3 representatives + `…`
    + a `×N` badge, shared detail said once; `repeat_row`). **Icons:** when the deck uses SVG icons,
    judge the five quality marks (`icons.md`) — semantic fit, one coherent family, per-category
-   colour-coding, contrast, and consistent size/position; a mismatched zoo or one-per-bullet clutter is
-   a finding. **Corner-rounding** (rounded vs hard-edged) is a deck-wide language — a square-cornered
+   colour-coding, contrast, and consistent size/position; a mismatched zoo, one-per-bullet clutter, or a
+   decorative icon that does no job (fails the rule-of-thumb — *what is this / does / why pay attention*)
+   is a finding. **Corner-rounding** (rounded vs hard-edged) is a deck-wide language — a square-cornered
    image inside rounded cards (or vice-versa) is a consistency finding.
    **Deck-level rhythm (scan all slides together):** across a *long* deck, does the visual
    protagonist and density vary (a paced sequence — chart / diagram / photo / big-number / quote,
