@@ -90,7 +90,7 @@ Before I build, please give me:
 1. Template/brand: existing template, new template, design a clean one, or generate one with an image tool?
 2. Purpose/audience/time: who is this for, how long — and is it presented live, screen-shared, or sent to self-read? Main goal: inform, support a decision, or inspire action?
 3. Source material: paper, deck, doc, figures, repo, or none?
-4. Style/language: density (diagram-heavy ↔ balanced ↔ text-heavy?), tone (minimal/corporate/academic/playful), and language (中文/English/etc.)?
+4. Style/language: density (≈a phrase / one sentence / 2–3 sentences per point?), tone (minimal/corporate/academic/playful), and language (中文/English/etc.)?
 ```
 
 This batching is deliberate: the interview is non-negotiable, so it has to be *cheap*.
@@ -281,19 +281,21 @@ the direction gate** (the look is already decided). The four:
 
 4. **Style.** "How do you want it to look and feel?" Offer these (applies to *every*
    purpose):
-   - *Minimal / diagram-heavy* (**recommended default**) — a few words per point, a
-     diagram/figure carrying each idea; what lets an audience follow a *speaker*.
-   - *Moderate text* · *dense / detailed* — for any **read-without-a-speaker** artifact: a
-     leave-behind, an emailed/reference/appendix deck, a board pre-read, a **poster**, or a
-     single-slide **infographic**. There fuller, self-contained text is the deliverable, not a flaw
-     (this sets the deck's **delivery mode** — see `references/design-principles.md` "Delivery mode").
-   - **Density (text-heavy ↔ diagram-heavy) is ALWAYS a SURFACED choice — ask it, never silently derive
-     it.** This is the question you remember as "text-heavy or diagram-heavy"; it lives here in Style and
-     composes with the **delivery context** (Q2): for a **presented** deck offer **diagram-heavy
-     (recommended) ↔ balanced** (a *text-heavy presented* deck is a wall of text — steer away from it);
-     for a **self-read / poster / leave-behind** deck offer **balanced ↔ dense/detailed** (fuller
-     self-contained text is the deliverable). Put it in the interview as an explicit option (like the
-     deck length) — don't quietly decide "diagram-driven" or "dense" from the purpose/delivery alone.
+   - **Density — ALWAYS a surfaced choice, defined by TEXT-PER-POINT (not "text vs no text").** EVERY
+     level has *both* text and visuals; what changes is how much each *point* says and how much the
+     diagram carries. Offer three concrete levels (this is the "text-heavy vs diagram-heavy" question):
+     - **Diagram-heavy** — *a phrase per point* (~3–7 words); a diagram / figure / chart carries the
+       idea, the text is a terse label or takeaway. Lets an audience follow a *speaker*. (Presented default.)
+     - **Balanced** — *one short sentence per point* + a supporting visual; scannable live, still mostly
+       clear when skimmed.
+     - **Text-heavy** — *2–3 self-contained sentences per point* (a short paragraph); the slide reads on
+       its own without a speaker, visuals support the prose. For a **read-without-a-speaker** artifact —
+       leave-behind, emailed/reference/appendix deck, board pre-read, **poster**, single-slide
+       **infographic** — that fuller text is the deliverable, not a flaw.
+     **Surface it explicitly (like deck length) and scale the options to delivery (Q2):** a **presented**
+     deck → *diagram-heavy (recommended) ↔ balanced* (a text-heavy presented deck is a wall of text —
+     steer away); a **self-read / poster** deck → *balanced ↔ text-heavy*. Don't silently decide it from
+     the purpose. (This sets the deck's **delivery mode** — see `references/design-principles.md`.)
    - **"Mimic an example I'll provide"** — the user hands over a deck (or slides /
      PDF / screenshots) whose **visual style they want imitated**. Different from a
      *template* (Q1): you do NOT build on it or inherit its logos — you reproduce its
