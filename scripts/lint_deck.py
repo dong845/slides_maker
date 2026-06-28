@@ -183,7 +183,15 @@ def lint(path):
             for j in range(i + 1, len(sol)):
                 a, b = sol[i], sol[j]
                 ix, iy = _inter(a, b)
-                if ix > TOL and iy > TOL and _frac_inside(a, b) < CONTAIN and _frac_inside(b, a) < CONTAIN:
+                # A clean overlap is one where BOTH dims clear the hairline tolerance, OR a
+                # "bar over a card" signature: one dim is broad (>= 0.5in) while the other is
+                # only a sliver (a wide bottom bar dipping a few pt into the card above it, or a
+                # tall sidebar grazing content). That sliver still CLIPS rounded corners / sits
+                # on top, so flag it even though it's under TOL in the short dim. The 0.012in
+                # floor still ignores true sub-pixel coincidence (flush edges).
+                clean = ix > TOL and iy > TOL
+                bar_on_block = (max(ix, iy) >= 0.5 and min(ix, iy) > 0.012)
+                if (clean or bar_on_block) and _frac_inside(a, b) < CONTAIN and _frac_inside(b, a) < CONTAIN:
                     # skip a hard offset-shadow / sticker pair: same size, offset by a few pt (intentional)
                     same_size = abs(a["w"] - b["w"]) < 0.06 and abs(a["h"] - b["h"]) < 0.06
                     tiny_offset = abs(a["l"] - b["l"]) < 0.18 and abs(a["t"] - b["t"]) < 0.18

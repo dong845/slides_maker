@@ -542,12 +542,21 @@ def timeline(slide, x, y, w, events, *, orientation="h", highlight=None, accent=
     if orientation == "h":
         ay = y + 0.2
         sw, _sh = _slide_size(slide)
+        lwlab = 2.0
         def _lx(cx, lw):                                  # keep a centered label box on-canvas
             return max(0.05, min(cx - lw / 2, sw - lw - 0.05))
-        box(slide, x, ay - 0.012, w, 0.024, fill=axis_c)
-        step = w / max(1, n - 1) if n > 1 else 0
+        # INSET the end nodes so the first/last centered labels fit WITHOUT clamping — otherwise the
+        # end dots sit at the canvas edge and their labels shift inward, looking mis-aligned from the
+        # dots while the middle node (un-clamped) looks centered. Inset keeps every label under its dot.
+        pad = 0.0
+        if n > 1:
+            pad = max(0.0, lwlab / 2 - (x - 0.05), lwlab / 2 - ((sw - 0.05) - (x + w)))
+            pad = min(pad, w / 2 - 0.3)
+        ax0, axw = x + pad, w - 2 * pad
+        box(slide, ax0, ay - 0.012, axw, 0.024, fill=axis_c)
+        step = axw / max(1, n - 1) if n > 1 else 0
         for i, ev in enumerate(events):
-            ex = x + (i * step if n > 1 else w / 2)
+            ex = ax0 + (i * step if n > 1 else axw / 2)
             when, title = ev[0], ev[1]; cap = ev[2] if len(ev) > 2 else ""
             em = (highlight is None or i == highlight)
             dc = accent if em else axis_c

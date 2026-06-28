@@ -871,7 +871,10 @@ critic round — full rationale in `references/design-principles.md`):
   not too loose). Split panels + flanking margins equal; no large dead-white band beside a
   narrow element; a **figure beside text is anchored to its margin (not centred-and-far-
   stranded)** with the text one gutter away; repeated blocks/connectors evenly spaced; grid-
-  aligned, nothing lopsided.
+  aligned, nothing lopsided. **A column/stack inside a card fills the space below its header** — a
+  ladder, a list, stacked chips should **distribute evenly** to fill the available height; don't
+  bottom-/top-anchor and strand a visible gap between the header and the first item (compute the gap
+  from the region — `(region_h − n·item_h)/(n−1)` — or use `vstack`/`rows`, never a hand-picked offset).
 - **Block padding & no inflated filler** — text inside a chip/card/callout hugs the box with a
   **modest, balanced** top/bottom margin (middle-anchored; not floating in a tall box, not cramped).
   A short card must not leave a white strip at the bottom. **No oversized block faking a full slide:**
