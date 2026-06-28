@@ -114,6 +114,34 @@ and tell the user which font the deck expects.
 - **Numbers / Latin terms** inside CJK text render in `FONT` (the latin font) — choose a
   Latin font that pairs cleanly with the CJK one (Calibri/Arial with most sans CJK).
 
+## Write like a human — kill the "AI taste" in the copy (voice; most acute in 中文)
+Typography makes a CJK deck *render* native; **wording** makes it *sound* native. AI-written slide copy
+has a recognizable, credibility-sapping smell — generic, over-formal, translation-shaped. Write the text
+the way a sharp human professional in that field would, in the deck's language. This holds for every
+language but is **most visible and most damaging in Chinese**, so check 中文 copy hardest.
+
+**The "AI taste" tells to cut (中文):**
+- **翻译腔 (translationese)** — English structures carried straight over: long `的…的…的` chains, "对于…来说",
+  "作为…", overused `其 / 该 / 这一`, reflexive `被`-passives, "在…的背景下 / 随着…的发展" essay openers. →
+  Reorder into natural Chinese, break the 的-chain, drop the scaffolding.
+- **动词名词化 + 空动词 (nominalization)** — `进行优化 → 优化`; `实现了提升 → 提升了 / 更…`; `起到了…作用 → 能…`;
+  `具有…的特点 →` (cut). Prefer the plain verb.
+- **套话 / 空泛形容词 (hype filler)** — 强大、高效、全面、深入、极致、一站式、海量、无缝、赋能、助力、打造、
+  全方位、显著提升（无数字）. These carry no information → replace with the **concrete fact** ("重建从 8 分钟降到
+  12 秒") or delete.
+- **机械排比 / 套路连接词** — every line "不仅…而且 / 首先…其次…最后", and filler like "值得一提的是、总而言之、
+  众所周知、由此可见". → Vary the structure; trust the reader; cut connectors a person wouldn't say aloud.
+- **节奏单一 + 破折号成瘾** — every sentence the same length, "X —— Y" on every line. → Vary length (let some
+  lines be short fragments — slides aren't prose); use 破折号 sparingly.
+
+**Do (any language):** concrete nouns + active verbs over abstract nouns; the specific number/name over a
+vague claim; vary sentence length and structure; cut every adjective not doing work; match the **register
+to the context** (sober for research, punchy for a pitch, plain-friendly for teaching — never
+press-release-empty). **Read each line aloud / sub-vocalise: would a sharp person in this field actually
+say it?** If it reads like a press release, a textbook abstract, or a translation when it shouldn't —
+rewrite. *(English has its own tells — "leverage / robust / seamless / delve / unlock / in today's
+fast-paced world / it's worth noting", reflexive triadic lists, em-dash overuse — same cure.)*
+
 ## Equations & figures
 - `eq_par` / `equation_png` use ASCII + Greek (`EQFONT`) — unaffected by language. Don't
   put CJK *inside* `equation_png` (matplotlib's math font may lack the glyphs); label CJK

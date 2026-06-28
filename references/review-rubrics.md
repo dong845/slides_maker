@@ -54,7 +54,10 @@ Score each dimension; cite specific slides.
    enough, key differences pointed at, in-figure labels readable? A results slide
    whose claim can't be verified from the image is a blocker.
 3. **Cognitive load / text.** Few words per point; no paragraph the audience must
-   read while the speaker talks. No text that merely duplicates what's said.
+   read while the speaker talks. No text that merely duplicates what's said. **Voice — reads human, not
+   AI-generated:** concrete fact over hype-filler (强大/高效/赋能 · "leverage/seamless"), varied rhythm, no
+   machine parallelism — **most acute in 中文** (translationese: 的-chains, 进行/实现-nominalization, 破折号成瘾).
+   *Would a sharp person in this field say this line aloud?* (See `multilingual.md` "Write like a human".)
 4. **Figures labeled, intact & cleanly cropped.** Every figure has a legend (what rows/cols/axes
    are) and a one-line takeaway (what to notice). Unlabeled figure = major issue. A PDF-sourced
    figure must be **precisely cropped** — zoom in on all four edges and check both failure modes:

@@ -125,6 +125,13 @@ Do not just skim for the first few obvious issues. Run these passes:
      - *Narrative:* opens with a **story** built to a hook; one message stated early and recapped; each
        slide answers a question the previous raised; closing slide named for its purpose ("Conclusion",
        not "Take home") **in the deck's language** (a native 结论/总结 on a Chinese deck is correct).
+     - *Voice — does the copy read HUMAN, or AI-generated?* Flag the "AI taste": **hype-filler** adjectives
+       with no fact (强大/高效/全面/赋能/打造 · "leverage / robust / seamless"), **machine parallelism /
+       套路连接词** (every line same shape; "值得一提的是 / it's worth noting"), and — **most acute in 中文 —
+       translationese**: `的…的…的` chains, `进行/实现`-nominalization (进行优化→优化), reflexive 被-passives,
+       "随着…的发展" openers, 破折号成瘾. The test: *would a sharp person in this field actually say this line
+       aloud?* If a line reads like a press release / textbook abstract / translation when it shouldn't,
+       flag it with a concrete human rewrite (see `references/multilingual.md` "Write like a human").
      - **Owns these named-flaw checks (below):** factual fidelity; source-figure faithfulness;
        generated-image factual correctness + topical relevance; real brand/product-asset credibility;
        build/meta-annotation leaks; formula transcription/derivation fidelity; claim currency (as-of

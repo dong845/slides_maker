@@ -140,7 +140,12 @@ For every slide, decide and record:
 - **Takeaway** — the one assertion.
 - **Content** — the terse points / the actual words, faithful to the source. Few words per
   point; the slide is a visual aid for a speaker, not a script (put the spoken script in
-  speaker notes).
+  speaker notes). **Write the copy like a sharp human in that field, not a content generator —
+  kill the "AI taste":** concrete nouns + active verbs over abstract nouns; the specific number/name
+  over a vague claim; cut hype-filler adjectives; vary the rhythm. This matters in every language and is
+  **most acute in 中文** (translationese: `的…的…的` chains, `进行/实现`-nominalization, empty 强大/高效/赋能,
+  机械排比, 破折号成瘾) — **read each 中文 line aloud: would a person actually say it?** See the "Write like a
+  human" section of `references/multilingual.md`.
 - **Visual source** — exactly one of: a **source figure** (name which one, used *whole*; note
   any trim of page margins), a **designed chart** generated from real data (name the *archetype*
   from §5's selection guide — donut+KPI / dumbbell / slope / dual-axis / Pareto / bubble — not a
