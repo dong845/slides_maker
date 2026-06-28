@@ -182,6 +182,9 @@ the direction gate** (the look is already decided). The four:
      via `deckkit.palette_from_image`, motif + component helpers, so native blocks match) → render the
      cover + one real content slide and gate it:
      > **🔴 CHECKPOINT** — show the hero + a sample content slide; iterate until the user confirms.
+     > *(A request to change the **atmosphere/mood/style** ⇒ RE-generate the imagery to embody it — new
+     > subject/composition/lighting/motifs — then re-derive `style.py`; don't just recolour the old plate.
+     > A minor palette/contrast tweak is a `style.py`-only change. See `references/generated-template.md`.)*
      Then **the look is decided — SKIP the 3-direction gate**, finish the interview normally, and build
      (image cover/dividers with native title on top; content built natively in `style.py`); save the
      confirmed template to the registry.

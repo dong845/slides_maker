@@ -112,8 +112,21 @@ Build **two** slides — the **cover** (hero image + native title/badges) and **
 slide** (native, using the derived components: a few cards + an emphasis band + motifs) — render
 them, and show both. The content slide is essential: it proves the blocks actually fit.
 > **🔴 CHECKPOINT** — show the generated template (hero + a sample content slide) and get the
-> user's OK. Iterate on their feedback — regenerate the image (new prompt) and/or tune the
-> palette/motifs/components — until they confirm. Only then proceed.
+> user's OK. Iterate on their feedback until they confirm. Only then proceed.
+
+**Match the FIX to what they asked to change — don't reflexively recolor:**
+- **A small palette / contrast tweak** ("warmer accent", "lighter background", "less saturated", "bigger
+  title zone") → adjust `style.py` (and re-place natively); **no regeneration needed**.
+- **A change of ATMOSPHERE / mood / style / feel** ("make it more energetic / calmer / darker / more
+  futuristic / more organic / more playful / more premium / more clinical") → **RE-GENERATE the hero —
+  do not just change the colour.** A mood lives in the **imagery itself** — its *subject, composition,
+  lighting, texture, and motifs* — not only the palette. Rewrite the image prompt so **all** of those
+  shift to embody the new atmosphere (e.g. *more energetic* → dynamic diagonal composition, bold forms,
+  vivid directional light; *calmer* → sparse, soft, generous negative space; *more organic* → natural
+  materials and hand-made texture instead of hard geometry), generate a fresh plate, then **re-derive
+  `style.py` from the new image** so the native blocks match. Recoloring the old plate leaves its
+  original mood baked into the picture, and the hero then fights the feeling the user asked for. If it's
+  unclear whether they mean a tweak or a new atmosphere, ask in one line before spending a generation.
 
 ### 5 — Continue the interview, then build to the template
 - The look is decided → **skip the 3-direction gate** and any style question; run the rest of the
