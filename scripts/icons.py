@@ -45,7 +45,11 @@ LIBRARIES = {
     "tabler-filled": f"{_CDN}/@tabler/icons@latest/icons/filled/{{name}}.svg",
     "lucide":        f"{_CDN}/lucide-static@latest/icons/{{name}}.svg",
     "phosphor":      f"{_CDN}/@phosphor-icons/core@latest/assets/regular/{{name}}.svg",
-    "phosphor-bold": f"{_CDN}/@phosphor-icons/core@latest/assets/bold/{{name}}.svg",
+    "phosphor-bold": f"{_CDN}/@phosphor-icons/core@latest/assets/bold/{{name}}-bold.svg",
+    "phosphor-fill": f"{_CDN}/@phosphor-icons/core@latest/assets/fill/{{name}}-fill.svg",
+    "phosphor-duotone": f"{_CDN}/@phosphor-icons/core@latest/assets/duotone/{{name}}-duotone.svg",
+    "phosphor-light": f"{_CDN}/@phosphor-icons/core@latest/assets/light/{{name}}-light.svg",
+    "phosphor-thin": f"{_CDN}/@phosphor-icons/core@latest/assets/thin/{{name}}-thin.svg",
     "feather":       f"{_CDN}/feather-icons@latest/dist/icons/{{name}}.svg",
     "heroicons":     f"{_CDN}/heroicons@latest/24/outline/{{name}}.svg",
     "heroicons-solid": f"{_CDN}/heroicons@latest/24/solid/{{name}}.svg",
@@ -91,6 +95,29 @@ def recolor(svg, color):
         return svg.replace("currentColor", color)
     # fill-based monochrome: inject a fill on the root <svg> (paths inherit it)
     return re.sub(r"<svg\b", f'<svg fill="{color}"', svg, count=1)
+
+
+def gradient_recolor(svg, colors, *, angle="diag"):
+    """Fill the icon with a TWO-STOP GRADIENT (`colors=(c0, c1)`, hex) instead of one flat colour
+    — the depth a flat monochrome glyph lacks, matching the glassy/gradient look of modern decks.
+    Works for both stroke-based (Tabler/Lucide/Feather) and fill-based icons: `currentColor` (or the
+    root fill) is repointed at an injected `<linearGradient>`. `angle`: 'diag' (TL→BR, default),
+    'h' (left→right), or 'v' (top→bottom). Keep the two stops close in hue/value so the glyph stays
+    legible; reserve gradient icons for hero/feature spots, not a dense row of tiny ones."""
+    c0, c1 = colors
+    gid = "smIconGrad"
+    coords = {"h": 'x1="0%" y1="0%" x2="100%" y2="0%"',
+              "v": 'x1="0%" y1="0%" x2="0%" y2="100%"'}.get(
+        angle, 'x1="0%" y1="0%" x2="100%" y2="100%"')
+    grad = (f'<defs><linearGradient id="{gid}" {coords}>'
+            f'<stop offset="0%" stop-color="{c0}"/>'
+            f'<stop offset="100%" stop-color="{c1}"/></linearGradient></defs>')
+    if "currentColor" in svg:
+        svg = svg.replace("currentColor", f"url(#{gid})")
+    else:
+        svg = re.sub(r"<svg\b", f'<svg fill="url(#{gid})"', svg, count=1)
+    # inject the gradient def immediately after the opening <svg ...> tag
+    return re.sub(r"(<svg\b[^>]*>)", r"\1" + grad, svg, count=1)
 
 
 def _find_chrome():
@@ -160,20 +187,29 @@ def rasterize(svg, out_png, px=160):
         "rsvg-convert (librsvg), or Google Chrome/Chromium (headless). See references/icons.md.")
 
 
-def icon_png(spec_or_path, out_png, *, color=None, px=160):
+def icon_png(spec_or_path, out_png, *, color=None, gradient=None, grad_angle="diag", px=160):
     """Fetch (or load a local .svg), recolor, and rasterize to a transparent PNG. Returns out_png.
 
     `spec_or_path` — "library:name" (fetched) OR a path to a local .svg / .png. A .png passes
     through unchanged (already raster). Recolor with `color` (deck accent/ink hex); `None` keeps
     original colors (for a brand logo in its own colour). `px` is the raster size (use ≥ 2-3× the
-    placed size in pixels for crispness)."""
+    placed size in pixels for crispness).
+
+    For VARIETY beyond a flat monochrome glyph (see references/icons.md "treatments"):
+    - `gradient=(c0, c1)` fills the icon with a two-stop gradient (overrides `color`); `grad_angle`
+      is 'diag' / 'h' / 'v'. Reserve it for hero/feature icons, not dense rows.
+    - pick a weight/style via the library: outline (`tabler:`/`lucide:`/`phosphor:`), filled
+      (`tabler-filled:`/`phosphor-fill:`/`heroicons-solid:`), or **two-tone** (`phosphor-duotone:` —
+      a built-in light+solid look in one accent colour, the depth-y treatment used by polished decks).
+      Keep ONE family/weight across a deck so siblings match."""
     if os.path.exists(spec_or_path) and spec_or_path.lower().endswith(".png"):
         return spec_or_path
     if os.path.exists(spec_or_path) and spec_or_path.lower().endswith(".svg"):
         svg = open(spec_or_path, encoding="utf-8").read()
     else:
         svg = fetch_svg(spec_or_path)
-    return rasterize(recolor(svg, color), out_png, px=px)
+    svg = gradient_recolor(svg, gradient, angle=grad_angle) if gradient else recolor(svg, color)
+    return rasterize(svg, out_png, px=px)
 
 
 if __name__ == "__main__":
@@ -182,7 +218,11 @@ if __name__ == "__main__":
     ap.add_argument("spec", help="library:name (e.g. tabler:rocket) or a local .svg/.png path")
     ap.add_argument("out", help="output PNG path")
     ap.add_argument("--color", default=None, help="recolor hex, e.g. '#1F5FA8' (omit to keep original)")
+    ap.add_argument("--gradient", default=None,
+                    help="two-stop gradient fill 'c0,c1' (e.g. '#5B8DEF,#A26BFA') — overrides --color")
+    ap.add_argument("--grad-angle", default="diag", choices=["diag", "h", "v"], help="gradient direction")
     ap.add_argument("--px", type=int, default=160, help="raster size in px (default 160)")
     a = ap.parse_args()
-    out = icon_png(a.spec, a.out, color=a.color, px=a.px)
+    grad = tuple(s.strip() for s in a.gradient.split(",")) if a.gradient else None
+    out = icon_png(a.spec, a.out, color=a.color, gradient=grad, grad_angle=a.grad_angle, px=a.px)
     print("wrote", out)

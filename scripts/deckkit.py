@@ -972,6 +972,81 @@ def icon_card(slide, x, y, w, h, png, title, body="", *, fill=None, line=None,
     return y + h
 
 
+def icon_tile(slide, x, y, size, png, *, shape="circle", fill=None, grad=None, grad_angle=120.0,
+              ring=None, ring_w=1.6, glass=False, sheen=False, pad=None, alt=None):
+    """Place an icon inside a STYLED TILE — the versatile alternative to a bare monochrome drop.
+    The same recolored icon reads very differently by container, so vary the treatment to fit the
+    deck instead of always using a flat glyph (see references/icons.md "treatments"):
+
+      shape : "circle" (disc), "squircle" (rounded square), or "square".
+      fill  : a solid tile colour (hex/RGBColor). Omit for no fill (pair with `ring`/`glass`).
+      grad  : a two-stop gradient tile — `(c0, c1)` or a full `[(pos,colour,alpha),…]` list —
+              overriding `fill`. Gives depth a flat fill lacks (the glassy header-disc look);
+              `grad_angle` is the linear direction in degrees (0=→, 90=↓).
+      ring  : an accent OUTLINE colour → a badge (icon inside a thin coloured ring).
+      glass : True → a frosted translucent tile (low-alpha tint of `fill` + white rim) for
+              dark / glowing / photographic backgrounds (pair with `glow()`).
+      sheen : True → a soft top highlight (the glassy edge in modern decks).
+
+    `size` is the tile edge in inches; the icon is inset by `pad` (default ≈26% so the glyph sits
+    at ~50-55% of the tile — the tidy proportion). For a ROW of icons keep size/shape/treatment
+    IDENTICAL across siblings (CRAP Repetition); colour-code per category by varying only the hue
+    (its tile + its label), as polished decks do. Returns the icon picture shape."""
+    if isinstance(grad, str):
+        grad = None
+    sh_kind = {"circle": MSO_SHAPE.OVAL, "squircle": MSO_SHAPE.ROUNDED_RECTANGLE,
+               "square": MSO_SHAPE.RECTANGLE}.get(shape, MSO_SHAPE.OVAL)
+    t = slide.shapes.add_shape(sh_kind, Inches(x), Inches(y), Inches(size), Inches(size))
+    if glass:
+        tint = _as_rgb(fill) if fill is not None else WHITE
+        _grad_fill(t, [(0.0, tint, 0.20), (1.0, tint, 0.06)], angle=grad_angle)
+    elif grad is not None:
+        stops = grad if isinstance(grad[0], (tuple, list)) \
+            else [(0.0, _as_rgb(grad[0]), 1.0), (1.0, _as_rgb(grad[1]), 1.0)]
+        _grad_fill(t, stops, angle=grad_angle)
+    elif fill is not None:
+        t.fill.solid(); t.fill.fore_color.rgb = _as_rgb(fill)
+    else:
+        t.fill.background()
+    if ring is not None:
+        t.line.color.rgb = _as_rgb(ring); t.line.width = Pt(ring_w)
+    elif glass:
+        t.line.color.rgb = WHITE; t.line.width = Pt(1.0)
+    else:
+        t.line.fill.background()
+    t.shadow.inherit = False
+    if shape == "squircle":
+        try: t.adjustments[0] = 0.24
+        except Exception: pass
+    if sheen:
+        # a faint white highlight across the top — sells the glassy edge
+        hh = size * 0.5
+        sh = slide.shapes.add_shape(
+            MSO_SHAPE.OVAL if shape == "circle" else MSO_SHAPE.ROUNDED_RECTANGLE,
+            Inches(x + size * 0.12), Inches(y + size * 0.06), Inches(size * 0.76), Inches(hh))
+        _grad_fill(sh, [(0.0, WHITE, 0.40), (1.0, WHITE, 0.0)], angle=90.0)
+        sh.line.fill.background(); sh.shadow.inherit = False
+    pad = pad if pad is not None else 0.26 * size
+    return picture(slide, png, x + pad, y + pad, size - 2 * pad, size - 2 * pad,
+                   fit="contain", alt=alt)
+
+
+def icon_badge(slide, x, y, size, png, *, ring=MAGENTA, ring_w=1.8, fill=None, alt=None):
+    """An icon inside a thin accent RING — a light, outlined treatment that reads as a badge
+    (good on a light deck where a solid tile would feel heavy). Thin wrapper over `icon_tile`."""
+    return icon_tile(slide, x, y, size, png, shape="circle", fill=fill, ring=ring,
+                     ring_w=ring_w, alt=alt)
+
+
+def icon_ghost(slide, png, x, y, size, *, alt=""):
+    """An OVERSIZED, FAINT icon used as a watermark behind a card's content (the ghost-glyph
+    treatment that adds texture without clutter). Place it FIRST, then draw text/blocks on top.
+    Recolor the PNG to a very light tint (icons.py `color=<pale hue>`) so it never competes with
+    the text — this helper only sizes/places it big; the faintness comes from the recolor. Pass a
+    big `size` (it may bleed past the card edge for effect). Decorative → `alt=""` by default."""
+    return picture(slide, png, x, y, size, size, fit="contain", alt=alt)
+
+
 def cjk_numeral(n, style="formal"):
     """CJK numeral string for n (1–99) — for East-Asian section markers (壹·贰·叁 …).
     style='formal' (壹贰叁肆伍陆柒捌玖拾, 大写) or 'simple' (一二三…). Use as a numeral marker on an
@@ -1869,8 +1944,9 @@ def _hex(c):
     return c if isinstance(c, str) else str(c)   # RGBColor.__str__ -> 'RRGGBB'
 
 def _as_rgb(c):
-    """Accept a colour as an RGBColor OR an 'RRGGBB' hex string (one convention everywhere)."""
-    return RGBColor.from_string(c) if isinstance(c, str) else c
+    """Accept a colour as an RGBColor OR a hex string ('RRGGBB' or '#RRGGBB') — one convention
+    everywhere, tolerant of a leading '#' so callers don't have to remember to strip it."""
+    return RGBColor.from_string(c.lstrip("#")) if isinstance(c, str) else c
 
 def _clear_table_style(tbl):
     """Strip PowerPoint's default banded-blue table theme so WE control every fill and
@@ -2157,6 +2233,35 @@ def footer(slide, tag="", page=None, w_in=None, h_in=None):
     if page is not None:
         text(slide, w_in - 1.0, h_in - 0.35, 0.6, 0.3,
              [[(str(page), 9, MUTE, True, False)]], align=PP_ALIGN.RIGHT, space_after=0)
+
+
+def logo(slide, path, *, corner="tr", h=0.42, margin=0.3, w_in=None, h_in=None, alt=None):
+    """Place a brand / institution / product logo as PERSISTENT chrome — the SAME mark in the
+    SAME spot on every slide. For a deck that is *about* a company, institution, or product,
+    the entity's real logo belongs on every content slide (top-right by convention) so the
+    audience always knows whose deck this is and the brand stays present; in the no-template /
+    generated branch there are no layouts to carry it, so call this once per slide (after the
+    background, before content) — and on the hero/cover too. It's chrome, not content: keep `h`
+    small (~0.35-0.5 in) so it never competes with the title, and keep `corner`/`margin`
+    identical across slides so it doesn't jump. The logo holds its aspect ratio (a wide wordmark
+    and a square mark both sit right). `corner` is "tr" (default), "tl", "br", or "bl".
+
+    Use the REAL logo (see references/image-generation.md's real-asset hierarchy) — if it's
+    missing, ask the user for it or drop in an honest "logo here" placeholder; NEVER an
+    AI-imagined or recolored look-alike. On a busy/dark background, give the logo a small scrim
+    or light plate behind it so it stays legible. Returns the picture shape."""
+    from PIL import Image
+    sw, sh = _slide_size(slide)
+    w_in = sw if w_in is None else w_in
+    h_in = sh if h_in is None else h_in
+    with Image.open(path) as im:
+        iw, ih = im.size
+    w = h * (iw / ih) if ih else h
+    top = "t" in corner.lower()
+    left = "l" in corner.lower()
+    x = margin if left else (w_in - margin - w)
+    y = margin if top else (h_in - margin - h)
+    return picture(slide, path, x, y, w, h, fit="contain", alt=("" if alt is None else alt))
 
 
 # ===================================================================== notes

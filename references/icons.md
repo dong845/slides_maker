@@ -25,7 +25,7 @@ no library icon fits; even then match the deck's stroke language.)
 |---|---|---|---|
 | `tabler:` (+ `tabler-filled:`) | crisp, minimal line | MIT | default; corporate / product / clean |
 | `lucide:` | clean, neutral line | ISC | minimal / editorial |
-| `phosphor:` (+ `phosphor-bold:`) | friendly, rounded line | MIT | approachable / teaching / playful |
+| `phosphor:` (+ `-bold` / `-fill` / `-duotone` / `-light` / `-thin`) | friendly rounded; 6 weights incl. **duotone** | MIT | approachable / teaching / playful; duotone for depth |
 | `feather:` | spare, thin line | MIT | very minimal |
 | `heroicons:` (+ `-solid`) | corporate line/solid | MIT | enterprise / stakeholder |
 | `simple:` | **brand / tech logos** (GitHub, Python, AWS…) | CC0 | representing actual products/tech |
@@ -61,6 +61,44 @@ dk.icon_card(s, *col, p, "Analytics", "Track what matters", accent=dk.ACCENT, di
   present). If none exists it errors clearly — `pip install cairosvg`, or install Chrome/Chromium.
 - **Offline / exact-name unknown:** pass a **local `.svg` path** to `icon_png()` instead of a spec
   (the user can drop an SVG in), or check the library's site for the exact kebab-case name.
+
+## Treatments — VARY how the icon is shown (don't default to a flat monochrome drop)
+A bare recolored glyph is the *baseline*, not the only option — the same icon reads very differently
+by **rendering** (how the glyph is filled) and by **container** (what sits behind it). Polished decks
+(e.g. the glassmorphism reference) get their richness here: **duotone glyphs on translucent gradient
+discs, colour-coded per category** — not flat icons scattered on a slide. Pick a treatment that fits
+the deck and **apply it identically across siblings** (same shape/size/treatment; vary only the *hue*
+to colour-code categories). The two layers, with the helpers that produce them:
+
+**Rendering (icons.py — how the glyph itself looks):**
+- **Outline** — `tabler:` / `lucide:` / `phosphor:` (the clean default).
+- **Filled / solid** — `tabler-filled:` / `phosphor-fill:` / `heroicons-solid:` (heavier, more
+  presence on a busy or dark slide).
+- **Two-tone (duotone)** — `phosphor-duotone:` → a built-in light+solid look in ONE accent colour;
+  the depth-y treatment the reference uses. The cheapest big upgrade from "flat".
+- **Weight** — Phosphor spans `thin` / `light` / regular / `bold` (match the deck's stroke language;
+  thin for archival/luxury, bold for punchy).
+- **Gradient-filled** — `icon_png(spec, out, gradient=("#5B8DEF", "#A26BFA"))` fills the glyph with a
+  two-stop gradient instead of one flat colour. Reserve for hero/feature icons (not dense rows).
+
+**Container (deckkit — what sits behind/around it):**
+- `icon(s, p, x, y, size, disc="#E8F0FA")` — bare, or on a simple tinted tile (the existing default).
+- `icon_tile(s, x, y, size, p, shape=…, fill=… | grad=(c0,c1) | glass=True, sheen=…)` — the versatile
+  tile: **circle / squircle / square**, **solid / gradient / frosted-glass**, optional top **sheen**.
+  A gradient disc with a duotone glyph is the reference's signature lockup; `glass=True` (+ `glow()`)
+  is the glassmorphism card; colour-code per category by changing only the tile hue.
+- `icon_badge(s, x, y, size, p, ring=ACC)` — icon inside a thin accent **ring** (light, outlined;
+  good on a light deck where a solid tile feels heavy).
+- `icon_ghost(s, p_pale, x, y, big_size)` — an **oversized faint** icon as a watermark behind a
+  card's content (recolor the PNG to a pale tint first); adds texture without clutter.
+- `icon_card(s, …, disc=…)` — the upper-left feature-card pattern (icon + title + body).
+
+**Pair treatment to surface:** flat/outline or a light `disc` on a clean light deck; **duotone or
+gradient glyphs on gradient/glass tiles** on a dark/glassy deck; ring badges for an airy editorial
+look; a ghost glyph to enrich an otherwise sparse card. Whatever you pick, keep it **one system** —
+mixing tile shapes or rendering styles across sibling icons is the same consistency tell as mixing
+families. Colour-coding categories (each its own hue, carried by tile + glyph + label) is encouraged;
+random per-icon restyling is not.
 
 ## Scenario fit — MATCH the style & dose to the register (icons fit ANY topic)
 **Icons are available on *every* deck — never excluded by topic or preset.** The libraries are vast and

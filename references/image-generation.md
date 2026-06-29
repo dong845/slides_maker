@@ -101,6 +101,21 @@ with a generated look-alike or a placeholder that pretends to be the brand. A *c
 misstates a real thing) and reads as fake instantly. This complements the rule above: generated
 imagery is for *atmosphere/concept*, never for a real identity that should be shown as-is.
 
+**When the deck is ABOUT a single company / institution / product, put that entity's logo on every
+page — persistent brand chrome, not a one-off.** A pitch, a product/launch deck, a company or
+stakeholder readout, an institution's report — anything whose subject *is* one organisation/product —
+reads as more credible and finished when the mark is always present, the way real corporate decks
+keep a logo in a fixed corner throughout. Place it small and in a **consistent position on every
+slide** so it reads as chrome and never jumps; **top-right is the usual default**, but it's your call —
+move it to a corner the title/figures/motifs leave free, just keep it the same everywhere. Use
+`deckkit.logo(slide, path, corner=..., h=...)` (no-template / clean / generated decks have no layout
+to carry it, so call it per slide). On a **provided/registered template** the branding usually already
+lives on the layouts (`inspect_template.py` shows where) — don't double it; only add a per-slide logo
+if the template *doesn't* carry one. Cases where a recurring logo does NOT apply: a deck that spans
+many organisations (a survey, a literature review, a market landscape), or a neutral/academic talk
+where house branding would be noise — there, name entities inline instead. Same fidelity rule as
+above: the real mark or an honest placeholder, never a faked one.
+
 ## Planning workflow
 
 1. During Step 3, decide each slide's visual role: source figure, deterministic chart,

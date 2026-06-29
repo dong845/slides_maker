@@ -559,7 +559,8 @@ ready** — send it back to the planner.
 Write a small per-deck build script that imports `scripts/deckkit.py` (don't re-derive primitives;
 full signatures + behaviour are in its docstrings). The helper set, by job:
 - **Chrome:** `title_bar`/`content_slide`, `footer`, `editorial_header` (caps eyebrow + title +
-  hairline), `part_eyebrow`/`page_marker` (mono eyebrow + page marker).
+  hairline), `part_eyebrow`/`page_marker` (mono eyebrow + page marker), `logo` (persistent
+  brand/institution/product mark in a fixed corner on every page — see the brand-logo rule below).
 - **Safe layout — measure or anchor, never hand-pick a y:** `columns`/`rows` (equal split panels with
   symmetric margins), `content_band` (the SAFE rect below title / above footer), **`bottom_callout`**
   (footer-safe bottom takeaway — anchors to the band, grows UP, can't collide), **`vstack(…, bottom=)`**
@@ -570,9 +571,12 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
   desyncs the first/last caption from its dot near a slide edge; `timeline` already uses it),
   `picture` (`fit="contain"` keeps edges /
   `"cover"` crops), `gif` (animated GIF, undistorted + size/still warnings) + `gif_poster` (extract the
-  first/representative frame to verify what the render & PDF export show), `icon`/`icon_card` (place an
-  open-licensed SVG icon — recolored + rasterized via `scripts/icons.py`; `icon_card` is the
-  upper-left-corner feature-card pattern). *(These exist so you never
+  first/representative frame to verify what the render & PDF export show), `icon`/`icon_tile`/
+  `icon_badge`/`icon_ghost`/`icon_card` (place an open-licensed SVG icon — recolored + rasterized via
+  `scripts/icons.py`, which also does **duotone** weights + **gradient-fill**; `icon_tile` is the
+  versatile container — circle/squircle/square × solid/gradient/glass tile, `icon_badge` a ring badge,
+  `icon_ghost` an oversized faint watermark, `icon_card` the upper-left feature-card pattern; vary the
+  treatment to fit the deck — see `references/icons.md` "Treatments"). *(These exist so you never
   hardcode a low `y` — the recurring overlap/footer bug.)*
 - **Text & blocks:** `bullet`, `callout` (auto-grows), `chip`, `modbox`, `arrow`, `table` (highlight
   the key row), `code_block`, `hrule`.
@@ -724,6 +728,17 @@ A few rules that matter (see `references/design-principles.md`):
   → OpenAI fallback; build the manifest with `image_prompts.py`), keep assets in
   `~/Downloads/<deck>/assets/generated/`, place with `deckkit.picture(fit="contain"|"cover")`, and
   render-check (calm space behind text, no pseudo-text/fake charts, subject whole, real things right).
+- **Brand logo on every page when the deck is ABOUT one company / institution / product.** A pitch,
+  product/launch, company or stakeholder readout, or a single institution's report reads as more
+  credible when that entity's **real logo is present on every slide** in a **consistent position** —
+  the way real corporate decks keep a mark in a fixed corner (top-right is the usual default; move it
+  to whichever corner the title/figures/motifs leave free, but keep it the same everywhere so it never
+  jumps). Use `deckkit.logo(slide, path, corner=..., h=...)` per slide on clean/generated decks; on a
+  **provided/registered template** the branding usually already lives on the layouts (don't double it).
+  Use the **real** mark (or an honest "logo here" placeholder if it's missing — ask the user), never a
+  faked/recolored one. This does **not** apply to multi-organisation decks (surveys, landscapes) or
+  neutral academic talks — there, name entities inline. Full rule + the no-apply cases in
+  `references/image-generation.md` ("Real brand / product assets come first").
 - **SVG icons — ONE coherent open-licensed family, recolored, used with restraint (full rules — the
   jobs icons do, the rule-of-thumb, + five quality marks — in `references/icons.md`).** An icon must
   **reduce cognitive load, not decorate**: use one only where it does a real job (label a section /
@@ -733,7 +748,14 @@ A few rules that matter (see `references/design-principles.md`):
   one family** (Tabler/Lucide/Phosphor MIT-ISC; `simple:` CC0 for brand/tech logos) via
   `scripts/icons.py` `icon_png(spec, out, color=ACCENT)` — it fetches, **recolors to the deck palette**,
   and rasterizes to a transparent PNG (python-pptx can't embed SVG reliably; rasterizing renders the
-  same everywhere). Place with `deckkit.icon()` or the **`icon_card()`** upper-left-corner pattern. The
+  same everywhere). **Don't default to a flat monochrome drop — vary the *treatment* to fit the deck**
+  (full gallery in `icons.md` "Treatments"): render it **duotone** (`phosphor-duotone:`) or
+  **gradient-filled** (`icon_png(..., gradient=(c0,c1))`), and place it in a styled container —
+  `deckkit.icon_tile()` (circle/squircle/square × solid/gradient/glass tile, optional sheen),
+  `icon_badge()` (ring badge), `icon_ghost()` (oversized faint watermark), `icon()` (bare or tinted
+  tile), or `icon_card()` (upper-left feature card). A duotone glyph on a gradient/glass disc, colour-
+  coded per category, is how polished decks look "designed" rather than clip-arty — but keep **one
+  treatment across siblings** (vary only the hue to colour-code). The
   five quality marks (`icons.md`): **semantic fit** (the metaphor matches what it labels), **colour-coded
   per category** (in a multi-category layout each category its own hue from `palette(n)`, carried by the
   icon + label + tint — not one global accent), **contrast** (bright on dark / saturated on light, a
@@ -1189,9 +1211,11 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   **one HTML link**; `archetypes.py` is the older pptx-render variant + the post-pick one-slide
   fidelity confirm) · `assemble.py` (assemble a sectioned deck) · `export_notes.py` (notes →
   rehearsal script).
-- `icons.py` — fetch an open-licensed SVG icon (Tabler/Lucide/Phosphor/Simple…), recolor to the deck
-  palette, rasterize to a transparent PNG (`icon_png(spec, out, color, px)`); pair with
-  `deckkit.icon`/`icon_card`. See `references/icons.md`.
+- `icons.py` — fetch an open-licensed SVG icon (Tabler/Lucide/Phosphor incl. **6 weights + duotone**/
+  Simple…), recolor OR **gradient-fill** to the deck palette, rasterize to a transparent PNG
+  (`icon_png(spec, out, color=…, gradient=(c0,c1), px)`); pair with the deckkit container helpers
+  `icon` / `icon_tile` (solid/gradient/glass tile) / `icon_badge` (ring) / `icon_ghost` (watermark) /
+  `icon_card`. See `references/icons.md` ("Treatments").
 - `image_fx.py` — `duotone(img, ink_a, ink_b)` / `grayscale(img)` — preprocess a colour photo to the
   deck's ink so it doesn't fight the accent (riso/brutalist/ink/luxury/museum). See `design-gallery.md`.
 - `extract_pdf.py` (crop a figure from a PDF — `figures`/`figure`/`autofig` auto-detect, `page`/`crop`
