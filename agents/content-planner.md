@@ -265,18 +265,42 @@ candidate sets in brief (full table in `form-selection.md`):
   ship an architecture as a static screenshot or a bullet list.)
 - **A numbered process / sequence of steps →** `step_list` (vertical numbered spine, or horizontal
   connected pills with an accented terminal/current step) — not a flat numbered bullet list.
+- **Explaining a METHOD / technique / contribution — pick the form by which QUESTION the slide answers
+  (the what / how / why triad).** A method is usually explained across *more than one* slide, and each
+  question wants a *different* form — so decide, per slide, which one it's answering:
+  | The slide answers… | Form | Best for |
+  |---|---|---|
+  | **WHAT the method is** (the idea, the shape of the approach) | a **labelled schematic diagram** (signal-path / architecture / setup / mechanism) + a short text gloss | **audience understanding** — the intuition, seen at a glance |
+  | **HOW it works** (the exact steps / data path) | an **`algorithm_block`** (numbered pseudocode) and/or a **`flow_chain`/`node`** data-path diagram | **technical detail** — the precise, reproducible procedure |
+  | **WHY it works** (the mathematical justification) | a **typeset `equation_png`** (the loss / rule / law), built term-by-term | **method justification** — why it's correct/optimal |
+  A thorough method section often uses **all three in sequence** (schematic → algorithm → equation); a
+  short talk may use only the *what* schematic. Choose deliberately — don't default every method slide to
+  bullets, and don't put the *how* (steps) or *why* (math) on the *what* (overview) slide. The three
+  bullets below detail each form.
 - **A method / algorithm / training-or-optimization PROCEDURE (the exact steps) →** an `algorithm_block`
   (numbered pseudocode — Input/Output, for/if, indentation, bolded keywords), **not** a paragraph and
   **not** vague bullets — *whenever the source gives a real procedure* (a training loop, an optimizer, a
   derivation, a protocol-as-computation) and the **precise steps/order carry the contribution**. Pair it
   with one prose line of intuition; add a small `flow_chain`/`node` diagram when the *data path* also
   matters (often both). General to ANY field with an algorithmic procedure, not only ML.
-- **A principle / mechanism / law you're EXPLAINING (how or why something works) →** put a **labelled
-  schematic diagram BESIDE the statement** — `node`+`connector`, an annotated whole/generated figure, or
-  an `equation_png` when the law *is* the relation — so the reader *sees* the forces / signal-path /
-  geometry / cause→effect. *Whenever a slide's job is to explain a mechanism* (physics, chemistry,
-  biology, economics, engineering, an algorithmic intuition), stating it as **text alone — when a diagram
-  could show it — is a miss.** Diagram the mechanism, don't just assert it.
+- **A principle / mechanism / EXPERIMENT / DEFINITION you're EXPLAINING →** put a **labelled schematic
+  diagram ALONGSIDE a short text description** — `node`+`connector`, an annotated whole/generated figure,
+  or an `equation_png` when the law *is* the relation — so the reader *sees* the forces / signal-path /
+  reaction / apparatus / geometry / cause→effect, with the text naming the parts and stating what it
+  shows. *Whenever a slide's job is to explain how/why something works, lay out an experimental setup,
+  or define a concept* — in **physics, chemistry, biology, engineering, economics, or any subject** —
+  stating it as **text alone (when a diagram could show it) is a miss.** TWO requirements: (1) **build the
+  schematic CORRECTLY** — the components, connections, geometry, reaction, forces, or apparatus must be
+  **domain-accurate and faithful to the source** (a wrong or generic box-and-dot cartoon is worse than
+  none; if the real artifact must look real — a specific molecule, a real plot — extract/compute it, don't
+  fake a schematic); (2) **pair it with a concise text description/labels**. Diagram the thing — built
+  right — don't just assert it. For a **physical/spatial science schematic** (force / ray / circuit /
+  apparatus / vector / wave), the build paths + per-family recipes + the domain-accuracy fidelity gate
+  are in **`references/schematic-diagrams.md`**: **matplotlib/domain-lib** for precise/label-critical
+  ones, OR the **OpenAI image tool** for complex/stylized/generated-template-matched ones (text-free
+  visual + labels overlaid as native editable text — never baked into the image, geometry verified).
+  In the plan's **visual-source** cell, say *which* path and why. For conceptual box-flow, the deckkit
+  node/connector kit is right.
 - **A conclusion / recommendation (readout, consulting, exec) →** make the **title a full-sentence
   ACTION TITLE** (the conclusion, not a topic label) and add an **`insight_banner`** (the one-line
   so-what bar under it). The evidence on the slide supports that stated conclusion.
@@ -605,11 +629,13 @@ builder can execute. Include:
    - (h) **Method/procedure → algorithm.** *If the deck describes an exact method / training loop /
      optimization or other algorithmic procedure*, it is planned as an `algorithm_block` (numbered
      pseudocode), not buried in prose — or a one-clause reason why prose is better here.
-   - (i) **Principle/mechanism → diagram.** *If a slide's job is to explain how/why something works*
-     (a physical, mathematical, biological, economic, or engineering mechanism), it carries a **labelled
-     schematic diagram beside the statement** (or an `equation_png` when the law *is* the relation) — not
-     text alone. These two fire *when suitable* and are skipped, with no penalty, when the deck has no
-     such content.
+   - (i) **Principle / mechanism / experiment / definition → diagram (built CORRECTLY, with text).**
+     *If a slide's job is to explain how/why something works, lay out an experimental setup, or define a
+     concept* (physics, chemistry, biology, engineering, economics — any subject), it carries a **labelled
+     schematic diagram alongside a short text description** (or an `equation_png` when the law *is* the
+     relation) — not text alone — and the schematic is **domain-accurate / faithful to the source** (not a
+     wrong or generic box-and-dot cartoon; extract/compute the real artifact when it must look real). These
+     fire *when suitable* and are skipped, with no penalty, when the deck has no such content.
 4. **Image opt-in list** — the **roll-up of every slide whose *Image* column is marked**: one
    explicit list, *"slides X, Y could carry a generated plate in <art-direction> — approve
    which, if any."* It must match the table exactly; it exists so the user makes one clear

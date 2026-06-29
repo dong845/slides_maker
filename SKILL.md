@@ -354,8 +354,9 @@ brief inline yourself. It is the
 constructive counterpart to the critic/arbiter judges. Give it the interview answers
 (purpose/audience/time, **delivery context** & **primary goal**, style/language, template
 decision, venue if any), the source material (or "none"), and the craft references
-(`design-principles.md`, `design-by-purpose.md`, `animation.md`, `image-generation.md`,
-`review-rubrics.md`, `multilingual.md`). It returns a **deck plan**: a comprehension brief
+(`design-principles.md`, `design-by-purpose.md`, `form-selection.md`, `schematic-diagrams.md`,
+`animation.md`, `image-generation.md`, `review-rubrics.md`, `multilingual.md`). It returns a **deck
+plan**: a comprehension brief
 + the narrative arc + a build-ready per-slide spec (takeaway · content · visual source ·
 layout · motion · proposed image), plus an image opt-in list, flagged forward-looking
 content, and open questions. You then take that plan into the **Step 3 checkpoint** (show
@@ -607,6 +608,18 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
   · dashed=optional · dotted=feedback) and **shape semantics** (straight=adjacent flow · elbow/U=loop /
   return / non-adjacent), exactly one `hub`; `diagram_island` (bright figure panel on a dark slide);
   `concentric_rings` (nested framework); `step_list` (numbered process, vertical/horizontal).
+  - **This kit draws conceptual BOX-FLOW only — not physical science schematics.** For a
+    **labelled science schematic** explaining a principle / mechanism / experiment / definition (a
+    **free-body / force diagram, optics ray path, electric circuit, chemistry apparatus + reaction,
+    vector / coordinate geometry, wave / field** — physics · chemistry · biology · engineering · any
+    subject), NOT the node/connector kit. Two faithful build paths (pick by precision-vs-polish):
+    **matplotlib / a domain library** → transparent PNG (the safe default when the exact geometry/labels
+    ARE the meaning — deterministic, correct-by-construction), OR — for a **complex / fancy / generated-
+    template-matched** schematic whose geometry isn't load-bearing — the **OpenAI image tool for a
+    text-free styled visual with the labels overlaid as native editable text**. **Never bake labels or
+    unverifiable geometry into a generated image** (garbled text + wrong physics). Recipes, the
+    image-tool workflow, and the **domain-accuracy fidelity gate** are in
+    `references/schematic-diagrams.md` — build it correct (a wrong schematic misleads worse than none).
 - **Editorial / consulting furniture:** `insight_banner` (so-what bar), `bilingual_lockup` (CJK+tracked
   Latin headline), `highlight` (inline `<k>keyword</k>` recolour), `ghost_numeral` (faint watermark
   ordinal), `concept_equation` (ZINE=MAGAZINE word-equation), `pull_quote`/`standfirst`, `cta_button`/
@@ -1227,6 +1240,6 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   content out of an existing deck — the redesign path).
 **Agents** (`agents/`): `content-planner.md` (Step-1 deep-understand + the build-ready per-slide plan incl. the Form ledger; the Step-3 checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `asset-prep.md` (execution-only asset materializer — crops/equations/plates/icons after Step-3 approval; zero design decisions) · `openai.yaml` (Codex display metadata).
 
-**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
+**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
 
 **Registry** (NOT part of the skill): `~/.codex/slide-templates/` (Codex) · `~/.claude/slide-templates/` (Claude Code) — the user's saved templates; read for choices, write new `profile.md`s to the active host. Empty for a new user.
