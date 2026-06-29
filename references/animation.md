@@ -33,6 +33,16 @@ b.apply(effect="appear")                  # or "fade" for a soft one-by-one
 same pattern reveals **cards, pipeline stages, quadrant cells, or a final callout** one at a time. This
 in-slide reveal — **not** a slide-to-slide transition — is what "add animation" means.
 
+> **🔴 The static base must NOT pre-spoil what the build reveals.** Anything that **names, lists, or
+> summarizes the to-be-revealed items** — a "four steps: A → B → C → D" caption, a recap line, a legend
+> for blocks that appear one by one — must itself be **inside the build**, not in the always-visible base.
+> The classic bug: drawing a summary line *after* `b.apply()` (or before the loop) so it's static — it
+> then shows the whole answer at click 0 while the cards reveal one at a time, defeating the build. Two
+> correct fixes: **(a) sync it** — break the summary so each fragment reveals *with* its block; or **(b)
+> reveal it LAST** — wrap the summary in a final `b.step()` so it lands as the synthesis after every block
+> is shown. Audit the **initial (pre-click) state**: it should give away *nothing* that a later click
+> reveals. (Same logic as "build to a punchline" — the punchline can't already be on screen.)
+
 ## When a build genuinely helps
 **Actively scan each (presented) slide's layout against this list** — animate the ones whose shape
 fits, leave the rest plain. The recurring build-friendly layouts:

@@ -47,6 +47,13 @@ something.
   - Flag a deck-level process issue if the manifest is **absent**, or if it shows **no appear-builds**
     on a deck that clearly has build-candidate slides, with no stated reason. (A genuinely build-free
     deck — all titles/dividers/one-idea/scan-at-once/read-alone — is fine *when reasoned*.)
+  - **A build whose STATIC base pre-spoils the reveal** is a real motion finding: if a slide builds
+    blocks/points one by one but a **summary, recap, legend, or caption that names/lists those same items
+    is statically visible** (revealed at click 0 — e.g. drawn after `b.apply()` or before the build), the
+    audience sees the whole answer before the build runs, defeating it. The manifest tells you (a build of
+    N items + a static line that enumerates them); flag it. Fix: the summary must be **in the build** —
+    synced with each block, or revealed **last** as the synthesis (`references/animation.md` "The static
+    base must NOT pre-spoil what the build reveals").
   Do **not** flag an intentionally plain/static deck just because it has no motion; the question is
   whether the choice was made thoughtfully. And per slide, flag a clear **build-candidate you can see
   in the pixels** — a multi-point bullet list, a multi-stage pipeline/diagram, a multi-part argument, or
