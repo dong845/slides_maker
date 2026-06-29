@@ -102,7 +102,10 @@ Score each dimension; cite specific slides.
    with neither containing the other (a figure encroaching on a table/text, a band over the footer,
    text crossing out of its box) — is **unacceptable** (major; a covered footer / unreadable overlap is
    a blocker). *Intentional layering* — a child fully inside its parent (label on a card, scrim on a
-   photo, glow under a glass card) — is **not** overlap and is fine.
+   photo, glow under a glass card) — is **not** overlap and is fine. Also check **interior padding** (no
+   text crammed against a card edge), **chips sized to their text** (no label overrunning its pill), no
+   **wrapped value/label colliding** with the line below, and **no node sitting ON a connector line**
+   (links route in the gaps) — `lint_deck.py` flags these against the rendered text.
    On **split layouts** (text + figure, two-up, image + caption), are the left and right
    regions — *and the white margins flanking them* — the **same width** (or a clearly
    intentional asymmetric split with equal outer margins)? Unequal panels, a lopsided

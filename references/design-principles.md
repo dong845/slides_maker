@@ -310,11 +310,25 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   single word/character reads as a mistake. Fix it by nudging the box **width** (a little wider or
   narrower so the last line gains company) or lightly rewording, so the wrap fills toward the end of
   the last line. Check it in the render — most common on 2–3 line bodies and titles.
-- **Interior padding.** Text should never crowd a block's edge — keep a comfortable
-  inset between a label/title/body and the boundary of its chip, callout, card, or
-  box (the deckkit `chip`/`callout` helpers bake this in; for boxes you draw yourself,
-  inset text ~0.15 in from the edges, more at the top of a titled card). Cramped text
-  touching a rounded corner reads as unfinished even when nothing overflows.
+- **Interior padding — keep a real margin on ALL sides (≥ ~0.12 in), measured against the *wrapped*
+  text.** Text must never crowd a block's edge — keep a comfortable inset between a label/title/body and
+  the boundary of its chip, callout, card, or box (deckkit `chip`/`callout` bake it in; for boxes you
+  draw yourself, inset ~0.15 in, more at a titled card's top). Cramped text touching an edge/corner reads
+  as unfinished **even when nothing overflows** — `lint_deck.py` now flags it (**TEXT PADDING**), so run
+  it and check the render. Two recurring sub-cases it now catches and you must design against:
+  - **Size a chip / pill / label to its text — never the reverse.** A label wider or taller than its
+    pill (e.g. "Boston Dynamics" in a 0.8-in chip) wrap-crams against the edges. Size the chip to the
+    longest label (or use fewer/shorter labels, or a plain `· `-separated line instead of pills). (**CHIP/LABEL TOO SMALL**.)
+  - **Stack value + label + sub-label with enough gap that a 2-line WRAP won't collide.** A big stat
+    numeral or a label that wraps to two lines overruns whatever sits below it — give each its own room
+    (or shrink the numeral / shorten the label so it stays one line). Two boxes whose *declared* rects
+    don't overlap still collide once the upper one's text wraps. (**TEXT COLLISION**.)
+- **A node/block must NOT sit ON a connector line — route links in the GAPS between nodes.** A line that
+  passes under or through a box (or a node dropped onto a bar) reads as a mistake and muddles the diagram.
+  Draw each connector **edge-to-edge in the gap** between nodes (or draw the nodes ON TOP of the mesh so
+  no line shows through), and give a node a clear margin from any line it doesn't connect to. If a
+  representation is hard to read (a row of chips on a bar), **rethink it** — a labelled container/mesh, a
+  clear left→right flow, or a stack usually says it better than dots on a line.
 - **No large empty region — fill the slide, balanced.** A slide that's mostly blank (content
   huddled in one corner or the top third, a wide empty band down a side or across the bottom) reads
   as unfinished — don't ship it. **Default fix: ENRICH the content** — add the supporting detail,

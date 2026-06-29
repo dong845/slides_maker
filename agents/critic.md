@@ -225,12 +225,20 @@ Do not just skim for the first few obvious issues. Run these passes:
      LAYERING is not a collision and must NOT be flagged** — a label on its card, a scrim over a photo,
      a glow under a glass card, a header band on its card (the child sits fully *inside* its parent);
      the test is simply *does one fully contain the other?* (contain → fine; not → collision).
-     `scripts/lint_deck.py` flags solid block/image collisions, footer-zone intrusions, and text-past-
-     card deterministically — **read its findings AND re-verify visually**, because it can't see a text
-     run spilling a panel edge, two elements a hair apart that read as touching, or a figure's label
-     clipped by a neighbour. For each real collision, name the **two elements**, where they touch, and
-     the **root-cause fix** (re-anchor via `content_band` / `vstack(bottom=)` / `bottom_callout`,
+     `scripts/lint_deck.py` flags solid block/image collisions, footer-zone intrusions, text-past-card,
+     **interior-padding (text crammed against a card edge), chip/label-too-small (a label overrunning its
+     pill), and text-vs-text collision (a wrapped value/label overrunning the line below)** —
+     deterministically, against the *rendered* text. **Read its findings AND re-verify visually**, because
+     it still can't see every case. For each real collision, name the **two elements**, where they touch,
+     and the **root-cause fix** (re-anchor via `content_band` / `vstack(bottom=)` / `bottom_callout`,
      resize, or add a gap — never a one-off `y` nudge that recurs when the wording changes).
+   - **Interior padding & cramming (a recurring, easy-to-miss flaw):** text must keep a real margin (≥~0.12in)
+     inside its chip/card on **all** sides — flag a label crammed against a card edge, a **chip too small
+     for its text** (so it wrap-crams — size the chip to its text or use a `· `-separated line), and a big
+     **stat numeral / label that wraps and collides** with the line below it (give each room or shrink/
+     shorten). And a **node/block sitting ON a connector line** (a line passing under/through a box; chips
+     dropped on a bar): route links in the **gaps** between nodes — and if a diagram is hard to read,
+     say so and propose a clearer form (a labelled mesh/container, a clean flow), not just a nudge.
    - **Layout:** overflow / clipped text, content occluded or jammed on the footer,
      **text spilling outside its own card/box** — a body that wraps to more lines than its card was
      sized for, so a line hangs *below the card edge* (a distinct, glaring tell; fix by sizing the

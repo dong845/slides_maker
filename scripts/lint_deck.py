@@ -22,6 +22,14 @@ Checks (tuned for low false-positives):
                   NO containment escape — a low content band that swallows the footer text into its
                   bbox is still a collision (that "text-on-a-card" exclusion was the blind spot that
                   let a band overlap the footer).
+  Plus, measured against each text's RENDERED extent (alignment- + anchor-aware, so centred / middle
+  text isn't mis-flagged) — the recurring "looks fine to a box-overlap check but cramped to the eye" bugs:
+  4. TEXT PADDING   — text inside a filled card crammed against (or past) the card's BOTTOM edge with
+                      less than the minimum interior margin (not just hard overflow).
+  5. CHIP/LABEL TOO SMALL — a text box coincident with a small filled pill whose label is taller/wider
+                      than the pill (a row of chips where the text overruns the chip — size the chip to its text).
+  6. TEXT COLLISION — the rendered bottom of an upper text box overruns the rendered top of a lower one
+                      in the same column (a wrap-collision two *declared* boxes never reveal).
   Plus: off-slide overflow, TEXT-OVERFLOWS-CARD, UNEVEN CARD HEIGHTS, ORPHANED PUNCTUATION / WIDOW
   (a wrapped box whose last line is a lone 。/，or a single CJK glyph — 避头尾), CJK-TEXT-WITHOUT-EA-FONT
   (the root cause of orphaned punctuation: no <a:ea> → PowerPoint applies no kinsoku, plus tofu risk —
@@ -31,6 +39,7 @@ Checks (tuned for low false-positives):
 import sys
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.oxml.ns import qn
 
 EMU = 914400.0
@@ -50,7 +59,7 @@ def _boxes(slide, sw, sh):
             continue
         full = s.text_frame.text.strip() if s.has_text_frame else ""
         txt = full.replace("\n", " ")[:26]
-        paras, size = [], 0.0
+        paras, size, align, anchor = [], 0.0, None, None
         if s.has_text_frame:
             size = max((r.font.size.pt for p in s.text_frame.paragraphs for r in p.runs if r.font.size),
                        default=12.0)
@@ -58,9 +67,13 @@ def _boxes(slide, sw, sh):
                 pr = [(r.text, (r.font.size.pt if r.font.size else size)) for r in p.runs]
                 if pr:
                     paras.append(pr)
+            try: anchor = s.text_frame.vertical_anchor
+            except Exception: anchor = None
+            try: align = s.text_frame.paragraphs[0].alignment if s.text_frame.paragraphs else None
+            except Exception: align = None
         out.append({"l": l, "t": t, "w": w, "h": h, "r": l + w, "b": t + h,
                     "st": str(s.shape_type).split()[0], "txt": txt, "full": full, "size": size or 12.0,
-                    "paras": paras, "solid": s.shape_type in SOLID,
+                    "paras": paras, "solid": s.shape_type in SOLID, "align": align, "anchor": anchor,
                     "text": bool(s.has_text_frame and txt),
                     "bg": (w * h) >= 0.95 * (sw * sh)})
     return out
@@ -228,22 +241,75 @@ def lint(path):
         # 5) orphan / blank slide
         if not [s for s in bx if not s["bg"] and (s["text"] or s["solid"])]:
             finds.append("EMPTY/ORPHAN slide: no native content (blank or background only)")
-        # 6) text overflowing the filled CARD it sits on (text taller than its container)
-        cards = [s for s in bx if s["solid"] and not s["bg"] and not s["text"] and s["h"] > 0.35]
+        # 6) INTERIOR PADDING / OVERFLOW: text inside a filled card must keep a minimum margin on every
+        #    side, measured against its RENDERED extent — not merely "not overflow the card". Catches both
+        #    text running PAST the card and text CRAMMED against an edge (the recurring "too close to the
+        #    boundary" bug that a pure-overflow check misses).
+        PAD = 0.09                                       # minimum interior padding (in)
+        def _cjk(t): return any(ord(ch) > 0x2E80 for ch in t["full"])
+        def _txt_h(t):
+            return _est_lines(t["paras"], t["w"]) * (t["size"] / 72.0) * (1.4 if _cjk(t) else 1.25)
+        def _nat_width(t):                               # natural one-line width of the widest paragraph
+            return max((sum((sz / 72.0) * (1.0 if ord(ch) > 0x2E80 else 0.52) for s_, sz in pr for ch in s_)
+                        for pr in t["paras"]), default=0.0)
+        def _rbox(t):
+            """The RENDERED bounding box of the text — alignment- and anchor-aware (so a centred /
+            middle-anchored label isn't mistaken for cramped-against-the-edge)."""
+            tw = min(_nat_width(t), t["w"]) or t["w"]; eh = _txt_h(t)
+            al = t["align"]
+            if al == PP_ALIGN.CENTER:   rl = t["l"] + (t["w"] - tw) / 2; rr = rl + tw
+            elif al == PP_ALIGN.RIGHT:  rr = t["r"]; rl = rr - tw
+            else:                       rl = t["l"]; rr = rl + tw
+            an = t["anchor"]
+            if an == MSO_ANCHOR.MIDDLE: rt = t["t"] + (t["h"] - eh) / 2; rb = rt + eh
+            elif an == MSO_ANCHOR.BOTTOM: rb = t["b"]; rt = rb - eh
+            else:                       rt = t["t"] + 0.04; rb = rt + eh
+            return rl, rt, rr, rb
+        # a "card" for padding is a SMALL filled block (not a full/half-slide scrim or background plate)
+        cards = [s for s in bx if s["solid"] and not s["bg"] and not s["text"] and s["h"] > 0.35
+                 and s["w"] * s["h"] < 0.45 * sw * sh]
         for t in [s for s in bx if s["text"]]:
             host = None
             for c in cards:
                 if c["l"] - 0.12 <= t["l"] and t["r"] <= c["r"] + 0.12 and c["t"] - 0.12 <= t["t"] <= c["b"] - 0.05:
                     if host is None or c["b"] < host["b"]:
                         host = c
-            if host:
-                nlines = _est_lines(t["paras"], t["w"])
-                lh = 1.4 if any(ord(ch) > 0x2E80 for ch in t["full"]) else 1.25   # CJK lines run taller
-                est_bottom = t["t"] + 0.06 + nlines * (t["size"] / 72.0) * lh      # + top inset
-                if est_bottom > host["b"] + 0.05:
-                    finds.append(f"TEXT OVERFLOWS its card: '{t['txt']}' (~{nlines} lines) runs past the "
-                                 f"card bottom ({round(host['b'],2)}in) — size the card to the text "
-                                 f"(measure-then-place) or shorten the text")
+            if not host:
+                continue
+            rl, rt, rr, rb = _rbox(t)
+            nlines = _est_lines(t["paras"], t["w"])
+            if rb > host["b"] - PAD:                          # rendered text crammed against / past the card bottom
+                kind = "runs PAST" if rb > host["b"] + 0.03 else "is cramped against (< pad)"
+                finds.append(f"TEXT PADDING: '{t['txt']}' (~{nlines} lines) {kind} the card bottom "
+                             f"({round(host['b'],2)}in) — size the card to the text, shorten, or add bottom padding")
+        # 6d) CHIP / LABEL too small: a text box coincident with a small filled pill whose text overruns it
+        #     (a row of chips where the label is wider/taller than the pill — text cramped to the pill edges).
+        fills = [s for s in bx if s["solid"] and not s["text"] and not s["bg"]]
+        for t in [s for s in bx if s["text"] and s["h"] < 0.55]:
+            pill = next((c for c in fills if abs(c["l"] - t["l"]) < 0.06 and abs(c["t"] - t["t"]) < 0.06
+                         and abs(c["w"] - t["w"]) < 0.16 and abs(c["h"] - t["h"]) < 0.16), None)
+            if pill:
+                nl = _est_lines(t["paras"], t["w"] - 0.10)         # inner pad
+                if nl * (t["size"] / 72.0) * (1.4 if _cjk(t) else 1.25) > t["h"] - 0.02:
+                    finds.append(f"CHIP/LABEL TOO SMALL: '{t['txt']}' (~{nl} lines) overruns its "
+                                 f"{round(t['w'],2)}×{round(t['h'],2)}in pill — size the chip to its text (or shorten)")
+        # 6e) TEXT-vs-TEXT collision: the RENDERED bottom of an upper text box overruns the rendered TOP of a
+        #     lower one in the same column (the wrap-collision a 'declared-box' overlap check never sees).
+        txts = [s for s in bx if s["text"] and not s["bg"] and s["t"] < sh - 0.55 and len(s["full"].strip()) > 1]
+        for a in txts:
+            arl, art, arr, arb = _rbox(a)
+            for b in txts:
+                if b is a:
+                    continue
+                brl, brt, brr, brb = _rbox(b)
+                if brt <= art + 0.05:                                  # b must sit clearly below a
+                    continue
+                if min(arr, brr) - max(arl, brl) < 0.30:               # must share an x-column
+                    continue
+                if arb > brt + 0.06:
+                    finds.append(f"TEXT COLLISION: '{a['txt']}' (~{_est_lines(a['paras'], a['w'])} lines) overruns "
+                                 f"into the text below '{b['txt']}' — add vertical gap or size the box")
+                    break
         # 6b) orphaned punctuation / widow: a wrapped box whose LAST line is just a punctuation mark
         #     (the 避头尾 bug — a lone 。/，pushed to its own row) or a single orphaned CJK glyph
         for t in [s for s in bx if s["text"] and s["w"] > 0]:
