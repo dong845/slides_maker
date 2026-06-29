@@ -503,6 +503,13 @@ Do not just skim for the first few obvious issues. Run these passes:
      (a header here, a corner image there). Flag the inconsistency; a content plate belongs in the
      content area (full-bleed / side panel / inline figure), and repeated full-bleed imagery belongs on
      dividers, applied consistently.
+   - **Flat opaque blocks on a rich/image background (a "pasted-on" tell):** when content sits on a
+     textured / photographic / 3D / generated-plate background, **fully opaque** cards/panels read as
+     stuck on top rather than part of the scene. Expect **semi-transparent (frosted)** blocks — the
+     background showing through ~30–45% with a subtle rim (`glass_card` / `box(grad=…α)`), one treatment
+     deck-wide, the tint harmonising with the palette. Flag flat opaque panels on a lush background — AND
+     conversely flag a frosted block whose **text drops below 4.5:1** over a bright patch (the fix is more
+     α / a stronger tint there, not removing the transparency). (On a plain/flat background, opaque is fine.)
    - **Deck rhythm (a deck-level check — scan all the thumbnails together):** across a **long** deck,
      do the **visual protagonist and density vary** (chart → diagram → photo → big-number → quote, with
      dense slides paced by airy ones), or does it read as **one template repeated**? Flag a long deck

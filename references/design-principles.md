@@ -329,6 +329,18 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   no line shows through), and give a node a clear margin from any line it doesn't connect to. If a
   representation is hard to read (a row of chips on a bar), **rethink it** — a labelled container/mesh, a
   clear left→right flow, or a stack usually says it better than dots on a line.
+- **Block fill must FIT the background — on a rich/image background use SEMI-TRANSPARENT (frosted) blocks,
+  not flat opaque panels.** A solid opaque card is right on a *plain/flat* background. But on a **textured,
+  photographic, 3D, or generated-plate** background a fully opaque block reads as "pasted on" and
+  disconnected from the scene. Give content blocks a **slight transparency** so the background shows
+  through (~30–45%) and they read as part of it — a **frosted-glass** treatment: a low-alpha tint of the
+  block colour + a subtle lighter **rim**, via `deckkit.glass_card` or `box(grad=[(0,tint,α),(1,tint,α)])`
+  with **α ≈ 0.55–0.72**. **Contrast stays non-negotiable:** the tint must still carry the text at ≥4.5:1
+  — if the background has a bright/busy patch under a block, raise the block's α (more opaque) or
+  darken/strengthen the tint where the text sits (and keep the deck's gentle background scrim). Use **ONE
+  block treatment deck-wide** so every card reads as the same material — and design the **block colour +
+  rim to harmonise with the palette** (a dark deck → a dark glass tint + a faint light/accent rim; a
+  light deck → a white glass tint), never a colour that fights the background.
 - **No large empty region — fill the slide, balanced.** A slide that's mostly blank (content
   huddled in one corner or the top third, a wide empty band down a side or across the bottom) reads
   as unfinished — don't ship it. **Default fix: ENRICH the content** — add the supporting detail,

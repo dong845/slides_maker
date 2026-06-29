@@ -17,10 +17,31 @@ layers**, and the split is what keeps it editable *and* on-brand:
 
 - **Hero + section-divider slides → a full-bleed GENERATED image.** A rich, styled, **text-free**
   illustration carries the mood; the title and badges sit on top as **native** editable shapes.
-- **Content slides → built NATIVELY to match.** No big image — the background, the decorations,
-  and the content cards/chips/bands are native python-pptx shapes that **reuse the template's
-  palette, motifs, and component treatments**. This is why the inserted blocks *fit*: they are
-  drawn in the same system, not pasted onto a foreign picture.
+  These are the **two "end-page" treatments** that carry the full-strength imagery.
+- **Content slides → built NATIVELY to match, on a SHALLOW background — never a flat single
+  colour.** The content (cards/chips/bands) is native python-pptx that reuses the template's
+  palette, motifs, and component treatments — that's why inserted blocks *fit*. But the slide
+  **canvas underneath them is not a plain fill**: every interior page carries a *subtle, low-
+  contrast* background so the deck feels designed end-to-end, not "cover is gorgeous, body is
+  blank." A flat one-colour content slide next to a lush cover is the #1 tell of a half-finished
+  generated template. The shallow background is **faint by design** (it sits *behind* content and
+  must never fight the text — see the legibility guardrail), and it comes from one of:
+  - a **faint native texture** in the palette — a soft two-stop gradient wash, a faint
+    `backdrop_motif` field, or a tinted corner/band — the lightest-weight option, fully editable; **or**
+  - a **subtle imagery plate** — a dedicated low-contrast, text-free background image generated in
+    the same style (placed `picture(fit="cover")`), or the hero re-placed full-bleed under a heavy
+    `scrim_overlay` so only a ghost of it remains.
+  Pick whichever suits the style (a geometric style → native motifs; a painterly/photographic style
+  → a faint imagery plate), and **apply the SAME treatment on every content slide** so they read as
+  one system. Only the cover and dividers get the full, vivid imagery.
+  - **Make the content BLOCKS semi-transparent (frosted) when they sit on an imagery/textured plate.**
+    A flat *opaque* card on a rich background reads as "pasted on". Give cards/panels a **slight
+    transparency** so the plate shows through (~30–45%) and they belong to the scene — a low-alpha glass
+    tint of the block colour + a subtle lighter rim (`deckkit.glass_card`, or `box(grad=[(0,tint,α),
+    (1,tint,α)])` with α≈0.55–0.72), the **same treatment deck-wide**, with the tint/rim chosen to
+    **harmonise with the palette** (dark deck → dark glass + faint accent rim). **Keep text ≥4.5:1** —
+    raise α (more opaque) or strengthen the tint over a bright/busy patch. (design-principles.md "Block
+    fill must FIT the background".)
 
 > Don't make every slide a generated image with text baked in — baked text isn't editable, wraps
 > badly in other languages, and can't be critiqued/fixed. Images set the mood on heroes/dividers;
@@ -81,8 +102,13 @@ Generate a **full-bleed, text-free** hero/divider illustration in the chosen sty
   geometric shapes — zigzags, dots, triangles, squiggles, checkerboard — bold black outlines")
   so you can reproduce them natively later.
 - Generate **1–2 plates**: a **hero** (cover) and, if the look differs, a **divider** variant.
-  A content-slide background is usually just the template's base colour + a few native motifs —
-  you rarely need a third image.
+- **For the content-slide shallow background, decide native vs. a third plate:** if the look is
+  geometric/graphic, the subtle background is best done **natively** (faint gradient + sprinkled
+  motifs) and needs no image. If the look is painterly, photographic, or texture-rich, generate
+  **one extra low-contrast background plate** — a **text-free, faint, evenly-toned** version of the
+  style (calm, low-saturation, no strong focal point) made to sit *behind* content. Prompt it
+  explicitly for low contrast and even tone ("soft, faded, low-contrast background texture, lots of
+  calm negative space, no focal subject") so text stays readable on top without a heavy scrim.
 - Keep assets in `~/Downloads/<deck>/assets/generated/`. Never leave a generated template
   image referenced only from Codex's default generated-images cache or an OS temp folder.
 
@@ -102,6 +128,17 @@ Study the generated image the way you'd study a provided style example
   title-chrome look as helpers (e.g. a rounded card with a **colour-header band**, a dark
   **emphasis band** with an accent headline, an accent-bar **title chrome**). Content slides call
   these so every block is on-system.
+- **A `content_bg(slide)` helper — the shallow interior background, called FIRST on every content
+  slide.** This is what stops content pages being flat. Encode the chosen treatment once so it's
+  identical everywhere: e.g. a faint two-stop gradient (`deckkit.scrim_overlay` over the base, or a
+  gradient fill), a faint `deckkit.backdrop_motif(... color=<very light palette tint>)`, or a
+  `deckkit.picture(bg_plate, fit="cover")` followed by a strong `scrim_overlay` to mute it. Keep it
+  *low-contrast by construction* and verify body text still clears 4.5:1 on top.
+- **A `brand(slide)` helper for the logo (only if the deck is about a company/institution/product).**
+  Wrap `deckkit.logo(slide, LOGO_PATH, corner=..., h=...)` so the real logo lands in the SAME spot
+  on every slide. Decide the corner once to fit the template (top-right is the usual choice; move it
+  if the title chrome or motifs occupy that corner) and keep it consistent. On a vivid hero, add a
+  small scrim/light plate behind the logo so it stays legible.
 - **Type + chrome** — pick a display font that fits the vibe (portable; see `font-guidance.md`)
   and set `deckkit.FONT`/`EAFONT`; define `title_bar`/`footer` to the template's chrome.
 - Put all of this in the deck's `style.py` (copy `references/examples/style_example.py` as the
@@ -135,13 +172,19 @@ them, and show both. The content slide is essential: it proves the blocks actual
   - **Cover + section dividers** → the generated image full-bleed (`picture(..., fit="cover")`),
     with the **title and badges native on top**, placed in the image's calm zone (add a soft
     scrim/plate behind the title if the area under it is busy, so contrast stays ≥ 4.5:1).
-  - **Content slides** → built **natively** in `style.py`: base-colour background, the
-    template's cards/bands/chips for the content, motifs sprinkled as accents. Reuse the source's
-    real figures/tables as always — framed to sit on the template (a thin card/plate behind a
-    figure helps it sit on a coloured background).
+  - **Content slides** → built **natively** in `style.py`, in this order: **(1)** `content_bg(slide)`
+    first so the page has its shallow background (never a flat single colour); **(2)** the template's
+    cards/bands/chips/motifs for the content; **(3)** `brand(slide)` last (if it's a
+    company/institution/product deck) so the logo sits on top of everything. Reuse the source's real
+    figures/tables as always — framed to sit on the template (a thin card/plate behind a figure helps
+    it sit on a textured background).
+  - **The logo also goes on the cover and dividers** (placed natively over the imagery, with a scrim
+    if needed) so the brand is present on every page, including the end pages.
   - Keep the craft rules (one idea/slide, whole figures, contrast, suitable spacing, balanced
     blocks). Then the normal **render + critic loop** — the critic judges whether content
-    genuinely fits the template (palette, motifs, components consistent) and stays legible.
+    genuinely fits the template (palette, motifs, components consistent), whether **every interior
+    page carries the shallow background** (none left flat), whether the **logo is present and
+    consistently placed** where the deck calls for one, and that everything stays legible.
 - **Save the confirmed template to the registry** (`~/.codex/slide-templates/<name>/` in
   Codex, or `~/.claude/slide-templates/<name>/` in Claude Code): the `style.py`, the
   generated `assets/`, and a `profile.md` — so it's a reusable choice next time (it shows up
@@ -157,9 +200,17 @@ them, and show both. The content slide is essential: it proves the blocks actual
   colour), and check `contrast_ratio ≥ 4.5`.
 - **Don't let motifs crowd content** — decorations are *accents in the margins/corners*, not a
   layer over the words. If a motif overlaps text, move or drop it.
-- **Consistency across slides** — same palette, same motif set, same component treatments on every
-  slide. A one-off card style or a stray colour breaks the "template" illusion faster than
-  anything; the critic should flag it.
+- **Consistency across slides** — same palette, same motif set, same component treatments, the
+  **same shallow background**, and the **same logo placement** on every slide. A one-off card style,
+  a stray colour, a flat content page among textured ones, or a logo that jumps corners breaks the
+  "template" illusion faster than anything; the critic should flag it.
+- **The shallow background must stay BEHIND the content** — it's atmosphere, not a competing layer.
+  If it darkens or busies the area under text, mute it harder (lighter tint, stronger scrim, fewer
+  motifs); body text must clear 4.5:1 against whatever the background leaves under it. A subtle
+  background that forces every text block onto its own opaque card has been made too strong.
+- **Logo = the REAL mark, present where it belongs** — for a company/institution/product deck the
+  logo appears on every page; use the real asset (image-generation.md's hierarchy), never a faked or
+  recolored one, and if it's missing, ask the user or use an honest "logo here" placeholder.
 - **Generated real things must be right** — if the hero depicts real objects/places, the
   size/proportion/count/colour must be factually correct (the image-generation fidelity rule).
 
@@ -170,11 +221,14 @@ them, and show both. The content slide is essential: it proves the blocks actual
       (named back to the user), or a fresh look from a reference — palette/motifs customised, not raw.
 - [ ] Hero (and divider) generated **text-free**, in-style, with a **calm zone** for the title.
 - [ ] `style.py` derived: palette **extracted from the image**, motif helpers, component helpers,
-      fonts/chrome.
+      fonts/chrome, a **`content_bg(slide)`** for the shallow interior background, and a
+      **`brand(slide)`** logo helper if the deck is about a company/institution/product.
 - [ ] Sample **cover + content slide** rendered and **confirmed by the user** (🔴 checkpoint).
 - [ ] Direction gate **skipped**; rest of the interview completed.
-- [ ] Built: dividers use the image; content is native and **on-system**; figures framed to sit
-      on the template; legibility ≥ 4.5:1 everywhere.
+- [ ] Built: dividers use the image; content is native and **on-system** with the **shallow
+      background on every interior page** (no flat single-colour pages); the **real logo present and
+      consistently placed** on every page if it's a company/institution/product deck; figures framed
+      to sit on the template; legibility ≥ 4.5:1 everywhere.
 - [ ] Template **saved to the registry** for reuse.
 
 ## Style library — well-known starting styles (seed, then tailor)
