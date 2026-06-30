@@ -627,8 +627,9 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
   co-centered with its end marker** — use it instead of hand-rolling a row of dots+captions, which
   desyncs the first/last caption from its dot near a slide edge; `timeline` already uses it),
   `picture` (`fit="contain"` keeps edges /
-  `"cover"` crops), `gif` (animated GIF, undistorted + size/still warnings) + `gif_poster` (extract the
-  first/representative frame to verify what the render & PDF export show), `icon`/`icon_tile`/
+  `"cover"` crops), `make_gif` (GENERATE a looping GIF from computed frames) + `gif` (embed the animated
+  GIF, undistorted + size/still warnings) + `gif_poster` (extract the first/representative frame to
+  verify what the render & PDF export show) — generate → embed → review, `icon`/`icon_tile`/
   `icon_badge`/`icon_ghost`/`icon_card` (place an open-licensed SVG icon — recolored + rasterized via
   `scripts/icons.py`, which also does **duotone** weights + **gradient-fill**; `icon_tile` is the
   versatile container — circle/squircle/square × solid/gradient/glass tile, `icon_badge` a ring badge,

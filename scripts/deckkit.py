@@ -1094,6 +1094,67 @@ def seal(slide, x, y, size, char, *, fill=None, tcolor=None, shape="square",
     return x + size
 
 
+def make_gif(frames, out_path, *, fps=12, loop=0, max_px=None, optimize=True):
+    """GENERATE an optimised, looping animated GIF from frames — the build-step that FEEDS `gif()`
+    (embed) and `gif_poster()` (review). Use it for a COMPUTED result whose *motion is the point*:
+    a simulation, a k-space fill, a denoising / training trajectory, a chart that builds up, a rotating
+    model. Compute the frames in the deck's asset step (like the static figures), stitch them here,
+    then place with `gif()`.
+
+    `frames` = a list where each frame is a `PIL.Image`, a NumPy array (`HxW` grey or `HxWx3/4`;
+    float arrays are read as 0..1, uint8 as 0..255), or a path to a frame PNG. `fps` sets speed
+    (per-frame duration = 1000/fps ms). `loop=0` loops forever. `max_px` caps the LONGER side
+    (downscale) — the #1 lever on file size — and `optimize` + palette quantisation shrink it further.
+
+    Keep it SMALL so it stays well under `gif()`'s `max_mb` and doesn't bloat the .pptx: a few-second
+    loop at ~10–15 fps with the longest side ~720–960px is plenty for a slide. **The GIF encode is a
+    second or two for a short clip; the real cost is COMPUTING / rendering your frames** (a matplotlib
+    animation, a sim) — so a GIF slide is only as time-consuming as the animation you draw, and fits the
+    same compute-it-in-the-asset-step rhythm as the static figures. Returns `out_path`.
+    """
+    import os
+    from PIL import Image
+    def _to_img(fr):
+        if isinstance(fr, Image.Image):
+            return fr.convert("RGB")
+        if isinstance(fr, (str, os.PathLike)):
+            with Image.open(fr) as im:
+                return im.convert("RGB")
+        # NumPy array (or anything array-like Pillow accepts)
+        try:
+            import numpy as _np
+            a = _np.asarray(fr)
+            if a.dtype.kind == "f":
+                a = (_np.clip(a, 0.0, 1.0) * 255.0).round().astype("uint8")
+            elif a.dtype != _np.uint8:
+                a = a.astype("uint8")
+            if a.ndim == 2:
+                return Image.fromarray(a, "L").convert("RGB")
+            if a.ndim == 3 and a.shape[2] == 4:
+                return Image.fromarray(a, "RGBA").convert("RGB")
+            return Image.fromarray(a, "RGB")
+        except Exception as exc:
+            raise TypeError(f"make_gif(): unsupported frame type {type(fr)} ({exc})")
+    imgs = [_to_img(f) for f in frames]
+    if not imgs:
+        raise ValueError("make_gif(): no frames given")
+    if max_px:
+        w, h = imgs[0].size
+        s = max_px / float(max(w, h))
+        if s < 1.0:
+            size = (max(1, round(w * s)), max(1, round(h * s)))
+            imgs = [im.resize(size, Image.LANCZOS) for im in imgs]
+    # quantise to a shared palette (from the most-varied frame) to keep colours stable + the file small
+    pal_src = max(imgs, key=lambda im: len(im.getcolors(maxcolors=1 << 24) or [0]))
+    pal = pal_src.convert("P", palette=Image.ADAPTIVE, colors=256)
+    pframes = [im.quantize(palette=pal, dither=Image.FLOYDSTEINBERG) for im in imgs]
+    out_path = str(out_path)
+    pframes[0].save(out_path, save_all=True, append_images=pframes[1:],
+                    duration=max(20, int(round(1000.0 / max(1, fps)))), loop=loop,
+                    optimize=optimize, disposal=2)
+    return out_path
+
+
 def gif_poster(path, out_png=None, frame="first"):
     """Extract ONE representative frame of an animated GIF to a PNG — for the render/critic
     (which see only a static image) and as a check on what the deck shows when NOT in slideshow.

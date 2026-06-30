@@ -131,6 +131,22 @@ L, R = dk.columns(2, slide=s)                 # GIF beside its quant panel — a
 dk.gif(s, "results/cine_recon.gif", *R, alt="4D cine reconstruction, one cardiac cycle")
 ```
 
+**No GIF yet, but the result is COMPUTABLE? Generate one with `deckkit.make_gif(frames, out, fps=…,
+max_px=…)`** — the build-step companion that completes the loop **generate → embed (`gif()`) → review
+(`gif_poster()`)**. Compute the frames in the deck's asset step exactly like the static figures (a
+matplotlib animation, a simulation, a k-space fill, a denoising / training trajectory, a chart that
+builds up) as PIL images / NumPy arrays / frame PNGs; `make_gif` stitches them into an optimised looping
+GIF (shared palette; `max_px` caps the longest side so the file stays well under `gif()`'s `max_mb`).
+**Time:** the encode is a second or two for a short clip — the real cost is computing the frames, so a
+GIF slide fits the same compute-in-the-asset-step rhythm as a static figure, not a separate time sink.
+Keep it modest (a few-second loop, ~10–15 fps, longest side ~720–960px). *(This is for one looping clip
+embedded IN a slide; to narrate the WHOLE deck as a video, that's the separate `slides-to-video` skill.)*
+```python
+frames = [render_frame(t) for t in range(24)]      # your computed frames (PIL / ndarray / PNG path)
+dk.make_gif(frames, "results/kspace_fill.gif", fps=12, max_px=900)
+dk.gif(s, "results/kspace_fill.gif", *R, alt="k-space filling line by line")
+```
+
 ### Make the FIRST frame representative — it's what everything-but-slideshow shows
 A `.gif` loops only in **slideshow**. In the editor, in a **PDF/print export**, in the LibreOffice
 render, and to the static critic, the GIF shows its **first frame** — and a GIF has no separate
