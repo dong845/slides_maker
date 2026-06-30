@@ -219,9 +219,12 @@ the direction gate** (the look is already decided). The four:
      `references/generated-template.md`**: a mini-interview *now* (scenario + brand colours; **seed from
      its Style library**, and **show the 3–4 best-fit styles as a VISUAL HTML preview — a "style gate"**
      (`archetypes_html.py`, one `file://` link, each style across a few representative pages) so the user
-     *sees* the candidate looks before any image is generated, then picks — plus "describe your own" / "a
-     reference" / **"let the image tool pick the style"** (auto: you select & name the best-fit, or give a
-     mood-led prompt). Mock the candidates natively; generate only the chosen style's hero for real) →
+     *sees* the candidate looks before any image is generated, then picks. **Offer these as first-class,
+     peer choices in the prompt — A / B / C (a shown style) · "describe your own / a reference" · and
+     "Auto — let me pick the best-fit and just go" (an explicit option, not a fallback).** On Auto (or
+     "you decide"), YOU select & name the best-fit and may SKIP the HTML gate, going straight to generate →
+     the 🔴 hero checkpoint (still the real gate — never a blind commit). Mock the candidates natively;
+     generate only the chosen style's hero for real) →
      generate the text-free hero with a calm title zone (**no key** — native imagegen in Codex, else
      `generate_images_codex.py`; see `image-generation.md`) → **derive a matching `style.py`** (palette
      via `deckkit.palette_from_image`, motif + component helpers, so native blocks match) → render the

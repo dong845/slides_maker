@@ -100,15 +100,22 @@ later in the normal interview):
     those land **only for the chosen style** at the 🔴 hero checkpoint below. **Don't generate 3–4 real
     hero images just for the picker** —
     that's slow and wasteful; mock them natively in the HTML, generate only the winner for real.
-  - **If the user likes none of them**, the page's **"D — describe your own"** path applies, plus two
-    escapes you offer in one line:
-    - **"Let the image tool decide (auto)"** — from **scenario + brand colours** YOU select the best-fit
-      library style and **name it back** ("for a summer festival I'll go Memphis/pop"), or, when the
-      scenario is distinctive, give the model a richer **mood-led** prompt (scenario + energy + palette +
-      "design a cohesive visual identity") instead of a named style.
-    - **"Describe your own / provide a reference"** — synthesize a fresh token-set from their words /
+  - **The choice prompt MUST offer these as FIRST-CLASS, peer options — not just fallbacks** (present
+    them as selectable choices, e.g. via the host's option UI; some users want to *delegate* the look
+    and shouldn't have to engage with the picker to do it):
+    - **A / B / C — pick one of the shown styles** (the common path: they *see* the candidates and choose).
+    - **"Auto — you pick the best-fit and just go"** — an explicit, up-front peer option (NOT only a
+      "liked none" escape). When the user takes it (or says "you decide / design it for me"), YOU select
+      the best-fit library style from **scenario + brand colours** and **name it back** ("for a summer
+      festival I'll go Memphis/pop"), or, for a distinctive scenario, give a richer **mood-led** prompt
+      (scenario + energy + palette + "design a cohesive visual identity") instead of a named style — then
+      generate and let them react at the hero checkpoint. **If they pick Auto up front, you may SKIP the
+      HTML style gate entirely** and go straight to generate → the 🔴 hero checkpoint (don't make a
+      delegating user wait on a picker they didn't want).
+    - **"D — describe your own / provide a reference"** — synthesize a fresh token-set from their words /
       reference image / brand and **regenerate the HTML** so they still pick from something they can *see*.
-  Either way, "auto" and "own" still resolve to a concrete look the user reacts to — never a blind commit.
+  Auto is **not a blind commit**: every path — pick, auto, or own — resolves to a concrete look the user
+  reacts to at the 🔴 hero checkpoint, which is the real gate.
 - **Vibe / mood (if describing your own)** — the aesthetic in words: energy (calm↔loud), era,
   references. Use this to pick/blend a library style or to author a fresh one.
 - **Brand colours / must-haves** — any fixed colours, a logo, words that must appear.
