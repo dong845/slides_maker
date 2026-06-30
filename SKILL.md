@@ -734,12 +734,17 @@ A few rules that matter (see `references/design-principles.md`):
     *renders* right: **(a) sample continuous curves finely** — a smooth function must look smooth, so
     use a dense `np.linspace` (a few hundred points / ≥~10× the highest frequency), never the integer
     index steps; plotting a high-frequency sine at integer `x` *aliases* it into jagged zigzags (the
-    classic "sin curve looks weird" bug). **(b) Place the legend so it never covers the data** — when
-    the plot area is full (oscillations spanning the range), put the legend **outside the axes**
-    (`bbox_to_anchor` right/below, `loc='center left'`) or in the genuinely empty corner; `loc='best'`
-    is not enough on a busy plot. **(c) Always view the rendered PNG** and fix anything that looks off
-    (aliasing, clipped labels, an occluding legend, a squished aspect) — a wrong-looking plot misleads
-    even when the math is right.
+    classic "sin curve looks weird" bug). **(b) The legend must NOT overlap the data — treat this as a
+    rule, not a nicety.** `loc='best'` and any in-axes corner routinely land the legend ON a curve on a
+    full/busy plot. The reliable fix is to put the legend **OUTSIDE the axes**: to the right
+    (`loc='center left', bbox_to_anchor=(1.0, 0.5)`) or **above** (`loc='lower center',
+    bbox_to_anchor=(0.5, 1.0), ncol=…`); use an in-axes corner ONLY when that corner is provably empty.
+    For a **dual-axis / twin-axis** plot don't draw two separate legends (they collide with each other and
+    the twin ticks) — collect both handle sets and draw **one combined legend above** (`h1+h2`,
+    `loc='lower center', bbox_to_anchor=(0.5,1.0), ncol=2`). It can't *always* be perfect on a dense plot
+    — when no empty region exists, going outside is the answer, never overlapping the data. **(c) Always
+    view the rendered PNG** and fix anything off (aliasing, clipped labels, an **occluding legend**, a
+    squished aspect) — a wrong-looking plot misleads even when the math is right.
 - **Generated visual plates (atmosphere / conceptual) — by taste & purpose, opt-in; full mechanics in
   `references/image-generation.md`.** Generate where it genuinely helps (no quota), styled to the deck;
   **never bake words/numbers/labels/charts/logos into a plate** (those stay editable objects / real

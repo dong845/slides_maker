@@ -55,6 +55,12 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
    ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), frameon=False)  # legend OUTSIDE the axes
    fig.savefig(out, bbox_inches="tight")    # so the outside legend isn't clipped
    ```
+   For a **dual-axis / twin-axis** plot, never draw two separate `legend()`s (they collide with each
+   other and the twin-axis ticks) — collect both handle lists and draw **one combined legend above** the
+   axes: `lns = l1 + l2; ax.legend(lns, [h.get_label() for h in lns], loc="lower center",
+   bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False)`. Overlap can't always be perfectly avoided on a
+   dense plot — when there's no empty region, going **outside** (right or above) is the answer; never ship
+   a legend sitting on the data.
    Always **view the rendered PNG** and fix aliasing / an occluding legend / clipped labels before
    placing it — a wrong-*looking* plot misleads even when the numbers are right.
 
