@@ -31,9 +31,18 @@ layers**, and the split is what keeps it editable *and* on-brand:
   - a **subtle imagery plate** — a dedicated low-contrast, text-free background image generated in
     the same style (placed `picture(fit="cover")`), or the hero re-placed full-bleed under a heavy
     `scrim_overlay` so only a ghost of it remains.
-  Pick whichever suits the style (a geometric style → native motifs; a painterly/photographic style
-  → a faint imagery plate), and **apply the SAME treatment on every content slide** so they read as
-  one system. Only the cover and dividers get the full, vivid imagery.
+  **🔴 MUST for the image-tool template — the interior shallow background is itself a GENERATED image
+  plate, not a flat / merely-native fill.** Since the user chose a *generated visual identity*, every
+  interior page carries a **dedicated low-contrast, text-free background image generated in the same
+  style** (the subtle imagery plate above), so the body reads as *designed* as the cover; a flat (or
+  merely-gradient) interior under a lush generated cover is the failure to avoid. Apply the **SAME plate
+  on every content slide** so they read as one system; only the cover and dividers get the full, vivid
+  imagery. *Carves (audit-scoped):* a deliberately **minimal / flat** generated style (Swiss ·
+  Scandinavian · Brutalist) whose aesthetic *is* near-flat may use a faint native texture instead (a busy
+  plate would fight that look), and **mask / suppress the plate** on a line-heavy figure slide (the
+  motif-suppression rule above). *(Outside this image-tool branch — e.g. a "design a clean one" deck — a
+  faint native texture is still a fine shallow background; the generated-plate MUST is specific to having
+  chosen the image tool.)*
   - **But SUPPRESS the motif on a slide whose content is itself the same visual language** — e.g. a
     **line/grid** shallow background (blueprint grid, hatch) behind a slide whose figure is **dense
     line-work** (a timing diagram, a k-space line stack, a wave/axis plot, a ruled table): the motif and
@@ -130,13 +139,14 @@ Generate a **full-bleed, text-free** hero/divider illustration in the chosen sty
   geometric shapes — zigzags, dots, triangles, squiggles, checkerboard — bold black outlines")
   so you can reproduce them natively later.
 - Generate **1–2 plates**: a **hero** (cover) and, if the look differs, a **divider** variant.
-- **For the content-slide shallow background, decide native vs. a third plate:** if the look is
-  geometric/graphic, the subtle background is best done **natively** (faint gradient + sprinkled
-  motifs) and needs no image. If the look is painterly, photographic, or texture-rich, generate
-  **one extra low-contrast background plate** — a **text-free, faint, evenly-toned** version of the
-  style (calm, low-saturation, no strong focal point) made to sit *behind* content. Prompt it
-  explicitly for low contrast and even tone ("soft, faded, low-contrast background texture, lots of
-  calm negative space, no focal subject") so text stays readable on top without a heavy scrim.
+- **Generate the interior shallow-background plate too — 🔴 MUST (see the construction model).**
+  Alongside the hero, generate **one extra low-contrast background plate**: a **text-free, faint,
+  evenly-toned** version of the style (calm, low-saturation, no strong focal point, generous negative
+  space) made to sit *behind* content on **every interior page**. Prompt it explicitly for low contrast
+  and even tone ("soft, faded, low-contrast background texture, lots of calm negative space in the
+  centre, no focal subject, no text") so dark text stays readable on top with only a **light scrim**.
+  *Carve:* a deliberately **minimal / flat** generated style (Swiss · Scandinavian · Brutalist) may skip
+  the plate and use a faint native texture instead — its aesthetic is near-flat by design.
 - Keep assets in `~/Downloads/<deck>/assets/generated/`. Never leave a generated template
   image referenced only from Codex's default generated-images cache or an OS temp folder.
 
@@ -157,11 +167,12 @@ Study the generated image the way you'd study a provided style example
   **emphasis band** with an accent headline, an accent-bar **title chrome**). Content slides call
   these so every block is on-system.
 - **A `content_bg(slide)` helper — the shallow interior background, called FIRST on every content
-  slide.** This is what stops content pages being flat. Encode the chosen treatment once so it's
-  identical everywhere: e.g. a faint two-stop gradient (`deckkit.scrim_overlay` over the base, or a
-  gradient fill), a faint `deckkit.backdrop_motif(... color=<very light palette tint>)`, or a
-  `deckkit.picture(bg_plate, fit="cover")` followed by a strong `scrim_overlay` to mute it. Keep it
-  *low-contrast by construction* and verify body text still clears 4.5:1 on top.
+  slide.** This is what stops content pages being flat. Per the 🔴 MUST it places the **GENERATED
+  interior plate**: `deckkit.picture(bg_plate, fit="cover")` then a **light scrim** (`scrim_overlay`, or
+  a white low-alpha `box`) to mute it to a shallow wash. Encode it ONCE so it's identical on every slide;
+  keep it *low-contrast by construction* and verify body text clears 4.5:1 on top. *(Minimal/flat-style
+  carve only — when no plate was generated: a faint two-stop gradient, or a faint
+  `deckkit.backdrop_motif(color=<very light palette tint>)`, instead.)*
 - **A `brand(slide)` helper for the logo (only if the deck is about a company/institution/product).**
   Wrap `deckkit.logo(slide, LOGO_PATH, corner=..., h=...)` so the real logo lands in the SAME spot
   on every slide. Decide the corner once to fit the template (top-right is the usual choice; move it
@@ -247,14 +258,17 @@ them, and show both. The content slide is essential: it proves the blocks actual
       describe-own + reference drop-ins + **"let the image tool pick" (auto)**; brand colours).
 - [ ] A style **chosen and tailored** to the scenario — a picked library style, an auto-picked one
       (named back to the user), or a fresh look from a reference — palette/motifs customised, not raw.
-- [ ] Hero (and divider) generated **text-free**, in-style, with a **calm zone** for the title.
+- [ ] Hero (and divider) generated **text-free**, in-style, with a **calm zone** for the title — **plus
+      the 🔴 MUST interior shallow-background plate** (low-contrast, even-toned; skipped only for a
+      deliberately minimal/flat style).
 - [ ] `style.py` derived: palette **extracted from the image**, motif helpers, component helpers,
       fonts/chrome, a **`content_bg(slide)`** for the shallow interior background, and a
       **`brand(slide)`** logo helper if the deck is about a company/institution/product.
 - [ ] Sample **cover + content slide** rendered and **confirmed by the user** (🔴 checkpoint).
 - [ ] Direction gate **skipped**; rest of the interview completed.
-- [ ] Built: dividers use the image; content is native and **on-system** with the **shallow
-      background on every interior page** (no flat single-colour pages); the **real logo present and
+- [ ] Built: dividers use the image; content is native and **on-system** with the **GENERATED shallow-
+      background plate on every interior page** (🔴 MUST — no flat single-colour or merely-gradient
+      interior, except a deliberately minimal/flat style) + frosted blocks; the **real logo present and
       consistently placed** on every page if it's a company/institution/product deck; figures framed
       to sit on the template; legibility ≥ 4.5:1 everywhere.
 - [ ] Template **saved to the registry** for reuse.

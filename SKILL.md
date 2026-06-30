@@ -189,10 +189,13 @@ the direction gate** (the look is already decided). The four:
      > A minor palette/contrast tweak is a `style.py`-only change. See `references/generated-template.md`.)*
      Then **the look is decided — SKIP the 3-direction gate**, finish the interview normally, and build
      (image cover/dividers with native title on top; content built natively in `style.py`. **🔴 MUST,
-     not a default: every INTERIOR page carries a shallow non-flat background AND its content blocks are
-     FROSTED / semi-transparent (~30–45% see-through, α≈0.55–0.72), never flat opaque panels — only the
-     end pages (the cover + section dividers) carry full-strength imagery; interior content pages don't**; text kept ≥4.5:1; see
-     `generated-template.md`); save the confirmed template to the registry.
+     not a default: also GENERATE a faint interior-background PLATE and place it (lightly scrimmed) on
+     every interior page — the shallow background is itself a generated image, not a flat/native fill —
+     AND make content blocks FROSTED / semi-transparent (~30–45% see-through, α≈0.55–0.72), never flat
+     opaque panels. Only the end pages (cover + section dividers) carry full-strength imagery; interior
+     pages get the faint plate.** Carve: a deliberately minimal/flat style (Swiss/Scandinavian/Brutalist)
+     may use a faint native texture instead. Text kept ≥4.5:1; see `generated-template.md`); save the
+     confirmed template to the registry.
 
    **Never hardcode or assume a specific institution's template.** This skill ships
    to anyone: a brand-new user has an *empty* registry, so they see only generic choices
@@ -501,7 +504,8 @@ guidance + RTL limits in `references/multilingual.md`.
 present on every machine that will open it (a missing font substitutes, shifting metrics
 or, for non-Latin, producing tofu). Default to cross-platform-safe fonts (Arial/Calibri,
 Georgia, Consolas), set `deckkit.FONT/MONO/EQFONT` accordingly, and flag any brand-font
-dependency at hand-off. Equations via `equation_png` are font-independent (rasterised).
+dependency at hand-off. Editable `equation_native` math needs a **math font** (STIX Two Math / Cambria
+Math) for its glyphs — flag that dependency; `equation_png` is font-independent (rasterised).
 Full list, fallbacks, and tofu recovery in `references/font-guidance.md`.
 
 ## Step 3 — Pace-check the plan, then get approval
@@ -600,7 +604,8 @@ full signatures + behaviour are in its docstrings). The helper set, by job:
 - **Surface (dark / glass / print):** `glass_card`/`glow`/`scrim_overlay` (gradient+alpha fill),
   `offset_shadow` (hard letterpress/riso shadow).
 - **Publication & math:** `cover`/`colophon` (bookend the deck), `sources_page`, `specimen_card`;
-  `equation_png` (LaTeX-style math) / `eq_par` (inline).
+  **`equation_native`** (EDITABLE LaTeX-subset math — real text runs, renders everywhere; the default) /
+  `equation_png` (rasterised LaTeX, for 2-D math: fractions/matrices) / `eq_par` (inline runs).
 - **East-Asian (CJK) accents:** `seal` (vermilion chop/印章 stamp — the one red accent on an ink deck),
   `cjk_numeral` (壹·贰·叁 section markers vs Latin "01"). See `references/east-asian-aesthetic.md`.
 - **Diagram kit (general flowcharts):** `node` + `connector` / `flow_chain` (straight links between adjacent nodes) + `elbow_connector` /
@@ -827,14 +832,21 @@ A few rules that matter (see `references/design-principles.md`):
   **alt-text** on every informative figure — `deckkit.alt_text(shape, "one-line
   description")` after `add_picture()` — for screen readers; it doesn't render (invisible
   to the critic) so make it a build habit. More in `references/design-principles.md`.
-- **Equations:** prefer **`equation_png()`** for any formula the audience reads — it
-  typesets real LaTeX-style math (italic variables, true sub/superscripts, fractions,
-  Greek) and looks markedly better than ASCII. Pick its `mathfont` (`'cm'` for a
-  formal/academic feel; a sans set like `'stixsans'` to match a crisp corporate deck),
-  set `color` to contrast the slide, and place the PNG scaled to a target *height* so
-  glyph size stays consistent across slides. Use **`eq_par()`** (`N()/SUP()/SUB()`)
-  only for trivial inline math or when matplotlib is unavailable. **Never** paste
-  Unicode super/subscripts (ᴴ ᵀ ᵣ) — the display font may lack them and render tofu.
+- **Equations — 🔴 default to EDITABLE native math (`equation_native()`); raster (`equation_png()`)
+  is the fallback for 2-D layout only.** A formula the audience reads should default to
+  **`deckkit.equation_native(slide, x, y, w, h, latex)`** — it renders a LaTeX-subset as **real,
+  click-editable TEXT runs** (italic variables · upright operators · true sub/superscripts · Greek &
+  math glyphs) in a math font, so it stays **editable** AND renders identically in PowerPoint / Keynote /
+  LibreOffice / PDF. This is the editability users expect — a raster formula is a *frozen image they
+  cannot fix*, so don't ship one where native math works. Reach for **`equation_png()`** (rasterised
+  LaTeX) **only for 2-D math that linear runs can't lay out** — fractions, matrices, stacked limits, big
+  integrals with bounds (`equation_native` raises `NotImplementedError` on those, naming the construct).
+  *(A true PowerPoint OMML equation OBJECT is editable in PowerPoint but **invisible in the LibreOffice
+  render & PDF export** — so it is NOT the default; native runs render everywhere and are verifiable in
+  the loop.)* **Never** paste Unicode super/subscripts (ᴴ ᵀ ᵣ) — the display font may lack them and tofu.
+  **Math font:** `equation_native` needs a math font for ℒ Σ ‖ … (`deckkit.EQ_MATHFONT` = `'STIX Two
+  Math'`; set `'Cambria Math'` for Office portability) — **flag this font dependency at hand-off**; for
+  `equation_png` pick its `mathfont` (`'cm'` formal · `'stixsans'` crisp).
   - **Size the formula to the CONTENT text, not to fill the slide.** A formula's glyph
     height should read like the deck's **body/content** size — *never* blown up to span
     the slide width (which oversizes every glyph and breaks the title→content hierarchy),
@@ -850,15 +862,16 @@ A few rules that matter (see `references/design-principles.md`):
     *R*(*x*)) must be set in **proper math style** — italic variable + real sub/superscript
     — not typed as plain upright body letters and never as Unicode super/subscripts. For one
     or two inline symbols use **`eq_par()`/native runs** so the symbol stays **click-editable**
-    and inherits the surrounding body size; reach for `equation_png` for a full expression.
-    Keep the LaTeX source for every `equation_png` in the build script (it's a raster, so
-    "editing" means re-rendering from the script) — that is what keeps formulas reproducible
-    and adjustable on a later iteration.
-- **Formulas → TYPESET math (`equation_png`), never a cropped image.** Unlike a figure or table
-  (cropped *whole* from the PDF with `extract_pdf.py`), a needed equation is **re-typeset**: write it
-  as LaTeX and render with `equation_png()` (or `eq_par()` for simple inline). A cropped formula
-  bitmap is low-res, carries the source's font/background, can't be restyled to the deck, and clips —
-  a typeset one is crisp at any zoom and on-brand.
+    and inherits the surrounding body size; reach for **`equation_native()`** for a full expression
+    (still editable), and `equation_png` only for 2-D math. Keep the LaTeX source in the build script
+    either way — it's the reproducible source of truth (for a raster it's the *only* way to "edit"; for
+    native math it's what you re-parse).
+- **Formulas → TYPESET math (editable `equation_native`; `equation_png` for 2-D), never a cropped
+  image.** Unlike a figure or table (cropped *whole* from the PDF with `extract_pdf.py`), a needed
+  equation is **re-typeset**: write it as LaTeX and render with **`equation_native()`** (editable native
+  runs) — or `equation_png()` for 2-D math. A cropped formula bitmap is low-res, carries the source's
+  font/background, can't be restyled to the deck, and clips — a typeset one is crisp at any zoom and
+  on-brand.
   - **From a paper → transcribe** the formula precisely (don't alter symbols/indices).
   - **From code/other material → derive** the formula the code implements (a loss, update rule,
     metric, transform, a pricing/unit-economics calc) when the content-planner judges it shows the
@@ -866,7 +879,7 @@ A few rules that matter (see `references/design-principles.md`):
     defense, conference method talk, teaching, an eng status readout). It must be a *correct*
     expression of what the code computes (verify against the code), not invented or wrongly-simplified.
   - Either way the **fidelity rule applies** — verify the rendered math against the source.
-  `extract_pdf.py` is for figures/tables; formulas go through `equation_png`.
+  `extract_pdf.py` is for figures/tables; formulas go through `equation_native` (editable) / `equation_png` (2-D).
 - **One language.** Keep the whole deck in the chosen target language — don't drift
   (no stray English on a Chinese deck, no English headings over translated bullets).
   Technical terms / proper nouns / acronyms / units / code may stay original; only

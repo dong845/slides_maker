@@ -2124,6 +2124,158 @@ def eq_par(tf, tokens, base, color, first=False, italic=False, font=None):
     return p
 
 
+# ============================================================ editable native math
+# A LaTeX-subset → real TEXT RUNS renderer: italic variables, upright operators, true
+# sub/superscripts, math symbols, in a math font. The result is CLICK-EDITABLE native
+# text that renders identically in PowerPoint / Keynote / LibreOffice / PDF — unlike
+# equation_png (a flat raster) and unlike an OMML equation object (invisible in the
+# LibreOffice render/PDF). Use this for LINEAR formulas (sums, norms, sub/superscripts,
+# Greek, operators); 2-D math (fractions, matrices, stacked limits) raises — use
+# equation_png there. See SKILL §4 "Equations".
+_EQ_GREEK = {'alpha':'α','beta':'β','gamma':'γ','delta':'δ','epsilon':'ε','varepsilon':'ε',
+'zeta':'ζ','eta':'η','theta':'θ','vartheta':'ϑ','iota':'ι','kappa':'κ','lambda':'λ','mu':'μ',
+'nu':'ν','xi':'ξ','pi':'π','rho':'ρ','sigma':'σ','tau':'τ','upsilon':'υ','phi':'φ','varphi':'φ',
+'chi':'χ','psi':'ψ','omega':'ω','Gamma':'Γ','Delta':'Δ','Theta':'Θ','Lambda':'Λ','Xi':'Ξ',
+'Pi':'Π','Sigma':'Σ','Upsilon':'Υ','Phi':'Φ','Psi':'Ψ','Omega':'Ω'}
+_EQ_SYM = {'sum':'Σ','prod':'Π','int':'∫','oint':'∮','partial':'∂','nabla':'∇','infty':'∞',
+'cdot':'·','times':'×','div':'÷','pm':'±','mp':'∓','ast':'∗','star':'⋆','circ':'∘','bullet':'∙',
+'leq':'≤','le':'≤','geq':'≥','ge':'≥','neq':'≠','ne':'≠','approx':'≈','sim':'∼','simeq':'≃',
+'equiv':'≡','cong':'≅','propto':'∝','ll':'≪','gg':'≫','in':'∈','notin':'∉','subset':'⊂',
+'subseteq':'⊆','supset':'⊃','cup':'∪','cap':'∩','forall':'∀','exists':'∃','rightarrow':'→',
+'to':'→','Rightarrow':'⇒','leftarrow':'←','Leftarrow':'⇐','leftrightarrow':'↔','mapsto':'↦',
+'odot':'⊙','oplus':'⊕','otimes':'⊗','langle':'⟨','rangle':'⟩','ldots':'…','cdots':'⋯','dots':'…',
+'top':'⊤','perp':'⊥','angle':'∠','prime':'′','hbar':'ℏ','ell':'ℓ','Re':'ℜ','Im':'ℑ'}
+_EQ_MCAL = {'A':'𝒜','B':'ℬ','C':'𝒞','D':'𝒟','E':'ℰ','F':'ℱ','G':'𝒢','H':'ℋ','I':'ℐ','J':'𝒥',
+'K':'𝒦','L':'ℒ','M':'ℳ','N':'𝒩','O':'𝒪','P':'𝒫','Q':'𝒬','R':'ℛ','S':'𝒮','T':'𝒯','U':'𝒰',
+'V':'𝒱','W':'𝒲','X':'𝒳','Y':'𝒴','Z':'𝒵'}
+_EQ_BB = {'R':'ℝ','N':'ℕ','Z':'ℤ','Q':'ℚ','C':'ℂ','E':'𝔼','P':'ℙ'}
+_EQ_ACC = {'hat':'̂','widehat':'̂','tilde':'̃','widetilde':'̃','bar':'̄',
+'vec':'⃗','dot':'̇','ddot':'̈','check':'̌','breve':'̆','acute':'́',
+'grave':'̀'}
+_EQ_2D = {'frac','dfrac','tfrac','sqrt','begin','overline','underline','binom','matrix','pmatrix',
+'bmatrix','vmatrix','overbrace','underbrace','substack'}
+
+def _eq_read_group(s, i):
+    depth = 0; j = i
+    while j < len(s):
+        if s[j] == '{': depth += 1
+        elif s[j] == '}':
+            depth -= 1
+            if depth == 0: return s[i+1:j], j+1
+        j += 1
+    return s[i+1:], len(s)
+
+def _eq_resolve(s):
+    """Resolve a LaTeX chunk (no top-level _/^) → list of (display_char, italic_bool)."""
+    out = []; i = 0
+    while i < len(s):
+        c = s[i]
+        if c == '\\':
+            j = i+1; name = ''
+            while j < len(s) and s[j].isalpha(): name += s[j]; j += 1
+            if name == '':                                   # escaped symbol: \|  \{  \}  \%
+                sym = s[j] if j < len(s) else ''
+                out.append(('‖' if sym == '|' else sym, False)); i = j+1; continue
+            if name in _EQ_ACC:                              # accents: \hat{x} → x̂
+                if j < len(s) and s[j] == '{': inner, j = _eq_read_group(s, j)
+                else: inner = s[j] if j < len(s) else ''; j += 1
+                u = _eq_resolve(inner)
+                if u: u[0] = (u[0][0] + _EQ_ACC[name], u[0][1])
+                out.extend(u); i = j; continue
+            if name in ('mathcal','mathbf','mathrm','mathbb','mathit','text','operatorname','boldsymbol'):
+                if j < len(s) and s[j] == '{': inner, j = _eq_read_group(s, j)
+                else: inner = s[j] if j < len(s) else ''; j += 1
+                if name == 'mathcal':
+                    for ch in inner: out.append((_EQ_MCAL.get(ch, ch), ch not in _EQ_MCAL))
+                elif name == 'mathbb':
+                    for ch in inner: out.append((_EQ_BB.get(ch, ch), ch not in _EQ_BB))
+                elif name in ('mathrm','text','operatorname'):
+                    for ch in inner: out.append((ch, False))
+                else:
+                    for ch in inner: out.append((ch, ch.isalpha()))
+                i = j; continue
+            if name in _EQ_2D:
+                raise NotImplementedError(f"\\{name} needs 2-D layout — use equation_png for this formula")
+            if name in _EQ_GREEK: out.append((_EQ_GREEK[name], False)); i = j; continue
+            if name in _EQ_SYM:   out.append((_EQ_SYM[name], False)); i = j; continue
+            if name in ('left','right','displaystyle','textstyle','limits','nolimits','bigl','bigr','Bigl','Bigr'):
+                i = j; continue
+            if name in ('quad','qquad'): out.append(('  ', False)); i = j; continue
+            for ch in name: out.append((ch, False))          # unknown command (\min,\arg,\log…) → upright
+            i = j; continue
+        if c in '{}': i += 1; continue
+        if c == '|': out.append(('‖', False)); i += 1; continue
+        if c == ' ': out.append((' ', False)); i += 1; continue
+        out.append((c, c.isalpha())); i += 1
+    return out
+
+def latex_to_runs(latex):
+    """LaTeX-subset string → list of (text, kind) tokens; kind ∈ n/i/sub/sup/isub/isup.
+    Raises NotImplementedError on 2-D constructs (\\frac, matrices, …)."""
+    s = latex.strip()
+    for a, b in (('\\,',' '),('\\;',' '),('\\:',' '),('\\!',''),('~',' '),('\\ ',' ')):
+        s = s.replace(a, b)
+    out = []; i = 0
+    def push(units, lvl):
+        for ch, ital in units:
+            kind = ('isup' if ital else 'sup') if lvl > 0 else \
+                   ('isub' if ital else 'sub') if lvl < 0 else ('i' if ital else 'n')
+            out.append((ch, kind))
+    while i < len(s):
+        c = s[i]
+        if c in '_^':
+            lvl = 1 if c == '^' else -1; j = i+1
+            if j < len(s) and s[j] == '{':
+                inner, j = _eq_read_group(s, j); push(_eq_resolve(inner), lvl)
+            elif j < len(s) and s[j] == '\\':
+                k = j+1
+                while k < len(s) and s[k].isalpha(): k += 1
+                push(_eq_resolve(s[j:k]), lvl); j = k
+            else:
+                push(_eq_resolve(s[j:j+1]) if j < len(s) else [], lvl); j = j+1
+            i = j; continue
+        if c == '\\':
+            j = i+1
+            while j < len(s) and s[j].isalpha(): j += 1
+            if j < len(s) and s[j] == '{': _, j = _eq_read_group(s, j)
+            push(_eq_resolve(s[i:j]), 0); i = j; continue
+        push(_eq_resolve(c), 0); i += 1
+    return out
+
+EQ_MATHFONT = "STIX Two Math"   # math font with ℒ Σ ‖ … ; 'Cambria Math' is the Office-portable alt
+
+def equation_native(slide, x, y, w, h, latex, *, size=20, color=DEEP, font=None,
+                    align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.MIDDLE):
+    """EDITABLE native math — the PREFERRED way to put a formula the user may edit on a slide.
+    Renders a LaTeX-subset (or a pre-tokenised list) as real, click-editable PowerPoint TEXT
+    RUNS (italic variables · upright operators · true sub/superscripts · math glyphs) in a math
+    `font`, so it renders identically in PowerPoint / Keynote / LibreOffice / PDF AND stays
+    editable — unlike `equation_png` (a flat raster) and unlike an OMML equation object (which is
+    invisible in the LibreOffice render & PDF export). For LINEAR formulas; 2-D math (fractions,
+    matrices, stacked limits) raises NotImplementedError → use `equation_png` for those.
+
+    `latex` e.g. r"\\mathcal{L} = \\sum_i \\|A x_i - y_i\\|_2^2 + \\lambda R(x_i)" (or a list of
+    (text, kind) tokens). `font` defaults to a math font (`EQ_MATHFONT` = 'STIX Two Math'; set it
+    to 'Cambria Math' for Office portability — flag the dependency at hand-off). `size` is the
+    base point size; keep it ≈ the deck's body size, consistent across slides. Returns the textbox."""
+    toks = latex if isinstance(latex, list) else latex_to_runs(latex)
+    fnt = font or EQ_MATHFONT
+    tb = slide.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
+    tf = tb.text_frame; tf.word_wrap = True
+    try: tf.vertical_anchor = anchor
+    except Exception: pass
+    for m in ('left','right','top','bottom'):
+        setattr(tf, 'margin_' + m, Inches(0.02))
+    p = tf.paragraphs[0]; p.alignment = align
+    for txt, k in toks:
+        r = p.add_run(); r.text = txt
+        sz = size * (0.62 if k in ('sub','sup','isub','isup') else 1.0)
+        set_font(r, sz, color, italic=(k in ('i','isub','isup')), font=fnt)
+        if k in ('sup','isup'): r._r.get_or_add_rPr().set('baseline', '30000')
+        if k in ('sub','isub'): r._r.get_or_add_rPr().set('baseline', '-22000')
+    return tb
+
+
 # ================================================================ template reuse
 def open_template(path):
     """Open the user's deck and delete its slides while KEEPING masters/layouts.
