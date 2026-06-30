@@ -26,7 +26,9 @@ Per asset, the plan gives you a complete spec:
 - **Render equations** with `deckkit.equation_png` from the plan's LaTeX at the plan's height.
 - **GIF posters** with `deckkit.gif_poster` (the plan's representative frame).
 - **Generated plates** via `scripts/image_prompts.py` → `generate_images_codex.py` (no key) / OpenAI
-  fallback, using the plan's prompts.
+  fallback, using the plan's prompts. Put ALL plates (hero · divider · interior plate · per-slide heroes)
+  in ONE manifest and run the script ONCE — it generates them **concurrently** (`--concurrency`), so the
+  batch lands in ~one image's time, not N×. (Don't launch a separate process per image.)
 - **Icons** via `scripts/icons.py` `icon_png` (fetch → recolor → rasterize), one coherent family.
 Keep everything in `~/Downloads/<deck>/assets/` (`figures/`, `icons/`, `generated/`).
 

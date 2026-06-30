@@ -7,6 +7,7 @@ same manifest that scripts/image_prompts.py creates.
 """
 import argparse
 import base64
+import concurrent.futures as _cf
 import json
 import os
 import sys
@@ -101,6 +102,25 @@ def _resolve_out_path(item, out_dir):
     return Path(item.get("path") or item["filename"])
 
 
+def _generate_item(item, out_path, args, api_key):
+    """Generate one image (blocking). Independent per item — safe to run concurrently:
+    each writes a distinct file, shares no mutable state. Returns out_path on success."""
+    payload = {
+        "model": args.model,
+        "prompt": item["prompt"],
+        "size": args.size,
+        "quality": args.quality,
+        "output_format": args.output_format,
+    }
+    if args.background:
+        payload["background"] = args.background
+    if args.moderation:
+        payload["moderation"] = args.moderation
+    result = _request_image(api_key, payload, timeout=args.timeout, retries=args.retries)
+    _write_response_image(result, out_path)
+    return out_path
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Generate images from image_prompt_manifest.json using the OpenAI Images API."
@@ -120,6 +140,9 @@ def main():
     ap.add_argument("--dry-run", action="store_true", help="Print planned outputs without calling the API.")
     ap.add_argument("--timeout", type=int, default=300, help="Per-request timeout in seconds.")
     ap.add_argument("--retries", type=int, default=2, help="Retries for transient failures.")
+    ap.add_argument("--concurrency", type=int, default=3,
+                    help="Images generated in parallel (I/O-bound HTTP; near-linear speedup for a "
+                         "multi-image deck — hero+divider+plate at once). Lower to 1 if you hit rate limits.")
     args = ap.parse_args()
 
     api_key = os.environ.get(args.api_key_env, "")
@@ -133,40 +156,51 @@ def main():
     if args.out_dir:
         Path(args.out_dir).mkdir(parents=True, exist_ok=True)
 
-    generated = 0
+    # partition first: skip-existing and dry-run are instant; only real generations get parallelized
     skipped = 0
+    worklist = []
     for item in items:
         out_path = _resolve_out_path(item, args.out_dir)
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        label = f"slide {item.get('slide', '?')}: {out_path}"
         if out_path.exists() and not args.overwrite:
             print(f"skip existing: {out_path}")
             skipped += 1
             continue
-
-        payload = {
-            "model": args.model,
-            "prompt": item["prompt"],
-            "size": args.size,
-            "quality": args.quality,
-            "output_format": args.output_format,
-        }
-        if args.background:
-            payload["background"] = args.background
-        if args.moderation:
-            payload["moderation"] = args.moderation
-
-        label = f"slide {item.get('slide', '?')}: {out_path}"
         if args.dry_run:
             print(f"would generate {label}")
             continue
+        worklist.append((item, out_path))
 
-        print(f"generate {label}")
-        result = _request_image(api_key, payload, timeout=args.timeout, retries=args.retries)
-        _write_response_image(result, out_path)
-        generated += 1
+    generated = 0
+    errors = []
+    conc = max(1, min(args.concurrency, len(worklist)))
+    if conc <= 1:
+        for item, out_path in worklist:
+            print(f"generate slide {item.get('slide', '?')}: {out_path}")
+            try:
+                _generate_item(item, out_path, args, api_key)
+                generated += 1
+            except Exception as exc:                       # one failure must not abort the batch
+                errors.append((out_path, str(exc)))
+                print(f"  FAILED {out_path}: {exc}", file=sys.stderr)
+    elif worklist:
+        print(f"generating {len(worklist)} images, concurrency {conc} …")
+        with _cf.ThreadPoolExecutor(max_workers=conc) as ex:
+            futs = {ex.submit(_generate_item, item, out_path, args, api_key): out_path
+                    for item, out_path in worklist}
+            for fut in _cf.as_completed(futs):
+                out_path = futs[fut]
+                try:
+                    fut.result()
+                    generated += 1
+                    print(f"  ok -> {out_path}")
+                except Exception as exc:
+                    errors.append((out_path, str(exc)))
+                    print(f"  FAILED {out_path}: {exc}", file=sys.stderr)
 
-    print(f"done: generated {generated}, skipped {skipped}")
-    return 0
+    print(f"done: generated {generated}, skipped {skipped}" + (f", failed {len(errors)}" if errors else ""))
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":

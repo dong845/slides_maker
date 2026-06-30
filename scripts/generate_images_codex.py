@@ -16,6 +16,7 @@ hosted tool steers size by prompt, so this script asks for the requested orienta
 """
 import argparse
 import base64
+import concurrent.futures as _cf
 import json
 import shutil
 import subprocess
@@ -130,6 +131,9 @@ def main():
     ap.add_argument("--overwrite", action="store_true", help="Regenerate existing files (default: skip).")
     ap.add_argument("--timeout", type=int, default=360, help="Per-image timeout (seconds).")
     ap.add_argument("--dry-run", action="store_true", help="Print planned outputs without calling codex.")
+    ap.add_argument("--concurrency", type=int, default=2,
+                    help="Images generated in parallel (each is a `codex exec` subprocess — 2 is a safe "
+                         "default; raise on a beefy machine, set 1 to serialize). Speeds a multi-image deck.")
     args = ap.parse_args()
 
     if not args.dry_run and not _have_codex():
@@ -156,7 +160,9 @@ def main():
     if args.limit is not None:
         items = items[: max(0, args.limit)]
 
+    # partition first: skip / dry-run are instant; only real generations get parallelized
     ok = skipped = failed = 0
+    worklist = []
     for item in items:
         out_path = _resolve_out(item, args.out_dir)
         label = f"slide {item.get('slide', '?')}: {out_path}"
@@ -164,12 +170,28 @@ def main():
             print(f"skip existing: {out_path}"); skipped += 1; continue
         if args.dry_run:
             print(f"would generate {label}"); continue
-        print(f"generate {label} … (codex exec; this takes ~30-90s)")
-        if _generate_one(item["prompt"], out_path, orientation=args.orientation, timeout=args.timeout):
-            print(f"  ok -> {out_path}"); ok += 1
-        else:
-            print(f"  FAILED: {label} — no image produced (check `codex login` / image_generation feature)",
-                  file=sys.stderr); failed += 1
+        worklist.append((item, out_path))
+
+    def _work(item, out_path):                              # independent per item (own file, own subprocess)
+        return _generate_one(item["prompt"], out_path, orientation=args.orientation, timeout=args.timeout)
+
+    conc = max(1, min(args.concurrency, len(worklist)))
+    if conc <= 1 or len(worklist) <= 1:
+        for item, out_path in worklist:
+            print(f"generate slide {item.get('slide','?')}: {out_path} … (codex exec; ~30-90s)")
+            if _work(item, out_path): print(f"  ok -> {out_path}"); ok += 1
+            else: print(f"  FAILED: {out_path} — no image produced", file=sys.stderr); failed += 1
+    else:
+        print(f"generating {len(worklist)} images, concurrency {conc} … (codex exec; ~30-90s each)")
+        with _cf.ThreadPoolExecutor(max_workers=conc) as ex:
+            futs = {ex.submit(_work, item, out_path): out_path for item, out_path in worklist}
+            for fut in _cf.as_completed(futs):
+                out_path = futs[fut]
+                try:
+                    if fut.result(): print(f"  ok -> {out_path}"); ok += 1
+                    else: print(f"  FAILED: {out_path} — no image produced", file=sys.stderr); failed += 1
+                except Exception as exc:
+                    print(f"  FAILED: {out_path} — {exc}", file=sys.stderr); failed += 1
 
     print(f"done: generated {ok}, skipped {skipped}, failed {failed}")
     return 1 if failed else 0

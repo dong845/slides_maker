@@ -221,6 +221,14 @@ python scripts/generate_images_openai.py \
 Both scripts share the manifest format and the `--out-dir` / `--limit` / `--overwrite` / `--dry-run`
 flags, save each output to the manifest path (e.g. `slide-01.png`), and skip existing files by default.
 
+**Generation is the slowest step in the pipeline, and a manifest's images are independent — so the
+scripts generate them CONCURRENTLY by default** (`--concurrency`, default 3 for the API path / 2 for the
+Codex path). Put hero + divider + interior-plate (and any per-slide heroes) in ONE manifest and run it
+once: a 3-image generated template lands in roughly the time of one image, not three. Lower
+`--concurrency 1` only if you hit API rate limits; a single failure no longer aborts the batch (it's
+reported and the rest continue). This is the main multi-process win in slide generation — the deck
+*build* itself (python-pptx) is already fast and stays one script run.
+
 > **Detection-first; ask only when stuck.** Pick native tool call → Codex CLI → API key by what's
 > available, proceed, and tell the user which you used (one line). **Only ask** when *none* is available — then
 > point them to `codex login` (no key) or, as a last resort, an `OPENAI_API_KEY`. Never block on a
