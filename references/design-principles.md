@@ -515,13 +515,28 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   before/after, or a comparison table as the content invites. If more than ~40–50% of the content slides
   are the same block type, that's over-reliance — rework the weakest into the form their content wants
   (taste, not a quota).
-- **Avoid the AI-slop tells.** A handful of choices instantly read as machine-generated filler — name
+- **Avoid the AI-slop tells (VISUAL).** A handful of choices instantly read as machine-generated filler — name
   and avoid them: full-screen rainbow / mesh / purple-to-blue gradients; emoji in titles or as bullet
   markers; ✅/🚀/🔥 decoration; the rounded-card-with-a-left-border-accent everywhere; three-near-identical
   "feature cards"; over-exposed default fonts used without intent; and **fabricated specifics** (made-up
   stats, fake quotes, invented logos). Meta-heuristic: **when you feel the urge to *add* something to
   make a plain slide "look nicer," that urge is usually the slop signal — subtract instead** (more
   whitespace, one stronger element) and fix the layout, don't decorate it.
+- **Write like a human presenter (VOICE) — the WORDS betray AI as fast as the visuals.** Write each line
+  the way a sharp person in the field would *say* it to the room, not the way an LLM defaults. Cut the
+  inflated / promotional vocabulary that clusters in AI text — *leverage · unlock · empower · robust ·
+  seamless · cutting-edge · game-changer · pivotal · crucial · underscore · landscape · delve · "a
+  testament to" · "marks a pivotal moment" · "in today's fast-paced world" · "it's worth noting"* — and
+  replace each with the **concrete specific it's dodging** (not "leveraging synergies to drive impact"
+  but "auto-routing cut support tickets 30%"). **Don't force the rule of three** — not every slide is 3
+  bullets / 3 columns; use the count the content actually has (2, 4, 5). **Don't reach for formulaic
+  section names** ("Key Takeaways", "Challenges & Future Prospects", "Deep Dive", "Overview") — name the
+  slide for its real point. Give the deck a **point of view** (an assertion, a recommendation), not
+  sterile both-sides neutrality. **The test: read each line aloud — would a real expert actually say this?**
+  If it sounds like a press release or a textbook abstract, rewrite. *(Em-dashes in **moderation** are fine
+  — it's **over-reliance** on them and on reflexive parallel triads that reads as machine. Language-specific
+  tells, incl. 中文 translationese (的-chains, 进行/实现-nominalisation, 破折号成瘾), live in `multilingual.md`
+  "Write like a human"; the critic enforces this via `review-rubrics.md` §3.)*
 - **Don't crowd the title's accent rule.** `title_bar` draws a short accent underline below
   the title. When you add a subtitle / definition line under it, leave a clear gap *below the
   rule* before the subline (and start the body a step below that) — a sub-line jammed against
