@@ -77,7 +77,10 @@ Three ways to put a chart on a slide; choose by what the deck needs:
   `bar`, and **slope** = a 2-point line), `native_dual_axis` (two-scale 'A↑ vs B↓', e.g. 占比% vs
   成本指数), `native_donut` (part-to-whole + a KPI in the hole), `native_pareto` (columns + cumulative-%
   line on a secondary axis), `native_bubble` (x·y·size). Themed (`palette`, `dark`, `font`,
-  `highlight`). *(RTL scripts — Arabic/Hebrew — remain a known layout limitation, see `multilingual.md`.)*
+  `highlight`). **Data from a spreadsheet?** `deckkit.series_from_csv(path, x_col, y_cols)` → `(categories,
+  series)` feeds `native_chart`/`native_dual_axis` directly (stdlib csv — no pandas; auto-sniffs the
+  delimiter; strips thousands-commas / `%` / a currency symbol; non-numeric → 0). *(RTL scripts —
+  Arabic/Hebrew — remain a known layout limitation, see `multilingual.md`.)*
 - **`designed_charts` (matplotlib raster).** Use only when (a) you specifically want the matplotlib
   styling, or (b) for the **dumbbell** (before→after gap), which has no native chart type — otherwise
   prefer the native editable equivalents above. A transparent PNG; **not editable**, and on a

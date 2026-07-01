@@ -1786,6 +1786,48 @@ def hrule(slide, x, y, w, color=MUTE, weight=0.012):
 
 
 # ================================================================= native (editable) charts
+def series_from_csv(path, x_col, y_cols, *, delimiter=None, encoding="utf-8"):
+    """Read a CSV/TSV into ``(categories, series)`` ready to hand straight to :func:`native_chart` /
+    :func:`native_dual_axis` — so a deck built from a spreadsheet doesn't re-parse columns by hand
+    every run. stdlib ``csv`` only (no pandas dependency).
+
+    ``x_col`` = the category column (its header NAME or a 0-based index). ``y_cols`` = a list of value
+    columns (names or indices). Returns ``(categories: [str, ...], series: [(name, [float, ...]), ...])``.
+    Non-numeric / blank cells become ``0.0`` (thousands commas, %, and a leading currency symbol are
+    stripped first). ``delimiter`` is auto-sniffed (``, \\t ;``) when not given. Example::
+
+        cats, series = dk.series_from_csv("q3.csv", "month", ["new", "returning"])
+        dk.native_chart(s, 0.6, 1.4, 8, 3.4, cats, series, kind="column", highlight=0)
+    """
+    import csv, os
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"series_from_csv(): file not found: {path}")
+    with open(path, newline="", encoding=encoding) as fh:
+        sample = fh.read(4096); fh.seek(0)
+        if delimiter is None:
+            try: delimiter = csv.Sniffer().sniff(sample, delimiters=",\t;").delimiter
+            except Exception: delimiter = "\t" if "\t" in sample.splitlines()[0] else ","
+        rows = list(csv.reader(fh, delimiter=delimiter))
+    rows = [r for r in rows if any(c.strip() for c in r)]          # drop blank lines
+    if len(rows) < 2:
+        raise ValueError(f"series_from_csv(): need a header + at least one data row in {path}")
+    header = [h.strip() for h in rows[0]]
+    def _idx(col):
+        if isinstance(col, int): return col
+        try: return header.index(col)
+        except ValueError:
+            raise ValueError(f"series_from_csv(): column {col!r} not in header {header}")
+    xi = _idx(x_col); yis = [_idx(c) for c in y_cols]
+    def _num(v):
+        s = (v or "").strip().lstrip("$€£¥").replace(",", "").rstrip("%").strip()
+        try: return float(s)
+        except ValueError: return 0.0
+    cats = [ (r[xi].strip() if xi < len(r) else "") for r in rows[1:] ]
+    series = [ (header[yi] if yi < len(header) else f"col{yi}",
+                [ _num(r[yi] if yi < len(r) else "") for r in rows[1:] ]) for yi in yis ]
+    return cats, series
+
+
 def native_chart(slide, x, y, w, h, categories, series, *, kind="line_markers",
                  palette=None, dark=False, font=None, highlight=None, legend=True,
                  value_fmt=None, smooth=True):

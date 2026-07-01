@@ -652,8 +652,9 @@ deliberately** — generate 2-3 candidate forms and choose with the tie-breaker 
   (one-accent discipline), `contrast_ratio` (verify ≥~4.5:1 before committing).
 - **Data furniture & charts:** `scorecard`/`leaderboard`/`takeaway_rail`, `change_stat` (baseline-
   centred before→after), `stat_row`, `big_numeral`; **editable native charts** `native_chart` /
-  `native_dual_axis` / `native_donut` / `native_pareto` / `native_bubble`, plus the raster recipes in
-  `scripts/designed_charts.py` — pick per `references/data-viz.md`.
+  `native_dual_axis` / `native_donut` / `native_pareto` / `native_bubble` (feed them straight from a
+  spreadsheet with **`series_from_csv(path, x_col, y_cols)`** → `(categories, series)`, stdlib, no pandas),
+  plus the raster recipes in `scripts/designed_charts.py` — pick per `references/data-viz.md`.
 - **Diagrams / patterns:** `quadrant`, `hub_spoke`, `timeline`, `before_after`/`image_tab`/
   `photo_triptych`, `wireframe_grid`+`spec_list`, `corner_frame`, `photo_card`, `backdrop_motif`,
   `repeat_row` (N identical-except-index units as representatives + `…` + `×N`, shared detail said
@@ -1066,7 +1067,10 @@ row, two solid blocks/images overlapping (neither contained), footer collisions,
 / widow (a lone 。/，or single glyph on the last line — 避头尾), CJK text with no EA font (the kinsoku
 root cause), whole-page-image (editability), and orphan/empty slides**: exactly the failures the eye
 misses (a callout tucked under a panel; a 2-line body hanging below a card; a 。 stranded on its own row). Fix every finding, re-render, and re-lint
-to clean before handing to the critic. It's a safety net for the no-overlap / fits-its-box rules, **not** a
+to clean before handing to the critic. It also prints soft **`[warn]`s** (advisory, non-blocking) for the
+two things invisible to every other check: **missing alt-text** on an informative image, and a **math-font
+tofu** risk (an `equation_native` font not installed on the render host) — resolve them too. It's a safety
+net for the no-overlap / fits-its-box rules, **not** a
 replacement for looking (it can't judge crop, balance, legibility, or fidelity).
 
 **Render self-check — scan EVERY slide for these before handing to the critic** (they're

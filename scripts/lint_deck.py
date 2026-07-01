@@ -35,6 +35,9 @@ Checks (tuned for low false-positives):
   (the root cause of orphaned punctuation: no <a:ea> → PowerPoint applies no kinsoku, plus tofu risk —
   checked across ANY text: text boxes, table cells, and grouped shapes), whole-page-image/editability,
   and orphan/empty slides.
+  Plus soft [warn]s (advisory — printed but do NOT fail the exit code): MISSING ALT-TEXT on an
+  informative image (accessibility; invisible to every other check), and MATH-FONT TOFU (an
+  equation_native math font not installed on the render host → equations render as boxes).
 """
 import sys
 from pptx import Presentation
@@ -46,6 +49,22 @@ EMU = 914400.0
 TOL = 0.05        # inches — ignore hairline/touching overlaps
 CONTAIN = 0.90    # A is "inside" B when >=90% of A's area lies within B
 SOLID = {MSO_SHAPE_TYPE.AUTO_SHAPE, MSO_SHAPE_TYPE.PICTURE, MSO_SHAPE_TYPE.TABLE, MSO_SHAPE_TYPE.FREEFORM}
+MATH_FONTS = {"STIX Two Math", "Cambria Math", "Latin Modern Math", "XITS Math", "Asana Math", "TeX Gyre Termes Math"}
+try:                                                  # reuse deckkit's font-availability probe for the tofu warn
+    import os as _os
+    sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+    from deckkit import _font_substituted as _fsub
+except Exception:
+    def _fsub(_name):                                 # can't check → never warn (no false positive)
+        return False
+
+def _no_real_alt(descr):
+    # python-pptx auto-sets a picture's descr to its FILE NAME; treat that (or None) as no real
+    # alt-text. A deliberate alt="" (decorative) or a real sentence is fine and NOT flagged.
+    if descr is None:
+        return True
+    d = descr.strip().lower()
+    return d.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".tif", ".tiff"))
 
 
 def _boxes(slide, sw, sh):
@@ -59,22 +78,33 @@ def _boxes(slide, sw, sh):
             continue
         full = s.text_frame.text.strip() if s.has_text_frame else ""
         txt = full.replace("\n", " ")[:26]
-        paras, size, align, anchor = [], 0.0, None, None
+        paras, size, align, anchor, mathfont = [], 0.0, None, None, None
         if s.has_text_frame:
             size = max((r.font.size.pt for p in s.text_frame.paragraphs for r in p.runs if r.font.size),
                        default=12.0)
             for p in s.text_frame.paragraphs:
-                pr = [(r.text, (r.font.size.pt if r.font.size else size)) for r in p.runs]
+                pr = []
+                for r in p.runs:
+                    pr.append((r.text, (r.font.size.pt if r.font.size else size)))
+                    if mathfont is None and r.font.name in MATH_FONTS:
+                        mathfont = r.font.name           # an equation_native run in a math font
                 if pr:
                     paras.append(pr)
             try: anchor = s.text_frame.vertical_anchor
             except Exception: anchor = None
             try: align = s.text_frame.paragraphs[0].alignment if s.text_frame.paragraphs else None
             except Exception: align = None
+        descr = None                                     # accessibility alt-text (cNvPr 'descr')
+        try:
+            cn = s._element.find(".//" + qn("p:cNvPr"))
+            if cn is not None:
+                descr = cn.get("descr")
+        except Exception:
+            descr = None
         out.append({"l": l, "t": t, "w": w, "h": h, "r": l + w, "b": t + h,
                     "st": str(s.shape_type).split()[0], "txt": txt, "full": full, "size": size or 12.0,
                     "paras": paras, "solid": s.shape_type in SOLID, "align": align, "anchor": anchor,
-                    "text": bool(s.has_text_frame and txt),
+                    "text": bool(s.has_text_frame and txt), "descr": descr, "mathfont": mathfont,
                     "bg": (w * h) >= 0.95 * (sw * sh)})
     return out
 
@@ -176,6 +206,7 @@ def lint(path):
         sys.exit(2)
     sw, sh = prs.slide_width / EMU, prs.slide_height / EMU
     total = 0
+    warn_total = 0
     for si, slide in enumerate(prs.slides):
         bx = _boxes(slide, sw, sh)
         finds = []
@@ -349,10 +380,24 @@ def lint(path):
                     finds.append(f"UNEVEN CARD HEIGHTS: a row of {len(row)} cards has heights "
                                  f"{sorted(round(h,2) for h in hs)} — sibling cards in a row must share ONE "
                                  f"height (size the row to the tallest card's content)")
+        # --- soft WARNs: advisory (do NOT fail the build) — accessibility + font-portability nudges
+        #     that are otherwise invisible to the critic and the geometry checks ---
+        warns = []
+        for s in bx:
+            if s["st"] == "PICTURE" and not s["bg"] and _no_real_alt(s["descr"]):
+                warns.append(f"MISSING ALT-TEXT: an informative image ({round(s['w'],1)}×{round(s['h'],1)}in) has no "
+                             f"alt-text — deckkit.alt_text(shape, '…'), or pass alt='' if purely decorative")
+            if s["mathfont"] and _fsub(s["mathfont"]):
+                warns.append(f"MATH-FONT TOFU RISK: '{s['txt']}' uses {s['mathfont']}, which isn't installed on this "
+                             f"render host — install it, or set deckkit.EQ_MATHFONT to a math font present here")
         for m in finds:
             print(f"  slide {si+1}: {m}")
+        for m in warns:
+            print(f"  slide {si+1}: [warn] {m}")
         total += len(finds)
-    print(f"\n{path}: {total} layout finding(s)" + ("" if total else "  ✓ clean"))
+        warn_total += len(warns)
+    tail = ("" if total else "  ✓ clean (no hard findings)") + (f"  ·  {warn_total} warning(s)" if warn_total else "")
+    print(f"\n{path}: {total} layout finding(s){tail}")
     return total
 
 
