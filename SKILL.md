@@ -708,21 +708,26 @@ A few rules that matter (see `references/design-principles.md`):
   when a figure feels too busy, your *first* move is to give it a whole slide — large, with an
   **assertion title + a one-line caption** pointing attention to the part that matters (e.g.
   "the orange line is this quarter", or "rightmost column is ours") — not to crop it down. Reach for cropping only to (a) **trim**
-  surrounding page header / caption / whitespace, or (b) lift **one cleanly-separable
-  sub-figure** that genuinely stands alone. Chopping a multi-panel figure into a few columns
+  surrounding page header / caption / whitespace (leaving a small margin, never flush), or (b) lift
+  **one cleanly-separable sub-figure** that genuinely stands alone. Chopping a multi-panel figure into a few columns
   *loses context and changes what the authors showed* — do it only when the whole is truly
   unusable on a slide, and prefer to **confirm with the user** before discarding panels.
   Build native diagrams only for structure with no source figure.
   - **Never clip the figure's OWN parts. Crop the complete SEMANTIC object, not an arbitrary
-    rectangle.** The legend, colour bar, axis titles/labels/ticks, units, **error bars / confidence
-    intervals & significance markers (`*`, p-values)**, **panel labels `(a) (b) (c)`**, and the
-    outermost rows/columns are all *part of the figure* — losing them is worse than showing the
-    figure a touch smaller. **If one part is needed to read another** (a colour key, a shared
-    legend/axis, a side-input to a diagram), keep them together. After every crop **and** after
-    placing/scaling a figure on a slide, **re-view the result** and confirm nothing of the figure is
-    cut off (a half-cut legend at the top edge is the classic miss). **Padding:** leave **~3–8%
-    breathing room** on each side — more (**8–12%**) when tick labels are rotated or a legend/
-    colour-bar sits *outside* the plot; a tick label *touching* the boundary is already too tight.
+    rectangle.** The legend, colour bar, axis titles/labels/ticks, units, **error bars / CIs &
+    significance markers (`*`, p-values)**, **panel-strip headers**, **panel labels `(a) (b) (c)`**,
+    a sub-plot's own x-axis labels, and the outermost rows/columns are all *part of the figure* —
+    losing them is worse than showing the figure a touch smaller. **If one part is needed to read
+    another** (a colour key, a shared legend/axis, a side-input to a diagram), keep them together.
+    After every crop **and** after placing/scaling a figure on a slide, **re-view the result** and
+    confirm nothing of the figure is cut off (a half-cut legend at the top edge is the classic miss).
+    **A small margin, not blank padding:** keep just enough margin that nothing sits *flush* (a tick
+    label *touching* the boundary is already too tight) — but no *fat* blank border either, since the
+    figure is placed with `picture(fit="contain")` and a wide white margin makes it float small on the
+    slide. Crop **close to the figure's real content**: a small even margin, which is *not* the same as
+    cropping flush (flush is still a bug). When tick labels are **rotated** or a legend/colour-bar sits
+    *outside* the plot, extend the crop to **include those elements fully** — that extra room is to
+    *fit* them, not to pad with whitespace.
     - **🔴 The auto-detector's bbox captures only the PLOT PANEL — expand beyond it.** A plotting
       library (ggplot / matplotlib / seaborn) places the **axis titles, tick labels, panel-strip
       headers, and legend OUTSIDE** that panel rectangle, so cropping to the detected box (or an
@@ -1174,16 +1179,13 @@ critic round — full rationale in `references/design-principles.md`):
   image of real things is **factually right** (relative size/proportion, count, colour); any
   **labels sit under the feature** they name.
 - **PDF figures cropped precisely** — for every figure pulled from a paper, zoom **each of the four
-  edges** (close-up, not a glance at the whole) and confirm THREE things: (a) nothing of the figure
-  is clipped OR **flush to the edge** (legend, colour bar, axis **titles** & tick labels, panel-strip
-  headers, outer rows/cols, a sub-plot's x-axis labels — a *flush* element reads as clipped once the
-  figure sits on a coloured slide, so treat flush = cut); (b) no page text bled in (its caption, a
-  neighbour's caption fragment, a running head, a page number, a stray body-text line); and (c) the
-  figure is **self-contained — its own x/y axis labels are present**, NOT silently replaced by a
-  legend you added on the slide (a slide-legend must not mask an over-crop that dropped the figure's
-  axis labels). Remember the auto-detector's bbox is only the *plot panel* — the axis titles/ticks/
-  legend sit outside it, so an eyeballed crop near that box drops them. Prefer `extract_pdf.py figure`
-  and expand the box outward; a clipped, flush, or axis-label-missing crop is a real flaw, not a nitpick.
+  edges** close-up (not a glance at the whole) and confirm: (a) none of the figure's own parts is
+  clipped **or flush** (flush = cut); (b) no page text bled in (its caption, a neighbour's caption
+  fragment, a running head, a page number, a stray body-text line); (c) the figure is
+  **self-contained — its own x/y axis labels are present**, not silently replaced by a legend you
+  added on the slide. The full element list + the plot-panel-bbox pitfall (the auto-detector's box
+  excludes the axis titles/ticks/legend, so an eyeballed crop near it drops them) are under **“Never
+  clip the figure's OWN parts”** in Step 4. A clipped, flush, or axis-label-missing crop is a real flaw, not a nitpick.
 - **Motion & images by taste** — what's there earns its place (emphasises/engages/guides),
   nothing thoughtless; what's plain is fine.
 **On native Windows (PowerShell / cmd) there is no bash — call the Python entry points
