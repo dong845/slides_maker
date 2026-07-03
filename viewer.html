@@ -79,9 +79,14 @@ if (!deck) {
     '<div class="err">Unknown deck. <a href="index.html">Back to the gallery</a></div>';
   document.querySelector('.nav').style.display = 'none';
 } else {
-  document.getElementById('deckTitle').textContent = `${deck.title} (${deck.lang === 'zh' ? '中文' : 'English'})`;
+  const zh = deck.lang === 'zh';
+  document.getElementById('deckTitle').textContent = `${deck.title} (${zh ? '中文' : 'English'})`;
   document.title = `${deck.title} — slide-maker viewer`;
+  document.documentElement.lang = zh ? 'zh-CN' : 'en';
+  document.querySelector('a.back').textContent = zh ? '← 返回画廊' : '← Gallery';
+  document.querySelector('.hint').textContent = zh ? '方向键翻页，点画面左右半边，或左右滑动。' : 'Use arrow keys, click the left / right half of the slide, or swipe.';
   const dl = document.getElementById('dlBtn');
+  dl.textContent = zh ? '下载 .pptx' : 'Download .pptx';
   dl.href = `templates/decks/${id}/template.pptx`;
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === ' ') go(1);
