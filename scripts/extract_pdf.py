@@ -46,6 +46,11 @@ import sys
 import os
 import fitz   # PyMuPDF
 
+# _rect_area_compat: pymupdf>=1.26 removed Rect.get_area()
+if not hasattr(fitz.Rect, "get_area"):
+    fitz.Rect.get_area = lambda self, unit=None: abs(self.width * self.height)
+    fitz.IRect.get_area = lambda self, unit=None: abs(self.width * self.height)
+
 
 def _open(pdf):
     doc = fitz.open(pdf)
