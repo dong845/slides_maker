@@ -178,7 +178,7 @@ Put your material in the current project, or give a full path in the request. Yo
 
 ### Optional: AI image generation
 
-If you want a generated cover, page illustrations, or a full generated visual identity, say "use AI image generation" in the chat. This branch uses Codex image generation and needs an active Codex subscription. Without it, slide-maker still produces fully editable PPTX.
+If you want a generated cover, page illustrations, or a full generated visual identity, say "use AI image generation" in the chat. Two ways to power it, either works: a Codex subscription uses its built-in image generation with no key, or set an OpenAI API key to go through the API. With neither, slide-maker still produces fully editable PPTX.
 
 ## How to use the templates
 
