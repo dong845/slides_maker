@@ -129,13 +129,37 @@ python3 scripts/install_skill.py --target both
 
 If you only use one tool, replace `both` with `codex` or `claude`. Then go back to the chat and send your request.
 
-### Step 2: Send one short request
-
-No long prompt needed. Start with what you want:
+### Step 2: Say what you want, in one line
 
 ```text
 Use slide-maker to create a PPT from paper.pdf.
 ```
+
+That one line is enough. slide-maker is interview-driven: it does not need a long, perfect prompt, because it asks. A real first exchange looks like this:
+
+```text
+You:  Use slide-maker to create a PPT from paper.pdf.
+
+It:   Before I build, four quick things:
+      1. Template: one from the gallery, your own reference PPT,
+         a clean design by me, or an AI-generated visual identity?
+      2. Audience and setting: presented live, screen-shared,
+         or sent to be read? How long is the talk?
+      3. Source scope: just this PDF, or also code, figures, other docs?
+      4. Language and density: English or Chinese? Visual-first or more text?
+
+You:  For my advisor and labmates, 12 minutes, live. Only paper.pdf.
+      English, visual and concise. You pick the look.
+
+It:   (after reading the paper) Here is the plan: 15 slides.
+      Slide 4 places the paper's Figure 1 whole; the results page
+      becomes a native chart you can re-number...
+      Confirm the direction and I will build.
+```
+
+In Claude Code the questions show up as clickable options; in Codex they arrive as short follow-up text. Either way short answers are enough, "you decide" is always a valid answer, and "show me a few style directions first" gets you rendered style candidates to pick from.
+
+Other ways to open the conversation:
 
 ```text
 Use slide-maker to create a technical presentation from this repository.
@@ -147,18 +171,6 @@ and make a new English deck from paper.pdf.
 ```
 
 Put your material in the current project, or give a full path in the request. You can also start with just a topic: it will research the subject online first, then agree on a structure with you.
-
-### Step 3: Answer its follow-ups in short lines
-
-If something is missing it will ask, usually four things: which template or style to start from, the audience and duration, the source scope, and the language and text density. This is enough:
-
-```text
-For my advisor and labmates, 12 minutes, live presentation.
-Only paper.pdf.
-English, formal, visual and concise.
-```
-
-Not sure about the look? Reply "show me a few style directions first". In a hurry? Reply "you decide and make a first version".
 
 ### Optional: AI image generation
 
