@@ -3,15 +3,15 @@
 This branch contains **only** the slide-maker Agent Skill (`SKILL.md`, `agents/`,
 `references/`, `scripts/`, `requirements.txt`) so it can be installed with
 [`npx skills`](https://github.com/vercel-labs/skills) **without cloning the full
-project** — the template gallery, demo site, and example decks live on `main`.
+project**: the template gallery, demo site, and example decks live on `main`.
 
 ## Install
 
 ```bash
-npx skills add addsumtech/slides_maker#skill-dist -a claude-code -g -y
+npx skills add addsumtech/slides_maker#skill-dist
 ```
 
-Use `-a codex` for Codex; drop `-g` for a project-local install.
+It prompts for the agent and scope. Add `-g` (global), `-a claude-code`/`-a codex` (skip the agent prompt), and `-y` (non-interactive) for a no-prompts one-liner.
 
 Then install the runtime dependencies (details in the full README on `main`):
 

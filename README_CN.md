@@ -206,10 +206,10 @@ python3 scripts/install_skill.py --target both
 **想一行搞定？用 [`npx skills`](https://github.com/vercel-labs/skills) 只装技能本体**（免克隆，约 1.1 MB）：
 
 ```bash
-npx skills add addsumtech/slides_maker#skill-dist -a claude-code -g -y
+npx skills add addsumtech/slides_maker#skill-dist
 ```
 
-`#skill-dist` 是只含技能的轻量分支（不含画廊和站点），所以安装小而快。Codex 用 `-a codex`，去掉 `-g` 装到当前项目。仍需上面的运行依赖：LibreOffice、一个 SVG 栅格化器，以及 `python3 -m pip install -r requirements.txt`。
+它会先问装到哪个 agent、哪个范围。`#skill-dist` 是只含技能的轻量分支（不含画廊和站点），所以安装小而快。加 `-g` 装到全局（所有项目），加 `-a claude-code`（或 `-a codex`）跳过 agent 选择，加 `-y` 全程免确认。仍需上面的运行依赖：LibreOffice、一个 SVG 栅格化器，以及 `python3 -m pip install -r requirements.txt`。
 
 ### 第二步：敲 /slide-maker，逐题回答（最推荐）
 

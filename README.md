@@ -206,10 +206,10 @@ If you only use one tool, replace `both` with `codex` or `claude`. Not sure what
 **Prefer a one-liner? Install just the skill with [`npx skills`](https://github.com/vercel-labs/skills)** (no clone, about 1.1 MB):
 
 ```bash
-npx skills add addsumtech/slides_maker#skill-dist -a claude-code -g -y
+npx skills add addsumtech/slides_maker#skill-dist
 ```
 
-`#skill-dist` is a lightweight, skill-only branch (no gallery or website), so the install stays small and fast. Use `-a codex` for Codex, and drop `-g` for a project-local install. You still need the runtime dependencies above: LibreOffice, an SVG rasterizer, and `python3 -m pip install -r requirements.txt`.
+It prompts for the agent and scope. `#skill-dist` is a lightweight, skill-only branch (no gallery or website), so the install stays small and fast. Add `-g` to install globally (all projects), `-a claude-code` (or `-a codex`) to skip the agent prompt, and `-y` for a fully non-interactive run. You still need the runtime dependencies above: LibreOffice, an SVG rasterizer, and `python3 -m pip install -r requirements.txt`.
 
 ### Step 2: Invoke it and answer the interview (the recommended path)
 
