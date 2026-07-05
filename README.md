@@ -182,7 +182,7 @@ To be plain about it: it does not promise a perfect deck in one shot. It promise
 
 ### Step 1: Install
 
-You need **Python 3.9+**, **LibreOffice** (renders slide previews for the automatic layout checks), and **one SVG rasterizer** for icons (librsvg, cairosvg, or any Chrome-family browser).
+slide-maker relies on three system tools: **Python 3.9+**, **LibreOffice** (renders slide previews for the automatic layout checks), and **one SVG rasterizer** for icons (librsvg, cairosvg, or any Chrome-family browser). Install them for your OS:
 
 | OS | LibreOffice | Icon rasterizer |
 | --- | --- | --- |
@@ -190,7 +190,9 @@ You need **Python 3.9+**, **LibreOffice** (renders slide previews for the automa
 | Linux | `sudo apt install libreoffice` | `sudo apt install librsvg2-bin` |
 | Windows | `winget install TheDocumentFoundation.LibreOffice` | Chrome or Edge installed (used headless) |
 
-**Windows note:** slide-maker is plain cross-platform Python, so it runs on Windows too. We just test mostly on macOS and Linux, so Windows gets less mileage and you may hit the odd environment quirk. If you do, run `check_env.py` below and it will tell you what is missing; if that does not fix it, open an issue with the error output and we will help.
+(Windows works too; we just test it less, so if you hit an environment quirk, run `check_env.py` below to self-diagnose or open an issue with the error.)
+
+With those system tools in place, install slide-maker itself. The four lines below clone the repo, install its Python packages, and register it as a skill:
 
 ```bash
 git clone --depth 1 https://github.com/addsumtech/slides_maker.git

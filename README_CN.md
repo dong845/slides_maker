@@ -182,7 +182,7 @@ slide-maker 不是一个 prompt 包办一切，而是一组各有专职的 **age
 
 ### 第一步：安装
 
-需要 **Python 3.9+**、**LibreOffice**（渲染页面预览做自动版式检查），以及**任一 SVG 栅格化器**给图标用（librsvg、cairosvg 或任意 Chrome 系浏览器）。
+slide-maker 依赖三样系统工具：**Python 3.9+**、**LibreOffice**（渲染页面预览做自动版式检查），以及**任一 SVG 栅格化器**给图标用（librsvg、cairosvg 或任意 Chrome 系浏览器）。按你的系统装：
 
 | 系统 | LibreOffice | 图标栅格化 |
 | --- | --- | --- |
@@ -190,7 +190,9 @@ slide-maker 不是一个 prompt 包办一切，而是一组各有专职的 **age
 | Linux | `sudo apt install libreoffice` | `sudo apt install librsvg2-bin` |
 | Windows | `winget install TheDocumentFoundation.LibreOffice` | 装好 Chrome 或 Edge（无头调用） |
 
-**Windows 说明：** slide-maker 就是跨平台的 Python，Windows 上一样能用。只是我们主要在 macOS 和 Linux 上测试，Windows 跑得少，偶尔可能碰到个别环境问题。真遇到了，先跑下面的 `check_env.py`，它会告诉你缺什么；还搞不定就带上报错信息开个 issue，我们跟进。
+（Windows 一样能用，只是我们测得少；真碰到环境问题，先跑下面的 `check_env.py` 自查，搞不定就带报错开 issue。）
+
+这些系统依赖就位后，再把 slide-maker 本体装进来。下面这四行会克隆仓库、装好它的 Python 包、并注册成技能：
 
 ```bash
 git clone --depth 1 https://github.com/addsumtech/slides_maker.git
