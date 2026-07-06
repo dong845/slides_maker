@@ -101,6 +101,27 @@ with a generated look-alike or a placeholder that pretends to be the brand. A *c
 misstates a real thing) and reads as fake instantly. This complements the rule above: generated
 imagery is for *atmosphere/concept*, never for a real identity that should be shown as-is.
 
+### Logo / brand mark — its own hierarchy (a typographic stand-in is honest; a fake replica is not)
+A logo has one rung the other assets don't: a **typographic** stand-in is an honest, legitimate choice
+where a fabricated product render never is. Source it in order, stopping at the first you can get:
+
+1. the **real logo** the content-planner's web-search found (or the user's / a clearly-official asset) — always first;
+2. **a clean designed typographic WORDMARK / monogram** in the deck's own type — **the DEFAULT when the
+   real logo wasn't found**, legitimate and honest **only when clearly flagged as a non-official
+   designer's stand-in**; surface it at the **DESIGN checkpoint** for the user to confirm or override;
+3. **NEVER a fabricated fake of a real entity's official logo** — an invented mark passed off as the
+   real thing is a fidelity violation (it misstates a real thing) and reads as fake instantly.
+
+**Minimal wordmark recipe — keep it restrained:** set the entity's **name in the deck's DISPLAY face**,
+optionally with a **simple monogram** (its initial in a disc / square) or a thin rule / dot separator, in
+the **deck palette** — nothing more. A wordmark is type done well, not an illustration.
+
+**Fidelity guard:** designing a mark is fully appropriate for the user's **OWN** product or a **new /
+fictional** one with no official logo; for **another** real entity, the real logo stays real or the gap is
+flagged as an open question — you never invent its official mark. (This is the honest counterpart to
+"STOP and ask": a *product render / UI screenshot* of a real other entity has no typographic stand-in, so
+ask; a *logo* has a clearly-labelled wordmark as its sanctioned default.)
+
 **When the deck is ABOUT a single company / institution / product, put that entity's logo on every
 page — persistent brand chrome, not a one-off.** A pitch, a product/launch deck, a company or
 stakeholder readout, an institution's report — anything whose subject *is* one organisation/product —

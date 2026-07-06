@@ -59,6 +59,15 @@ sameness, no hero, dead layout, thoughtless motion, decorative icons — is your
 
 ## Method
 
+**This design intelligence is HOW you design — it runs on EVERY deck / each case, never opt-in per
+deck.** The design self-verify (a–o) and the `references/design-intelligence-addendum.md` gates
+(concept→viz reasoning, block audit, evenness / one-hero-per-slide, semantic colour where colour is
+used, rhythm, WOW) apply to every deck and **scale down gracefully** — a 4-slide deck still gets one
+hero per slide, no card-grid reflex, semantic colour, and one memorable moment; you just do less of it,
+you don't skip it. The **deck-level NUMERIC FLOORS** (≥4 protagonists · ≤2 consecutive card slides ·
+≥3 non-card forms · ≥1 WOW; addendum §7) are the only part gated to size — they apply to decks with
+**6+ content slides**. Treat all of this as the craft applied to this case, not an extra gate to pass.
+
 ### 1 — Set the deck's DESIGN LANGUAGE first (the atmosphere)
 Before any per-slide choice, decide ONE coherent look for the whole deck — this is what makes a deck
 feel art-directed rather than defaulted, and it's yours to set once and hold. Pick a **`preset`**
@@ -216,9 +225,25 @@ matrix in `references/animation.md`; here you own where builds fall (think SMART
   facts the generator gets wrong (scale/count/colour/arrangement) so the prompt states them and the
   result is verified — else draw it natively. See `references/image-generation.md`.
 - **Real brand / product / UI → plan the REAL asset** (logo / render / screenshot / brand colours+fonts
-  on native blocks), never a generic stand-in; if you lack it, flag it as an open question. A
-  **single-entity deck** (pitch, product, company/stakeholder readout) gets **persistent brand chrome**
-  (`deckkit.logo` in a fixed corner on every content slide); skip it for multi-org/neutral-academic decks.
+  on native blocks), never a generic stand-in; if you lack it, flag it as an open question — **except a
+  LOGO on a company/product/single-entity deck, which has a sanctioned default (a designed wordmark) per
+  the LOGO PRINCIPLE below**, not merely an open question.
+- **LOGO PRINCIPLE (a real design principle — general, any domain).** It fires for a **company /
+  product / single organisation / brand / institution** deck (pitch, product intro, launch, company or
+  stakeholder readout, an org's report) — and ALSO a research talk naming a tool / framework / model, a
+  teaching deck showing an app, a status deck naming a vendor. A **single-entity** deck (its subject IS
+  one org/product) EXPECTS a **logo as persistent brand chrome** (`deckkit.logo`, fixed corner, every
+  content slide). A multi-org deck (survey / landscape / review) or neutral-academic talk names entities
+  inline — no global logo, and **don't double** a logo a provided/registered template already carries.
+  - **FLOW:** (1) ALWAYS web-search for the entity's REAL logo (+ real brand colours/fonts) — this is
+    part of the content-planner's always-on web research; record *found* (with source) or *not-found*.
+    (2) **Found →** use the real asset. (3) **NOT found → default to DESIGNING a clean typographic
+    WORDMARK / simple monogram** in the deck's own type (default = yes, design it), surfaced at the
+    DESIGN checkpoint for the user to confirm or override. Wordmark recipe: `references/image-generation.md`.
+  - **FIDELITY GUARD (critical):** a designed wordmark is a **clearly-labelled designer's stand-in**,
+    NEVER a fabricated replica passed off as the entity's official logo. Never invent a fake official
+    logo. For the user's OWN / a new / fictional product with no official logo, designing a mark is fully
+    appropriate. Evidence / real logos of OTHER real entities stay real or are flagged as open questions.
 - **One art-direction for the whole deck** (palette, medium, mood, realism, motif, calm space for text)
   that matches the topic AND the preset's register — record it once so every plate reads as one family.
 - **Steer clear of the AI-slop tells** (`design-principles.md`): no full-screen rainbow/mesh washes, no
@@ -268,7 +293,7 @@ considered · keep-or-redesign*. If card/panel logic runs on **>2 consecutive sl
 ready** unless justified by content shape — this qualitative gate catches the visual sameness the family
 count misses, so both must pass.
 
-### Design self-verify (a–n)
+### Design self-verify (a–o)
 State the plan is **not ready** unless: **(a)** every slide has ONE named hero passing the squint test;
 **(b)** the Form-ledger diversity gate passes; **(c)** every non-obvious slide names the alternative its
 form beat; **(d)** the Design language is concrete — a *named* signature motif + a deliberately-chosen
@@ -290,7 +315,13 @@ not one even grey field; **(k) WOW is memorable** (§1.4) — each WOW/hero name
 *surrounding contrast* against its neighbours, else it's just a bigger slide; **(l) minimum-variation
 floors** (§7) met for 6+-slide decks; **(m) block-dependency audit** (§2) passes — no card/panel logic on
 >2 consecutive slides without a content reason; **(n) semantic-colour ledger** (§6) present — no accent
-hue without a bound meaning. Fix any failing check before the DESIGN checkpoint.
+hue without a bound meaning. Plus one more **content-triggered** check (fires ONLY when the deck's
+subject IS a company / product / single entity — an org / brand / institution, incl. a talk naming a
+tool/framework/model, per the LOGO PRINCIPLE): **(o) the deck carries a logo as persistent chrome** —
+the REAL one if the web search found it, else a **designed wordmark by default (flagged as a stand-in)**,
+surfaced at the DESIGN checkpoint for the user to confirm or override (a multi-org / neutral-academic
+deck, or one whose template already carries a logo, satisfies this by naming entities inline / not
+doubling). Fix any failing check before the DESIGN checkpoint.
 
 ### Design-critic checklist
 Confirm the deck answers the 10 checks the critic's design lens will apply (design bible):

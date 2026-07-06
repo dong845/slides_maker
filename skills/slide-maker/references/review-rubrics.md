@@ -241,10 +241,18 @@ Score each dimension; cite specific slides.
    assets count too:** on a slide about a real brand/product/UI, a generated look-alike, an
    invented logo, or a default-blue box standing in for the real asset (rather than the real
    logo/screenshot or an honest placeholder) is a fidelity blocker — use the real asset or ask the user.
-   **Persistent brand chrome:** a **single-entity** deck (pitch / product / company readout / institution
-   report) should carry the entity's real logo in a **fixed corner on every content slide** (consistent
-   position + size) — flag it missing, or a mark that jumps around. (Not for multi-org / neutral-academic
-   decks; don't double a template's own branding.)
+   **Persistent brand chrome (the authoritative logo check — design *and* fidelity):** a **single-entity**
+   deck (pitch / product / company readout / institution report — and equally a research / teaching / status
+   deck whose subject IS one named tool / app / vendor) should carry a logo in a **fixed corner on every
+   content slide** (consistent position + size). Two findings live here: **(design lens)** a single-entity
+   deck shipping with **no brand chrome at all** — neither the real logo **nor a designed wordmark
+   stand-in** — is flagged, as is a mark that **jumps corner / size**; and **(fidelity)** a **fabricated
+   fake of a real entity's official logo** (an invented mark passed off as the real one) is a **blocker**.
+   What *satisfies* the check: the **real logo** (from search), or — when it wasn't found — a **clean
+   designed typographic wordmark clearly flagged as a non-official stand-in** (the sanctioned default; do
+   **not** flag that as 'fake' — designing a mark is correct for the user's own / a new product). (Not for
+   multi-org / neutral-academic decks; don't double a template's own branding; see `image-generation.md`
+   "Logo / brand mark".)
    **Currency:** if the deck makes time-bound / falsifiable claims (a "latest / current", a count, a
    ranking, a dated event), confirm it carries an **as-of date** (as the planner requires) and that
    nothing dated has silently gone stale (last year's figure presented as this year's is a finding).

@@ -90,7 +90,7 @@ abstract/conclusion stresses most; if your one-sentence message would surprise t
 wrong — fix it before continuing.
 
 ### 2 — Research and fact-check the web (for any deck, not just no-source)
-Use the web for **two jobs**, and run it whether or not you have a source:
+Use the web for **three jobs**, and run it whether or not you have a source:
 - **(a) Fill the gaps the source doesn't cover** — the venue's norms, related work *since* the
   source was written, a missing writeup for a code repo, prose for bare figures. When there's no
   material at all, this also supplies the whole framing: draft an outline from your expertise,
@@ -108,6 +108,17 @@ Use the web for **two jobs**, and run it whether or not you have a source:
   have already happened as of today and write the correct tense; stable facts (definitions,
   historical events) → a source citation suffices. Re-run verification for time-bound rows on
   **every** build — never reuse cached values for them.
+- **(c) Find the single-entity's real brand assets (a research act, not a design one).** When the
+  deck's subject **is one organisation / product / brand / institution** — a pitch, product intro,
+  launch, company or stakeholder readout, an org's report, **and equally** a research talk naming a
+  tool / framework / model, a teaching deck showing an app, or a status deck naming a vendor —
+  **web-search for the entity's REAL logo plus its real brand colours / fonts** as part of research,
+  and record what you found: the **source URL** for a found asset, or an explicit **not-found**, in
+  the plan. If not found, **note it in Open questions** so the slide-design agent defaults to a
+  **designed wordmark** — a **NOTE for design, not a content blocker** (a missing logo never blocks
+  the plan). This stays a **content/research act — you find the asset**; *whether and where* a mark
+  is placed is the slide-design agent's call. (A **multi-organisation** deck — survey / landscape /
+  review — or a **neutral-academic** talk needs no such global mark; name entities inline.)
 
 For a **conference talk**, research the named venue (talk length, audience composition, what a
 strong talk there argues and covers) and fold the *content* norms into the arc. *(Venue design
@@ -235,7 +246,9 @@ extrapolation, not a fabricated result.
 ## Open questions
 Anything you couldn't verify or need the user to confirm — including any **real brand / product / UI
 asset** *any* slide needs but you don't have (a tool / app / logo a research, teaching, or status
-deck shows, as well as a pitch / stakeholder slide), and any **venue design norm** (slide ratio,
+deck shows, as well as a pitch / stakeholder slide) — and for a **single-entity deck whose real logo
+you couldn't find**, record it here as a note that the slide-design agent should **design a wordmark
+stand-in** (the default, not a blocker) — and any **venue design norm** (slide ratio,
 official template) the slide-design agent will need. List them for the user to supply rather than
 guessing.
 

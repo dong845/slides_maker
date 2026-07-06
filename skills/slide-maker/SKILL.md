@@ -525,20 +525,27 @@ references it designs against (`form-selection.md`, `design-gallery.md`, `script
 returns a **Design plan**: the deck's **Design language** (a *named* signature motif + a
 deliberately-chosen palette/type + the polish moves), the **deck rhythm**, a **per-slide design
 table** (visual protagonist · form + the runner-up it beat · layout · icons · motion · image?), the
-**Form ledger + diversity gate**, the **design self-verify (a–i)**, the **10-item design-critic
+**Form ledger + diversity gate**, the **design self-verify (a–o)**, the **10-item design-critic
 checklist** (which the Step-5 critic's design lens then applies), and the **image opt-in list**. The
 art director is *one mind* over the whole deck — only it sees every slide at once, so deck rhythm and
 where the appear-builds fall are its call, not the builder's.
 
 **The design plan is the cheapest place to change visual direction**, so end the step by showing it
-and getting the user's OK before the canvas is set up or anything is built. **Precondition — the
-design gate:** the plan is **not ready** unless it has a concrete **Design language** (a *named*
+and getting the user's OK before the canvas is set up or anything is built. **This design intelligence
+runs on EVERY deck — it's how the art director designs, never opt-in per deck — and scales down
+gracefully to small decks (a 4-slide deck still earns one hero per slide, no card-grid reflex, semantic
+colour, and one memorable moment); only the deck-level numeric floors are size-gated (6+ content
+slides).** **Precondition — the design gate:** the plan is **not ready** unless it has a concrete **Design language** (a *named*
 signature motif + a deliberately-chosen palette/type, not a defaulted light/minimal/blue), a **Form
 ledger** whose diversity gate passes (no one format-family on >~40–50% of content slides — the
 card-overuse guard), the addendum's **deck-level design gates** — a **rhythm map**, a **semantic-colour
 ledger**, a passing **block-dependency audit** (no >2 consecutive card slides), and the **minimum
-deck-level variation** (`references/design-intelligence-addendum.md`) — and the **THREE DESIGN MUSTS**
-addressed (`slide-design.md` self-verify e–g) —
+deck-level variation** (`references/design-intelligence-addendum.md`) — plus, for a **company / product /
+single-entity** deck (its subject IS one org / product / brand / institution, or a talk naming a
+tool/framework/model), a **logo plan**: the real logo if the web search found it, else a
+**designed-wordmark-by-default** the user confirms at the DESIGN checkpoint (skip only for
+multi-org / neutral-academic decks, or where a template already carries the mark) — and the **THREE
+DESIGN MUSTS** addressed (`slide-design.md` self-verify e–g) —
 **(1) appear-builds** on the structural beats (a motion manifest: build/static *with a reason* per
 slide), **(2) a style-matched SVG icon family** on an icon-fit, category-rich deck, **(3) diverse
 formats** (not a card grid repeated) — each *applied where it helps or justified where not* (a must
@@ -556,7 +563,9 @@ SMART about where — plates only for the few slides that genuinely earn one, NE
 when the user has opted into image generation.** The user then approves which (if any) are
 generated. Fold in the user's design edits, then set up the canvas (Step 3).
 > **🔴 CHECKPOINT — DESIGN:** show the Design language + Form ledger + the 3 design musts + the
-> image opt-in list, and get the user's OK before building.
+> image opt-in list + (for a company/product/single-entity deck) the **logo plan** — the real
+> logo if the search found it, else a **designed wordmark by default** for the user to confirm or
+> override — and get the user's OK before building.
 
 ## Step 3 — Set up the canvas
 **First, decide where the deck lands.** Deliver each deck as one self-contained

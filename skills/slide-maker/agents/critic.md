@@ -563,7 +563,10 @@ Do not just skim for the first few obvious issues. Run these passes:
      that never jumps). Flag a single-entity deck **missing** the persistent mark, or a logo that **jumps
      corner/size** across slides. *(Not for a multi-organisation deck — survey / landscape / review — or a
      neutral-academic talk, where house branding is noise; and don't double a logo a template already
-     carries. The mark must be the **real** one or an honest placeholder, never faked.)* (image-generation.md.)
+     carries. The mark must be the **real** one, a **designed wordmark clearly flagged as a non-official
+     stand-in** (the honest default when no real logo was found — don't flag *that* as fake), or an honest
+     placeholder, never a fabricated fake.)* Authoritative check: `review-rubrics.md` item 10 "Persistent
+     brand chrome" (design lens = missing chrome, incl. no wordmark; fidelity = a fabricated fake). (image-generation.md.)
    - **Flat opaque blocks — or a flat single-colour CANVAS — on a rich/image background (a "pasted-on" /
      half-finished tell):** when content sits on a textured / photographic / 3D / generated-plate
      background, **fully opaque** cards/panels read as stuck on top rather than part of the scene. Expect
