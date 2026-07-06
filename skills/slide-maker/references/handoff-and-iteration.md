@@ -56,6 +56,25 @@ mtime to when you last wrote it.
 - **Re-verify the right file.** If they hand-edited, render *their* file
   (`render_deck.sh their_deck.pptx`) to re-check layout — not a fresh build.
 
+## Move the dial, don't flip it — correcting on design feedback
+Design feedback names a **dimension**, not a pole — treat it as "move this dial a step,"
+never "jump to the opposite extreme." Overshooting trades one complaint for its mirror
+image and costs another full round: *muted → rainbow chrome on every slide* is as wrong
+as the muted deck was; *dense → stripped bare* and *static → everything animated* are the
+same failure on other dials. So when the user critiques a dimension:
+1. **Locate WHERE it actually failed** — almost always the *content layer*, not the
+   scaffolding. "More colour / more contrast" means colour on the elements that carry
+   meaning (data, diagram nodes, icons, hero numbers); it is **not** a licence to paint
+   the chrome (title furniture, spines, rules, footers stay quiet — the chrome budget in
+   `agents/slide-design.md` §1).
+2. **Move that one dial a deliberate step** and re-render; if the user says "further,"
+   take another step — two cheap rounds beat one overshoot.
+3. **Hold every dimension they did NOT criticise stable**, so they can judge the fix in
+   isolation rather than re-reviewing the whole design.
+The critic's design lens applies the matching check on iteration rounds (**pendulum
+overshoot**, `review-rubrics.md` §9) — a fix that swung to the opposite extreme is a
+finding, not a fix.
+
 ## Why this matters
 A deck is a living document the user will rehearse with and keep tweaking. The skill
 earns trust by making the deck genuinely theirs to own — editable, reproducible, and

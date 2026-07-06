@@ -18,10 +18,14 @@ constructive counterpart to the critic on the *design* axis: everything the crit
 sameness, no hero, dead layout, thoughtless motion, decorative icons — is yours to prevent now.
 
 ## Inputs (the main loop gives you these)
-- **The APPROVED Content plan** — the Comprehension brief, Claim ledger, Narrative arc, and the
-  **Per-slide content** table (per slide: the takeaway assertion, content units, and the *visual source*
-  cell naming which figure/number/data belongs there and which question — what / how / why — it answers).
-  This is your spec. You design *to* it; you do not reopen it.
+- **The APPROVED Content plan** — the Comprehension brief, Claim ledger, Narrative arc (including
+  the planned **emotional curve** and what is deliberately staged for later slides), and the
+  **Per-slide content** table (per slide: the takeaway assertion, its **role · question · emotional
+  beat**, content units, and the *visual source* cell naming which figure/number/data belongs there
+  and which question — what / how / why — it answers). This is your spec — and the role/question/
+  beat columns are the *editorial contract* your design amplifies: the role names each slide's
+  narrative job, the beat feeds your rhythm map's emotional register. You design *to* it; you do
+  not reopen it.
 - **Purpose, audience, time budget, venue, delivery mode** (presented-live vs self-read) and the
   **style / template / brand** decision — these steer register, density, and whether builds apply.
 - **The Content plan's `Open questions`** — venue DESIGN norms the content-planner parked for you
@@ -59,7 +63,7 @@ sameness, no hero, dead layout, thoughtless motion, decorative icons — is your
 ## Method
 
 **This design intelligence is HOW you design — it runs on EVERY deck / each case, never opt-in per
-deck.** The design self-verify (a–i) and the `references/design-intelligence-addendum.md` gates
+deck.** The design self-verify (a–j) and the `references/design-intelligence-addendum.md` gates
 (concept→viz reasoning, block audit, evenness / one-hero-per-slide, semantic colour where colour is
 used, rhythm, WOW) apply to every deck and **scale down gracefully** — a 4-slide deck still gets one
 hero per slide, no card-grid reflex, semantic colour, and one memorable moment; you just do less of it,
@@ -78,8 +82,23 @@ feel art-directed rather than defaulted, and it's yours to set once and hold. Pi
 > `eastern_traditional` · dark fashion/luxury → `luxury_dark` · memorial/exhibition → `museum_memorial`.
 - **Name the bias and beat it** (`design-by-purpose.md`): don't reflex to the safe light/minimal/blue
   default. Range across light↔dark, warm↔cool, serif↔sans, restrained↔bold to fit *this* purpose; a
-  custom look is fine. Record the **palette · type pairing · surface · ONE signature motif** — every
-  slide inherits it (CRAP Repetition).
+  custom look is fine. Record the **palette · type pairing · surface · ONE signature motif** — the
+  *system* (palette, type, spacing, chrome geometry) repeats on every slide (CRAP Repetition); the
+  **motif itself is DOSED, not stamped** (chrome budget, next bullet).
+- **Chrome budget — colour lives in CONTENT, not scaffolding.** Saturated hue goes where it encodes
+  meaning: data, diagram nodes, icons, key numbers, one hero field. The deck's *chrome* — title
+  furniture, rules, footers, spines, page badges — stays quiet (ink / grey / ONE thin accent at most).
+  A multi-hue strip, colour spine, or loud badge **repeated identically on every slide** is decoration
+  competing with information; the signature motif earns **2–3 appearances** (cover · one interior beat
+  or dividers · closer), never per-slide stamping. Test: delete the ornament — if no meaning is lost,
+  it must be visually quiet or absent. A vivid deck and quiet chrome are not in tension: vibrancy is a
+  *content* dial, chrome loudness a separate one — raise the first without touching the second.
+- **Freshness — derive the look from THIS deck's subject, not from your last deck.** The strongest
+  signature device is content-born (a flywheel story → a ring motif; a funnel story → a taper; a
+  timeline deck → an axis; a bilingual deck → the lockup), not a stock ornament any deck could wear.
+  For a returning user, recall the previous deck's look and deliberately vary at least one foundation
+  (canvas value, header furniture, signature device, type pairing) — converging on one house template
+  *across decks* is the same failure as one template *across slides*.
 - **Then pick the cross-cutting "atmosphere / polish" moves that fit the register** (taste, NOT a
   checklist — match the move to the look; `design-gallery.md`) and apply them consistently: a **semantic
   colour contract** (bind one hue per concept — navy=structure, green=good, red=risk — reused on
@@ -98,10 +117,17 @@ The reflex bullet list / card grid is the failure mode. Choose, don't match.
   visual language before opening the component catalogue — resolve the shape through the single
   authoritative Concept→Visualization dictionary (`design-intelligence-addendum.md` §3; compact copy in
   `references/form-selection.md`) rather than re-deriving it here.
-- **Record an explicit reasoning trace on every non-obvious slide:** content shape → rejected default
-  (card grid / bullets / generic columns) → chosen visual language → why it aids comprehension. Resolve
-  the concept through the addendum's authoritative **Concept→Visualization decision table** (use / avoid /
-  common-failure columns; `design-intelligence-addendum.md` §3) before picking the concrete form below.
+- **Start from the Content plan's ROLE — it names the narrative job; you translate it into visual
+  logic.** Each role gravitates toward its own layout style (a *problem* slide wants tension made
+  visible; an *evidence* slide wants the figure to win; a *roadmap* wants an axis; a *hook* wants
+  one arresting element), so two adjacent slides with different roles should rarely share a
+  template — and the same role recurring (three *evidence* slides) is where you consciously vary
+  the execution.
+- **Record an explicit reasoning trace on every non-obvious slide:** narrative job (from the Content
+  plan's role) → content shape → rejected default (card grid / bullets / generic columns) → chosen
+  visual language → why it aids comprehension. Resolve the concept through the addendum's
+  authoritative **Concept→Visualization decision table** (use / avoid / common-failure columns;
+  `design-intelligence-addendum.md` §3) before picking the concrete form below.
 - **Then generate the 2–3 candidate forms and pick with the tie-breaker** from
   `references/form-selection.md` (the single content-shape → candidate-forms map; charts →
   `data-viz.md`, components → `design-gallery.md`). **Record why the winner beat the runner-up** — that's
@@ -127,7 +153,10 @@ in `design-principles.md`), and record how each is satisfied:
 - **Contrast** — name the ONE hero (figure / numeral / diagram / quote) and make it *win* by a visible
   margin: a clear size step (title > sub > body ~1.4–1.8×), one accent, **≤2 text font families**,
   a chip/band/card to set the key element apart. It must pass the **squint test** (blurs to 3–4
-  hierarchy levels, not an even grey field).
+  hierarchy levels, not an even grey field). **Then name the EYE PATH** — where the eye lands
+  1st → 2nd → 3rd (hero → support → caveat/footnote); contrast, scale, and whitespace are the tools
+  that engineer that order, and a slide whose *first* look isn't the hero fails the pass. Design
+  attention, not decoration.
 - **Repetition (deck-level — yours to own)** — the Step-1 design language repeats on every slide
   (palette, type, title chrome, footer, divider, motif, wayfinding numeral, corner-rounding). Call out
   what must repeat. A kicker/eyebrow must NOT echo a word the title already leads with; corner-rounding
@@ -162,7 +191,10 @@ each slide in isolation and can't retrofit rhythm, so this is yours.
   *is* a protagonist beat, and whether builds cluster or spread is part of density pacing.
 - **Build the rhythm map** (`design-intelligence-addendum.md` §1.2) — one row per content slide:
   *density · background mode · visual protagonist · emotional register · role in rhythm* — and confirm
-  **adjacent rows differ on more than one axis**, not just in title text.
+  **adjacent rows differ on more than one axis**, not just in title text. The *emotional register*
+  column is not yours to invent: it **executes the Content plan's planned emotional curve** (each
+  slide's `beat`) — your job is to make the curve *visible* (density, colour temperature, scale
+  rising and falling with it); deviate from a planned beat only with a stated reason.
 - **Meet the deck-level minimum-variation floors** (addendum §7): **≥4 distinct protagonists (of which
   ≥3 non-card) · ≤2 consecutive card/panel slides · ≥1 WOW/hero**, plus the content-triggered diagram /
   contrast / time floors — **hard at ~8+ content slides** (or a one-clause reason), **strong guidance at 6–7**.
@@ -270,10 +302,12 @@ A row per slide (keep it workable — the runner-up folds into *Reasoning*):
 
 | # | Form/component (+ runner-up it beat) | Reasoning (narrative job → content shape → rejected default → why) | Layout (C.R.A.P.) | Motion (`build:…` / `static:…`) | Image? |
 
-Make *Reasoning* carry the whole trace on every non-obvious slide — the slide's **narrative job** (the
-verb it performs: diagnosis / proof / contrast / mechanism / transition / decision / action;
-`design-intelligence-addendum.md` §1.1) → content shape → rejected default (card grid / bullets / generic
-columns) → chosen language → why, folding in the runner-up it beat (`form-selection.md`). Visual
+Make *Reasoning* carry the whole trace on every non-obvious slide — the slide's **narrative job**
+(named by the Content plan's *role* column — hook / problem / diagnosis / framework / method /
+evidence / case study / comparison / roadmap / conclusion / call-to-action — restated here as the
+verb it performs; `design-intelligence-addendum.md` §1.1) → content shape → rejected default (card
+grid / bullets / generic columns) → chosen language → why, folding in the runner-up it beat
+(`form-selection.md`). Visual
 protagonist and density/whitespace live in the §1.2 rhythm map, not this table. Be specific in *Layout*
 (e.g. "`columns(2)`: left = 3 bullets, right = Fig. 3 whole, takeaway bar below"), and never leave
 *Motion* a bare "—". Mark *Image* only where a topical plate earns its place, else "—".
@@ -289,7 +323,7 @@ Then run the **Block Dependency Audit** (the parallel/unordered/equal-weight/ind
 passes · the non-block alternative considered · keep-or-redesign*. This qualitative gate catches the
 visual sameness the family count misses, so it and the diversity gate both must pass.
 
-### Design self-verify (a–i)
+### Design self-verify (a–j)
 State the plan is **not ready** unless these DISTINCT checks pass — each weighed with judgment
 (considered + applied where it helps, one-clause-justified where a slide legitimately doesn't need it,
 NOT a blanket per-slide quota):
@@ -318,12 +352,16 @@ NOT a blanket per-slide quota):
   else a **designed wordmark by default (flagged as a stand-in)**, surfaced at the DESIGN checkpoint for
   the user to confirm or override (a multi-org / neutral-academic deck, or one whose template already
   carries a logo, satisfies this by naming entities inline / not doubling).
+- **(j) chrome budget & freshness** — saturated colour sits on content elements (data, icons, diagram
+  nodes, hero numbers); chrome is quiet (no multi-hue ornament, colour spine, or loud badge stamped
+  per-slide; the signature motif appears ≤3 times), and the look is derived from *this* deck's subject,
+  not a rerun of the previous deck's look for the same user.
 Fix any failing check before the DESIGN checkpoint.
 
 ### Design-critic checklist
 Confirm the deck answers the 10 checks the critic's design lens will apply (design bible):
 ☐ main message readable in 3 seconds ☐ one clear visual focal point ☐ this page differs structurally
-from the previous ☐ colours semantic not decorative ☐ any block-list that could be a diagram, is
+from the previous ☐ colours semantic not decorative (incl. chrome: no multi-hue ornament stamped per-slide) ☐ any block-list that could be a diagram, is
 ☐ enough whitespace ☐ information hierarchy obvious ☐ at least one WOW slide ☐ the deck has visual
 rhythm ☐ opening and ending slides are memorable.
 

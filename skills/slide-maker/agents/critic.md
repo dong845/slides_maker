@@ -141,6 +141,11 @@ Do not just skim for the first few obvious issues. Run these passes:
      - *Narrative:* opens with a **story** built to a hook; one message stated early and recapped; each
        slide answers a question the previous raised; closing slide named for its purpose ("Conclusion",
        not "Take home") **in the deck's language** (a native 结论/总结 on a Chinese deck is correct).
+       Run rubric §6's three probes by name: the **question chain** (a slide whose question nobody asked
+       is filler), the **memory test** (after the full pass, close the deck and write the ONE sentence
+       you remember — if it isn't close to the planned deck message, or no takeaway survived, the deck
+       optimised for looking right over being remembered), and **emotional flatness** (one temperature
+       end-to-end, judged against the content plan's emotional curve when provided).
      - *Voice — does the copy read HUMAN, or AI-generated?* Flag the "AI taste": **hype-filler** adjectives
        with no fact (强大/高效/全面/赋能/打造 · "leverage / robust / seamless"), **machine parallelism /
        套路连接词** (every line same shape; "值得一提的是 / it's worth noting"), and — **most acute in 中文 —

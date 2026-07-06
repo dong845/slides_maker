@@ -83,7 +83,18 @@ Score each dimension; cite specific slides.
 5. **Signaling.** Is the eye guided to what matters (arrow, box, color, bold), or
    is everything the same weight?
 6. **Narrative flow.** Do the slides form an arc (problem → idea → method →
-   evidence → so-what)? Are there gaps or non-sequiturs between slides?
+   evidence → so-what)? Are there gaps or non-sequiturs between slides? Three sharper probes:
+   **(question chain)** every slide should answer a nameable question — ideally one the *previous*
+   slide raised (question → answer → evidence, per the content plan's role · question · beat
+   column when provided); a slide whose question nobody asked, or whose title is a bare topic
+   answering nothing, is filler — cite it. **(memory test)** After the full pass, close the deck
+   and write the ONE sentence you remember plus the deck's message as you understood it; if it
+   isn't close to the planned deck message, or no slide takeaway survived, the deck optimised for
+   looking right over being remembered — a real finding, citing the forgettable beats (the goal is
+   a presentation people *remember*, not merely beautiful slides). **(emotional flatness)** a deck
+   holding one emotional temperature end-to-end — check against the content plan's emotional curve
+   when provided — reads as a document, not a talk; pair this with the design lens's rhythm checks
+   (the rhythm map's emotional-register column is where the curve should be visible).
 7. **Visual quality.** Contrast (text vs. background — aim for ≥4.5:1, so light-grey
    text on white or low-contrast figure labels are flags), consistency (fonts, colors,
    alignment), whitespace (not crammed, not awkwardly empty), no overflow/clipping.
@@ -199,7 +210,8 @@ Score each dimension; cite specific slides.
    pass the design/layout critic runs over the whole deck; kept WORD-FOR-CONCEPT identical to the
    checklist the planner designs to in `agents/slide-design.md` so the art director plans against the
    exact checks applied here):* ☐ main message readable in 3 seconds ☐ one clear visual focal point
-   ☐ this page differs structurally from the previous ☐ colours semantic not decorative ☐ any
+   ☐ this page differs structurally from the previous ☐ colours semantic not decorative (incl.
+   chrome: no multi-hue ornament stamped per-slide) ☐ any
    block-list that could be a diagram, is ☐ enough whitespace ☐ information hierarchy obvious ☐ at
    least one WOW slide ☐ the deck has visual rhythm ☐ opening and ending slides are memorable.
    **Anti-template deck-level checks — the critic applying the addendum's Reference-vs-Generated Gap
@@ -210,6 +222,14 @@ Score each dimension; cite specific slides.
    **block-grid overuse** — the deck's main visual language is card / panel blocks, or **more than two
    consecutive slides** run block/card/panel logic (stricter than the ~40–50% one-format count above,
    which a "dashboard + metric-matrix + action-cards" run passes while all three read as the same grid);
+   **loud / stamped chrome** — decorative furniture (a colour spine, a multi-hue strip or rainbow rule,
+   a heavy title badge) repeated identically on every slide and competing with content for attention:
+   the chrome budget (`agents/slide-design.md` §1) puts saturated colour on content elements and holds
+   the signature motif to ~2–3 appearances, so palette-as-ornament stamped per-slide is a finding even
+   when each instance is individually tidy; **pendulum overshoot** *(iteration rounds only)* — a fix
+   for named feedback that swung to the opposite extreme (muted → rainbow chrome, dense → bare, static
+   → everything animated) instead of moving the criticised dial one deliberate step in the content
+   layer (`references/handoff-and-iteration.md` "Move the dial");
    **evenness** — a slide where every element shares one visual weight with no clear first-read **fails
    the squint test**, because nothing was chosen to win ("balanced" is not "even"); **missing
    semantic-colour ledger** — one accent hue used for everything, or colour that is decorative rather

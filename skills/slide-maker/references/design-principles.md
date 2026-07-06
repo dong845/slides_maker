@@ -229,6 +229,12 @@ design a slide and when you critique one. Each maps onto rules this skill alread
   deck and makes a long one feel unified rather than templated-at-random — it is largely a **deck-level**
   (planner) responsibility, since only a whole-deck view can keep the system consistent. (See
   "Deck-level rhythm" — repetition of the *system*, deliberate variation of the *protagonist*.)
+  **What repeats is the QUIET system, never the loudest ornament**: unity comes from palette, type,
+  spacing, and chrome *geometry* — a signature motif or decorative device stamped identically on every
+  page stops branding and starts shouting. Dose the motif (cover · dividers · closer, ~2–3 appearances)
+  and keep per-slide chrome (title furniture, rules, footers) in ink/grey with at most one thin accent;
+  saturated colour belongs on the elements that carry meaning — data, diagram nodes, icons, the hero
+  number — not on the scaffolding around them.
 - **Alignment — every element sits on a shared grid, intentionally; nothing is placed by eye.** A clear
   alignment makes a slide read as organized; a single off-grid element reads as messy. Derive positions
   from `columns`/`rows`/`vstack`/`content_band` so edges line up — never hand-pick a coordinate. (See
@@ -518,7 +524,9 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
 - **Avoid the AI-slop tells (VISUAL).** A handful of choices instantly read as machine-generated filler — name
   and avoid them: full-screen rainbow / mesh / purple-to-blue gradients; emoji in titles or as bullet
   markers; ✅/🚀/🔥 decoration; the rounded-card-with-a-left-border-accent everywhere; three-near-identical
-  "feature cards"; over-exposed default fonts used without intent; and **fabricated specifics** (made-up
+  "feature cards"; **a multi-colour decorative strip / spine / rainbow rule stamped on every slide**
+  (palette-as-ornament — the palette shows through the content, not through a swatch bar);
+  over-exposed default fonts used without intent; and **fabricated specifics** (made-up
   stats, fake quotes, invented logos). *(An invented **fake of a real entity's official logo** is the tell; a clearly-flagged designed **wordmark** stand-in — used only when no real logo exists or could be found — is sanctioned, see `review-rubrics.md` / `image-generation.md` "Logo / brand mark".)* Meta-heuristic: **when you feel the urge to *add* something to
   make a plain slide "look nicer," that urge is usually the slop signal — subtract instead** (more
   whitespace, one stronger element) and fix the layout, don't decorate it.

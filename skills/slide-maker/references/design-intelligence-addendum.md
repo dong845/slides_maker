@@ -69,6 +69,15 @@ Rejected default: card grid / bullet list / generic columns, because …
 The *narrative job* is the verb the slide performs in the argument; the *visual logic* is the structure
 that performs it; the *rejected default* forces you to name — and beat — the reflex form.
 
+**The job is assigned upstream, not invented here.** The Content plan's per-slide **role · question ·
+beat** column (role vocabulary: hook / problem / diagnosis / framework / method / evidence / case study /
+comparison / roadmap / conclusion / call-to-action) already names each slide's job — the art director
+*translates* the role into visual logic rather than re-deriving it at design time. Each role gravitates
+to its own layout style, so adjacent slides with different roles should rarely share a template, and the
+same role recurring is exactly where execution must consciously vary. If a slide arrives with no
+nameable role or question, that is a **content** gap — raise it to the content-planner, don't paper over
+it with layout.
+
 ### 1.2 Rhythm Design — a slide-by-slide rhythm map
 
 The failure mode: every slide passes on its own, but the deck feels **evenly paced** end to end — same
@@ -91,6 +100,12 @@ Required table (one row per content slide):
 The example rows are cross-domain scaffolding, not a prescription — a teaching deck's registers might run
 *curiosity → tension → aha → consolidation*; a status deck's might run *steady → concern → plan →
 commitment*. What matters is that **adjacent rows differ** on more than one axis.
+
+The *Emotional register* column is **executed, not invented**: the Content plan's narrative arc carries a
+planned **emotional curve** (each slide tagged with its beat), and this map's job is to make that curve
+*visible* — density, colour temperature, and scale rising and falling with it. A flat emotional
+temperature end-to-end is precisely the failure this table exists to catch; deviating from a planned beat
+needs a stated reason, and a missing curve is a content-plan gap to raise upstream.
 
 ### 1.3 Space Intelligence — whitespace is active; subtract, don't add
 

@@ -414,9 +414,10 @@ decision, venue if any), the source material (or "none"), and the content refere
 `design-principles.md`, `design-by-purpose.md`, `form-selection.md`, `schematic-diagrams.md`,
 `animation.md`, `image-generation.md` — belong to the slide-design agent in Step 2, not here.)*
 It returns a **Content plan** — message only, no design: a comprehension brief + a claim ledger
-+ the authors'-emphasis check + the narrative arc + a per-slide CONTENT spec (takeaway · content
-units · visual source: which figure/number/data + which question — what/how/why), plus flagged
-forward-looking content and open questions. You then take that plan into the **Step-1 CONTENT
++ the authors'-emphasis check + the narrative arc (incl. the planned **emotional curve** + what's
+deliberately staged for later slides) + a per-slide CONTENT spec (takeaway that passes the
+memory test · **role · question · beat** · content units · visual source: which figure/number/data
++ which question — what/how/why), plus flagged forward-looking content and open questions. You then take that plan into the **Step-1 CONTENT
 checkpoint** (show it, get the user's OK on the story/message — the pace/slide-count check happens
 HERE); only *after* content is approved does the slide-design agent design the look (Step 2). The
 planner is *one mind* — it may fan out *reading* across multiple documents, but it synthesises the
@@ -515,8 +516,9 @@ edits to the story, then move to design (Step 2).
 With the **Content plan approved**, dispatch `agents/slide-design.md` — the deck's **art director**
 — to design the look on top of the locked message. Dispatch it through an available multi-agent/
 subagent tool when the host exposes one, otherwise run the same brief inline. Give it the **approved
-Content plan** (comprehension brief, claim ledger, narrative arc, and the per-slide CONTENT table
-with each slide's *visual source* cell), the interview answers that steer register
+Content plan** (comprehension brief, claim ledger, narrative arc with its emotional curve, and the
+per-slide CONTENT table with each slide's *role · question · beat* and *visual source* cells), the
+interview answers that steer register
 (purpose/audience/time, delivery mode, style, template/brand decision, venue), and the craft
 references it designs against (`form-selection.md`, `design-gallery.md`, `scripts/presets.py`,
 `design-by-purpose.md`, `design-principles.md`, `design-intelligence-addendum.md`, `semantic-color-contract.md`, `data-viz.md`,

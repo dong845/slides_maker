@@ -147,17 +147,43 @@ Then:
   expertise — what to assume, what to unpack, which terms to gloss (a specialist room vs. a broad
   one differ sharply). State that calibration in the Narrative arc section.
 - **Write each slide's takeaway first** — the assertion the slide proves. Content is the support,
-  not the message.
+  not the message. **Apply the memory test:** if the audience remembers ONE sentence from this
+  slide tomorrow, it should be this one — a technically-correct but forgettable takeaway ("we
+  changed the architecture") fails where a rememberable assertion ("only the warp needs to be 3D")
+  passes. The deck-level one-sentence message is held to the same bar: it's what the room should
+  repeat to a colleague the next day.
+- **Assign each slide a ROLE, and give it a QUESTION.** The role names the job the slide performs
+  in the argument — hook · problem · diagnosis · framework/idea · method · evidence · case study ·
+  comparison · roadmap · conclusion · call-to-action (a *vocabulary*, not a straitjacket: a
+  lecture, a defense, and a status deck use different mixes, and covers/dividers are structural,
+  not argument roles). The question is what the slide answers — ideally one the *previous* slide
+  just raised, so the audience is pulled forward. The structure of every slide is **question →
+  answer → evidence**: the takeaway IS the answer, the content units are the evidence — never
+  topic → stuff. A slide whose role you can't name, or whose question nobody asked, is filler:
+  cut it or merge it.
+- **Plan the EMOTIONAL CURVE, and stage the reveal.** A deck that holds one emotional temperature
+  end-to-end reads as a document, not a talk. Sketch the curve across the arc in purpose-relative
+  beats — a pitch might run *surprise → tension → clarity → confidence → inspiration*; a defense
+  *curiosity → rigor → confidence*; a status update *steady → concern → plan → commitment* — and
+  tag each slide's beat (the slide-design agent's rhythm map executes this curve visually; it must
+  not have to invent it). And **stage information deliberately** across slides — problem → cause →
+  solution → evidence → conclusion — rather than front-loading: for each content unit ask *"does
+  this land harder if delayed one beat?"* Suspense is a content decision; within-slide appear-builds
+  are the design agent's echo of it.
 - **Build a story, not a document.** Open with a hook / why-it-matters (don't start mid-method);
-  state the message early and recap it; make **each slide answer a question the previous slide
-  raised**, so the audience is pulled forward. Name the closing slide for its purpose
-  ("Conclusion" for a talk, "Next steps" for a status update) — in the deck's language (结论/总结 on
-  a Chinese deck), not necessarily the English word.
+  state the message early and recap it — the question chain (above) is what pulls the audience
+  forward. Name the closing slide for its purpose ("Conclusion" for a talk, "Next steps" for a
+  status update) — in the deck's language (结论/总结 on a Chinese deck), not necessarily the English word.
 
 ### 4 — Specify each slide's CONTENT (message-ready)
 For every slide, decide and record **only what it says** — never how it looks. The slide-design
 agent decides form, layout, icons, and motion downstream. For each slide record:
-- **Takeaway** — the one assertion the slide proves (a full sentence, not a topic label).
+- **Takeaway** — the one assertion the slide proves (a full sentence, not a topic label — and it
+  passes the §3 memory test).
+- **Role · question · beat** — the slide's role in the argument, the question it answers
+  (question → answer → evidence), and its emotional beat on the §3 curve. One word / short phrase
+  each — this is the editorial contract the slide-design agent designs *to* (role → visual logic,
+  beat → rhythm map), so don't leave it implicit.
 - **Content units** — the terse points / the actual words, faithful to the source. Few words per
   point; the slide is a visual aid for a speaker, not a script (put the spoken script in speaker
   notes). **Write the copy like a sharp human in that field, not a content generator — kill the
@@ -221,6 +247,8 @@ fix the message before continuing.
 
 ## Narrative arc
 - The narrative **arc in one line** (which arc shape you chose and why — inform / decide / inspire).
+- The **emotional curve in one line** (purpose-relative beats mapped across the arc, per §3) and
+  **what is deliberately staged** — the information held back so it lands on a later slide.
 - **Slide count vs. time budget**, with the **pace check** (one idea per slide; a longer deck means
   more slides, not denser ones).
 - The **audience calibration** and the **delivery mode** (presented-live vs. self-read) that set
@@ -229,14 +257,16 @@ fix the message before continuing.
 ## Per-slide content
 One row per slide — **content only**:
 
-| # | Takeaway (an assertion sentence) | Content units (terse) | Visual source (which figure / number / data belongs here, AND which question it answers: what / how / why) | notes |
+| # | Takeaway (an assertion sentence) | Role · question · beat | Content units (terse) | Visual source (which figure / number / data belongs here, AND which question it answers: what / how / why) | notes |
 
-Be specific in *Visual source* — name the actual figure ("Fig. 3, the right-hand panel — the
-recon-vs-baseline curve"), the actual number/series (traceable to a ledger row), or the equation
-(transcribed / derived-from-code, verified), and state which question (what / how / why) the slide
-answers. Do **not** name a chart type, diagram, component, layout, icon, or build here — those are
-the slide-design agent's decisions. Use *notes* for content caveats (e.g. "self-read: fuller copy",
-"forward-looking — see below", "needs asset — see open questions").
+Keep *Role · question · beat* terse — one word / short phrase each (e.g. `problem · "为什么增长停滞?"
+· tension`); it's the editorial contract the design agent reads. Be specific in *Visual source* —
+name the actual figure ("Fig. 3, the right-hand panel — the recon-vs-baseline curve"), the actual
+number/series (traceable to a ledger row), or the equation (transcribed / derived-from-code,
+verified), and state which question (what / how / why) the slide answers. Do **not** name a chart
+type, diagram, component, layout, icon, or build here — those are the slide-design agent's
+decisions. Use *notes* for content caveats (e.g. "self-read: fuller copy", "forward-looking — see
+below", "needs asset — see open questions").
 
 ## Forward-looking additions
 Anything you drafted that isn't in the source (future work / next steps / the ask), **clearly
