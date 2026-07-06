@@ -519,7 +519,7 @@ Content plan** (comprehension brief, claim ledger, narrative arc, and the per-sl
 with each slide's *visual source* cell), the interview answers that steer register
 (purpose/audience/time, delivery mode, style, template/brand decision, venue), and the craft
 references it designs against (`form-selection.md`, `design-gallery.md`, `scripts/presets.py`,
-`design-by-purpose.md`, `design-principles.md`, `semantic-color-contract.md`, `data-viz.md`,
+`design-by-purpose.md`, `design-principles.md`, `design-intelligence-addendum.md`, `semantic-color-contract.md`, `data-viz.md`,
 `schematic-diagrams.md`, `icons.md`, `animation.md`, `image-generation.md`,
 `east-asian-aesthetic.md`). It consumes the approved content — it does **not** reopen it — and
 returns a **Design plan**: the deck's **Design language** (a *named* signature motif + a
@@ -535,7 +535,10 @@ and getting the user's OK before the canvas is set up or anything is built. **Pr
 design gate:** the plan is **not ready** unless it has a concrete **Design language** (a *named*
 signature motif + a deliberately-chosen palette/type, not a defaulted light/minimal/blue), a **Form
 ledger** whose diversity gate passes (no one format-family on >~40–50% of content slides — the
-card-overuse guard), and the **THREE DESIGN MUSTS** addressed (`slide-design.md` self-verify e–g) —
+card-overuse guard), the addendum's **deck-level design gates** — a **rhythm map**, a **semantic-colour
+ledger**, a passing **block-dependency audit** (no >2 consecutive card slides), and the **minimum
+deck-level variation** (`references/design-intelligence-addendum.md`) — and the **THREE DESIGN MUSTS**
+addressed (`slide-design.md` self-verify e–g) —
 **(1) appear-builds** on the structural beats (a motion manifest: build/static *with a reason* per
 slide), **(2) a style-matched SVG icon family** on an icon-fit, category-rich deck, **(3) diverse
 formats** (not a card grid repeated) — each *applied where it helps or justified where not* (a must

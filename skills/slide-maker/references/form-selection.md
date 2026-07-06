@@ -1,7 +1,7 @@
 # Form selection — content shape → the candidate FORMS (generate a set, then pick)
 
 The single content-indexed map for "what visual form should this slide take?" — used by the
-**content-planner** (designs to it), the **builder** (SKILL.md step 4), and the **critic** (judges form
+**slide-design** agent (designs to it, Step 2), the **builder** (SKILL.md step 4), and the **critic** (judges form
 fit) so all three resolve to one surface. Each row is a **candidate SET + a tie-breaker**, never a
 single answer.
 
@@ -17,6 +17,12 @@ single answer.
 Before opening the content-shape map, read the idea's underlying shape and reach for its visual
 metaphor. The **`slide-design` agent owns this move** (step 2 of `agents/slide-design.md`); the concrete
 form / component is chosen in the map below (and `design-gallery.md`).
+
+**The single authoritative dictionary is the Concept → Visualization decision table in
+`references/design-intelligence-addendum.md` §3** — with the full **Use when / Avoid when / Common AI
+failure** detail for every concept. The compact reminder below is a *pointer into it*, not a second
+source: reach for the visual language here, then resolve the use / avoid / failure-mode call — and any
+concept not listed below — in the addendum before picking the concrete form.
 
 | Concept | Visual language | Concept | Visual language |
 |---|---|---|---|
@@ -52,7 +58,7 @@ form / component is chosen in the map below (and `design-gallery.md`).
 **science schematic** (force/ray/circuit/apparatus) per `schematic-diagrams.md`; reach for the
 exact **component** in `design-gallery.md`; place safely with the `deckkit` helpers in SKILL.md step 4.
 
-## How the planner uses this (the Form ledger)
+## How the slide-design agent uses this (the Form ledger)
 For every **content** slide, the plan records one Form-ledger row — `slide | visual protagonist |
 format-family (card / chart / diagram / quote / big-number / timeline / table / photo) | build?` — plus,
 in the per-slide Layout cell, the winner **and** the alternative it beat: e.g. *"dumbbell — beats

@@ -177,6 +177,12 @@ Do not just skim for the first few obvious issues. Run these passes:
        distinct hierarchy levels; if it blurs to an even grey field, there's no hierarchy (flag it).
        As a final squint-level design pass, apply the **10-item design-critic checklist** in
        `references/review-rubrics.md` (item 9) — the same list the planner designed to in `agents/slide-design.md`.
+       **Also apply the anti-template deck-level checks** — the block-dependency audit, the evenness /
+       squint penalty, the semantic-colour ledger, and rhythm / protagonist variation — from
+       `references/design-intelligence-addendum.md` (surfaced in `review-rubrics.md` item 9), so you score
+       the same things the art director planned against: a *clean-but-even* deck (one grid repeated, one
+       accent hue used decoratively, no clear first-read, a WOW that's merely big) is a finding even when
+       every individual slide looks tidy.
        **Does the look fit the purpose?** crisp/corporate status vs sober defense vs bold pitch vs warm
        lecture (`design-by-purpose.md`) — a mismatch is a real finding. **If a style example was given, judge
        fidelity to it PER THE CHOSEN MIMIC MODE** (the plan records it; `style-analysis.md`): **Mode A

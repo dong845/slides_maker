@@ -202,6 +202,23 @@ Score each dimension; cite specific slides.
    ☐ this page differs structurally from the previous ☐ colours semantic not decorative ☐ any
    block-list that could be a diagram, is ☐ enough whitespace ☐ information hierarchy obvious ☐ at
    least one WOW slide ☐ the deck has visual rhythm ☐ opening and ending slides are memorable.
+   **Anti-template deck-level checks — the critic applying the addendum's Reference-vs-Generated Gap
+   Heuristic + Evenness Penalty** *(`references/design-intelligence-addendum.md` §2, §4–7 — the same gates
+   the art director planned against, so the design lens scores what the planner gated).* Beyond the
+   per-slide checklist, judge whether the deck is **art-directed** or merely **clean template output**
+   (the "clean-but-even" failure this layer exists to catch), and flag, as deck-level design findings:
+   **block-grid overuse** — the deck's main visual language is card / panel blocks, or **more than two
+   consecutive slides** run block/card/panel logic (stricter than the ~40–50% one-format count above,
+   which a "dashboard + metric-matrix + action-cards" run passes while all three read as the same grid);
+   **evenness** — a slide where every element shares one visual weight with no clear first-read **fails
+   the squint test**, because nothing was chosen to win ("balanced" is not "even"); **missing
+   semantic-colour ledger** — one accent hue used for everything, or colour that is decorative rather
+   than *bound* to a nameable meaning that shifts across the argument's beats; **weak rhythm / variation**
+   — few true visual events, or **fewer than 4 distinct visual protagonists** on a deck of 6+ content
+   slides (adjacent slides not differing on density / colour mode / protagonist); and a **WOW that isn't
+   memorable** — a hero beat that is merely a *large* element, not one that contrasts with its neighbours
+   and stays memorable after the deck is closed. (General and cross-purpose — a short or
+   deliberately-uniform deck relaxes the counts.)
 10. **Factual fidelity** *(when source material exists — the check every system fails).*
    Does every number, label, and headline claim trace back to the source? Does the deck
    represent the source's *actual emphasis* (e.g. a comparison table foregrounds the

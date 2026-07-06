@@ -35,7 +35,10 @@ sameness, no hero, dead layout, thoughtless motion, decorative icons — is your
   `references/design-principles.md` (full C.R.A.P., deck rhythm, whitespace, AI-slop tells),
   `references/semantic-color-contract.md`, `references/data-viz.md`, `references/schematic-diagrams.md`,
   `references/icons.md`, `references/animation.md`, `references/image-generation.md`,
-  `references/east-asian-aesthetic.md`.
+  `references/east-asian-aesthetic.md`, and the operational layer that makes this philosophy testable:
+  `references/design-intelligence-addendum.md` (operational layer: narrative-job / rejected-default
+  reasoning trace, block-dependency audit, the expanded Concept→Visualization decision table, rhythm map,
+  evenness penalty, semantic-colour ledger, minimum-variation gates).
 
 ## Design philosophy (hold this the whole way through)
 - **Content first, layout second. Narrative first, decoration second. One slide, one message.**
@@ -45,6 +48,9 @@ sameness, no hero, dead layout, thoughtless motion, decorative icons — is your
   when nothing better fits — not the first move.
 - **Consistency ≠ repetition.** Repeat the *system* (palette, type, chrome); vary the *protagonist*.
 - **Simplicity is a design decision, not the absence of one.** Every visual must serve the story.
+- **Whenever a choice risks becoming a card grid, a repeated template, or a visually even
+  medium-density page, consult `references/design-intelligence-addendum.md`** — it turns this philosophy
+  into testable gates.
 - The five bottlenecks you exist to beat (`design-principles.md`): **1 Layout intelligence** (narrative
   → visual structure → layout, never template-first); **2 Rhythm** (alternate dense/light; mix
   hero / dashboard / diagram / timeline / minimalist); **3 Space** (intentional whitespace, ~50–70% page
@@ -88,6 +94,10 @@ The reflex bullet list / card grid is the failure mode. Choose, don't match.
   decision-tree · Process → assembly-line · Relationship → network · Dependency → sankey · Scale →
   stairs · Prioritization → quadrant · Evolution → timeline · Risk → heatmap · Performance → dashboard ·
   Progress → progress-bar.
+- **Record an explicit reasoning trace on every non-obvious slide:** content shape → rejected default
+  (card grid / bullets / generic columns) → chosen visual language → why it aids comprehension. Resolve
+  the concept through the addendum's authoritative **Concept→Visualization decision table** (use / avoid /
+  common-failure columns; `design-intelligence-addendum.md` §3) before picking the concrete form below.
 - **Then generate the 2–3 candidate forms and pick with the tie-breaker** from
   `references/form-selection.md` (the single content-shape → candidate-forms map; charts →
   `data-viz.md`, components → `design-gallery.md`). **Record why the winner beat the runner-up** — that's
@@ -128,6 +138,11 @@ in `design-principles.md`), and record how each is satisfied:
   **split the slide — never shrink it to illegible.**
 - **Image fit** — for any slide with an image, state the **`fit`**: `contain` when the subject/all parts
   must stay whole; `cover` only for edge-tolerant texture. Never a `cover` crop that slices the subject.
+- **Block Dependency Audit** (`design-intelligence-addendum.md` §2) — cards / panels / blocks are allowed
+  ONLY for **parallel · unordered · equal-weight · independent** units; the moment they have order, a
+  relationship, two axes, or differing weight, a non-block form says it better. If card/panel logic recurs
+  on **>2 consecutive slides**, the plan is NOT ready unless a stated content reason justifies it — this is
+  stricter than the format-family gate (which counts families and can be gamed), so run both.
 
 ### 4 — Design the DECK RHYTHM (only you see every slide at once)
 Read DOWN the column you've built. Vary the **visual protagonist** and pace density — the builder builds
@@ -140,6 +155,12 @@ each slide in isolation and can't retrofit rhythm, so this is yours.
   hero), never *add* a plate/card-row to fill it (that urge is the AI-slop signal).
 - Decide **where the appear-builds fall** here (step 6), not on a separate pass — a built pipeline slide
   *is* a protagonist beat, and whether builds cluster or spread is part of density pacing.
+- **Build the rhythm map** (`design-intelligence-addendum.md` §1.2) — one row per content slide:
+  *density · background mode · visual protagonist · emotional register · role in rhythm* — and confirm
+  **adjacent rows differ on more than one axis**, not just in title text.
+- **Meet the deck-level minimum-variation floors** for any deck with 6+ content slides (addendum §7):
+  **≥4 distinct protagonists · ≥3 non-card forms · ≤2 consecutive card/panel slides · ≥1 WOW/hero**, plus
+  the content-triggered diagram / contrast / time floors — a plan that misses them is not ready.
 
 ### 5 — SVG icons (a first-class decision — think SMART about where/when, never by quota)
 An icon must **reduce cognitive load, not decorate.** Rule-of-thumb: it must answer *what-is-this /
@@ -213,7 +234,10 @@ sections:
 The chosen **`preset`** (or a custom look), named by *beating the default pull* and anchored to a
 concrete exemplar, with its **palette · type pairing · surface · ONE signature motif** — plus the
 atmosphere/polish moves committed deck-wide (only those that fit the register) and the one deck-wide
-**image art-direction** + the (secondary) transition choice.
+**image art-direction** + the (secondary) transition choice. Include a **Semantic Colour Ledger**
+(`design-intelligence-addendum.md` §6) — a *role | token | used-for | must-not* table binding each accent
+hue to a named meaning; **no accent colour ships without a bound meaning**, and one hue used for
+everything means the plan is not ready.
 
 ### Deck rhythm
 The planned **sequence of visual protagonists** (e.g. cover → diagram → chart → photo → big-number →
@@ -221,21 +245,30 @@ divider), the dense↔light / colour pacing, the ~50–70% whitespace target, wh
 fall (every ~6–8 slides), and where the **appear-builds** cluster or spread.
 
 ### Per-slide design
-A row per slide:
+A row per slide (keep it workable — the runner-up folds into *Reasoning*):
 
-| # | Visual protagonist | Form/component (+ runner-up it beat & why) | Layout (C.R.A.P.; measured primitives; balance) | Icons | Motion (`build:<what reveals, in order>` / `static:<reason>`) | Image? |
+| # | Narrative job | Visual protagonist | Form/component | Reasoning (shape → rejected default → why; incl. runner-up beaten) | Layout (C.R.A.P.; primitives; balance) | Density/whitespace | Icons | Motion (`build:…` / `static:…`) | Image? |
 
-Be specific in *Form* (name the winner **and** the alt it beat, from `form-selection.md`, on non-obvious
-slides), in *Layout* (e.g. "`columns(2)`: left = 3 bullets, right = Fig. 3 whole, takeaway bar below"),
-and in *Motion* (never a bare "—"). Mark *Image* only where a topical plate earns its place, else "—".
+Fill *Narrative job* with the verb the slide performs (diagnosis / proof / contrast / mechanism /
+transition / decision / action; `design-intelligence-addendum.md` §1.1). Make *Reasoning* carry the trace
+on every non-obvious slide — content shape → rejected default (card grid / bullets / generic columns) →
+chosen language → why, folding in the runner-up it beat (`form-selection.md`). Be specific in *Layout*
+(e.g. "`columns(2)`: left = 3 bullets, right = Fig. 3 whole, takeaway bar below"), give a
+*Density/whitespace* estimate (~50–70% target; addendum §1.3), and never leave *Motion* a bare "—". Mark
+*Image* only where a topical plate earns its place, else "—".
 
-### Form ledger + diversity gate
+### Form ledger + diversity gate + block audit
 One row per **content** slide: `# | visual protagonist | format-family (card · chart · diagram · quote ·
 big-number · timeline · table · photo) | build?` — followed by the **diversity-gate** result. If any one
 format-family exceeds **~40–50% of content slides**, the plan is **NOT ready**: rework the weakest into
 the form its content wants (`form-selection.md`), or record a one-clause justification per the gate.
+Then run the **Block Dependency Audit** (`design-intelligence-addendum.md` §2) — one row per card/panel
+slide: *why the parallel/unordered/equal-weight/independent test passes · the non-block alternative
+considered · keep-or-redesign*. If card/panel logic runs on **>2 consecutive slides**, the plan is **NOT
+ready** unless justified by content shape — this qualitative gate catches the visual sameness the family
+count misses, so both must pass.
 
-### Design self-verify (a–i)
+### Design self-verify (a–n)
 State the plan is **not ready** unless: **(a)** every slide has ONE named hero passing the squint test;
 **(b)** the Form-ledger diversity gate passes; **(c)** every non-obvious slide names the alternative its
 form beat; **(d)** the Design language is concrete — a *named* signature motif + a deliberately-chosen
@@ -250,7 +283,14 @@ surfaced here (form actively varied, not one card grid repeated). Plus two **con
 (only when that content is present): **(h) method/procedure → `algorithm_block`** (or one-clause why prose
 is better); **(i) principle / mechanism / experiment / definition → a labelled schematic diagram built
 CORRECTLY (domain-accurate, faithful to source) alongside text** (or an `equation_png` when the law *is*
-the relation) — not text alone. Fix any failing check before the DESIGN checkpoint.
+the relation) — not text alone. Plus the **operational gates** from `design-intelligence-addendum.md`
+(consider + apply, justify where a slide legitimately doesn't need one — NOT blanket quotas): **(j)
+evenness penalty** (§5) — every slide has a clear first-read element and blurs to 3–4 hierarchy levels,
+not one even grey field; **(k) WOW is memorable** (§1.4) — each WOW/hero names *why-memorable* AND the
+*surrounding contrast* against its neighbours, else it's just a bigger slide; **(l) minimum-variation
+floors** (§7) met for 6+-slide decks; **(m) block-dependency audit** (§2) passes — no card/panel logic on
+>2 consecutive slides without a content reason; **(n) semantic-colour ledger** (§6) present — no accent
+hue without a bound meaning. Fix any failing check before the DESIGN checkpoint.
 
 ### Design-critic checklist
 Confirm the deck answers the 10 checks the critic's design lens will apply (design bible):
