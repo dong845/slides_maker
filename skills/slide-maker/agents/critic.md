@@ -175,6 +175,8 @@ Do not just skim for the first few obvious issues. Run these passes:
        box**; intentional colour variety; aligned, balanced, uncrowded. **Squint test:** blur your eyes
        (or view a thumbnail) — focal element, title, and supporting blocks must still separate into
        distinct hierarchy levels; if it blurs to an even grey field, there's no hierarchy (flag it).
+       As a final squint-level design pass, apply the **10-item design-critic checklist** in
+       `references/review-rubrics.md` (item 9) — the same list the planner designed to in `agents/slide-design.md`.
        **Does the look fit the purpose?** crisp/corporate status vs sober defense vs bold pitch vs warm
        lecture (`design-by-purpose.md`) — a mismatch is a real finding. **If a style example was given, judge
        fidelity to it PER THE CHOSEN MIMIC MODE** (the plan records it; `style-analysis.md`): **Mode A

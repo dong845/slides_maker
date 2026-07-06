@@ -195,6 +195,13 @@ Score each dimension; cite specific slides.
    match the question it answers — the **what/how/why triad**: *what* it is → schematic; *how* it works →
    `algorithm_block`/data-path diagram; *why* it works → typeset equation (don't pile *how*/*why* onto the
    *what* overview slide). (See `references/form-selection.md` + `references/schematic-diagrams.md`.)
+   **The design lens's 10-item design-critic checklist** *(this IS the design lens — the squint-level
+   pass the design/layout critic runs over the whole deck; kept WORD-FOR-CONCEPT identical to the
+   checklist the planner designs to in `agents/slide-design.md` so the art director plans against the
+   exact checks applied here):* ☐ main message readable in 3 seconds ☐ one clear visual focal point
+   ☐ this page differs structurally from the previous ☐ colours semantic not decorative ☐ any
+   block-list that could be a diagram, is ☐ enough whitespace ☐ information hierarchy obvious ☐ at
+   least one WOW slide ☐ the deck has visual rhythm ☐ opening and ending slides are memorable.
 10. **Factual fidelity** *(when source material exists — the check every system fails).*
    Does every number, label, and headline claim trace back to the source? Does the deck
    represent the source's *actual emphasis* (e.g. a comparison table foregrounds the

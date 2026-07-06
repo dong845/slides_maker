@@ -11,6 +11,26 @@ single answer.
 > — is the right answer for **parallel, unordered, equal-weight** items only; the moment the content has
 > **order, magnitude, a relationship, time, or two axes**, a non-card form almost always says it better.
 
+## Concept → visualization (the FIRST move — before the content-shape map)
+
+**Reason from the concept's *shape* to a visual language, THEN pick the concrete form/component below.**
+Before opening the content-shape map, read the idea's underlying shape and reach for its visual
+metaphor. The **`slide-design` agent owns this move** (step 2 of `agents/slide-design.md`); the concrete
+form / component is chosen in the map below (and `design-gallery.md`).
+
+| Concept | Visual language | Concept | Visual language |
+|---|---|---|---|
+| **Flow** | pipeline / river / conveyor | **Decision** | decision-tree |
+| **Journey** | timeline / road / metro | **Process** | assembly-line |
+| **Growth** | mountain / rocket / curve | **Relationship** | network |
+| **Loop** | flywheel / orbit | **Dependency** | sankey |
+| **Comparison** | split-screen | **Scale** | stairs |
+| **Hierarchy** | pyramid | **Prioritization** | quadrant |
+| **Strategy** | compass | **Evolution** | timeline |
+| **Ecosystem** | galaxy / network | **Risk** | heatmap |
+| **System** | circuit / layer | **Performance** | dashboard |
+| **Transformation** | morphing | **Progress** | progress-bar |
+
 ## By communicative intent
 
 | The content is… | Candidate forms (deckkit, in rough preference order) | Tie-breaker |

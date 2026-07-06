@@ -46,7 +46,7 @@ Everything describing what was *done* stays anchored to the source.
 Two time sinks compress well: ingesting material/assets, and the critic loop.
 - **Parallelize independent work, never a single argument.** Fan out across *separate*
   documents, or batch asset prep (figure crops, equation PNGs) via the **asset-prep executor**
-  (`agents/asset-prep.md` — an execution-only worker that runs AFTER Step-3 approval and makes ZERO
+  (`agents/asset-prep.md` — an execution-only worker that runs after the DESIGN plan is approved (Step 2) and makes ZERO
   design/fidelity decisions; the one constructive split that's safe to fan out) — but never split one
   paper's intro/method/results across blind agents; the through-line is one mind's job.
   If you fan out reading, synthesize back into one comprehension brief (step 1) before
@@ -71,10 +71,11 @@ wrong wastes a whole build.
 ## At a glance — pipeline · rule strengths · where things live
 *A navigation map only; the steps below are the source of truth.*
 
-**Pipeline:** Interview (Step 0) → Understand & plan (Step 1) → Set up canvas (Step 2) → Pace-check &
-approve the plan (Step 3) → Build with deckkit + build-time geometry gate (Step 4) → Render · lint ·
-actor-critic loop (Step 5) → Hand off & iterate (Step 6). Steps run in order; every **🔴 CHECKPOINT** is a hard stop.
-**Steps:** 0 Interview · 1 Understand & plan · 2 Canvas · 3 Approve plan · 4 Build · 5 Render & critic ·
+**Pipeline:** Interview (Step 0) → Plan the CONTENT (Step 1, **🔴 content checkpoint**) → Design the deck
+(Step 2, **🔴 design checkpoint**) → Set up canvas (Step 3) → Build with deckkit + build-time geometry gate
+(Step 4) → Render · lint · actor-critic loop (Step 5) → Hand off & iterate (Step 6). Steps run in order;
+every **🔴 CHECKPOINT** is a hard stop.
+**Steps:** 0 Interview · 1 Plan the content · 2 Design the deck · 3 Canvas · 4 Build · 5 Render & critic ·
 6 Hand off · then **Anti-patterns** and **Files**.
 
 **Rule-strength vocabulary** (how to read the rules below):
@@ -93,7 +94,8 @@ actor-critic loop (Step 5) → Hand off & iterate (Step 6). Steps run in order; 
 |---|---|
 | The craft / the "why" (contrast · hierarchy · C.R.A.P. · layout safety) | `references/design-principles.md` |
 | Per-purpose look (defense vs exec vs lecture …) | `references/design-by-purpose.md` |
-| Deep-understand + per-slide plan (Steps 1 & 3) | `agents/content-planner.md` |
+| Content — deep read + per-slide message (Step 1) | `agents/content-planner.md` |
+| Look / form / layout / rhythm / icons / motion (Step 2) | `agents/slide-design.md` |
 | Independent review + JSON schema | `agents/critic.md` · `agents/arbiter.md` · `references/review-rubrics.md` |
 | Which visual FORM a slide takes (avoid the card-grid default) | `references/form-selection.md` |
 | Colour-means-one-thing (bind a hue to a concept deck-wide) | `references/semantic-color-contract.md` |
@@ -181,13 +183,13 @@ the direction gate** (the look is already decided). The four:
    identity). If you're using a structured-choice UI and run out of option slots, keep (c) and (d) and
    fold the registered/provide-your-own into one "use/provide a template" option — never omit the
    generate-with-image-tool path. Then:
-   - *A registered template* → build on it using its saved `profile.md` (step 2).
+   - *A registered template* → build on it using its saved `profile.md` (step 3).
    - *A new template* → they give a `.pptx`/brand; build on it, AND after profiling it
-     (step 2) **save a new subfolder to the active template registry** (its
+     (step 3) **save a new subfolder to the active template registry** (its
      `profile.md`) so it becomes a remembered choice next time. The registry **grows
      through conversation.**
    - *Design a clean one* → build from preferences (brand colour/logo? formality?),
-     and **shape the look to the chosen purpose** (step 2 / `references/design-by-purpose.md`)
+     and **shape the look to the chosen purpose** (step 3 / `references/design-by-purpose.md`)
      rather than always shipping the same default blue — a defense, an exec readout,
      and a lecture should not look alike.
      **Because the look is entirely yours to invent here, default to offering the
@@ -272,14 +274,14 @@ the direction gate** (the look is already decided). The four:
      - **Deck length is ALWAYS the user's choice — surface it, never silently derive it.** Make it an
        explicit interview option: a **self-read** deck → ask **short ~5–8 / medium ~9–15 / long 16+**; a
        **spoken** deck → the **time budget** sets the working count (~1 slide/min), but still **confirm the
-       resulting slide count** with the user at the Step-3 plan checkpoint before building. Don't ship a
+       resulting slide count** with the user at the Step-1 content checkpoint before building. Don't ship a
        length the user never saw (e.g. quietly building 14 slides because the content "felt like 14").
      - **Primary goal / intent — inform & educate · support a decision · inspire / motivate action.**
        This sets the **rhetorical arc**: *inform* builds to the evidence; *decide* leads with the
        recommendation and the ask; *inspire* opens on stakes and closes on a call to action. Purpose
        hints at it but doesn't fix it (a conference talk can inform *or* persuade) — so confirm it.
    - *(Structure emphasis — data/trends vs narrative-insights vs sector/section breakdown — and the
-     fine-grained slide count are best steered at the **Step-3 plan checkpoint**, where the user
+     fine-grained slide count are best steered at the **Step-1 content checkpoint**, where the user
      approves the arc, rather than front-loaded here — keep this interview cheap.)*
    - **Webinar / online presentation** = a talk delivered over video, watched in a shrunk
      window on mixed-size screens. Build it like a conference talk but for a shared screen:
@@ -376,7 +378,7 @@ the direction gate** (the look is already decided). The four:
      with everything (e.g. build on the user's template for branding, yet borrow an example's components).
    - Plus any tone (academic, corporate, playful).
    Honor their choice over your own habits; nudge toward concise + visual when
-   unsure; carry the choice into the plan (step 3) and the build (step 4).
+   unsure; carry the choice into the plan (steps 1–2) and the build (step 4).
    - **Direction gate (when to show rendered options first).** Two cases call for it:
      (a) **"design a clean one" / no template** → it's the *recommended default* there —
      offer 3 directions as described in Q1's design-one branch above; (b) any other case
@@ -400,27 +402,29 @@ units, and code may stay in their original form (that's not "mixing"). Build a
 **mixed/bilingual** deck only if the user asks (or picks it) — and then do it
 systematically (same pairing on every slide). See `references/multilingual.md`.
 
-## Step 1 — Understand the material & plan the deck (use the content-planner)
-**Use `agents/content-planner.md` for this step and Step 3 as one deep pass** — dispatch
+## Step 1 — Understand & plan the CONTENT (use the content-planner)
+**Use `agents/content-planner.md` for this step — the CONTENT only** — dispatch
 it through an available multi-agent/subagent tool when the host exposes one (in Codex,
 discover multi-agent tools with `tool_search` if needed), otherwise run the same planner
 brief inline yourself. It is the
 constructive counterpart to the critic/arbiter judges. Give it the interview answers
 (purpose/audience/time, **delivery context** & **primary goal**, style/language, template
-decision, venue if any), the source material (or "none"), and the craft references
-(`design-principles.md`, `design-by-purpose.md`, `form-selection.md`, `schematic-diagrams.md`,
-`animation.md`, `image-generation.md`, `review-rubrics.md`, `multilingual.md`). It returns a **deck
-plan**: a comprehension brief
-+ the narrative arc + a build-ready per-slide spec (takeaway · content · visual source ·
-layout · motion · proposed image), plus an image opt-in list, flagged forward-looking
-content, and open questions. You then take that plan into the **Step 3 checkpoint** (show
-it, get the user's OK), set up the canvas (Step 2), and build it (Step 4). The planner is
-*one mind* — it may fan out *reading* across multiple documents, but it synthesises the
-understanding, arc, and design itself; never split one paper across blind agents. For a
+decision, venue if any), the source material (or "none"), and the content references
+(`review-rubrics.md` — the content lens — and `multilingual.md`). *(The design references —
+`design-principles.md`, `design-by-purpose.md`, `form-selection.md`, `schematic-diagrams.md`,
+`animation.md`, `image-generation.md` — belong to the slide-design agent in Step 2, not here.)*
+It returns a **Content plan** — message only, no design: a comprehension brief + a claim ledger
++ the authors'-emphasis check + the narrative arc + a per-slide CONTENT spec (takeaway · content
+units · visual source: which figure/number/data + which question — what/how/why), plus flagged
+forward-looking content and open questions. You then take that plan into the **Step-1 CONTENT
+checkpoint** (show it, get the user's OK on the story/message — the pace/slide-count check happens
+HERE); only *after* content is approved does the slide-design agent design the look (Step 2). The
+planner is *one mind* — it may fan out *reading* across multiple documents, but it synthesises the
+understanding, arc, and per-slide message itself; never split one paper across blind agents. For a
 quick, low-stakes deck you may do this pass inline yourself rather than dispatching — but
 the deep-understanding and planning standard below is the same either way.
 
-The rest of this step and Step 3 are the **specification the planner works to** (and what
+The rest of this step is the **specification the planner works to** (and what
 you check its plan against). The bar — understand it deeply, don't skim:
 
 A deck is only as good as your grasp of the material — a superficial read produces a
@@ -484,11 +488,74 @@ inventing — it's fidelity to what's *true now*.
     "leading / latest" thing may since have been superseded. Date the deck **"as of \<day month
     year\>"**; if the newest *full-year* metric is last year's, label it and add the current
     year-to-date figure rather than presenting old data as current.
-  Carry the verified outline + source log into the **Step 3 deck plan**, where the user
-  approves it — a no-source deck still produces one full plan, gated once at the Step 3
-  checkpoint, not twice here.
+  Carry the verified outline + source log into the **Content plan**, where the user
+  approves it — a no-source deck is gated the same as any other: once at the CONTENT
+  checkpoint (Step 1), then again at the DESIGN checkpoint (Step 2).
 
-## Step 2 — Set up the canvas
+**End Step 1 at the 🔴 CONTENT checkpoint — pace-check first, then approve the story.** The
+Content plan is the cheapest place to fix a misread or a wrong emphasis, so present it *before any
+design begins*: the **comprehension brief + claim ledger** FIRST (so the user can spot a misread
+before a single slide is designed), then the **authors'-emphasis check**, the **narrative arc**,
+and the **per-slide takeaways + content** (message only — no look yet), plus any flagged
+forward-looking content and open questions. **The pace / slide-count check happens HERE, not
+later:** for a *spoken* deck scale the slide count to the time budget — ~1 slide per talking-minute
+as a loose anchor (short talk/status ~6–9, lecture/thesis defense/job talk ~10–20+), counting an
+animated/build slide *once*; compute `slide_count ÷ time_minutes` and, if it runs well over ~1/min,
+cut slides or get more time and flag it. A *read-alone / poster* deck has no talking-minute budget —
+its scope is set by content completeness, and deliberate density is fine, not a defect. **Confirm
+the resulting slide count** with the user (never ship a length they never saw). **Precondition —
+the comprehension gate:** before showing the plan, confirm it carries a *complete* comprehension
+brief (every field filled + traced) and claim ledger (no shipped `verified?=N` rows); an
+empty/hedged/untraced brief is **not ready** — send it back to the planner. Fold in the user's
+edits to the story, then move to design (Step 2).
+> **🔴 CHECKPOINT — CONTENT:** show the comprehension brief + claim ledger + narrative arc + the
+> per-slide takeaways/content, and confirm the pace/slide-count, before any design work begins.
+
+## Step 2 — Design the deck (use the slide-design agent)
+With the **Content plan approved**, dispatch `agents/slide-design.md` — the deck's **art director**
+— to design the look on top of the locked message. Dispatch it through an available multi-agent/
+subagent tool when the host exposes one, otherwise run the same brief inline. Give it the **approved
+Content plan** (comprehension brief, claim ledger, narrative arc, and the per-slide CONTENT table
+with each slide's *visual source* cell), the interview answers that steer register
+(purpose/audience/time, delivery mode, style, template/brand decision, venue), and the craft
+references it designs against (`form-selection.md`, `design-gallery.md`, `scripts/presets.py`,
+`design-by-purpose.md`, `design-principles.md`, `semantic-color-contract.md`, `data-viz.md`,
+`schematic-diagrams.md`, `icons.md`, `animation.md`, `image-generation.md`,
+`east-asian-aesthetic.md`). It consumes the approved content — it does **not** reopen it — and
+returns a **Design plan**: the deck's **Design language** (a *named* signature motif + a
+deliberately-chosen palette/type + the polish moves), the **deck rhythm**, a **per-slide design
+table** (visual protagonist · form + the runner-up it beat · layout · icons · motion · image?), the
+**Form ledger + diversity gate**, the **design self-verify (a–i)**, the **10-item design-critic
+checklist** (which the Step-5 critic's design lens then applies), and the **image opt-in list**. The
+art director is *one mind* over the whole deck — only it sees every slide at once, so deck rhythm and
+where the appear-builds fall are its call, not the builder's.
+
+**The design plan is the cheapest place to change visual direction**, so end the step by showing it
+and getting the user's OK before the canvas is set up or anything is built. **Precondition — the
+design gate:** the plan is **not ready** unless it has a concrete **Design language** (a *named*
+signature motif + a deliberately-chosen palette/type, not a defaulted light/minimal/blue), a **Form
+ledger** whose diversity gate passes (no one format-family on >~40–50% of content slides — the
+card-overuse guard), and the **THREE DESIGN MUSTS** addressed (`slide-design.md` self-verify e–g) —
+**(1) appear-builds** on the structural beats (a motion manifest: build/static *with a reason* per
+slide), **(2) a style-matched SVG icon family** on an icon-fit, category-rich deck, **(3) diverse
+formats** (not a card grid repeated) — each *applied where it helps or justified where not* (a must
+to consider + apply, never a blank per-slide quota — still smart about where/when). A plan that
+defaults its look, over-relies on one format, or silently forgets builds or icons is **not ready** —
+send it back to the art director.
+**The per-slide content-image opt-in is a CROSS-CUTTING choice, available on EVERY deck** — it is
+*not* tied to the template choice and is *separate from* Q1's "generate a template with an image
+tool" path (which makes the visual identity). Whenever an image tool is available, offer it
+regardless of how the deck was templated — a **registered**, **provided**, **clean**, or
+**generated** template can all carry generated *content* images. Two guardrails the art director
+enforces and the checkpoint shows: **(a) each proposed plate is *content-related* — it depicts THAT
+slide's actual subject, never generic "fancy" filler** (`image-generation.md`); and **(b) it is
+SMART about where — plates only for the few slides that genuinely earn one, NEVER every slide, even
+when the user has opted into image generation.** The user then approves which (if any) are
+generated. Fold in the user's design edits, then set up the canvas (Step 3).
+> **🔴 CHECKPOINT — DESIGN:** show the Design language + Form ledger + the 3 design musts + the
+> image opt-in list, and get the user's OK before building.
+
+## Step 3 — Set up the canvas
 **First, decide where the deck lands.** Deliver each deck as one self-contained
 folder in the user's Downloads — `~/Downloads/<deck-name>/`, holding the
 `<deck-name>.pptx` and a `render/` subfolder of slide PNGs — so the user gets a
@@ -561,63 +628,6 @@ Cambria Math — for native `equation_native` math; `EQFONT` only affects inline
 dependency at hand-off. Editable `equation_native` math needs a **math font** (STIX Two Math / Cambria
 Math) for its glyphs — flag that dependency; `equation_png` is font-independent (rasterised).
 Full list, fallbacks, and tofu recovery in `references/font-guidance.md`.
-
-## Step 3 — Pace-check the plan, then get approval
-The content-planner's plan (Step 1) already carries the arc and the per-slide spec; this
-step locks it. The standard it must meet: **one idea per slide** *(for a presented deck — a
-read-alone / reference / poster deck legitimately packs more per surface; see `design-principles.md`
-"Delivery mode")*, in an arc that fits the purpose (a conference talk and a status update are ordered
-differently — let the rubric guide you). **For a spoken deck, scale the slide count to the time
-budget** — ~1 slide per talking-minute as a loose anchor: short talk/status ~6–9 slides,
-lecture/thesis defense/job talk ~10–20+; a longer spoken deck means *more* slides, never a denser
-one. *(A **read-alone / fixed-surface** deck has no talking-minute budget — its scope is set by
-content completeness, and deliberate density is fine, not a defect to split away.)* At **~15+
-slides**, consider the section fan-out (step 4). Each slide's **takeaway** comes first; bullets support it.
-
-Each slide's **visual source** is set in the plan — source figure, chart, native diagram,
-generated plate, or **none**. Both **generated images and motion are a matter of taste and
-purpose, never a quota** (full rules: `references/image-generation.md`, `references/animation.md`):
-generated plates are opt-in, styled to the deck's purpose + topic, and never carry evidence. For
-**motion**, actively check each (presented) slide's *layout* for a build-friendly shape — a flow of
-blocks joined by arrows, a multi-part/numbered build, before→after, evidence→takeaway, a
-quadrant/timeline/step-cards — and plan a step-reveal there; none across the deck is fine, but don't
-*miss* a pipeline that clearly wants one (build it with `scripts/anim.py`).
-
-**Sanity-check pace against the clock.** After planning, compute `slide_count ÷
-time_minutes`: well over ~1/min for a *spoken* talk means you'll overrun — cut slides or
-get more time, and flag it to the user. Count an **animated/build slide once** (a 4-click
-pipeline is one slide for pacing, not four). Read-alone decks (no speaker) aren't bound by
-this.
-
-**Show the plan and get approval before building — always.** The deck plan (from the
-content-planner in Step 1) is the cheapest place to course-correct, so present it to the
-user every time: the **comprehension brief + claim ledger** (shown FIRST, so the user can spot
-a misread before any build), then the narrative arc + the per-slide spec (takeaway, content,
-visual source, layout, motion) + the **image opt-in list** (which slides you'd propose a
-generated plate for, in what style — the user chooses whether any are generated) + any flagged
-forward-looking content + open questions. Fold in their edits, then build.
-**The per-slide content-image opt-in is a CROSS-CUTTING choice, available on EVERY deck** — it is
-*not* tied to a template choice and is *separate from* Q1's "generate a template with an image tool"
-path (which makes the visual identity). Whenever an image tool is available, offer it regardless of how
-the deck was templated — a **registered** template, a **provided** template, a **clean** design, or a
-**generated** template can all carry generated *content* images. Two guardrails the planner enforces and
-the checkpoint shows: **(a) each proposed plate is *content-related* — it depicts THAT slide's actual
-subject, never generic "fancy" filler** (`image-generation.md`); and **(b) the planner is SMART about
-where — it proposes plates only for the few slides that genuinely earn one, NEVER every slide, even when
-the user has opted into image generation.** The user then approves which (if any) are generated.
-**Precondition — the comprehension AND design gates:** before showing the plan, confirm it carries a
-*complete* comprehension brief (every field filled + traced) and claim ledger (no shipped
-`verified?=N` rows) — AND that the **design side passes too**: a concrete **Design language** (a *named*
-signature motif + a deliberately-chosen palette/type, not a defaulted light/minimal/blue), a **Form
-ledger** whose diversity gate passes (no one format-family on >~40–50% of content slides — the
-card-overuse guard), and the planner's **THREE DESIGN MUSTS** addressed (`content-planner.md` §3c) —
-**(1) appear-builds** on the structural beats (motion manifest: build/static *with a reason* per slide),
-**(2) a style-matched SVG icon family** on an icon-fit, category-rich deck, **(3) diverse formats**
-(not a card grid repeated) — each *applied where it helps or justified where not* (a must to consider +
-apply, never a blank per-slide quota — still smart about where/when). A plan that is empty/hedged/untraced
-**or** that defaults its look / over-relies on one format / silently forgets builds or icons is **not
-ready** — send it back to the planner.
-> **🔴 CHECKPOINT** — show the deck plan (brief + claim ledger + **Design language + Form ledger + the 3 design musts**) and get the user's OK (including the image opt-in) before building.
 
 ## Step 4 — Build with deckkit
 Write a small per-deck build script that imports `scripts/deckkit.py` (don't re-derive primitives;
@@ -778,7 +788,7 @@ A few rules that matter (see `references/design-principles.md`):
   algorithm / optimisation, a reconstruction or simulation converging, a transformation, cine/4D, a
   rotating 3D)? You MAY generate one — `deckkit.make_gif` from frames you compute in the asset step —
   but SPARINGLY:** only when motion conveys what a static frame can't (the "When a GIF earns its place"
-  rubric in `animation.md`; the content-planner makes the call), a deck carries **zero-to-a-few**
+  rubric in `animation.md`; the slide-design agent makes the call), a deck carries **zero-to-a-few**
   purposeful GIFs (never one per slide — keep concepts/tables/equations/charts static), and a generated
   GIF must animate a **real computable change, never fabricated motion**. It embeds the real animated GIF (every frame preserved;
   PowerPoint and Keynote **loop it in slideshow**), places it **whole and undistorted** (`contain` —
@@ -1411,7 +1421,7 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
 - `extract_pdf.py` (crop a figure from a PDF — `figures`/`figure`/`autofig` auto-detect, `page`/`crop`
   manual) · `crop_helper.py` (crop/trim/panel **by looking, not guessing**) · `extract_deck.py` (pull
   content out of an existing deck — the redesign path).
-**Agents** (`agents/`): `content-planner.md` (Step-1 deep-understand + the build-ready per-slide plan incl. the Form ledger; the Step-3 checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `asset-prep.md` (execution-only asset materializer — crops/equations/plates/icons after Step-3 approval; zero design decisions) · `openai.yaml` (Codex display metadata).
+**Agents** (`agents/`): `content-planner.md` (Step-1 CONTENT deep-understand + claim ledger + per-slide message; the content checkpoint) · `slide-design.md` (the art director — Step-2 design language + per-slide form/layout/rhythm + icons + appear-animation + the Form ledger; the design checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `asset-prep.md` (execution-only asset materializer — crops/equations/plates/icons after the design plan is approved; zero design decisions) · `openai.yaml` (Codex display metadata).
 
 **References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
 
