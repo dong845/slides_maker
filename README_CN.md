@@ -16,7 +16,7 @@
 > 在 Codex 或 Claude Code 里聊几句。一支各司其职的 **agent 团队**先读懂你的材料（**没有材料就先联网调研**），再规划、生成，先交给独立评审过一遍，才交到你手上。你拿到的是一份真正的 PowerPoint：每个文本、形状、图表都能点开就改，讲稿写在备注里，要点是原生的点击渐显。
 
 <p align="center">
-  <a href="https://slides.addsum.top/"><strong>在线预览</strong></a> ·
+  <a href="https://slides.addsum.top/"><strong>视频介绍</strong></a> ·
   <a href="#模板库"><strong>模板库</strong></a> ·
   <a href="#slide-maker-不一样在哪"><strong>不一样在哪</strong></a> ·
   <a href="#它是怎么干活的"><strong>工作流程</strong></a> ·

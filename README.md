@@ -16,7 +16,7 @@
 > Chat with it in Codex or Claude Code. A small team of specialized agents **reads your material, or researches the web when you have none**, then plans the deck, builds it, and has an independent critic review it before you see it. You get a real PowerPoint: every text box, shape, and chart is click-to-edit, the script lives in speaker notes, and bullet reveals are native click builds.
 
 <p align="center">
-  <a href="https://slides.addsum.top/"><strong>Live demo</strong></a> ·
+  <a href="https://slides.addsum.top/"><strong>Intro video</strong></a> ·
   <a href="#template-gallery"><strong>Templates</strong></a> ·
   <a href="#what-makes-slide-maker-different"><strong>What's different</strong></a> ·
   <a href="#how-it-works"><strong>How it works</strong></a> ·
