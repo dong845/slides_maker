@@ -110,7 +110,19 @@ compact block, one line per question — before any planning, so a wrong pick co
 veto, not a build. The FLOOR: delegation covers *preferences*, never *information only the user
 has* — a missing TOPIC or unlocatable source material is still asked (that one question, not the
 form), same class as the save-location stop. Preference questions the request already answers
-are simply recorded, not re-picked. Content checkpoint = the deck
+are simply recorded, not re-picked.
+**Delegated picks are DERIVED, not defaulted — the waiver removes the asking, never the
+understanding.** Before picking, actually look at what they gave: scan provided material for its
+genre, register, density, and audience clues (a clinical paper, a pitch doc, and a course note
+want different answers to every question); read a terse few-sentence ask for its real intent.
+Then choose the way the sharpest person in the room would choose *for THIS deck* — the TASTE
+PROTOCOL applies to the picks themselves, and "a defensible default" that ignores what the
+material obviously wants is not defensible. Downstream, nothing relaxes: Step 1's deep-read /
+comprehension-brief bar, the no-source web-verification, and the full critic loop run at the
+same standard as an interviewed deck. And if the deep read later contradicts an initial pick
+(the material turns out self-read-shaped, denser, or more formal than the first scan suggested),
+REVISE the pick and say so in the next FYI — riding a wrong guess to delivery is the one failure
+delegation must never produce. Content checkpoint = the deck
 memory sentence + emotional-curve line + pace check + ONE table (`# | 角色 | 记忆句(takeaway) |
 承载证据`); Design checkpoint = look/palette/type/motif in ~4 lines + the rhythm-map table +
 the three design musts + logo plan. Keep each under ~25 lines — the user reads it in the
