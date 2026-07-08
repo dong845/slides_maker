@@ -78,6 +78,26 @@ Pick the preset to the purpose+mood, then **vary it** — these are starting lan
 - **Micro-viz (cheap, legible):** `dot_meter` (●●○), `tradeoff_list` (green + / red −), `segmented_bar`
   (cumulative 100%). For KPIs use `scorecard`/`stat_row`/`change_stat`; for ranked-to-chart use
   `leaderboard`; for the so-what use `takeaway_rail`.
+- **Decision & strategy furniture:** `eval_matrix` (options×criteria grid — `harvey_ball` fifths-fill
+  glyphs or semantic ✓/◐/✕ marks, `recommend=` tints the winning column + a RECOMMENDED tab; the
+  qualitative scoring `table` can't give) · `heat_matrix` (category×category grid coloured by value,
+  `scale="seq"|"div"|"risk"`, contrast-aware cell text — the designed risk/prioritization matrix) ·
+  `tier_stack` (one taper core: `mode="funnel"` conversion drop-off / `mode="pyramid"` proportional
+  tiers, semantic ramp + optional `values`; `funnel()`/`pyramid()` wrappers).
+- **Plan / time:** `gantt` (task bars on a shared `axis_scale` — `lanes=` swimlanes, `today=` marker,
+  `ticks/tick_labels=` a quarter grid; durations & overlap, where `timeline` shows only dated points) ·
+  `waterfall` (raster recipe — a total's rise/fall/total walk).
+- **Product / UI:** `device_frame` — a real screenshot clipped into a `chrome="browser"` (window +
+  traffic-lights + URL pill) or `chrome="phone"` (bezel + notch) bezel, so the shot reads as the
+  product, not a floating rectangle. For a pitch/product/teaching deck showing an actual app/site.
+- **Compose-from-primitives recipes (no dedicated helper):** **team roster** — circular
+  `picture(fit="cover", round=…)` headshots on a `columns(n)` grid + name/role/bio, one avatar
+  diameter/accent/alignment across all cards. **Org / issue / driver tree** — `node` + `elbow_connector`
+  as a branch bus (parent drop → horizontal bus → even child drops), left-to-right for a driver tree.
+  **Venn** — 2–3 translucent `glass_card`/`box` circles with labeled overlaps. **Agenda / section
+  tracker** — a quiet nav rail of sections with the current one accented (or `step_list(active_idx=…)`
+  on an agenda page). **Geographic map** — a license-clear/computed base map as `picture` + native
+  markers/labels on top (never bake labels into a generated map). (Recipes routed from `form-selection.md`.)
 - **Photography on-brand:** `image_fx.duotone(img, ink_a, ink_b)` / `grayscale(img)` so a colour photo
   doesn't fight the accent (riso/brutalist/ink/luxury/museum), then `picture(fit="cover")`.
 - **East-Asian:** `seal` (vermilion chop), `cjk_numeral` (壹贰叁), `bilingual_lockup` — see

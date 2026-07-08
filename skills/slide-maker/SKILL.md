@@ -861,9 +861,16 @@ generate 2-3 candidate forms and choose with the tie-breaker in `references/form
   centred before→after), `stat_row`, `big_numeral`; **editable native charts** `native_chart` /
   `native_dual_axis` / `native_donut` / `native_pareto` / `native_bubble` (feed them straight from a
   spreadsheet with **`series_from_csv(path, x_col, y_cols)`** → `(categories, series)`, stdlib, no pandas),
-  plus the raster recipes in `scripts/designed_charts.py` — pick per `references/data-viz.md`.
+  plus the raster recipes in `scripts/designed_charts.py` (incl. **`waterfall`** — a total's rise/fall/
+  total walk, semantic up/down colour) — pick per `references/data-viz.md`.
+- **Decision / plan / grid:** **`eval_matrix`** (options×criteria scoring grid — `harvey_ball` fifths-fill
+  glyphs or ✓/◐/✕ marks, `recommend=` tints the winner) · **`heat_matrix`** (category×category grid coloured
+  by value, `scale="seq"|"div"|"risk"`) · **`tier_stack`** (one taper: `mode="funnel"` drop-off /
+  `mode="pyramid"` layers, + `funnel()`/`pyramid()` wrappers) · **`gantt`** (dated task bars on a shared
+  `axis_scale`, `lanes=` swimlanes, `today=` marker — durations & overlap, where `timeline` shows only points).
 - **Diagrams / patterns:** `quadrant`, `hub_spoke`, `timeline`, `before_after`/`image_tab`/
-  `photo_triptych`, `wireframe_grid`+`spec_list`, `corner_frame`, `photo_card`, `backdrop_motif`,
+  `photo_triptych`, **`device_frame`** (a real screenshot in a `chrome="browser"`/`"phone"` bezel),
+  `wireframe_grid`+`spec_list`, `corner_frame`, `photo_card`, `backdrop_motif`,
   `repeat_row` (N identical-except-index units as representatives + `…` + `×N`, shared detail said
   once — never N duplicate blocks).
 - **Surface (dark / glass / print):** `glass_card`/`glow`/`scrim_overlay` (gradient+alpha fill),
@@ -1765,8 +1772,9 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   render/parse-only faults (CJK kinsoku/widow · missing EA font · whole-page-image · orphan slides);
   run after render, before critic; non-zero on findings. `smoke_deckkit.py` — regression guard for the helpers.
 - `anim.py` — PowerPoint click-builds/transitions (pair `references/animation.md`).
-- `designed_charts.py` — raster matplotlib chart recipes (use only for dumbbell or a deliberate
-  look — prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
+- `designed_charts.py` — raster matplotlib chart recipes (dumbbell, slope, dual_axis, bubble_trend,
+  pareto, donut_kpi, **waterfall** — for a chart type with no native equivalent or a deliberate look;
+  prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
   design-language presets (glassmorphism · swiss · editorial_paper · editorial_report · risograph ·
   memphis · brutalist · blueprint · ink_wash · eastern_traditional · **consulting** (MBB action-title) ·
   **dark_tech** (engineering dark + diagram-island) · **luxury_dark** · **museum_memorial**; ink_wash/

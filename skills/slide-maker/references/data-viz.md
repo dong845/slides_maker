@@ -13,14 +13,22 @@ is for when the relationship is richer.)
 | Before→after / a gap per category | **dumbbell** | `dumbbell(rows, ...)` |
 | Rank/level change between **two** dates | **slope / bump** | `slope(series, ...)` |
 | Two trends on different scales (A↑ while B↓) | **dual-axis line** | `dual_axis(x, left, right, ...)` |
-| x vs y with a 3rd (size) dimension + fair value | **bubble + trend line** | `bubble_trend(points, ...)` |
+| x vs y with a 3rd (size) dimension + fair value | **bubble + trend line** | `bubble_trend(points, ...)` (raster) · **`deckkit.native_bubble`** (editable-native — prefer it for a non-Latin deck or when the user will edit) |
 | The "vital few" that drive a total | **Pareto** (bars + cumulative %) | `pareto(items, ...)` |
 | Current state in numbers (3-6 metrics) | **KPI scorecards** (native) | `deckkit.scorecard(...)` ×N |
 | Ranked / part list keyed to a chart | **leaderboard** (native) | `deckkit.leaderboard(rows)` |
 | One hub, many dependents | **hub-and-spoke** | native (`box`+connectors); radial layout |
+| **How a total builds start→end / a variance walk** | **waterfall / bridge** | `waterfall(out, items, ...)` — floating rise/fall/total bars + connector steps; the one **semantic up/down colour** exception (not the single-highlight rule) |
+| **A multivariate profile across 3+ axes** (compare shapes) | **radar / spider** | `radar(out, axes, series, ...)` (matplotlib polar — PowerPoint's native radar is unthemeable; keep to ≤3 overlaid polygons) |
 | A simple single comparison / one trend | **bar / line** | `matplotlib` (the existing path) |
 
 The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="contain")`.
+
+**Recipe patterns (no dedicated helper — compose in matplotlib / deckkit):**
+- **Small multiples / trellis** — the same metric across many comparable slices (regions, products, cohorts): a `rows`/`columns` grid of identical mini charts with **shared x/y scales** (so shapes compare) + **one highlighted** slice, the rest greyed. Better than one spaghetti chart of N series.
+- **Sparkline** — a tiny axis-less word-scale trend inside a KPI tile / table cell / sentence: a matplotlib line with axes/ticks/frame off, saved small and placed inline via `picture`, or a native mini `native_chart` stripped of chrome. Pairs with `big_numeral`/`stat_row` to show "the number AND its trend".
+- **Chart annotation layer** — data-anchored overlays ON a designed chart: a **CAGR growth arrow** across columns, a **delta bracket** between two bars, a **reference/target line** (`ax.axhline`), a **convergence/target band** (`ax.axhspan`), or a labeled callout on the key point. The annotation carries the "so-what" *inside* the plot; keep it to the ONE thing that matters.
+- **Football field / range bars** — a value RANGE per category (valuation, estimate, min–max) as floating horizontal bars on a shared `deckkit.axis_scale`, one row per category — a `dot_strip` cousin for ranges instead of points.
 
 ## Chart anti-patterns (each one has shipped an ugly or misleading chart — check by name)
 - **Dual-axis abuse** — two unrelated series forced onto twin axes to fake correlation; use it only

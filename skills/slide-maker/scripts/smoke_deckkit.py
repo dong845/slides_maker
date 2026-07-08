@@ -261,6 +261,78 @@ def _pangu():
         pass
 ok("pangu (default no-op + spaced/unspaced idempotent + bad-mode guard)", _pangu)
 
+# --- new geometry components: tier_stack / gantt / harvey_ball+eval_matrix / heat_matrix / device_frame ---
+def _tier_stack():
+    p = dk.blank_deck(W, H); s2 = dk.add_slide(p)
+    dk.pyramid(s2, 1.0, 1.2, 4.4, 3.8, ["Vision", "Strategy", "Delivery", "Foundation"])
+    dk.funnel(s2, 7.2, 1.2, 5.0, 3.8, ["Visits", "Signups", "Trials", "Paid"],
+              values=[100, 54, 30, 12], labels="side")
+    dk.lint_layout(p, strict=True)                       # tiers taper + labels stay collision-free
+ok("tier_stack / pyramid + funnel (value-proportional, lint-clean)", _tier_stack)
+raises("tier_stack rejects an empty tier list", lambda: dk.tier_stack(last(), 1, 1, 4, 3, []))
+
+def _gantt():
+    p = dk.blank_deck(W, H); s2 = dk.add_slide(p)
+    dk.gantt(s2, 0.6, 1.3, 12.1,
+             [("Discovery", 0, 1, 0), ("Design", 1, 2.5, 0),
+              ("Build", 2, 5, 1), ("QA", 4.5, 6, 1), ("Launch", 6, 6.5, 2)],
+             axis_min=0, axis_max=7, ticks=[0, 2, 4, 6], tick_labels=["Q1", "Q2", "Q3", "Q4"],
+             lanes=["Plan", "Engineering", "GTM"], today=3.2, highlight=2)
+    dk.lint_layout(p, strict=True)                       # bars keyed to axis_scale, swimlanes clean
+ok("gantt (swimlanes + ticks + today + highlight, lint-clean)", _gantt)
+raises("gantt raises on an off-axis bar", lambda: dk.gantt(last(), 0.6, 1.3, 11.0,
+       [("X", 0, 5)], axis_min=0, axis_max=3))          # end 5 > axis_max 3 → off-canvas
+
+def _harvey_ball():
+    s2 = S()
+    from pptx.oxml.ns import qn as _qn
+    wsh = dk.harvey_ball(s2, 3.0, 3.0, 2, d=0.4)
+    g = wsh._element.spPr.find(_qn("a:prstGeom"))
+    assert g is not None and g.get("prst") == "pie", "harvey_ball(level=2) must build a PIE wedge"
+    assert len(wsh.adjustments) == 2, "PIE must expose 2 adjustments (start/end angle)"
+    dk.harvey_ball(s2, 4.0, 3.0, 0)                      # empty ring (no wedge)
+    dk.harvey_ball(s2, 5.0, 3.0, 4)                      # full disc
+ok("harvey_ball (PIE wedge geometry builds)", _harvey_ball)
+
+def _eval_matrix():
+    p = dk.blank_deck(W, H); s2 = dk.add_slide(p)
+    dk.eval_matrix(s2, 0.8, 1.6, 11.0, ["Option A", "Option B", "Option C"],
+                   ["Cost", "Speed", "Risk", "Support"],
+                   [[4, 2, 3], [3, 4, 2], [2, 3, 4], [4, 1, 3]], recommend=0)
+    dk.eval_matrix(dk.add_slide(p), 0.8, 1.6, 11.0, ["A", "B", "C"], ["c1", "c2", "c3"],
+                   [["yes", "no", "partial"], ["partial", "yes", "no"], ["yes", "yes", "partial"]],
+                   mark="mark", legend=False)
+    dk.lint_layout(p, strict=True)
+ok("eval_matrix (harvey balls + marks + recommend column, lint-clean)", _eval_matrix)
+
+def _heat_matrix():
+    p = dk.blank_deck(W, H); s2 = dk.add_slide(p)
+    dk.heat_matrix(s2, 1.2, 1.4, 6.2, 4.2,
+                   [[1, 2, 3, 4, 5], [2, 4, 6, 8, 10], [3, 6, 9, 12, 15],
+                    [4, 8, 12, 16, 20], [5, 10, 15, 20, 25]],
+                   ["Rare", "Unlikely", "Possible", "Likely", "Certain"],
+                   ["Trivial", "Minor", "Moderate", "Major", "Severe"],
+                   scale="risk", cell_labels=True)
+    dk.heat_matrix(dk.add_slide(p), 1.2, 1.4, 6.0, 3.0,
+                   [[10, 20, 30], [40, 50, 60]], ["r1", "r2"], ["c1", "c2", "c3"],
+                   scale="div", cell_labels=True)
+    dk.lint_layout(p, strict=True)                       # cells + contrast text stay collision-free
+ok("heat_matrix (risk + div scales, contrast-aware text, lint-clean)", _heat_matrix)
+
+def _device_frame():
+    r = dk.device_frame(S(), IMG, 0.8, 1.3, 6.2, 3.6, chrome="browser",
+                        url="app.example.com/dashboard")
+    assert len(r) == 4 and r[2] > 0 and r[3] > 0, "device_frame must return the inner picture rect"
+    dk.device_frame(S(), IMG, 5.2, 1.0, 2.2, 4.6, chrome="phone")
+ok("device_frame (browser chrome + phone bezel)", _device_frame)
+
+def _waterfall():
+    q = os.path.join(TMP, "_wf.png")
+    dc.waterfall(q, [("Start", None), ("Q1", 25), ("Q2", -12), ("Q3", 18), ("End", None)])
+    assert os.path.exists(q) and os.path.getsize(q) > 1500, "waterfall PNG missing/trivial"
+ok("dc.waterfall (floating step bars + dashed connectors)", _waterfall)
+raises("waterfall rejects an empty item list", lambda: dc.waterfall(os.path.join(TMP, "_x.png"), []))
+
 prs.save(os.path.join(TMP, "_smoke_deck.pptx"))
 print(f"\nsmoke_deckkit: {len(fails)} failure(s)" + ("" if not fails else " — " + "; ".join(n for n, _ in fails)))
 sys.exit(1 if fails else 0)

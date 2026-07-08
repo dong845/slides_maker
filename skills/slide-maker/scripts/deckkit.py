@@ -4347,6 +4347,441 @@ def fit_text_size(runs, w, h, start_size, *, font=None, min_size=9.0, line_h=_LI
     return min_size
 
 
+# ============================================ taper stacks · roadmaps · rating grids · frames
+def tier_stack(slide, x, y, w, h, tiers, *, mode="pyramid", direction=None, accents=None,
+               ink=None, values=None, labels="inside", font=None):
+    """A FUNNEL or PYRAMID from one taper core (they are geometric siblings) — centered horizontal
+    bands whose width tapers across the stack, an editorial part-to-whole ladder, NOT a SmartArt
+    gradient. ``tiers`` = label strings TOP→BOTTOM.
+
+    ``mode='pyramid'`` (narrow top → wide base — a foundation/hierarchy) or ``'funnel'`` (wide top →
+    narrow — stage-by-stage drop-off). ``direction`` = ``'up'``/``'down'`` overrides which end is the
+    narrow one (default follows ``mode``). Each band gets a colour from a semantic RAMP — tints of one
+    accent, light at the top → full accent at the base — or the explicit per-tier ``accents`` list.
+    ``values`` (optional, aligned to ``tiers``) is DISPLAYED (conversion %/counts); when numeric it
+    ALSO drives band width value-proportionally, so a real funnel's drop-off is honest geometry rather
+    than a fixed taper. ``labels='inside'`` sets the label (auto-fit) ON the band, contrast-aware;
+    ``labels='side'`` draws the tiers in the left ~half and calls each label out to the RIGHT with a
+    thin leader. ``ink`` is the side-label colour (default DEEP). Returns the bottom y.
+
+    Ship ``pyramid(...)`` / ``funnel(...)`` as the two obvious entry points over this core."""
+    if not tiers:
+        raise ValueError("tier_stack() needs at least one tier")
+    if mode not in ("pyramid", "funnel"):
+        raise ValueError("tier_stack(): mode must be 'pyramid' or 'funnel'")
+    if labels not in ("inside", "side"):
+        raise ValueError("tier_stack(): labels must be 'inside' or 'side'")
+    if direction is not None and direction not in ("up", "down"):
+        raise ValueError("tier_stack(): direction must be 'up', 'down', or None")
+    ic = ink if ink is not None else DEEP
+    n = len(tiers)
+    # narrow-end: pyramid apex-up (narrow top); funnel wide-top (narrow bottom) — direction overrides
+    narrow_top = (direction == "up") if direction is not None else (mode == "pyramid")
+    # widths: value-proportional when values are numeric (an honest funnel), else a linear taper
+    numeric_vals = None
+    if values is not None:
+        try:
+            numeric_vals = [float(v) for v in values]
+        except (TypeError, ValueError):
+            numeric_vals = None
+    MINF = 0.20
+    if numeric_vals is not None and max(abs(v) for v in numeric_vals) > 0:
+        mx = max(abs(v) for v in numeric_vals)
+        fracs = [max(MINF, abs(v) / mx) for v in numeric_vals]
+    else:
+        fracs = []
+        for i in range(n):
+            t = (i / (n - 1)) if n > 1 else 1.0
+            fracs.append(MINF + (1 - MINF) * (t if narrow_top else (1 - t)))
+    # colour ramp light(top)→full accent(base), or an explicit semantic list
+    if accents is not None:
+        cols = [_as_rgbc(c) for c in accents[:n]]
+        cols += [BLUE] * (n - len(cols))
+    else:
+        cols = [tint(BLUE, 0.30 + 0.70 * ((i / (n - 1)) if n > 1 else 1.0)) for i in range(n)]
+    w_area = w if labels == "inside" else w * 0.52
+    band_h = h / n                                     # flush bands (a funnel/pyramid's classic look)
+    cy = y
+    for i, lab in enumerate(tiers):
+        band_w = w_area * fracs[i]
+        bx = x + (w_area - band_w) / 2.0
+        box(slide, bx, cy, band_w, band_h, fill=cols[i], round=True, r=min(0.06, band_h / 4.0))
+        val_str = None
+        if values is not None and i < len(values) and values[i] not in (None, ""):
+            v = values[i]
+            val_str = f"{v:g}" if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v)
+        band_cy = cy + band_h / 2.0
+        if labels == "inside":
+            tc = WHITE if contrast_ratio(WHITE, cols[i]) >= contrast_ratio(DEEP, cols[i]) else DEEP
+            lsize = fit_text_size([(str(lab), True)], max(0.4, band_w - 0.24), band_h - 0.06, 14,
+                                  font=font, min_size=8)
+            runs = [[(str(lab), lsize, tc, True, False, font)]]
+            if val_str:
+                runs.append([(val_str, max(8.0, lsize - 2), tc, False, False, font)])
+            text(slide, bx, cy, band_w, band_h, runs, align=PP_ALIGN.CENTER,
+                 anchor=MSO_ANCHOR.MIDDLE, space_after=0, line_spacing=0.98)
+        else:
+            lx = x + w_area + 0.22
+            connector(slide, (bx + band_w, band_cy), (lx - 0.06, band_cy),
+                      color=MUTE, width=1.0, arrow=False)
+            runs = [(str(lab), 12.5, ic, True, False, font)]
+            if val_str:
+                runs.append(("   " + val_str, 12.5, MUTE, False, False, font))
+            text(slide, lx, cy, max(0.6, x + w - lx), band_h, [runs],
+                 anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        cy += band_h
+    return cy
+
+
+def pyramid(slide, x, y, w, h, tiers, **kw):
+    """A PYRAMID (narrow top → wide base) — the foundation/hierarchy taper. Thin wrapper over
+    :func:`tier_stack` (``mode='pyramid'``)."""
+    return tier_stack(slide, x, y, w, h, tiers, mode="pyramid", **kw)
+
+
+def funnel(slide, x, y, w, h, tiers, **kw):
+    """A FUNNEL (wide top → narrow) — the stage-by-stage drop-off taper. Thin wrapper over
+    :func:`tier_stack` (``mode='funnel'``)."""
+    return tier_stack(slide, x, y, w, h, tiers, mode="funnel", **kw)
+
+
+def gantt(slide, x, y, w, tasks, *, axis_min=None, axis_max=None, ticks=None, tick_labels=None,
+          lanes=None, today=None, row_h=0.42, label_w=2.4, accents=None, highlight=None, font=None):
+    """A dated task-bar / swimlane ROADMAP — a left label column, a quarter/month tick grid, and one
+    rounded bar per task row, all keyed to the SHARED ``axis_scale`` value→x mapper so bar geometry
+    can never drift. ``tasks = [(label, start, end)]`` or ``(label, start, end, lane_or_accent_idx)``
+    with numeric ``start``/``end`` on the same axis (dates as ordinals or quarter numbers).
+
+    ``axis_min``/``axis_max`` fix the axis (default: span the tasks). ``ticks`` + ``tick_labels`` draw
+    the vertical grid (e.g. quarter boundaries labelled ``Q1 Q2 …`` — the categorical roadmap-board
+    mode uses this SAME path). ``lanes`` (a list of lane names) groups rows into faintly-tinted,
+    labelled swimlane bands — then a task's 4th element is its LANE index; without ``lanes`` the 4th
+    element is an ACCENT index into ``accents``. ``today`` drops a vertical marker line; ``highlight``
+    (a flat task index) recolours one bar. **Fails loudly** (``ValueError``) if a bar falls off the
+    axis, on the ``timeline``/``vstack`` precedent. Returns the bottom y."""
+    if not tasks:
+        raise ValueError("gantt() needs at least one task")
+    lo = axis_min if axis_min is not None else min(t[1] for t in tasks)
+    hi = axis_max if axis_max is not None else max(t[2] for t in tasks)
+    if hi <= lo:
+        hi = lo + 1
+    x0 = x + label_w
+    chart_w = w - label_w
+    if chart_w <= 0.5:
+        raise ValueError("gantt(): label_w leaves no room for bars — reduce label_w or grow w")
+    X, _draw = axis_scale(x0, chart_w, lo, hi)         # the ONE shared value→x mapper
+    ink = DEEP
+    header_h = 0.34 if (ticks or tick_labels) else 0.06
+    lane_head_h = 0.30
+    lane_gap = 0.12
+    pool = [_as_rgbc(c) for c in accents] if accents else list(ACCENTS)
+    # ---- lay rows out (grouped by lane if given), recording every bar's y first
+    groups = []
+    if lanes:
+        for li, lname in enumerate(lanes):
+            groups.append((li, lname, [(ti, t) for ti, t in enumerate(tasks)
+                                       if len(t) > 3 and t[3] == li]))
+    else:
+        groups.append((None, None, list(enumerate(tasks))))
+    rows_out, lane_bands = [], []
+    cy = y + header_h
+    for li, lname, lt in groups:
+        band_top = cy
+        if lname is not None:
+            cy += lane_head_h
+        for ti, t in lt:
+            rows_out.append((ti, t, cy, li))
+            cy += row_h
+        if lname is not None:
+            lane_bands.append((li, lname, band_top, cy - band_top))
+        cy += lane_gap
+    chart_bottom = cy - lane_gap
+    grid_top = y + header_h
+    # ---- lane band backgrounds (behind), then gridlines, then bars/labels on top
+    for li, lname, bt, bh in lane_bands:
+        box(slide, x, bt, w, bh, fill=tint(pool[li % len(pool)], 0.06))
+    if ticks:
+        # gridlines/today are CONNECTORS (not filled boxes) so a full-height line crossing the
+        # swimlane band containers is never mis-flagged as escaping one of them
+        tls = tick_labels if tick_labels is not None else [f"{t:g}" for t in ticks]
+        sw, _sh = _slide_size(slide)
+        for t, lbl in zip(ticks, tls):
+            gx = X(t)
+            connector(slide, (gx, grid_top), (gx, chart_bottom),
+                      color=RGBColor(0xE4, 0xE7, 0xEC), width=1.0, arrow=False)
+            lxp = max(0.05, min(gx - 0.6, sw - 1.25))
+            text(slide, lxp, y, 1.2, header_h - 0.02, [[(str(lbl), 10, MUTE, True, False, font)]],
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM, space_after=0)
+    if today is not None:
+        tx = X(today)
+        connector(slide, (tx, grid_top), (tx, chart_bottom), style="dashed",
+                  color=MAGENTA, width=1.4, arrow=False)
+    for li, lname, bt, bh in lane_bands:
+        text(slide, x, bt + 0.01, label_w - 0.12, lane_head_h,
+             [[(str(lname).upper(), 10, pool[li % len(pool)], True, False, font)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    for ti, t, row_top, li in rows_out:
+        lab, s0, e0 = t[0], t[1], t[2]
+        bx0, bx1 = X(s0), X(e0)
+        if bx1 < bx0 or bx0 < x0 - 1e-6 or bx1 > x0 + chart_w + 1e-6:
+            raise ValueError(f"gantt(): task '{lab}' [{s0}, {e0}] falls outside the axis "
+                             f"[{lo}, {hi}] — widen axis_min/axis_max or fix the dates")
+        bar_h = row_h * 0.56
+        by = row_top + (row_h - bar_h) / 2.0
+        if highlight is not None and ti == highlight:
+            col = MAGENTA
+        elif lanes is not None:
+            col = pool[(li or 0) % len(pool)]
+        elif len(t) > 3 and t[3] is not None:
+            col = pool[int(t[3]) % len(pool)]
+        else:
+            col = BLUE
+        box(slide, bx0, by, max(bx1 - bx0, 0.06), bar_h, fill=col, round=True, r=bar_h / 2.0)
+        text(slide, x, row_top, label_w - 0.12, row_h,
+             [[(str(lab), 11.5, ink, ti == highlight, False, font)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    bottom = chart_bottom
+    if today is not None:
+        text(slide, X(today) - 0.6, chart_bottom + 0.04, 1.2, 0.24,
+             [[("TODAY", 8, MAGENTA, True, False, font)]], align=PP_ALIGN.CENTER, space_after=0)
+        bottom = chart_bottom + 0.3
+    return bottom
+
+
+def harvey_ball(slide, cx, cy, level, *, d=0.24, accent=None, track=None):
+    """A HARVEY-BALL rating glyph — an empty ring outline with a filled wedge swept ``level/4`` of
+    360° (``level`` 0..4; 0 empty, 4 full), the compact "how much" mark for a scorecard cell.
+    Drawn as an ``MSO_SHAPE.PIE`` whose swept angle is set through the shape's ``adjustments`` (start
+    12 o'clock, clockwise); ``level==4`` is a solid disc and ``level==0`` just the ring, so the pie
+    never hits its degenerate full-turn. ``(cx, cy)`` is the CENTRE and ``d`` the diameter (inches).
+    ``accent`` fills the wedge; ``track`` colours the ring — contrast-aware, so the outline stays
+    visible on white. Returns the wedge shape (pie/disc), or the ring when empty."""
+    acc = _as_rgbc(accent) if accent is not None else DEEP
+    tr = _as_rgbc(track) if track is not None else RGBColor(0xB6, 0xBC, 0xC8)
+    lvl = max(0, min(4, int(round(level))))
+    r = d / 2.0
+    x0, y0 = cx - r, cy - r
+    outline = tr if contrast_ratio(tr, WHITE) >= 1.25 else _blend(acc, WHITE, 0.5)
+    ring = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x0), Inches(y0), Inches(d), Inches(d))
+    ring.fill.solid(); ring.fill.fore_color.rgb = WHITE
+    ring.line.color.rgb = outline; ring.line.width = Pt(1.1); ring.shadow.inherit = False
+    wedge = None
+    if lvl >= 4:
+        wedge = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x0), Inches(y0), Inches(d), Inches(d))
+        wedge.fill.solid(); wedge.fill.fore_color.rgb = acc
+        wedge.line.color.rgb = outline; wedge.line.width = Pt(1.1); wedge.shadow.inherit = False
+    elif lvl >= 1:
+        # sweep clockwise from 12 o'clock (270° in DrawingML, where 0°=east). BOTH angles must stay
+        # in [0, 360): LibreOffice CLAMPS an end angle past 360°, so we wrap it with mod and let the
+        # renderer sweep clockwise from start to end (sweep = (end-start) mod 360 = level/4·360°).
+        start = 270.0
+        end = (start + (lvl / 4.0) * 360.0) % 360.0
+        wedge = slide.shapes.add_shape(MSO_SHAPE.PIE, Inches(x0), Inches(y0), Inches(d), Inches(d))
+        wedge.fill.solid(); wedge.fill.fore_color.rgb = acc
+        wedge.line.fill.background(); wedge.shadow.inherit = False
+        # python-pptx pie adj values are angle_deg × 0.6 (the default 0..270° pie reads [0.0, 162.0])
+        try:
+            wedge.adjustments[0] = start * 0.6
+            wedge.adjustments[1] = end * 0.6
+        except Exception:
+            pass
+    return wedge if wedge is not None else ring
+
+
+_EVAL_MARKS = {"yes": ("✓", RGBColor(0x1F, 0x9D, 0x55)), "y": ("✓", RGBColor(0x1F, 0x9D, 0x55)),
+               "true": ("✓", RGBColor(0x1F, 0x9D, 0x55)),
+               "no": ("✕", RGBColor(0xC6, 0x3A, 0x33)), "n": ("✕", RGBColor(0xC6, 0x3A, 0x33)),
+               "false": ("✕", RGBColor(0xC6, 0x3A, 0x33)),
+               "partial": ("◐", RGBColor(0xD9, 0x8A, 0x1E)), "maybe": ("◐", RGBColor(0xD9, 0x8A, 0x1E))}
+
+def _eval_mark(slide, cx, cy, val, *, font=None, size=15):
+    """Draw a semantic check/cross/partial glyph (✓ green · ✕ red · ◐ amber) centred at (cx, cy)."""
+    glyph, col = _EVAL_MARKS.get(str(val).strip().lower(), ("◐", RGBColor(0xD9, 0x8A, 0x1E)))
+    text(slide, cx - 0.3, cy - 0.18, 0.6, 0.36, [[(glyph, size, col, True, False, font)]],
+         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+
+
+def eval_matrix(slide, x, y, w, options, criteria, cells, *, mark="ball", recommend=None,
+                row_h=0.42, legend=True, accents=None, ink=None, font=None):
+    """A decision / OPTION-vs-CRITERIA scoring grid: a header row of option names (columns), a left
+    column of criteria labels (rows), and a cell grid. ``cells`` is a 2-D list ``cells[row][col]``:
+    ``0..4`` for ``mark='ball'`` (a :func:`harvey_ball` per cell) or ``'yes'``/``'no'``/``'partial'``
+    for ``mark='mark'`` (semantic ✓/✕/◐). ``recommend=<col idx>`` tints that column and drops a
+    ``corner_tab`` "RECOMMENDED" on it — foreground the ONE option the analysis picks. ``legend=True``
+    adds a small on-canvas 0–100 % harvey-ball key (ball mode only). ``accents[0]`` sets the
+    recommend/ball hue; ``ink`` the label colour. Returns the bottom y."""
+    ic = ink if ink is not None else DEEP
+    nopt, ncrit = len(options), len(criteria)
+    if nopt == 0 or ncrit == 0:
+        raise ValueError("eval_matrix() needs at least one option and one criterion")
+    crit_w = min(3.0, max(1.4, w * 0.30))
+    col_w = (w - crit_w) / nopt
+    head_h = 0.5
+    acc = _as_rgbc(accents[0]) if accents else BLUE
+    if recommend is not None and 0 <= recommend < nopt:
+        rx = x + crit_w + recommend * col_w
+        box(slide, rx, y + head_h, col_w, ncrit * row_h, fill=tint(acc, 0.10), round=True, r=0.06)
+        corner_tab(slide, rx, y, col_w, "Recommended", fill=acc, w=min(1.7, col_w + 0.3))
+    for c, opt in enumerate(options):
+        ox = x + crit_w + c * col_w
+        emph = (recommend == c)
+        text(slide, ox, y, col_w, head_h, [[(str(opt), 12, acc if emph else ic, True, False, font)]],
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    # separators are CONNECTORS (not filled boxes) so a full-width rule crossing the tinted
+    # recommend column is never mis-flagged as a node escaping it
+    connector(slide, (x, y + head_h), (x + w, y + head_h),
+              color=RGBColor(0xD9, 0xDD, 0xE4), width=1.2, arrow=False)
+    for r in range(ncrit):
+        ry = y + head_h + r * row_h
+        text(slide, x, ry, crit_w - 0.12, row_h, [[(str(criteria[r]), 11.5, ic, False, False, font)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        for c in range(nopt):
+            ccx = x + crit_w + c * col_w + col_w / 2.0
+            ccy = ry + row_h / 2.0
+            val = cells[r][c]
+            if mark == "ball":
+                harvey_ball(slide, ccx, ccy, val, d=min(row_h * 0.55, col_w * 0.42), accent=acc)
+            else:
+                _eval_mark(slide, ccx, ccy, val, font=font)
+        if r < ncrit - 1:
+            connector(slide, (x, ry + row_h), (x + w, ry + row_h),
+                      color=RGBColor(0xEE, 0xF0, 0xF3), width=0.8, arrow=False)
+    bottom = y + head_h + ncrit * row_h
+    if legend and mark == "ball":
+        ly = bottom + 0.2
+        lx = x + crit_w
+        text(slide, x, ly, crit_w - 0.12, 0.24, [[("SCALE", 9, MUTE, True, False, font)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        for k in range(5):
+            hx = lx + k * 0.92
+            harvey_ball(slide, hx + 0.11, ly + 0.11, k, d=0.2, accent=acc)
+            text(slide, hx + 0.26, ly, 0.62, 0.24, [[(f"{k * 25}%", 9, MUTE, False, False, font)]],
+                 anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        bottom = ly + 0.32
+    return bottom
+
+
+def _heat_color(v, vmin, vmax, scale, accent):
+    """Map a value to a cell fill for :func:`heat_matrix`. ``scale='seq'`` light→accent · ``'div'``
+    blue↔red through a neutral midpoint · ``'risk'`` green→amber→red (a risk grid)."""
+    span = (vmax - vmin) or 1.0
+    t = max(0.0, min(1.0, (float(v) - vmin) / span))
+    acc = _as_rgbc(accent) if accent is not None else BLUE
+    if scale == "div":
+        cool, mid, warm = RGBColor(0x2C, 0x6F, 0xBB), RGBColor(0xF2, 0xF3, 0xF5), RGBColor(0xC6, 0x3A, 0x33)
+        return _blend(cool, mid, t / 0.5) if t < 0.5 else _blend(mid, warm, (t - 0.5) / 0.5)
+    if scale == "risk":
+        green, amber, red = RGBColor(0x2E, 0x8B, 0x57), RGBColor(0xE0, 0xA3, 0x2E), RGBColor(0xC6, 0x3A, 0x33)
+        return _blend(green, amber, t / 0.5) if t < 0.5 else _blend(amber, red, (t - 0.5) / 0.5)
+    return tint(acc, 0.14 + 0.86 * t)                  # 'seq' (default): light → full accent
+
+
+def heat_matrix(slide, x, y, w, h, values, row_labels, col_labels, *, scale="seq",
+                cell_labels=None, legend=True, vmin=None, vmax=None, accent=None, font=None):
+    """A category×category HEAT MATRIX — solid-filled cells coloured by value, with two-edge axis
+    labels (``col_labels`` across the top, ``row_labels`` down the left). ``values`` is a 2-D list
+    ``values[row][col]``. The value→colour mapper is ``scale='seq'`` (light→accent), ``'div'``
+    (blue↔red through neutral — signed deltas), or ``'risk'`` (green→amber→red — a 5×5 risk grid);
+    ``vmin``/``vmax`` fix the range (default data min/max). ``cell_labels`` prints values in the cells
+    — pass ``True`` to show the numbers, or a 2-D list of strings — in a CONTRAST-AWARE colour
+    (``contrast_ratio`` picks dark-on-light / light-on-dark). ``legend=True`` adds a colour-bar strip
+    with the min/max. Returns the bottom y."""
+    nr, nc = len(row_labels), len(col_labels)
+    if nr == 0 or nc == 0:
+        raise ValueError("heat_matrix() needs non-empty row_labels and col_labels")
+    flat = [float(v) for row in values for v in row]
+    lo = vmin if vmin is not None else min(flat)
+    hi = vmax if vmax is not None else max(flat)
+    rlab_w = min(2.2, max(1.0, w * 0.2))
+    clab_h = 0.3
+    leg_h = 0.5 if legend else 0.0
+    gx, gy = x + rlab_w, y + clab_h
+    grid_w, grid_h = w - rlab_w, h - clab_h - leg_h
+    cw, ch = grid_w / nc, grid_h / nr
+    for c, cl in enumerate(col_labels):
+        text(slide, gx + c * cw, y, cw, clab_h, [[(str(cl), 10.5, MUTE, True, False, font)]],
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM, space_after=0)
+    for r in range(nr):
+        text(slide, x, gy + r * ch, rlab_w - 0.1, ch, [[(str(row_labels[r]), 10.5, DEEP, True, False, font)]],
+             align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        for c in range(nc):
+            col = _heat_color(values[r][c], lo, hi, scale, accent)
+            box(slide, gx + c * cw, gy + r * ch, cw, ch, fill=col)
+            lbl = None
+            if cell_labels is True:
+                lbl = f"{values[r][c]:g}"
+            elif cell_labels is not None:
+                lbl = str(cell_labels[r][c])
+            if lbl is not None:
+                tc = WHITE if contrast_ratio(WHITE, col) >= contrast_ratio(DEEP, col) else DEEP
+                text(slide, gx + c * cw, gy + r * ch, cw, ch, [[(lbl, 10.5, tc, True, False, font)]],
+                     align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    bottom = gy + grid_h
+    if legend:
+        lgy = bottom + 0.16
+        bar_w = min(2.6, max(1.4, grid_w * 0.6))
+        nseg = 24
+        for i in range(nseg):
+            vv = lo + (i / (nseg - 1)) * (hi - lo)
+            box(slide, gx + i * bar_w / nseg, lgy, bar_w / nseg + 0.006, 0.14,
+                fill=_heat_color(vv, lo, hi, scale, accent))
+        text(slide, gx, lgy + 0.16, 1.2, 0.2, [[(f"{lo:g}", 9, MUTE, False, False, font)]],
+             align=PP_ALIGN.LEFT, space_after=0)
+        text(slide, gx + bar_w - 1.2, lgy + 0.16, 1.2, 0.2, [[(f"{hi:g}", 9, MUTE, False, False, font)]],
+             align=PP_ALIGN.RIGHT, space_after=0)
+        bottom = lgy + 0.38
+    return bottom
+
+
+def device_frame(slide, path, x, y, w, h, *, chrome="browser", url=None, accent=None,
+                 dark=False, round=True):
+    """Place a screenshot in a DEVICE / BROWSER bezel so a product shot reads as a real UI, not a bare
+    rectangle. ``chrome='browser'`` = a rounded window + a top chrome bar with 3 traffic-light dots and
+    a URL pill (``url`` text); ``chrome='phone'`` = a dark rounded bezel with a notch. The real
+    screenshot is placed with ``picture(fit='cover', round=...)`` clipped to the inner rounded rect
+    (via :func:`_round_pic_geom`). ``dark=True`` themes the browser chrome dark; ``accent`` is
+    available for theming. Returns the inner picture rect ``(x, y, w, h)``."""
+    if chrome == "phone":
+        bezel = RGBColor(0x14, 0x16, 0x1C)
+        box(slide, x, y, w, h, fill=bezel, round=True, r=min(0.28, w * 0.12, h * 0.12))
+        pad = max(0.06, min(w, h) * 0.045)
+        ix, iy, iw, ih = x + pad, y + pad, w - 2 * pad, h - 2 * pad
+        picture(slide, path, ix, iy, iw, ih, fit="cover", round=round, r=(0.12 if round else None))
+        nw, nh = w * 0.36, 0.16                        # the top notch, over the screen
+        box(slide, x + w / 2.0 - nw / 2.0, iy, nw, nh, fill=bezel, round=True, r=nh / 2.0)
+        return (ix, iy, iw, ih)
+    if chrome not in ("browser",):
+        raise ValueError("device_frame(): chrome must be 'browser' or 'phone'")
+    body_c = RGBColor(0x1E, 0x22, 0x2B) if dark else WHITE
+    chrome_c = RGBColor(0x2A, 0x2E, 0x37) if dark else RGBColor(0xED, 0xEE, 0xF1)
+    border = RGBColor(0x3A, 0x40, 0x4C) if dark else RGBColor(0xD7, 0xDB, 0xE2)
+    r_out = 0.12
+    box(slide, x, y, w, h, fill=body_c, line=border, line_w=1.0, round=True, r=r_out)
+    ch_h = min(0.34, h * 0.16)                          # < 0.35 so the chrome bar isn't a lint container
+    box(slide, x, y, w, ch_h, corners="top", r=r_out, fill=chrome_c)
+    dr = min(0.062, ch_h * 0.26)
+    for i, lc in enumerate((RGBColor(0xFF, 0x5F, 0x57), RGBColor(0xFE, 0xBC, 0x2E), RGBColor(0x28, 0xC8, 0x40))):
+        o = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x + 0.14 + i * (dr * 2 + 0.06)),
+                                   Inches(y + ch_h / 2.0 - dr), Inches(2 * dr), Inches(2 * dr))
+        o.fill.solid(); o.fill.fore_color.rgb = lc; o.line.fill.background(); o.shadow.inherit = False
+    pill_x = x + 0.14 + 3 * (dr * 2 + 0.06) + 0.14
+    pill_w = max(0.9, w - (pill_x - x) - 0.5)
+    pill_h = ch_h * 0.62
+    box(slide, pill_x, y + ch_h / 2.0 - pill_h / 2.0, pill_w, pill_h,
+        fill=(RGBColor(0x14, 0x18, 0x20) if dark else WHITE), line=border, line_w=0.8,
+        round=True, r=pill_h / 2.0)
+    if url:
+        text(slide, pill_x + 0.14, y + ch_h / 2.0 - pill_h / 2.0, pill_w - 0.28, pill_h,
+             [[(str(url), 9.5, (PALE if dark else MUTE), False, False, MONO)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+    pad = 0.06
+    ix, iy = x + pad, y + ch_h + 0.02
+    iw, ih = w - 2 * pad, h - ch_h - 0.02 - pad
+    picture(slide, path, ix, iy, iw, ih, fit="cover", round=round,
+            r=(max(0.03, r_out - 0.06) if round else None))
+    return (ix, iy, iw, ih)
+
+
 if __name__ == "__main__":          # `python deckkit.py deck.pptx` → lint a finished file
     import sys
     if len(sys.argv) > 1:

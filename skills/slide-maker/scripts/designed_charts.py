@@ -22,6 +22,7 @@ Pick by argument (see references/data-viz.md):
   dual_axis   — two trends on different scales (e.g. success ↑ vs cost ↓)
   bubble_trend— x vs y with a third (size) dimension + a fair-value trend line
   pareto      — ranked bars + cumulative % (the "vital few")
+  waterfall   — running total built from signed steps (start → +/- deltas → end); no native pptx form
 
 All emit a single highlight per the deck's one-accent discipline; pair each with a
 ``deckkit.takeaway_rail`` so the chart always carries its "so-what".
@@ -223,4 +224,65 @@ def pareto(out, items, *, palette=None, dark=False, font=None, figsize=(6.8, 4.0
     ax.tick_params(axis="y", colors=muted); ax2.tick_params(axis="y", colors=muted)
     for sp in ("top",): ax.spines[sp].set_visible(False); ax2.spines[sp].set_visible(False)
     ax.spines["bottom"].set_color(muted)
+    return _save(fig, out)
+
+
+def waterfall(out, items, *, palette=None, dark=False, font=None, total_label="Total", figsize=(6.8, 4.0)):
+    """Running total built from signed steps — the 'how did we get from A to B' bridge that
+    python-pptx has NO native form for. ``items = [(label, delta), ...]`` where a ``delta`` of ``None``
+    marks a SUBTOTAL/TOTAL bar (drawn from zero to the running cumulative). Each step bar FLOATS on the
+    cumulative so far; rises, falls and totals are coloured DISTINCTLY (green ↑ / red ↓ / navy total —
+    the documented categorical exception to one-accent), consecutive bars are joined by dashed connector
+    steps, and every bar carries a direct value label. ``total_label`` names a total bar whose label is
+    left blank. Transparent PNG saved to ``out``."""
+    if not items:
+        raise ValueError("waterfall needs at least one item")
+    plt, ink, grid, muted = _mpl(dark, font)
+    pal = list(palette) if palette else ["#33415C", "#00A6A6", "#F2A03D"]
+    up_c, down_c, total_c = "#1F9D55", "#D9463B", pal[0]
+    n = len(items)
+    running = 0.0
+    bases, heights, colors, is_total, deltas, cum_after, labels = [], [], [], [], [], [], []
+    for (label, delta) in items:
+        if delta is None:
+            base, height, color, tot, val = 0.0, running, total_c, True, running
+            labels.append(label if label else total_label)
+        else:
+            tot = False
+            if delta >= 0:
+                base, height, color = running, delta, up_c
+            else:
+                base, height, color = running + delta, -delta, down_c
+            running += delta
+            val = delta
+            labels.append(label)
+        bases.append(base); heights.append(height); colors.append(color)
+        is_total.append(tot); deltas.append(val); cum_after.append(running)
+    xs = list(range(n)); bw = 0.62
+    tops = [bases[i] + heights[i] for i in xs]
+    allmax, allmin = max(tops + bases), min(bases + tops)
+    span = (allmax - allmin) or 1.0
+    lblpad = 0.03 * span
+    fig, ax = plt.subplots(figsize=figsize)
+    for i in xs:
+        ax.bar(i, heights[i], bottom=bases[i], width=bw, color=colors[i], edgecolor="none", zorder=3)
+    for i in range(n - 1):                              # dashed connector at the level between bars
+        ax.plot([i + bw / 2, i + 1 - bw / 2], [cum_after[i], cum_after[i]],
+                color=muted, lw=1.0, ls="--", zorder=2)
+    for i in xs:
+        if is_total[i]:
+            ax.text(i, tops[i] + lblpad, _numlabel(deltas[i]), ha="center", va="bottom",
+                    fontsize=10, color=ink, fontweight="bold")
+        elif deltas[i] >= 0:
+            ax.text(i, tops[i] + lblpad, "+" + _numlabel(deltas[i]), ha="center", va="bottom",
+                    fontsize=9.5, color=up_c, fontweight="bold")
+        else:
+            ax.text(i, bases[i] - lblpad, "−" + _numlabel(abs(deltas[i])), ha="center", va="top",
+                    fontsize=9.5, color=down_c, fontweight="bold")
+    ax.set_xticks(xs); ax.set_xticklabels(labels, fontsize=10, color=ink)
+    ax.set_ylim(min(0.0, allmin) - lblpad * 2, allmax + lblpad * 4)
+    ax.axhline(0, color=grid, lw=1.0, zorder=1)
+    for sp in ("top", "right", "left"):
+        ax.spines[sp].set_visible(False)
+    ax.spines["bottom"].set_color(muted); ax.tick_params(axis="x", colors=muted); ax.set_yticks([])
     return _save(fig, out)
