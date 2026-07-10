@@ -453,6 +453,16 @@ A row per slide (keep it workable — the runner-up folds into *Reasoning*):
 
 | # | Form/component (+ runner-up it beat) | Reasoning (narrative job → content shape → rejected default → why) | Layout (C.R.A.P.) | Motion (`build:…` / `static:…`) | Image? |
 
+**The runner-up must come from a DIFFERENT form family** (a card vs a *differently-styled* card is
+not a candidate set — pit the card against a diagram, a proportional bar, a split, a roadmap, big
+type). This is the divergent pass in miniature, and it exists because a single forward pass emits
+the *modal* form for every content shape — "N items" → a card row, "two things" → two panels — and
+those modal answers are individually fine yet collectively a template. The better form is usually
+the *less obvious* candidate, and it only surfaces if a genuinely different family was on the table.
+Watch for the shapes that boxes silently flatten: a RATIO wants a proportional visual, a FLIP /
+transformation wants a topology diagram, a DIVISION wants a split, a PROCESS-over-time wants a
+roadmap — a panel that merely *states* one of these is the rejected default, not a finalist.
+
 Make *Reasoning* carry the whole trace on every non-obvious slide — the slide's **narrative job**
 (named by the Content plan's *role* column — hook / problem / diagnosis / framework / method /
 evidence / case study / comparison / roadmap / conclusion / call-to-action — restated here as the

@@ -179,6 +179,14 @@ Then:
 - **One idea per slide.** Use ~1 spoken minute per slide only as a rough sizing check — pace by
   the story, not the clock: some slides earn a long dwell, others flash by. A longer deck means
   *more* slides, never a denser one.
+- **…but one FULL idea — run the frame-fill / merge check before locking the list.** Size slides to
+  their content, never to a target count: after drafting the per-slide table, scan it once asking of
+  each row *"do these content units fill a frame well?"* Two thin neighbouring beats that are really
+  two views of one idea (a step list + its timeline; a claim + its lone example) are **merge
+  candidates — name them in the plan** (`merge? S9+S10 — same idea, two views`) so the checkpoint
+  decides deliberately; a thin beat that must stand alone gets **enriched** with the concrete detail
+  that makes it land, or its quiet register named in one clause. A deck planned beat-by-beat to hit a
+  count ships half-empty slides — this one-pass scan is where that's caught, upstream of any design.
 - **Calibrate to the audience.** Tune the altitude and how much you define to the audience's
   expertise — what to assume, what to unpack, which terms to gloss (a specialist room vs. a broad
   one differ sharply). State that calibration in the Narrative arc section.

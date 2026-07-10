@@ -1327,8 +1327,8 @@ pixels). **The canonical home is the per-slide function docstrings** (the scaffo
 comment block in `build_<deck>.py` remains the fallback for template-specific build_examples
 that don't use the scaffold.
 
-### 🔴 PRE-FLIGHT — tick these 11 before the first render, EVERY deck, no exceptions
-This is the fixed boarding-pass between build and render. **Emit it as eleven literal ✓/✗ lines** (in
+### 🔴 PRE-FLIGHT — tick these 12 before the first render, EVERY deck, no exceptions
+This is the fixed boarding-pass between build and render. **Emit it as twelve literal ✓/✗ lines** (in
 your working notes or the build script's tail comment) — writing the ticks is what forces the checks
 to actually run; a deck with un-ticked pre-flight items is not ready to render. It exists because
 these are the rules that history shows get *silently* skipped when they live only as prose — they are
@@ -1346,12 +1346,17 @@ those here; read its report instead).
 9. **Eye path**: squint each slide — first look lands on the named hero, 3–4 hierarchy levels survive the blur.
 10. **Hand-off ready**: font/portability deps + per-slide click order noted for the hand-off; open questions carried, not dropped; output dir resolved + announced (`~/Downloads/<deck>/` or the user's stated choice).
 11. **Titles bound to takeaways**: every content slide's title IS the plan's takeaway or a compression keeping its subject + verb + claim; **list the slide numbers** of compressions and of noted exceptions (bare topic labels are fine on cover/divider/agenda/closing; a named exception covers: Mode A "match its title treatment", a registered user template with a fixed title register, or a slide whose planned takeaway demonstrably lands as its named hero / `insight_banner` / `takeaway_rail` — note which element carries it). Emitting the slide numbers, not just a ✓, is what forces the per-slide comparison.
+12. **Form diversity & frame fill — EMIT THE TALLY**: write the deck's form-family tally as one literal line (`cards/panels: N · diagram: N · chart/proportional: N · big-type/editorial: N · timeline/roadmap: N · hero-image: N …`) and check three things against it: (a) **no family >~40% of content slides** — a first draft's greedy default is the card/panel, and per-slide checks can't see deck-level sameness, so this tally is the one place the crutch becomes visible; (b) every slide whose content is a RATIO / FLIP / DIVISION / PROCESS uses the form that *shows* it (a proportional bar, a topology diagram, a split, a roadmap), not a box that states it; (c) each interior slide **fills its frame** — a slide whose content ends in the top half either gets enriched, merged with its neighbour, or names its deliberate quiet register in one clause. Emitting the tally + the (b)/(c) slide numbers, not just a ✓, is what forces the deck-level look a slide-by-slide build never takes.
 
 **Gates never collapse.** A quick / low-stakes / inline run scales the *size* of each artifact
 (a 5-line content plan, a 10-line design plan), never the *existence* of the gates: interview →
 content plan → design plan (with self-verify) → pre-flight → lint+stats → critic. Every rule-miss
 this skill has shipped happened when a step was run "in my head" instead of emitted — if it isn't
-written down, it didn't happen.
+written down, it didn't happen. **The auto-waiver/inline path is where this bites hardest:** with
+no checkpoint audience, the build slides into a single greedy pass that reaches for the same
+handy component on every slide and stops at "nothing's broken" — every gate above is a floor, and
+only the emitted form-candidates (per-slide runner-up from a different family) + the PRE-FLIGHT 12
+tally push toward the ceiling. A delegated deck emits them for itself, not for the user.
 
 ## Step 5 — Render, verify, then run the actor–critic loop
 **You should already have run the build-time geometry gate** (`dk.lint_layout(prs)` at the end of

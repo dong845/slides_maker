@@ -455,6 +455,11 @@ def _slide_stats(slide, bx, sw, sh):
     body_tier = _cwmedian([(pt, ch) for pt, ch in sizes if pt > 11.0])
     # lopsided inputs: per-half occupancy of content ink (bg plate + footer chrome excluded)
     halves = _half_occ([s for s in bx if not s["bg"] and s["t"] < footer_y], sw, sh)
+    # card-dominance input: how much of the canvas is covered by LARGE solid panels/cards (the
+    # greedy first-draft default). Small diagram nodes (<1.5in²) and pictures don't count.
+    boxy_area = sum(s["w"] * s["h"] for s in bx
+                    if s["solid"] and not s["bg"] and not s["pic"] and s["w"] * s["h"] >= 1.5)
+    boxy = boxy_area >= 0.25 * sw * sh
     notes_text = ""                                       # the spoken thread (speaker notes)
     try:
         if slide.has_notes_slide:                         # never touch .notes_slide when absent —
@@ -462,7 +467,7 @@ def _slide_stats(slide, bx, sw, sh):
     except Exception:
         pass
     return {
-        "title_pt": title_pt, "body_tier": body_tier, "halves": halves,
+        "title_pt": title_pt, "body_tier": body_tier, "halves": halves, "boxy": boxy,
         "notes": notes_text,
         "notes_words": _text_load(notes_text),
         "pingfang": pingfang,
@@ -596,6 +601,15 @@ def _print_stats(rows, mode, sw, sh, lums=None, static_ok=False):
             elif hv["top"] < 0.05 and hv["bottom"] > 0.33:
                 warns.append(f"LOPSIDED: slide {i+1} content sank to the BOTTOM half with an empty top — "
                              f"check for a missing title / add a header, or recenter")
+        # UNDERFILLED: an interior content slide whose ink covers little of the canvas — thin content
+        # floating in a frame it doesn't earn. The fix is upstream (enrich the point, or merge two
+        # thin neighbours into one full slide), not stretching boxes. Cover/closing/dividers and
+        # deliberately quiet registers are exempt — record the exception instead.
+        if (mode != "surface" and 0 < i < len(rows) - 1 and r["load"] >= 15
+                and r["ink_cov"] < 0.25 and r["n_pic"] == 0):
+            warns.append(f"UNDERFILLED: slide {i+1} ink covers only {r['ink_cov']*100:.0f}% of the canvas "
+                         f"for a ~{r['load']}-word content slide — enrich the point, merge it with a thin "
+                         f"neighbour, or record the quiet-register exception (frame-fill rule)")
     builds = sum(1 for r in rows if r["build"])
     transd = sum(1 for r in rows if r["trans"])
     drama = (max((r["max_pt"] for r in rows), default=0.0) / body_med) if body_med else 0.0
@@ -625,6 +639,19 @@ def _print_stats(rows, mode, sw, sh, lums=None, static_ok=False):
                      f"floor is ≥4 on an 8+-slide deck (design-intelligence-addendum §1.2); rotate the "
                      f"canvas architecture (statement / split / island / dashboard / band / full-bleed / "
                      f"rail / gallery), not just the protagonist")
+    # CARD DOMINANCE: the deck-level tell a per-slide check can't see — most content slides carry
+    # their content in large solid panels/cards (each individually fine, together a template). The
+    # fix is form, not layout: give a ratio a proportional bar, a flip a diagram, a process a
+    # roadmap (form-selection.md; PRE-FLIGHT 12's form-family tally is the design-time twin).
+    if mode != "surface" and n >= 5:
+        interior = rows[1:]
+        boxy_idx = [i + 2 for i, r in enumerate(interior) if r.get("boxy")]
+        if len(boxy_idx) > 0.5 * len(interior):
+            warns.append(f"CARD DOMINANCE: {len(boxy_idx)} of {len(interior)} content slides "
+                         f"(slides {', '.join(map(str, boxy_idx))}) carry their content in large "
+                         f"solid panels/cards — the greedy default form; re-form the ones whose idea "
+                         f"has a shape (ratio → proportional bar · flip → diagram · division → split · "
+                         f"process → roadmap), don't just restyle the boxes")
     # TIMID COVER: the cover is the deck's poster — its largest run should reach display scale
     # (≥2.5× body; warn below 2×). max_pt>0 guards template-inherited sizes (only explicit-size runs
     # count); a deliberately quiet register answers with the one-clause exception.
