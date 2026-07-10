@@ -127,6 +127,14 @@ Use the web for **three jobs**, and run it whether or not you have a source:
   is placed is the slide-design agent's call. (A **multi-organisation** deck — survey / landscape /
   review — or a **neutral-academic** talk needs no such global mark; name entities inline.)
 
+- **(d) Calibrate density against professional decks when unsure.** If you can't confidently say
+  how much a page of THIS genre should carry (an investor update vs a lecture vs a conference talk
+  distribute very differently), spend 1–2 searches looking at how professional decks in the genre
+  actually fill a page — real examples (company keynotes, top-venue talks, well-known public decks),
+  not listicle advice. You're calibrating two numbers you'll use in step 3's distribution pass: the
+  typical units-per-page and how much supporting detail sits on the slide vs in the narration. Keep
+  it light; this is a taste calibration, not a literature review.
+
 For a **conference talk**, research the named venue (talk length, audience composition, what a
 strong talk there argues and covers) — start from the Step-0 venue findings if provided (build
 on them; re-verify, don't re-research) — and fold the *content* norms into the arc. *(Venue design
@@ -179,13 +187,32 @@ Then:
 - **One idea per slide.** Use ~1 spoken minute per slide only as a rough sizing check — pace by
   the story, not the clock: some slides earn a long dwell, others flash by. A longer deck means
   *more* slides, never a denser one.
+- **DISTRIBUTE deliberately: collect a surplus, then budget each page.** Emptiness and density are
+  both *distribution* failures, and they're decided here — not at build time. Work in this order:
+  **(1) Collect more than you'll use** — from the source and the §2 research, gather roughly a third
+  more content units than the slide count strictly needs; a plan with zero surplus has no fuel for
+  enrichment, and the builder ends up stretching what's there. **(2) Let each slide's ROLE set its
+  degree of compression** — a grounding slide carries evidence nearly uncompressed (the stat, its
+  context line, its caveat); a transition or big-idea slide compresses hard to one assertion; a
+  teaching slide keeps the worked detail the audience must actually follow. Compression is a
+  per-page dial derived from the role, never one global squeeze applied everywhere (a uniform
+  squeeze is exactly what produces ten half-empty pages). **(3) Check both directions per row** —
+  a row with one unit and no planned support reads empty (fix: pull surplus units in, or merge);
+  a row whose units can't be spoken in its dwell time reads dense (fix: split, or demote detail
+  to the Spoken thread / speaker notes — moving it OFF the page is compression too, and often the
+  right kind). When unsure what "right" looks like for this genre, use the §2(d) calibration.
 - **…but one FULL idea — run the frame-fill / merge check before locking the list.** Size slides to
   their content, never to a target count: after drafting the per-slide table, scan it once asking of
   each row *"do these content units fill a frame well?"* Two thin neighbouring beats that are really
   two views of one idea (a step list + its timeline; a claim + its lone example) are **merge
   candidates — name them in the plan** (`merge? S9+S10 — same idea, two views`) so the checkpoint
   decides deliberately; a thin beat that must stand alone gets **enriched** with the concrete detail
-  that makes it land, or its quiet register named in one clause. A deck planned beat-by-beat to hit a
+  that makes it land, or its quiet register named in one clause. **Provision the support, don't just
+  assert it:** a content slide's row should name a headline unit PLUS 2–3 concrete supporting units
+  (a stat, an example, a counterpoint, a caption-grade detail) drawn from the source — when the plan
+  hands the builder only a takeaway and one number, the built slide WILL come out thin, and no
+  layout skill downstream can fix a content shortfall (`UNDERFILLED`/`DEAD BOTTOM` lint is where it
+  surfaces, three steps too late). A deck planned beat-by-beat to hit a
   count ships half-empty slides — this one-pass scan is where that's caught, upstream of any design.
 - **Calibrate to the audience.** Tune the altitude and how much you define to the audience's
   expertise — what to assume, what to unpack, which terms to gloss (a specialist room vs. a broad

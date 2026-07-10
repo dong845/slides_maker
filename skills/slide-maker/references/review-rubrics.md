@@ -124,7 +124,12 @@ Score each dimension; cite specific slides.
    call for is **enrich the content** (add the detail/example/sub-point/figure the point deserves)
    or enlarge the hero — *not* shipping it sparse, and **not** inflating an oversized block around a
    single short line to fake fullness (a small-font one-liner swimming in a big box is a placeholder
-   tell — flag it). Is
+   tell — flag it). **Lone canvas flip:** does exactly ONE interior slide sit on a different
+   background value/colour than the rest of the deck (e.g. one dark page in a light deck)? That
+   reads as an error, not a rhythm event — a real finding: the fix is to repeat the treatment as a
+   family (all dividers, bookends) or fold the slide back into the deck's one visual system; on a
+   generated-template deck any canvas flip that abandons the background plate is a finding
+   regardless of count. Is
    any meaning carried by **colour alone** (a plot legend or status distinguished only
    by hue)? Pair it with a label/shape/marker so it survives projection and colour-blind
    viewers. And **none of the named AI-slop tells** (full-screen gradient wash, emoji titles,

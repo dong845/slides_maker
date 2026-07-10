@@ -123,7 +123,7 @@ an order of operations, and you guard it:
   exactly where the art director earns the fee.
 
 **This design intelligence is HOW you design — it runs on EVERY deck / each case, never opt-in per
-deck.** The design self-verify (a–l) and the `references/design-intelligence-addendum.md` gates
+deck.** The design self-verify (a–m) and the `references/design-intelligence-addendum.md` gates
 (concept→viz reasoning, block audit, evenness / one-hero-per-slide, semantic colour where colour is
 used, rhythm, WOW) apply to every deck and **scale down gracefully** — a 4-slide deck still gets one
 hero per slide, no card-grid reflex, semantic colour, and one memorable moment; you just do less of it,
@@ -296,11 +296,29 @@ each slide in isolation and can't retrofit rhythm, so this is yours.
   a **subtle gradient** hero, a **duotone photo/texture band** (`image_fx.duotone`), or an **accent-flood
   WOW** — so the deck breathes in light/dark as well as in density. **Dose it like the WOW (a few beats,
   not every slide), keep each such slide's background zones harmonised** (no dark-panel-beside-light-panel
-  clash — `design-principles.md`), and keep it *canvas* variation, not loud chrome.
+  clash — `design-principles.md`), and keep it *canvas* variation, not loud chrome. **A value event
+  must RECUR or bookend — never land on exactly one interior slide** (a lone flipped canvas reads as
+  an error, not rhythm; `ONE-OFF CANVAS FLIP` lint catches it): plan flips as a family (all dividers
+  dark, dark cover+closer bookends). **On the generated-template branch, don't flip the canvas at
+  all** — rhythm there comes from imagery STRENGTH (faint plate ↔ full-strength hero/divider
+  imagery); a foreign flat canvas abandons the plate (`generated-template.md`).
 - **A WOW / hero slide every ~6–8 slides** — a bold number, a dramatic statement, or an iconic diagram
   that passes the squint test from across a room.
-- **~50–70% whitespace target** — when a slide feels thin, **subtract** (more whitespace, one stronger
-  hero), never *add* a plate/card-row to fill it (that urge is the AI-slop signal).
+- **~50–70% whitespace target — but whitespace must be DESIGNED, not leftover.** When a slide feels
+  thin, diagnose which failure it is: **(a) the point is under-served** — the far more common case —
+  fix it UPSTREAM with substance (send it back to the content plan: add the supporting detail,
+  example, stat, or mini-diagram the point deserves, or merge two thin neighbours — the frame-fill
+  rule); **(b) the point is genuinely complete** — then subtract to one stronger hero and let the
+  whitespace carry emphasis. What you must never do is the third thing: pad with an empty plate or
+  card-row to *look* full (the AI-slop signal) — decoration is not the fix for either failure.
+  A content slide whose ink stops well above the footer ships as "unfinished" (`UNDERFILLED` /
+  `DEAD BOTTOM` lint) — and **stretching few items apart to occupy the height is the same failure,
+  not a fix**: oversized gaps between three list items, or a list hugging the left while the right
+  half stays bare, reads exactly as empty as a dead band (`STRETCHED THIN` lint measures the blank
+  vertical channel in the render). When a form is intrinsically narrow (a step list, a short
+  ranking), pair it with a second column of substance — a supporting panel, a worked example, the
+  "so what" expansion — rather than letting the layout dilute it.
+  If the quiet is deliberate, record the register exception in the plan.
 - Decide **where the appear-builds fall** here (step 6), not on a separate pass — a built pipeline slide
   *is* a protagonist beat, and whether builds cluster or spread is part of density pacing.
 - **Build the rhythm map** (`design-intelligence-addendum.md` §1.2) — one row per content slide:
@@ -486,7 +504,7 @@ Then run the **Block Dependency Audit** (the parallel/unordered/equal-weight/ind
 passes · the non-block alternative considered · keep-or-redesign*. This qualitative gate catches the
 visual sameness the family count misses, so it and the diversity gate both must pass.
 
-### Design self-verify (a–l)
+### Design self-verify (a–m)
 State the plan is **not ready** unless these DISTINCT checks pass — each weighed with judgment
 (considered + applied where it helps, one-clause-justified where a slide legitimately doesn't need it,
 NOT a blanket per-slide quota):
@@ -536,6 +554,11 @@ NOT a blanket per-slide quota):
   type-only (§7's safe-default allowance). This makes the strong §7 "the cover earns a topical
   visual" rule falsifiable at plan time (PRE-FLIGHT item 3 then verifies the built cover carries what
   the row named); a bare big-type cover that never considered a visual does NOT pass.
+- **(m) frame-fill & one canvas system** — reading the rhythm map top to bottom: every interior
+  content slide's planned units plausibly FILL its frame (support provisioned per the content plan's
+  frame-fill rule; thin rows merged/enriched or their quiet register named in one clause), and no
+  canvas value flip appears exactly once (any flip recurs as a divider family or bookend; on the
+  generated-template branch, no canvas flip at all — imagery-strength beats only).
 Fix any failing check before the DESIGN checkpoint.
 
 ### Design-critic checklist

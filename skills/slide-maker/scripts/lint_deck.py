@@ -480,6 +480,15 @@ def _slide_stats(slide, bx, sw, sh):
         "sizes": sizes,
         "n_shapes": len([s for s in bx if not s["bg"]]),
         "n_pic": len([s for s in bx if s["pic"]]),
+        # foreground pictures only — a full-bleed background plate (bg) is canvas, not content,
+        # and must NOT exempt a slide from the thin-content checks below
+        "n_pic_fg": len([s for s in bx if s["pic"] and not s["bg"]]),
+        # a SUBSTANTIAL foreground image (≥10% of canvas) earns its whitespace; small icons don't —
+        # an icon-column slide with a dead lower third is still a dead lower third
+        "big_pic_fg": any(s["pic"] and not s["bg"] and s["w"] * s["h"] >= 0.10 * sw * sh for s in bx),
+        # how far down the canvas the content actually reaches (footer chrome excluded)
+        "content_bottom": (max((s["t"] + s["h"] for s in bx
+                                if not s["bg"] and s["t"] < footer_y), default=0.0) / sh),
         "n_chart": len([s for s in slide.shapes if getattr(s, "has_chart", False)]),
         "build": has_timing,
         "trans": has_trans,
@@ -487,8 +496,34 @@ def _slide_stats(slide, bx, sw, sh):
     }
 
 
+def _render_col_void(im):
+    """Largest contiguous BLANK vertical channel in the slide's interior, as a fraction of width.
+    'Blank' = pixels within noise distance of the canvas colour (median of the border pixels), so a
+    faint background plate doesn't count as content. Interior = rows 20–86% (below title chrome,
+    above footer), columns inside 4% margins. This is the render-side signature of a STRETCHED-THIN
+    slide: a few items spaced out (or hugging one side) pass ink-coverage checks while a whole
+    column of the canvas stays empty top to bottom."""
+    im = im.resize((96, 54))
+    px = im.load()
+    border = ([px[c, 0] for c in range(96)] + [px[c, 53] for c in range(96)]
+              + [px[0, r] for r in range(54)] + [px[95, r] for r in range(54)])
+    canvas = tuple(sorted(ch[k] for ch in border)[len(border) // 2] for k in range(3))
+    lo, hi = int(0.20 * 54), int(0.86 * 54)
+    run = best = 0
+    for c in range(int(0.04 * 96), int(0.96 * 96)):
+        ink = sum(1 for r in range(lo, hi)
+                  if sum(abs(px[c, r][k] - canvas[k]) for k in range(3)) > 90)
+        if ink / max(1, hi - lo) < 0.02:
+            run += 1
+            best = max(best, run)
+        else:
+            run = 0
+    return best / 96.0
+
+
 def _load_render_lums(path, renders_dir, n):
-    """Per-slide (mean luminance, mean HSV saturation) from the rendered PNGs, or None.
+    """Per-slide (mean luminance, mean HSV saturation, largest blank column-void fraction) from
+    the rendered PNGs, or None.
     Silent no-op when Pillow is missing, the dir is absent, or the PNG count != slide count —
     so a standalone lint (no ./render) is byte-for-byte unchanged. Cheap: each PNG is downscaled
     to ~64px wide before the pixel walk."""
@@ -510,6 +545,7 @@ def _load_render_lums(path, renders_dir, n):
     for p in pngs:
         try:
             im = Image.open(p).convert("RGB")
+            void = _render_col_void(im)
             w, h = im.size
             im = im.resize((64, max(1, int(64 * h / w))))
             px = list(im.getdata())
@@ -519,7 +555,7 @@ def _load_render_lums(path, renders_dir, n):
             for r, g, b in px:
                 mx = max(r, g, b)
                 sat += 0.0 if mx == 0 else (mx - min(r, g, b)) / mx
-            out.append((lum, sat / m))
+            out.append((lum, sat / m, void))
         except Exception:
             return None
     return out
@@ -560,7 +596,7 @@ def _print_stats(rows, mode, sw, sh, lums=None, static_ok=False):
                 f"{r['max_pt']:5.1f}  {r['n_shapes']:3d}  {r['n_pic']:3d}  {r['n_chart']:3d}    "
                 f"{'✓' if r['build'] else '—'}   {(str(nw) if nw else '—'):>5}  {sim}")
         if lums:
-            lu, sa = lums[i]
+            lu, sa = lums[i][0], lums[i][1]
             dl = abs(lums[i][0] - lums[i - 1][0]) if i else 0.0
             line += f"  {lu:.2f}  {sa:.2f}  {dl:.2f}"
         print(line)
@@ -606,10 +642,31 @@ def _print_stats(rows, mode, sw, sh, lums=None, static_ok=False):
         # thin neighbours into one full slide), not stretching boxes. Cover/closing/dividers and
         # deliberately quiet registers are exempt — record the exception instead.
         if (mode != "surface" and 0 < i < len(rows) - 1 and r["load"] >= 15
-                and r["ink_cov"] < 0.25 and r["n_pic"] == 0):
+                and r["ink_cov"] < 0.25 and not r.get("big_pic_fg", r["n_pic"] > 0)):
             warns.append(f"UNDERFILLED: slide {i+1} ink covers only {r['ink_cov']*100:.0f}% of the canvas "
                          f"for a ~{r['load']}-word content slide — enrich the point, merge it with a thin "
                          f"neighbour, or record the quiet-register exception (frame-fill rule)")
+        # DEAD BOTTOM: an interior content slide whose content stops well above the footer — the
+        # lower third reads as an accidental void even when overall ink% passes (a wide-but-shallow
+        # layout). Charts and big fg imagery earn their own whitespace; text/panel slides don't.
+        if (mode != "surface" and 0 < i < len(rows) - 1 and r["load"] >= 15
+                and r.get("content_bottom", 1.0) < 0.62
+                and r["n_chart"] == 0 and not r.get("big_pic_fg", r["n_pic"] > 0)):
+            warns.append(f"DEAD BOTTOM: slide {i+1} content stops at {r['content_bottom']*100:.0f}% of the "
+                         f"canvas height — the bottom band is a void; enrich the point, pull a supporting "
+                         f"row/banner down into it, or record the quiet-register exception (frame-fill rule)")
+        # STRETCHED THIN (render-based): a wide blank vertical channel through the slide's interior.
+        # This is how sparse content evades the ink-coverage checks — a few items spaced out, or all
+        # content hugging one side, covers enough total area while a whole column of canvas stays
+        # empty top to bottom. Interior content slides only; big imagery/charts earn their space.
+        if (lums and mode != "surface" and 0 < i < len(rows) - 1 and r["load"] >= 15
+                and len(lums[i]) > 2 and lums[i][2] >= 0.18
+                and r["n_chart"] == 0 and not r.get("big_pic_fg", r["n_pic"] > 0)):
+            warns.append(f"STRETCHED THIN: slide {i+1} has a blank vertical channel spanning "
+                         f"{lums[i][2]*100:.0f}% of the slide width through its interior — spacing few "
+                         f"items apart is the same emptiness as a dead band; enrich with a second column "
+                         f"of substance (supporting panel, example, mini-diagram), merge with a neighbour, "
+                         f"or record the quiet-register exception (frame-fill rule)")
     builds = sum(1 for r in rows if r["build"])
     transd = sum(1 for r in rows if r["trans"])
     drama = (max((r["max_pt"] for r in rows), default=0.0) / body_med) if body_med else 0.0
@@ -672,8 +729,25 @@ def _print_stats(rows, mode, sw, sh, lums=None, static_ok=False):
         if lum_range < 0.12 and max_dlum < 0.06 and sat_range < 0.10:
             warns.append(f"FLAT RHYTHM: deck-wide luminance range {lum_range:.2f} and max adjacent Δlum "
                          f"{max_dlum:.2f} — no light/dark or temperature event anywhere (rhythm map "
-                         f"'Background mode'; design-gallery light/dark pacing) — vary the canvas value on "
-                         f"at least one beat, or record why this deck is deliberately single-mode")
+                         f"'Background mode'; design-gallery light/dark pacing) — if you vary the canvas "
+                         f"value, do it as a RECURRING family (all dividers, cover+closer bookends), never "
+                         f"exactly one interior slide (that trips ONE-OFF CANVAS FLIP); on a "
+                         f"generated-template deck vary imagery strength instead; or record why this deck "
+                         f"is deliberately single-mode")
+    # ONE-OFF CANVAS FLIP: exactly ONE interior slide whose canvas value departs sharply from the
+    # deck's median — a lone dark (or light) page mid-deck reads as an ERROR, not rhythm. Rhythm
+    # events must recur (a divider family, bookends) or come from imagery strength, never a single
+    # foreign canvas. Cover and closer are exempt (they legitimately bookend in a different value).
+    if lums and n >= 6:
+        L = [x[0] for x in lums]
+        med = sorted(L)[len(L) // 2]
+        outliers = [i for i in range(1, n - 1) if abs(L[i] - med) > 0.22]
+        if len(outliers) == 1:
+            i = outliers[0]
+            warns.append(f"ONE-OFF CANVAS FLIP: slide {i+1} is the only interior slide whose canvas value "
+                         f"(lum {L[i]:.2f}) departs sharply from the deck median ({med:.2f}) — a lone flipped "
+                         f"canvas reads as a mistake, not a rhythm event; either repeat the treatment (divider "
+                         f"family / bookend) or fold the slide back into the deck's one visual system")
     if mode == "surface":
         print("     single-canvas surface: per-slide word/size budgets not applied — judge density "
               "per the fixed-surface overlay (review-rubrics.md poster section)")
@@ -991,7 +1065,11 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
                       "size_clusters": r["size_clusters"],
                       "notes_words": r.get("notes_words", 0),
                       "notes": (r.get("notes") or "")[:500],
-                      **({"lum": round(lums[i][0], 3), "sat": round(lums[i][1], 3)} if lums else {})}
+                      "n_pic_fg": r.get("n_pic_fg", 0),
+                      "content_bottom": round(r.get("content_bottom", 0.0), 3),
+                      **({"lum": round(lums[i][0], 3), "sat": round(lums[i][1], 3),
+                          **({"col_void": round(lums[i][2], 3)} if len(lums[i]) > 2 else {})}
+                         if lums else {})}
                      for i, r in enumerate(stats_rows)]
         with open(json_out, "w", encoding="utf-8") as f:
             json.dump({"file": str(path), "mode": mode, "findings": j_findings,

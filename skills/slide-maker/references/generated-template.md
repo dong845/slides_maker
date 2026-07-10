@@ -284,6 +284,16 @@ them, and show both. The content slide is essential: it proves the blocks actual
   **same shallow background**, and the **same logo placement** on every slide. A one-off card style,
   a stray colour, a flat content page among textured ones, or a logo that jumps corners breaks the
   "template" illusion faster than anything; the critic should flag it.
+- **Rhythm on this branch comes from IMAGERY STRENGTH, never a foreign canvas.** The generic
+  "vary the canvas value on at least one beat" pressure (FLAT RHYTHM lint; rhythm-map guidance)
+  does NOT license flipping one mid-deck slide to a different background colour — on a
+  generated-identity deck, a lone flipped canvas abandons the plate and reads as an *error*, not
+  a rhythm event (users call it out immediately). Make the beats by varying how strongly the
+  generated imagery shows: faint plate on working slides ↔ full-strength hero imagery on the
+  cover, dividers, and the closer. If you genuinely want a canvas value change, it must RECUR as
+  a family (all section dividers dark, or dark bookends) — never exactly one interior slide
+  (`ONE-OFF CANVAS FLIP` in lint_deck.py enforces this deterministically). Answer FLAT RHYTHM
+  with the register exception line, not with a one-off flip.
 - **The shallow background must stay BEHIND the content** — it's atmosphere, not a competing layer.
   If it darkens or busies the area under text, mute it harder (lighter tint, stronger scrim, fewer
   motifs); body text must clear 4.5:1 against whatever the background leaves under it. A subtle

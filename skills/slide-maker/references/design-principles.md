@@ -478,6 +478,11 @@ ask of each element "is there suitable, balanced space around it, or is it crowd
   (`box(0,0,W,H,fill=…)` behind light type). **Dose it like the WOW — a few tasteful beats, not every
   slide different** (and keep each such slide's zones harmonised, per the rule above; a varied deck is
   not a clashing one). This is *canvas* variation, not loud chrome — the frame/footer stay quiet.
+  **And a value event must RECUR or bookend — never appear exactly once mid-deck.** One lone slide
+  in a different canvas value reads as a mistake, not rhythm (the `ONE-OFF CANVAS FLIP` lint catches
+  it): tie every flip to a repeating family (all dividers dark, dark cover+closer bookends). On a
+  generated-identity deck the rule is stricter still — see generated-template.md: rhythm comes from
+  imagery strength, never from abandoning the plate on one page.
 - **No large empty region — fill the slide, balanced.** A slide that's mostly blank (content
   huddled in one corner or the top third, a wide empty band down a side or across the bottom) reads
   as unfinished — don't ship it. **Default fix: ENRICH the content** — add the supporting detail,
