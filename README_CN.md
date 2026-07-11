@@ -11,7 +11,7 @@
   <img alt="Output: editable PPTX" src="https://img.shields.io/badge/output-native_editable_PPTX-0f766e">
 </p>
 
-<p align="center"><sub><a href="https://addsum.top/"><strong>增和科技 Addsum</strong></a> 出品 · 免费开源</sub></p>
+<p align="center"><sub><a href="https://addsum.top/cn/"><strong>增和科技 Addsum</strong></a> 出品 · 免费开源</sub></p>
 
 > **一个会读你真实材料、绝不编造数字、输出真正可编辑的原生 PowerPoint、并且要等独立评审点头才交付的 AI 做 PPT 工具。**
 
@@ -27,7 +27,7 @@
 <sub>原生可编辑 PPTX 如今已是基本盘(不少工具都能做)。稀缺的是**可编辑 + 溯源不编造 + 审校过 + 每 deck 定制**——四者合一,在一份归你所有的文件里。诚实的边界:没有零配置云端、没有分享链接、没有动态网页背景——它做的是一个**本地生成的文件**,能在真 PowerPoint/Keynote 里干净打开、编辑。详见[不一样在哪](#slide-maker-不一样在哪)。</sub>
 
 <p align="center">
-  <a href="https://slides.addsum.top/"><strong>视频介绍</strong></a> ·
+  <a href="https://slides.addsum.top/cn/"><strong>视频介绍</strong></a> ·
   <a href="#模板库"><strong>模板库</strong></a> ·
   <a href="#slide-maker-不一样在哪"><strong>不一样在哪</strong></a> ·
   <a href="#它是怎么干活的"><strong>工作流程</strong></a> ·

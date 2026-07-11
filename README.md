@@ -11,7 +11,7 @@
   <img alt="Output: editable PPTX" src="https://img.shields.io/badge/output-native_editable_PPTX-0f766e">
 </p>
 
-<p align="center"><sub>Free and open source, built by <a href="https://addsum.top/en/"><strong>Addsum</strong></a></sub></p>
+<p align="center"><sub>Free and open source, built by <a href="https://addsum.top/"><strong>Addsum</strong></a></sub></p>
 
 > **The AI deck-maker that reads your actual work, never invents a number, ships fully-editable native PowerPoint — and won't hand it over until an independent critic signs off.**
 
