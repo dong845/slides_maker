@@ -1221,14 +1221,15 @@ def colophon(slide, tagline, *, credits=None, tooling=None, x=0.7, accent=MAGENT
         text(slide, x, cy + 0.28, tw, 0.4, [[(tooling, 11, tc, False, False, chrome)]], space_after=0)
 
 
-def sources_page(slide, sources, *, title="Sources", cols=2, x=0.7, y=1.4, accent=MAGENTA, ink=DEEP, chrome=None):
+def sources_page(slide, sources, *, title="Sources", cols=2, x=0.7, y=1.4, accent=MAGENTA, ink=DEEP, chrome=None, rule=True):
     """Render references as mono numbered columns under an accent header — a research deck's
     colophon / a credible 'where this came from' close. ``chrome`` resolves to the current
-    ``MONO`` at call time."""
+    ``MONO`` at call time. ``rule=False`` suppresses the accent hairline under the title."""
     chrome = chrome or MONO
     sw, sh = _slide_size(slide)
     part_eyebrow(slide, x, 0.6, title, color=accent, font=chrome, size=13)
-    box(slide, x, 1.02, 1.2, 0.05, fill=accent)
+    if rule:
+        box(slide, x, 1.02, 1.2, 0.05, fill=accent)
     w = (sw - 2 * x - 0.4 * (cols - 1)) / cols
     per = (len(sources) + cols - 1) // cols
     for ci in range(cols):
