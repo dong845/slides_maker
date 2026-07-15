@@ -4523,7 +4523,8 @@ def lint_layout(prs, *, verbose=True, strict=False, overlap_tol=0.05, escape_tol
                 if off and not ((is_pic or is_wm) and full_bleed):
                     findings.append((n, "CRITICAL", "OFF_CANVAS",
                         f"{'text' if ink is not None else ('image' if is_pic else 'shape')} extends past the "
-                        f"{', '.join(off)} edge"))
+                        f"{', '.join(off)} edge — move/shrink it to stay inside the canvas "
+                        f"(full-bleed images: picture(..., fit='cover') at exact canvas size)"))
             if ink is not None:
                 # overlap-deflation budget: only a MULTI-line box can carry a fabricated extra wrapped
                 # line under a substituted font; a single measured line can't, so it isn't deflated
@@ -4644,8 +4645,12 @@ def lint_layout(prs, *, verbose=True, strict=False, overlap_tol=0.05, escape_tol
             for n, sev, code, msg in sorted(findings, key=lambda f: (f[0], f[1] != "CRITICAL")):
                 print(f"[lint] {'✗' if sev=='CRITICAL' else '•'} slide {n:>2} {code:<13} {msg}")
             print(f"[lint] {crit} critical, {warn} warning(s) — clear the criticals before rendering")
+            print("[lint] what each code means + first fix: references/troubleshooting-faq.md §4")
     if strict and any(f[1] == "CRITICAL" for f in findings):
-        raise RuntimeError(f"lint_layout: {sum(1 for f in findings if f[1]=='CRITICAL')} critical layout fault(s)")
+        raise RuntimeError(f"lint_layout: {sum(1 for f in findings if f[1]=='CRITICAL')} critical layout fault(s)"
+                           + (" — each is listed above with its slide and fix" if verbose
+                              else " — rerun with verbose=True to list each")
+                           + "; plain-language dictionary: references/troubleshooting-faq.md §4")
     return findings
 
 

@@ -576,8 +576,8 @@ def _load_render_lums(path, renders_dir, n):
     # numeric sort: lexical sorting breaks at >=100 slides (slide100 between slide10 and slide11)
     pngs = sorted(glob.glob(os.path.join(renders_dir, "slide*.png")),
                   key=lambda p: int(re.sub(r"\D", "", os.path.basename(p)) or 0))
-    if len(pngs) != n:
-        return None
+    if not pngs or len(pngs) != n:      # `not pngs` also guards the 0-slide deck: max() below
+        return None                     # would raise on an empty iterable
     # stale-render guard (auto-discovered dir only — an explicit --renders is the user's contract):
     # a matching PNG COUNT from an older build of a different deck would silently feed wrong
     # lum/sat/void into the render-based checks
@@ -892,7 +892,8 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
             if s["r"] > sw + TOL: ov.append(f"right+{round(s['r']-sw,2)}")
             if s["b"] > sh + TOL: ov.append(f"bottom+{round(s['b']-sh,2)}")
             if ov:
-                finds.append(f"OVERFLOW [{','.join(ov)}] {s['st']} '{s['txt']}'")
+                finds.append(f"OVERFLOW [{','.join(ov)}] {s['st']} '{s['txt']}' — move/shrink it back "
+                             f"inside the canvas (or shorten the text if a font swap re-wrapped it)")
         # 1b) text-vs-backing contrast — the invisible dark-on-dark class. A run with NO
         # explicit colour inherits the default (BLACK in the LibreOffice render loop and most
         # viewers), so on a dark card it vanishes; lint treats inherited as black. THEME colours
@@ -949,7 +950,8 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
                     tiny_offset = abs(a["l"] - b["l"]) < 0.18 and abs(a["t"] - b["t"]) < 0.18
                     if same_size and tiny_offset:
                         continue
-                    finds.append(f"OVERLAP {round(ix,2)}x{round(iy,2)}in  {a['st']}'{a['txt']}' x {b['st']}'{b['txt']}'")
+                    finds.append(f"OVERLAP {round(ix,2)}x{round(iy,2)}in  {a['st']}'{a['txt']}' x {b['st']}'{b['txt']}'"
+                                 f" — move/shrink one so they separate (≥0.12in gap) or nest one fully inside the other")
         # 3) footer-zone reservation: the bottom footer band is deck chrome — NO content block (solid
         #    or text) may cover the footer text or dip into its reserved zone. (No containment escape:
         #    a content band whose bottom collides with the footer is a bug even when the footer text
@@ -1125,6 +1127,10 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
     deck_stats = _print_stats(stats_rows, mode, sw, sh, lums=lums, static_ok=static_ok)
     tail = ("" if total else "  ✓ clean (no hard findings)") + (f"  ·  {warn_total} warning(s)" if warn_total else "")
     print(f"\n{path}: {total} layout finding(s){tail}")
+    if total:
+        print("  fix guide (symptom → cause → fix, plain language): references/troubleshooting-faq.md §6")
+    if deck_stats.get("warns"):
+        print("  [stats] lines are advisory — which to act on vs accept: references/troubleshooting-faq.md §7")
     if json_out:
         import json
         per_slide = [{"slide": i + 1, "load": r["load"], "text_cov": round(r["text_cov"], 3),

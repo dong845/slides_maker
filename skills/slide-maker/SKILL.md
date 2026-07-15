@@ -216,6 +216,7 @@ every **🔴 CHECKPOINT** is a hard stop.
 | East-Asian / ink looks | `references/east-asian-aesthetic.md` |
 | The build helpers (source of truth) | `scripts/deckkit.py` (docstrings) |
 | Geometry lint — build-time · render-time | `deckkit.lint_layout(prs, strict=True)` (Step 4, pre-render) · `scripts/lint_deck.py` (Step 5, post-render) |
+| ANY error / lint finding / env failure — symptom → cause → fix, plain language | `references/troubleshooting-faq.md` (open it BEFORE improvising a fix; report findings to the user in its plain-language form) |
 
 *(Full file/script inventory: see **Files** at the end.)*
 
@@ -1226,7 +1227,8 @@ A few rules that matter (see `references/design-principles.md`):
   box, and **text-on-text** overlap; it **warns** on a label/figure **escaping its card**, a **single
   line left off-centre** in a card, content **reaching the footer**, and **two panels nearly
   touching** (`SLIVER_GAP` — a 0.005–0.10in seam between panels, or a panel and a picture: the
-  hand-picked-pitch bug). Every CRITICAL it prints is real *when the deck's fonts are
+  hand-picked-pitch bug). (Each code's plain-language meaning + first fix:
+  `references/troubleshooting-faq.md` §4.) Every CRITICAL it prints is real *when the deck's fonts are
   installed* — when a font is substituted for measurement it says so and carries ~1 line of slack
   (conservative, may under-flag), so it never fabricates. It is a **net, not a substitute for
   looking** (it can't see contrast, z-order, a figure smothering text, or shapes inside groups — the
@@ -1423,6 +1425,13 @@ slide). python-pptx writes blind — overflow, low contrast, a callout on the fo
 or a missing glyph only show up in the image. Fix mechanical issues and re-render.
 (First time on a machine, or a render errors? `bash scripts/check_env.sh` verifies
 LibreOffice + the python deps and prints the fix for anything missing.)
+**When anything in this step fails or flags** — a build exception, a lint finding you don't
+immediately recognize, a render that produces nothing — open `references/troubleshooting-faq.md`
+first: it maps every error surface (build exceptions · `lint_layout` codes · render failures ·
+`lint_deck` findings · `[stats]` act-or-accept guidance) to symptom → cause → first fix. And when
+you surface a finding to the user (in a checkpoint, FYI, or hand-off), say it in that page's
+plain language — *what broke, why, and the fix applied or proposed* — never as a raw lint code
+the user would need documentation to decode.
 **Codex sandbox note:** LibreOffice may abort or produce no PDF when launched inside a managed
 sandbox even though `check_env.py` passes; in that case rerun only the render command with elevated /
 unsandboxed execution, then continue the normal render -> lint -> critic loop. This is an environment
@@ -1591,7 +1600,8 @@ so comment out the suspect slide (or the shape you last added), rebuild + re-ren
 confirm the rest is fine, then fix that one slide and restore it. A frequent culprit is a
 bad asset path (a figure/GIF/equation PNG that doesn't exist) or a malformed `equation_png`
 string — the Python traceback names it. Don't ship a partially-rendered deck silently; if
-one slide can't render, tell the user which and why.
+one slide can't render, tell the user which and why. (Symptom → cause → fix tables:
+`references/troubleshooting-faq.md` §5 for render failures, §3 for build tracebacks.)
 
 **If you used animation/builds:** the render (and the critic) see only the **final
 built state** — they can't play the sequence (the anim.py timing is verified to
@@ -1916,6 +1926,6 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   content out of an existing deck — the redesign path).
 **Agents** (`agents/`): `content-planner.md` (Step-1 CONTENT deep-understand + claim ledger + per-slide message; the content checkpoint) · `slide-design.md` (the art director — Step-2 design language + per-slide form/layout/rhythm + icons + appear-animation + the Form ledger; the design checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `asset-prep.md` (execution-only asset materializer — crops/equations/plates/icons after the design plan is approved; zero design decisions) · `openai.yaml` (Codex display metadata).
 
-**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `user-taste.md` (the registry-root `taste.md` — schema · read protocol · dial-ledger promotion + consented-look write-back) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
+**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `troubleshooting-faq.md` (**symptom → cause → fix for every error surface** — env · build exceptions · both lints · render · images · CJK — plus the FAQ; consult on any failure, and report findings to the user in its plain-language form) · `user-taste.md` (the registry-root `taste.md` — schema · read protocol · dial-ledger promotion + consented-look write-back) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
 
 **Registry** (NOT part of the skill): `~/.codex/slide-templates/` (Codex) · `~/.claude/slide-templates/` (Claude Code) — the user's saved templates, **plus `taste.md` at the root** (the portable taste profile — schema + read/write protocol in `references/user-taste.md`); read for choices, write new `profile.md`s to the active host — a freshly-designed look saved at hand-off carries the vetted critic `strengths` distilled into its profile's Notes. Empty for a new user (no templates, no `taste.md` — silently skipped; no write until the first durable signal).

@@ -310,7 +310,9 @@ python3 ~/.codex/skills/slide-maker/scripts/check_env.py
 python3 ~/.claude/skills/slide-maker/scripts/check_env.py
 ```
 
-It prints the exact fix for anything missing. If problems persist after installing dependencies, open an issue with the error output.
+It prints the exact fix for anything missing.
+
+For everything beyond the environment — build errors, lint findings and what they mean in plain language, render failures, image sourcing, CJK issues — there is a dedicated symptom → cause → fix page: [**Troubleshooting & FAQ**](skills/slide-maker/references/troubleshooting-faq.md). Failing lint runs print a pointer to it. If a problem isn't covered there, open an issue with the error output.
 
 ---
 

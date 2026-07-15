@@ -306,7 +306,9 @@ python3 ~/.codex/skills/slide-maker/scripts/check_env.py
 python3 ~/.claude/skills/slide-maker/scripts/check_env.py
 ```
 
-缺什么它会直接打印修复命令。依赖装完还报错，欢迎开 issue，带上报错输出。
+缺什么它会直接打印修复命令。
+
+环境之外的问题——构建报错、lint 各类提示的白话解释和修法、渲染失败、图片来源、中文排版——有一个专门的「症状 → 原因 → 修法」排障 FAQ 页：[**Troubleshooting & FAQ**](skills/slide-maker/references/troubleshooting-faq.md)（lint 未通过时也会在输出末尾提示这个页面）。页面里没覆盖到的，欢迎开 issue，带上报错输出。
 
 ---
 
