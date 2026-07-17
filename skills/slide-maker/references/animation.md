@@ -15,6 +15,18 @@ Flying, spinning, bouncing text is the opposite — it pulls attention to the mo
 instead of the meaning. The bar: **if an animation doesn't help the audience
 understand or follow, cut it.**
 
+## Table of contents
+- When a build genuinely helps
+- Appear-by-content-type — the quick decision matrix
+- Decide WHERE by taste and purpose — not by a rule or a quota
+- Where a build helps — and where a slide is simply plain
+- Animated GIFs / looping results — insert the GIF, don't freeze it
+- The slide-to-slide transition is SECONDARY — never a substitute for builds
+- Record a motion manifest (so the critic can judge what it can't see)
+- Craft rules
+- How to build it (with deckkit)
+- Verifying animation (important caveat)
+
 > **🔴 FULL STAGED REVEAL — an animated slide reveals ALL its content, one beat at a time, in order.**
 > The single most common build defect (the user has called it out): a slide where *some* blocks animate
 > in while the *rest sit on screen from click 0* — a jarring half-animated slide. The rule: once a slide
@@ -233,8 +245,10 @@ build, jot a one-line-per-slide **motion manifest**: `build: <what reveals, in o
 the critic with the renders. It lets the critic judge the motion *design* it can't watch:
 whether each build genuinely *emphasizes/guides* (and isn't thoughtless flourish), and
 whether a slide that would clearly have been stronger with a build was left plain. It's a
-record of your design choices, not a checklist quota. A comment block at the top of
-`build_<deck>.py` is a perfectly good place to keep it.
+record of your design choices, not a checklist quota. **The canonical home is each slide
+function's docstring** (the SKILL.md Step-4 scaffold reads it from there); a comment block at the
+top of `build_<deck>.py` is the fallback only when the scaffold isn't used (template
+build-examples).
 
 ## Craft rules
 - **Default to a subtle fade**, ~0.4–0.6s. Avoid flashy entrances (fly/spin/bounce);

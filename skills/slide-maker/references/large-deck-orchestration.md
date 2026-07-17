@@ -23,6 +23,11 @@ by an independent critic panel.
 > without the drift. "Neighbor awareness" is a *global* property — the coordinator
 > supplies each section the context of its neighbors; it is not pairwise gossip.
 
+## Table of contents
+- Actor side — coordinator + parallel section authors
+- Critic side — independent panel + routing (the "second orchestrator")
+- Checklist / gotchas
+
 ## Actor side — coordinator + parallel section authors
 
 1. **Coordinator does the non-parallelizable core itself (one owner) — two minds, in sequence.**
@@ -71,6 +76,12 @@ by an independent critic panel.
               template="<brand.pptx>")   # or omit for a blank styled deck
    ```
    One base deck, every `build_section` run in order — one file, no XML merge, no drift.
+   `build_deck()` (and `preview_section()`) run the 🔴 build-time geometry gate —
+   `deckkit.lint_layout(prs, strict=True)` — before saving, so the sectioned path has the same
+   never-save-with-CRITICALs floor as a single-author build (`lint=False` is debugging-only).
+   Per-section critics list their SECTION's page range in `slides_opened` (the coverage gate is
+   scoped to the assigned range — `agents/critic.md`); the whole-deck coherence critic covers
+   every slide.
 
 ## Critic side — independent panel + routing (the "second orchestrator")
 

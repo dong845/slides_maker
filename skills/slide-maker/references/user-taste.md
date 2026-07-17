@@ -7,6 +7,14 @@ round happened, in the user's own words) · **Step-6 write-back is the only brid
 returning user never re-teaches a preference at the cost of a render-review round — and so a
 one-deck guess never hardens into a standing rule.
 
+## Table of contents
+- Where it lives — and the empty-file rule
+- Precedence — the profile seeds, it never decides
+- The schema — fixed sections, HARD CAPS (whole file ≤ ~500 tokens)
+- READ protocol
+- WRITE protocol — conservative by construction (Step 6 only)
+- Why this shape
+
 ## Where it lives — and the empty-file rule
 `taste.md` sits at the **active template-registry ROOT** — `~/.claude/slide-templates/taste.md`
 (Claude Code) · `~/.codex/slide-templates/taste.md` (Codex); if only one root exists, use it —

@@ -36,13 +36,18 @@ Checks (tuned for low false-positives):
   checked across ANY text: text boxes, table cells, and grouped shapes), whole-page-image/editability,
   and orphan/empty slides.
   Plus soft [warn]s (advisory — printed but do NOT fail the exit code): MISSING ALT-TEXT on an
-  informative image (accessibility; invisible to every other check), and MATH-FONT TOFU (an
-  equation_native math font not installed on the render host → equations render as boxes).
+  informative image (accessibility; invisible to every other check), MATH-FONT TOFU (an
+  equation_native math font not installed on the render host → equations render as boxes),
+  NO SLIDE TITLE / DUPLICATE SLIDE TITLES / READING ORDER (screen readers navigate by title and
+  read z-order), and NON-TEXT CONTRAST (small icon discs/chips and connector lines vs their
+  backing, WCAG 1.4.11). With renders available, TEXT-ON-IMAGE CONTRAST samples the pixels behind
+  text sitting on a picture/gradient (adversarial percentile — a scrim in the render counts) and
+  warns in the 1.5-3.0:1 band; only its hopeless <1.5:1 case (TEXT ON IMAGE) is a HARD finding.
 """
 import re
 import sys
 from pptx import Presentation
-from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx.enum.shapes import MSO_SHAPE_TYPE, PP_PLACEHOLDER
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.oxml.ns import qn
 
@@ -79,7 +84,7 @@ def _no_real_alt(descr):
 
 def _boxes(slide, sw, sh):
     out = []
-    for s in slide.shapes:
+    for zi, s in enumerate(slide.shapes):
         try:
             l, t, w, h = s.left / EMU, s.top / EMU, s.width / EMU, s.height / EMU
         except (TypeError, AttributeError):
@@ -135,12 +140,18 @@ def _boxes(slide, sw, sh):
         except Exception:
             fill_rgb = None
         is_pic = str(s.shape_type).startswith("PICTURE")
-        out.append({"l": l, "t": t, "w": w, "h": h, "r": l + w, "b": t + h,
+        tph = False                                      # a TITLE/CENTER_TITLE placeholder (a11y title)
+        try:
+            tph = bool(s.is_placeholder) and s.placeholder_format.type in (
+                PP_PLACEHOLDER.TITLE, PP_PLACEHOLDER.CENTER_TITLE)
+        except Exception:
+            tph = False
+        out.append({"l": l, "t": t, "w": w, "h": h, "r": l + w, "b": t + h, "zi": zi,
                     "runs": run_colors, "fill": fill_rgb, "unk": fill_unk, "pic": is_pic,
                     "st": str(s.shape_type).split()[0], "txt": txt, "full": full, "size": size or 12.0,
                     "paras": paras, "solid": s.shape_type in SOLID, "align": align, "anchor": anchor,
                     "text": bool(s.has_text_frame and txt), "descr": descr, "mathfont": mathfont,
-                    "bg": (w * h) >= 0.95 * (sw * sh)})
+                    "title_ph": tph, "bg": (w * h) >= 0.95 * (sw * sh)})
     return out
 
 
@@ -190,6 +201,33 @@ def _last_line(paras, width_in):
 
 # punctuation that must never stand alone at the start of a line (closing marks)
 _CLOSERS = set("。．，、！？：；）》】」』〕〗｝….,!?:;)]}、。")
+
+
+def _cjk(t): return any(ord(ch) > 0x2E80 for ch in t["full"])
+
+
+def _txt_h(t):
+    return _est_lines(t["paras"], t["w"]) * (t["size"] / 72.0) * (1.4 if _cjk(t) else 1.25)
+
+
+def _nat_width(t):                                       # natural one-line width of the widest paragraph
+    return max((sum((sz / 72.0) * (1.0 if ord(ch) > 0x2E80 else 0.52) for s_, sz in pr for ch in s_)
+                for pr in t["paras"]), default=0.0)
+
+
+def _rbox(t):
+    """The RENDERED bounding box of the text — alignment- and anchor-aware (so a centred /
+    middle-anchored label isn't mistaken for cramped-against-the-edge)."""
+    tw = min(_nat_width(t), t["w"]) or t["w"]; eh = _txt_h(t)
+    al = t["align"]
+    if al == PP_ALIGN.CENTER:   rl = t["l"] + (t["w"] - tw) / 2; rr = rl + tw
+    elif al == PP_ALIGN.RIGHT:  rr = t["r"]; rl = rr - tw
+    else:                       rl = t["l"]; rr = rl + tw
+    an = t["anchor"]
+    if an == MSO_ANCHOR.MIDDLE: rt = t["t"] + (t["h"] - eh) / 2; rb = rt + eh
+    elif an == MSO_ANCHOR.BOTTOM: rb = t["b"]; rt = rb - eh
+    else:                       rt = t["t"] + 0.04; rb = rt + eh
+    return rl, rt, rr, rb
 
 
 def _walk_runs(shapes):
@@ -248,16 +286,61 @@ def _contrast(h1, h2):
     return (a + 0.05) / (b + 0.05)
 
 
-def _backing_fill(bx, ti):
+# 256-entry sRGB→linear channel table (same math as _lum, precomputed for the pixel walks)
+_SRGB = [(c / 255.0) / 12.92 if c / 255.0 <= 0.04045 else (((c / 255.0) + 0.055) / 1.055) ** 2.4
+         for c in range(256)]
+
+
+def _px_lum(p):
+    return 0.2126 * _SRGB[p[0]] + 0.7152 * _SRGB[p[1]] + 0.0722 * _SRGB[p[2]]
+
+
+def _region_bg_lum(im, s, sw, sh, ink_lum):
+    """ADVERSARIAL background-luminance estimate behind a text shape, sampled from the slide
+    render. Region = the text's RENDERED extent (alignment/anchor-aware) padded ~0.08in and
+    clamped to the declared box, so true backdrop dominates the sample. The text ink is a
+    minority of pixels: values within 0.14 of the ink's own luminance are dropped (the ink +
+    its antialiasing) — unless that empties the region, in which case the backdrop itself is
+    ink-coloured and the raw region is judged. The estimate is the mean of the quartile the ink
+    is MOST at risk against: the lightest quartile for light ink, the darkest for dark ink.
+    A scrim/panel overlay is part of the render, so a properly scrimmed hero reads as its scrim.
+    Returns None when the region is too small to judge."""
+    rl, rt, rr, rb = _rbox(s)
+    pad = 0.08
+    l, r = max(s["l"], rl - pad), min(s["r"], rr + pad)
+    t, b = max(s["t"], rt - pad), min(s["b"], rb + pad)
+    if r - l <= 0.05 or b - t <= 0.05:
+        l, t, r, b = s["l"], s["t"], s["r"], s["b"]
+    W, H = im.size
+    x0 = max(0, min(W - 1, int(l / sw * W))); x1 = max(x0 + 1, min(W, int(r / sw * W)))
+    y0 = max(0, min(H - 1, int(t / sh * H))); y1 = max(y0 + 1, min(H, int(b / sh * H)))
+    if x1 - x0 < 3 or y1 - y0 < 3:
+        return None
+    reg = im.crop((x0, y0, x1, y1))
+    if reg.width * reg.height > 6400:                    # cap the pixel walk (~80×80 per shape)
+        f = (6400.0 / (reg.width * reg.height)) ** 0.5
+        reg = reg.resize((max(3, int(reg.width * f)), max(3, int(reg.height * f))))
+    lums = sorted(_px_lum(p) for p in reg.getdata())
+    bg = [v for v in lums if abs(v - ink_lum) >= 0.14]
+    if len(bg) < max(12, 0.2 * len(lums)):               # backdrop ≈ ink-coloured throughout
+        bg = lums
+    q = max(1, len(bg) // 4)
+    band = bg[-q:] if ink_lum >= 0.5 else bg[:q]
+    return sum(band) / len(band)
+
+
+def _backing_fill(bx, ti, own=True):
     """The topmost solid fill under text shape bx[ti]: the shape's OWN fill if solid, else the
     highest lower-z shape whose box covers the text (center inside + >=50% overlap). A picture,
     gradient, or theme fill in between returns "UNKNOWN" (backing colour unknowable — the caller
-    must skip, never assume white). Slide bg unknown -> None."""
+    must skip, never assume white). Slide bg unknown -> None. own=False skips the shape's OWN
+    fill — the backdrop BEHIND a filled shape (the non-text-contrast check's question)."""
     t = bx[ti]
-    if t["fill"]:
-        return t["fill"]
-    if t.get("unk"):
-        return "UNKNOWN"
+    if own:
+        if t["fill"]:
+            return t["fill"]
+        if t.get("unk"):
+            return "UNKNOWN"
     cx, cy = (t["l"] + t["r"]) / 2, (t["t"] + t["b"]) / 2
     ta = max(t["w"] * t["h"], 1e-6)
     best = None
@@ -273,6 +356,36 @@ def _backing_fill(bx, ti):
         elif s["fill"]:
             best = s["fill"]
     return best
+
+
+def _fill_under_point(bx, x, y, zmax):
+    """Topmost resolvable fill under canvas point (x, y) among shapes with z-index < zmax — the
+    backing resolver for CONNECTORS (zero-height lines never enter bx, so the index-based
+    _backing_fill can't serve them). Same contract as _backing_fill: hex, "UNKNOWN", or None."""
+    best = None
+    for s in bx:
+        if s.get("zi", 1 << 30) >= zmax:
+            continue
+        if not (s["l"] <= x <= s["r"] and s["t"] <= y <= s["b"]):
+            continue
+        if s["pic"] or s.get("unk"):
+            best = "UNKNOWN"
+        elif s["fill"]:
+            best = s["fill"]
+    return best
+
+
+def _find_title(bx, sh):
+    """Index in bx of the slide's plausible TITLE, or None: a non-empty TITLE placeholder anywhere
+    (an off-canvas-invisible title is the sanctioned statement-slide trick), else the first text
+    >= ~15pt whose top sits in the top ~28% of the canvas."""
+    for i, s in enumerate(bx):
+        if s.get("title_ph") and s["full"]:
+            return i
+    for i, s in enumerate(bx):
+        if s["text"] and not s["bg"] and s["size"] >= 14.5 and s["t"] < 0.28 * sh:
+            return i
+    return None
 
 
 # ───────────────────────── DECK STATS — measured design targets ─────────────────────────
@@ -555,22 +668,20 @@ def _render_col_void(im):
     return best / 96.0
 
 
-def _load_render_lums(path, renders_dir, n):
-    """Per-slide (mean luminance, mean HSV saturation, largest blank column-void fraction) from
-    the rendered PNGs, or None.
-    Silent no-op when Pillow is missing, the dir is absent, or the PNG count != slide count —
-    so a standalone lint (no ./render) is byte-for-byte unchanged. Cheap: each PNG is downscaled
-    to ~64px wide before the pixel walk."""
+def _render_png_paths(path, renders_dir, n):
+    """Sorted per-slide render PNGs, or None — the ONE discovery shared by the stats lum pass and
+    the text-on-image contrast check. Silent no-op when Pillow is missing, the dir is absent, or
+    the PNG count != slide count — so a standalone lint (no ./render) is byte-for-byte unchanged."""
     import os
+    try:
+        from PIL import Image                            # noqa: F401 — every consumer needs Pillow
+    except ImportError:
+        return None
     auto = renders_dir is None
     if renders_dir is None:
         cand = os.path.join(os.path.dirname(os.path.abspath(str(path))), "render")
         renders_dir = cand if os.path.isdir(cand) else None
     if not renders_dir or not os.path.isdir(renders_dir):
-        return None
-    try:
-        from PIL import Image
-    except ImportError:
         return None
     import glob
     # numeric sort: lexical sorting breaks at >=100 slides (slide100 between slide10 and slide11)
@@ -589,6 +700,22 @@ def _load_render_lums(path, renders_dir, n):
                 return None
         except OSError:
             pass
+    return pngs
+
+
+def _load_render_lums(path, renders_dir, n, pngs=...):
+    """Per-slide (mean luminance, mean HSV saturation, largest blank column-void fraction) from
+    the rendered PNGs, or None. Discovery/guards live in _render_png_paths; lint() passes its
+    already-discovered list (possibly None) so the stale-render note never prints twice. Cheap:
+    each PNG is downscaled to ~64px wide before the pixel walk."""
+    if pngs is ...:
+        pngs = _render_png_paths(path, renders_dir, n)
+    if not pngs or len(pngs) != n:
+        return None
+    try:
+        from PIL import Image
+    except ImportError:
+        return None
     out = []
     for p in pngs:
         try:
@@ -874,6 +1001,10 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
     warn_total = 0
     stats_rows = []
     j_findings, j_warns = [], []
+    # discover the per-slide render PNGs ONCE — shared by the text-on-image contrast check
+    # (per-slide, inside the loop) and the stats lum pass (after it)
+    pngs = _render_png_paths(path, renders_dir, len(prs.slides))
+    titles = []                                          # (slide#, normalized title, display snip)
     for si, slide in enumerate(prs.slides):
         bx = _boxes(slide, sw, sh)
         try:
@@ -930,6 +1061,50 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
                     # labels) may sit in the 3.0-4.5 band without a warn
                     warns.append(f"BODY CONTRAST: '{snip}' ink #{ink} on fill #{back} — {ratio:.2f}:1 "
                                  f"(body-size text targets ≥4.5:1)")
+        # 1c) TEXT-ON-IMAGE contrast (render-based): text whose backing resolves to a picture /
+        #     gradient ("UNKNOWN") is exactly what 1b must skip — when renders exist, sample the
+        #     pixels behind the text instead (_region_bg_lum's adversarial percentile; a scrim or
+        #     panel overlay is part of the render, so a properly scrimmed hero reads as its scrim)
+        #     and estimate the effective contrast. HARD only when the estimate is hopeless
+        #     (<1.5:1) — a false hard positive is worse than a miss; the 1.5-3.0 band is a [warn].
+        #     Skipped entirely without renders; tiny runs (<4 chars) and sub-8pt text are skipped.
+        if pngs:
+            im_r = None                                  # this slide's render, loaded at most once
+            for ti, s in enumerate(bx):
+                if not s["text"] or not s["runs"] or s["size"] < 8:
+                    continue
+                back = _backing_fill(bx, ti)
+                if not (back == "UNKNOWN" or (back is None and unk_plate)):
+                    continue                             # solid/resolvable backing → 1b's territory
+                if im_r is None:
+                    try:
+                        from PIL import Image
+                        im_r = Image.open(pngs[si]).convert("RGB")
+                    except Exception:
+                        im_r = False
+                if im_r is False:
+                    break                                # render unreadable → skip the slide
+                worst = None                             # (est, snip) — one verdict per shape
+                for snip, rc in s["runs"]:
+                    if rc == "THEME" or len(snip) < 4:
+                        continue                         # theme ink unresolvable; tiny runs skipped
+                    ink_lum = _lum(rc if rc else "000000")
+                    bg = _region_bg_lum(im_r, s, sw, sh, ink_lum)
+                    if bg is None:
+                        continue
+                    hi, lo = max(ink_lum, bg), min(ink_lum, bg)
+                    est = (hi + 0.05) / (lo + 0.05)
+                    if worst is None or est < worst[0]:
+                        worst = (est, snip)
+                if worst:
+                    est, snip = worst
+                    if est < 1.5:
+                        finds.append(f"TEXT ON IMAGE: '{snip}' est. contrast {est:.2f}:1 against the "
+                                     f"image behind it — unreadable; add an opaque panel or scrim, "
+                                     f"or move the text")
+                    elif est < 3.0:
+                        warns.append(f"TEXT-ON-IMAGE CONTRAST: '{snip}' est. {est:.2f}:1 (<3:1) over "
+                                     f"an image — verify legibility; a scrim/panel usually fixes it")
         # 2) solid vs solid partial overlap (neither contained)
         sol = [s for s in bx if s["solid"] and not s["bg"]]
         for i in range(len(sol)):
@@ -994,25 +1169,7 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
         #    text running PAST the card and text CRAMMED against an edge (the recurring "too close to the
         #    boundary" bug that a pure-overflow check misses).
         PAD = 0.09                                       # minimum interior padding (in)
-        def _cjk(t): return any(ord(ch) > 0x2E80 for ch in t["full"])
-        def _txt_h(t):
-            return _est_lines(t["paras"], t["w"]) * (t["size"] / 72.0) * (1.4 if _cjk(t) else 1.25)
-        def _nat_width(t):                               # natural one-line width of the widest paragraph
-            return max((sum((sz / 72.0) * (1.0 if ord(ch) > 0x2E80 else 0.52) for s_, sz in pr for ch in s_)
-                        for pr in t["paras"]), default=0.0)
-        def _rbox(t):
-            """The RENDERED bounding box of the text — alignment- and anchor-aware (so a centred /
-            middle-anchored label isn't mistaken for cramped-against-the-edge)."""
-            tw = min(_nat_width(t), t["w"]) or t["w"]; eh = _txt_h(t)
-            al = t["align"]
-            if al == PP_ALIGN.CENTER:   rl = t["l"] + (t["w"] - tw) / 2; rr = rl + tw
-            elif al == PP_ALIGN.RIGHT:  rr = t["r"]; rl = rr - tw
-            else:                       rl = t["l"]; rr = rl + tw
-            an = t["anchor"]
-            if an == MSO_ANCHOR.MIDDLE: rt = t["t"] + (t["h"] - eh) / 2; rb = rt + eh
-            elif an == MSO_ANCHOR.BOTTOM: rb = t["b"]; rt = rb - eh
-            else:                       rt = t["t"] + 0.04; rb = rt + eh
-            return rl, rt, rr, rb
+        # (_cjk/_txt_h/_nat_width/_rbox are module-level — shared with the text-on-image sampler)
         # a "card" for padding is a SMALL filled block (not a full/half-slide scrim or background plate)
         cards = [s for s in bx if s["solid"] and not s["bg"] and not s["text"] and s["h"] > 0.35
                  and s["w"] * s["h"] < 0.45 * sw * sh]
@@ -1115,6 +1272,65 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
             if s["mathfont"] and _fsub(s["mathfont"]):
                 warns.append(f"MATH-FONT TOFU RISK: '{s['txt']}' uses {s['mathfont']}, which isn't installed on this "
                              f"render host — install it, or set deckkit.EQ_MATHFONT to a math font present here")
+        # --- a11y structure [warn]s: slide title presence + reading order (screen readers
+        #     navigate by title and read shapes in z-order) ---
+        t_idx = _find_title(bx, sh)
+        if t_idx is not None:
+            titles.append((si + 1, " ".join(bx[t_idx]["full"].split()).lower(),
+                           bx[t_idx]["full"].replace("\n", " ")[:40]))
+        if si > 0 and any((s["text"] or s["solid"]) and not s["bg"] for s in bx):
+            if t_idx is None:
+                warns.append("NO SLIDE TITLE: screen readers navigate by titles — give the slide a "
+                             "title (an off-canvas-invisible title is a sanctioned trick for "
+                             "statement slides)")
+            else:
+                first_txt = next((i for i, s in enumerate(bx) if s["text"]), None)
+                if first_txt is not None and first_txt != t_idx:
+                    warns.append("READING ORDER: the title is not first in shape order — screen "
+                                 "readers read z-order; reorder so the title is added first")
+        # --- NON-TEXT CONTRAST [warn] (WCAG 1.4.11): small solid marks (icon discs, chips) and
+        #     connector lines vs the resolvable fill BEHIND them. A chip that merely backs a
+        #     coincident text label is the text checks' territory; anything unresolvable
+        #     (theme/picture/canvas) stays silent — noise is worse than a miss on a
+        #     decorative-vs-essential call lint can't make. One warn per colour pair per slide. ---
+        seen_pairs = set()
+        for i, s in enumerate(bx):
+            if not s["solid"] or s["text"] or s["bg"] or s["pic"] or not s["fill"]:
+                continue
+            if s["w"] * s["h"] >= 1.2:                   # small marks only — panels/cards excluded
+                continue
+            cx, cy = (s["l"] + s["r"]) / 2, (s["t"] + s["b"]) / 2
+            if any(t2["text"] and t2["l"] - 0.05 <= cx <= t2["r"] + 0.05
+                   and t2["t"] - 0.05 <= cy <= t2["b"] + 0.05 for t2 in bx):
+                continue                                 # a text chip — its label is what's judged
+            back = _backing_fill(bx, i, own=False)
+            if not back or back == "UNKNOWN":
+                continue
+            ratio = _contrast(s["fill"], back)
+            if ratio < 3.0 and (s["fill"], back) not in seen_pairs:
+                seen_pairs.add((s["fill"], back))
+                warns.append(f"NON-TEXT CONTRAST: icon/chip #{s['fill']} on #{back} — {ratio:.2f}:1 "
+                             f"(<3:1, WCAG 1.4.11); essential icons/lines need more contrast")
+        for zi, shp in enumerate(slide.shapes):          # connectors never enter bx (zero extent)
+            try:
+                if shp.shape_type != MSO_SHAPE_TYPE.LINE:
+                    continue
+                from pptx.enum.dml import MSO_FILL
+                if shp.line.fill.type != MSO_FILL.SOLID:
+                    continue
+                lc = str(shp.line.color.rgb)             # theme colour raises → silent skip
+                mx = (shp.left + shp.width / 2) / EMU
+                my = (shp.top + shp.height / 2) / EMU
+            except Exception:
+                continue
+            back = _fill_under_point(bx, mx, my, zi)
+            if not back or back == "UNKNOWN":
+                continue
+            ratio = _contrast(lc, back)
+            if ratio < 3.0 and ("LINE", lc, back) not in seen_pairs:
+                seen_pairs.add(("LINE", lc, back))
+                warns.append(f"NON-TEXT CONTRAST: line #{lc} on #{back} — {ratio:.2f}:1 "
+                             f"(<3:1, WCAG 1.4.11); essential icons/lines need more contrast")
         for m in finds:
             print(f"  slide {si+1}: {m}")
             j_findings.append({"slide": si + 1, "text": m})
@@ -1123,7 +1339,19 @@ def lint(path, mode="presented", json_out=None, renders_dir=None, static_ok=Fals
             j_warns.append({"slide": si + 1, "text": m})
         total += len(finds)
         warn_total += len(warns)
-    lums = _load_render_lums(path, renders_dir, len(stats_rows))
+    # duplicate slide titles (deck-level, advisory): screen-reader navigation needs UNIQUE titles
+    by_title = {}
+    for sn, norm, disp in titles:
+        if norm:
+            by_title.setdefault(norm, ([], disp))[0].append(sn)
+    for norm, (sns, disp) in by_title.items():
+        if len(sns) >= 2:
+            m = (f"DUPLICATE SLIDE TITLES: slides {', '.join(map(str, sns))} share the title "
+                 f"'{disp}' — screen readers navigate by title; make each unique")
+            print(f"  slide {sns[0]}: [warn] {m}")
+            j_warns.append({"slide": sns[0], "text": m})
+            warn_total += 1
+    lums = _load_render_lums(path, renders_dir, len(stats_rows), pngs=pngs)
     deck_stats = _print_stats(stats_rows, mode, sw, sh, lums=lums, static_ok=static_ok)
     tail = ("" if total else "  ✓ clean (no hard findings)") + (f"  ·  {warn_total} warning(s)" if warn_total else "")
     print(f"\n{path}: {total} layout finding(s){tail}")

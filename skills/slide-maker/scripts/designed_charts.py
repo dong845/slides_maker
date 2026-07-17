@@ -26,6 +26,17 @@ Pick by argument (see references/data-viz.md):
 
 All emit a single highlight per the deck's one-accent discipline; pair each with a
 ``deckkit.takeaway_rail`` so the chart always carries its "so-what".
+
+IBCS scenario notation (business/status/finance decks): the bar-family recipes — ``pareto`` and
+``waterfall`` — take ``scenario=``, either ONE string for the whole chart or a per-bar sequence
+(the classic bridge: actual months solid, forecast months hatched). The fill encodes the data
+world: ``"actual"`` solid dark ink · ``"prior"`` solid light grey · ``"plan"`` hollow (white face,
+dark edge) · ``"forecast"`` hatched ``//``. In ``waterfall`` the treatment keeps each bar's
+semantic up/down/total colour as its ink (an FC variance bar = green/red hatch). Where a recipe
+shows variance (``waterfall``, ``dumbbell``), ``favorable_color``/``unfavorable_color`` name the
+green-favorable / red-unfavorable pair (flip them when *down* is good, e.g. cost) — and never rely
+on the hue alone: the recipes pair it with a sign/label. ``scenario=None`` (the default) keeps the
+pre-IBCS output unchanged. See references/data-viz.md → "IBCS notation".
 """
 import os
 
@@ -93,6 +104,42 @@ def _numlabel(v):
         return str(v)
 
 
+
+# IBCS scenario grammar: which data WORLD a bar shows is encoded in its FILL, so an
+# actual-vs-plan-vs-forecast readout scans without a legend. (Docs: references/data-viz.md.)
+IBCS_SCENARIOS = ("actual", "prior", "plan", "forecast")
+_PRIOR_GREY = "#C2C6D2"                    # PY light grey — same neutral the slope recipe de-emphasizes with
+
+
+def _scenario_fill(scenario, ink, dark):
+    """Map an IBCS scenario name to bar-fill kwargs. ``ink`` is the solid colour the bar would
+    otherwise carry (the chart ink for a plain bar family; the semantic up/down/total colour in a
+    waterfall). ``scenario=None`` → solid ``ink``, edge-less — the pre-IBCS default, unchanged."""
+    if scenario is None:
+        return dict(color=ink, edgecolor="none")
+    s = str(scenario).lower()
+    hollow = "none" if dark else "white"    # hollow face: white on a light deck, transparent on dark
+    if s == "actual":
+        return dict(color=ink, edgecolor="none")
+    if s == "prior":
+        return dict(color=_PRIOR_GREY, edgecolor="none")
+    if s == "plan":
+        return dict(color=hollow, edgecolor=ink, linewidth=1.6)
+    if s == "forecast":
+        return dict(color=hollow, edgecolor=ink, linewidth=1.2, hatch="//")
+    raise ValueError(f"unknown IBCS scenario {scenario!r} — use one of {IBCS_SCENARIOS}")
+
+
+def _per_bar_scenarios(scenario, n, recipe):
+    """Normalize ``scenario`` (None | str | sequence) to one entry per bar."""
+    if isinstance(scenario, (list, tuple)):
+        if len(scenario) != n:
+            raise ValueError(f"{recipe}: a per-bar scenario list needs one entry per item "
+                             f"({len(scenario)} given for {n} bars)")
+        return list(scenario)
+    return [scenario] * n
+
+
 def donut_kpi(out, segments, center_value, center_label, *, palette=None, dark=False, font=None, figsize=(5.2, 4.0)):
     """Part-to-whole donut with a headline KPI in the hole. segments = [(label, value), ...]."""
     if not segments:
@@ -114,23 +161,41 @@ def donut_kpi(out, segments, center_value, center_label, *, palette=None, dark=F
     return _save(fig, out)
 
 
-def dumbbell(out, rows, *, palette=None, dark=False, font=None, highlight=None, a_label="before", b_label="after", figsize=(6.6, 4.0)):
-    """Gap between two values per category. rows = [(label, value_a, value_b), ...]."""
+def dumbbell(out, rows, *, palette=None, dark=False, font=None, highlight=None, a_label="before", b_label="after",
+             favorable_color=None, unfavorable_color=None, figsize=(6.6, 4.0)):
+    """Gap between two values per category. rows = [(label, value_a, value_b), ...].
+    Variance semantics (IBCS): pass ``favorable_color``/``unfavorable_color`` to colour each row's
+    connector + "after" dot by direction of change — favorable when value_b >= value_a (pass the
+    colours swapped when *down* is good, e.g. cost). Passing either turns variance mode on (the
+    other defaults to the standard green/red pair); both ``None`` (default) keeps the accent look."""
     plt, ink, grid, muted = _mpl(dark, font)
     pal = list(palette) if palette else ["#5B4BE0", "#00A6A6", "#F2A03D"]
     acc, acc2, neutral = pal[0], (pal[1] if len(pal) > 1 else pal[0]), "#9AA0AE"
+    variance = favorable_color is not None or unfavorable_color is not None
+    fav = favorable_color or "#1F9D55"; unf = unfavorable_color or "#D9463B"
     labels = [r[0] for r in rows]; A = [r[1] for r in rows]; B = [r[2] for r in rows]
     ys = list(range(len(rows)))[::-1]
     fig, ax = plt.subplots(figsize=figsize)
     for i, y in enumerate(ys):
         em = (highlight is None or i == highlight)
-        ax.plot([A[i], B[i]], [y, y], color=(acc if em else grid), lw=3 if em else 2, zorder=1, solid_capstyle="round")
-        ax.scatter([A[i]], [y], color=neutral if not em else acc2, s=70, zorder=2)
-        ax.scatter([B[i]], [y], color=neutral if not em else acc, s=70, zorder=2)
-        ax.annotate(_numlabel(B[i]), (B[i], y), textcoords="offset points", xytext=(8, 0),
-                    va="center", fontsize=9.5, color=ink, fontweight="bold")
+        if variance:   # "before" dot stays neutral (the reference); hue is paired with dot POSITION (left/right of
+            #            the reference) per the never-hue-alone rule, and the end label restates the value
+            vc = fav if B[i] >= A[i] else unf
+            line_c, a_c, b_c, lbl_c = (vc if em else grid), neutral, (vc if em else neutral), vc
+        else:
+            line_c, a_c, b_c, lbl_c = (acc if em else grid), (acc2 if em else neutral), (acc if em else neutral), ink
+        ax.plot([A[i], B[i]], [y, y], color=line_c, lw=3 if em else 2, zorder=1, solid_capstyle="round")
+        ax.scatter([A[i]], [y], color=a_c, s=70, zorder=2)
+        ax.scatter([B[i]], [y], color=b_c, s=70, zorder=2)
+        if variance and B[i] < A[i]:   # declining row: label on the FREE side, not atop the reference dot
+            ax.annotate(_numlabel(B[i]), (B[i], y), textcoords="offset points", xytext=(-8, 0),
+                        ha="right", va="center", fontsize=9.5, color=lbl_c, fontweight="bold")
+        else:
+            ax.annotate(_numlabel(B[i]), (B[i], y), textcoords="offset points", xytext=(8, 0),
+                        va="center", fontsize=9.5, color=lbl_c, fontweight="bold")
     ax.set_yticks(ys); ax.set_yticklabels(labels, fontsize=11, color=ink)
-    ax.scatter([], [], color=acc2, s=70, label=a_label); ax.scatter([], [], color=acc, s=70, label=b_label)
+    ax.scatter([], [], color=(neutral if variance else acc2), s=70, label=a_label)
+    ax.scatter([], [], color=(ink if variance else acc), s=70, label=b_label)
     ax.legend(loc="lower right", frameon=False, fontsize=10, labelcolor=ink)
     for sp in ("top", "right", "left"): ax.spines[sp].set_visible(False)
     ax.spines["bottom"].set_color(muted); ax.tick_params(colors=muted)
@@ -206,18 +271,27 @@ def bubble_trend(out, points, *, palette=None, dark=False, font=None, trend=True
     return _save(fig, out)
 
 
-def pareto(out, items, *, palette=None, dark=False, font=None, figsize=(6.8, 4.0)):
-    """Ranked bars + cumulative % line — the 'vital few' that drive the total. items=[(label,value)]."""
+def pareto(out, items, *, palette=None, dark=False, font=None, figsize=(6.8, 4.0), scenario=None):
+    """Ranked bars + cumulative % line — the 'vital few' that drive the total. items=[(label,value)].
+    ``scenario`` (IBCS): "actual"/"prior"/"plan"/"forecast" for the whole chart, or a per-item
+    sequence (kept aligned through the ranking sort) — bars then take the scenario fill (solid
+    ink / light grey / hollow / hatched) instead of the accent. ``None`` = the accent as before."""
     plt, ink, grid, muted = _mpl(dark, font)
     pal = list(palette) if palette else ["#5B4BE0"]; acc = pal[0]
-    items = sorted(items, key=lambda t: t[1], reverse=True)
+    scen = _per_bar_scenarios(scenario, len(items), "pareto")
+    ranked = sorted(zip(items, scen), key=lambda t: t[0][1], reverse=True)
+    items = [t[0] for t in ranked]; scen = [t[1] for t in ranked]
     labels = [i[0] for i in items]; vals = [i[1] for i in items]
     tot = sum(vals) or 1; cum = []; run = 0
     for v in vals:
         run += v; cum.append(100 * run / tot)
     xs = list(range(len(vals)))
     fig, ax = plt.subplots(figsize=figsize); ax2 = ax.twinx()
-    ax.bar(xs, vals, color=acc, width=0.62)
+    if scenario is None:
+        ax.bar(xs, vals, color=acc, width=0.62)
+    else:
+        for i in xs:
+            ax.bar(i, vals[i], width=0.62, **_scenario_fill(scen[i], ink, dark))
     ax2.plot(xs, cum, color=muted, lw=2, marker="o", ms=5)
     ax2.set_ylim(0, 105)
     ax.set_xticks(xs); ax.set_xticklabels(labels, fontsize=10, color=ink, rotation=0)
@@ -227,20 +301,27 @@ def pareto(out, items, *, palette=None, dark=False, font=None, figsize=(6.8, 4.0
     return _save(fig, out)
 
 
-def waterfall(out, items, *, palette=None, dark=False, font=None, total_label="Total", figsize=(6.8, 4.0)):
+def waterfall(out, items, *, palette=None, dark=False, font=None, total_label="Total", figsize=(6.8, 4.0),
+              scenario=None, favorable_color="#1F9D55", unfavorable_color="#D9463B"):
     """Running total built from signed steps — the 'how did we get from A to B' bridge that
     python-pptx has NO native form for. ``items = [(label, delta), ...]`` where a ``delta`` of ``None``
     marks a SUBTOTAL/TOTAL bar (drawn from zero to the running cumulative). Each step bar FLOATS on the
     cumulative so far; rises, falls and totals are coloured DISTINCTLY (green ↑ / red ↓ / navy total —
     the documented categorical exception to one-accent), consecutive bars are joined by dashed connector
     steps, and every bar carries a direct value label. ``total_label`` names a total bar whose label is
-    left blank. Transparent PNG saved to ``out``."""
+    left blank. Transparent PNG saved to ``out``.
+    ``favorable_color``/``unfavorable_color`` rename the ↑/↓ variance pair (defaults green/red — pass
+    them swapped when a rise is BAD, e.g. a cost bridge); the +/− on every label keeps the sign
+    readable without the hue. ``scenario`` (IBCS): "actual"/"prior"/"plan"/"forecast" for the whole
+    chart, or a per-item sequence (e.g. a bridge whose last steps are forecast) — the treatment keeps
+    each bar's semantic colour as its ink, so an FC variance bar renders as a green/red ``//`` hatch."""
     if not items:
         raise ValueError("waterfall needs at least one item")
     plt, ink, grid, muted = _mpl(dark, font)
     pal = list(palette) if palette else ["#33415C", "#00A6A6", "#F2A03D"]
-    up_c, down_c, total_c = "#1F9D55", "#D9463B", pal[0]
+    up_c, down_c, total_c = favorable_color, unfavorable_color, pal[0]
     n = len(items)
+    scen = _per_bar_scenarios(scenario, n, "waterfall")
     running = 0.0
     bases, heights, colors, is_total, deltas, cum_after, labels = [], [], [], [], [], [], []
     for (label, delta) in items:
@@ -265,7 +346,7 @@ def waterfall(out, items, *, palette=None, dark=False, font=None, total_label="T
     lblpad = 0.03 * span
     fig, ax = plt.subplots(figsize=figsize)
     for i in xs:
-        ax.bar(i, heights[i], bottom=bases[i], width=bw, color=colors[i], edgecolor="none", zorder=3)
+        ax.bar(i, heights[i], bottom=bases[i], width=bw, zorder=3, **_scenario_fill(scen[i], colors[i], dark))
     for i in range(n - 1):                              # dashed connector at the level between bars
         ax.plot([i + bw / 2, i + 1 - bw / 2], [cum_after[i], cum_after[i]],
                 color=muted, lw=1.0, ls="--", zorder=2)

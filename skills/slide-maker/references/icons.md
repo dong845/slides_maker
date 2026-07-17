@@ -11,6 +11,17 @@ and the AMOUNT.** The 7 jobs below are *content-driven*; the *style* (family/wei
 strong native device (a seal, photography) can carry a **style-matched** icon alongside it — the choice
 is *which style and how many*, not *whether*.
 
+## Table of contents
+- Design them yourself, or fetch them? — FETCH, from one open-licensed family
+- Mechanism — fetch → recolor → rasterize → place
+- Treatments — VARY how the icon is shown (don't default to a flat monochrome drop)
+- Scenario fit — MATCH the style & dose to the register (icons fit ANY topic)
+- The jobs an icon does — when to reach for one (the "why", + the rule-of-thumb)
+- When icons HELP vs HURT
+- What makes icons look GOOD — five qualities (from real well-iconned decks)
+- Placement patterns + the craft
+- Build checklist
+
 ## Design them yourself, or fetch them? — FETCH, from one open-licensed family
 **Do not hand-draw an icon set.** Hand-/AI-drawn icons come out inconsistent — varying stroke
 weight, optical size, corner radius, metaphor — which is exactly the inconsistency that looks
@@ -59,7 +70,7 @@ import deckkit as dk
 ACC = "#1F5FA8"                        # the deck accent
 p = icon_png("tabler:chart-bar", "assets/icons/chart.png", color=ACC, px=160)  # fetch+recolor+raster
 dk.icon(s, p, x, y, 0.42, disc="#E8F0FA")        # a single icon (optional tinted tile behind it)
-dk.icon_card(s, *col, p, "Analytics", "Track what matters", accent=dk.ACCENT, disc="#E8F0FA")
+dk.icon_card(s, *col, p, "Analytics", "Track what matters", accent=ACC, disc="#E8F0FA")
 ```
 - Keep recolored PNGs in `~/Downloads/<deck>/assets/icons/` (reproducible from the build).
 - **Rasterizer:** `icons.py` tries cairosvg → rsvg-convert → headless Chrome (the last is usually

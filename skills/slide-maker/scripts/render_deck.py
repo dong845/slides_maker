@@ -158,8 +158,8 @@ def main(argv):
             zoom = 240.0 / max(1.0, page.rect.width)
             page.get_pixmap(matrix=fitz.Matrix(zoom, zoom)).save(os.path.join(out, name + ".png"))
     print("rendered {} slides -> {}".format(doc.page_count, out))
-    print("next: python {} {}  # render-time lint, then the actor-critic loop".format(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "lint_deck.py"), argv[0] if argv else "<deck.pptx>"))
+    print("next: python3 {} {} --renders {}  # render-time lint, then the actor-critic loop".format(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "lint_deck.py"), pptx, out))
 
 
 if __name__ == "__main__":

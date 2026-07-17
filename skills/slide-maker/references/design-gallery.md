@@ -5,6 +5,12 @@ sample decks (280 slides). Use it to (a) pick a coherent *style* fast, and (b) r
 *component* instead of reinventing it. Everything here maps to a `presets.py` preset or a `deckkit`
 helper. The craft rules in `design-principles.md` still govern; this is the catalogue.
 
+## Table of contents
+- The style presets (one switch = palette + fonts + surface)
+- Cross-cutting techniques every strong deck uses (the "instantly professional" moves)
+- The component catalogue (reach for these, don't reinvent)
+- Reproduction notes
+
 ## The style presets (one switch = palette + fonts + surface)
 | preset | register | signature moves |
 |---|---|---|

@@ -308,7 +308,9 @@ agent decides form, layout, icons, and motion downstream. For each slide record:
     deck whose text smells AI-generated (esp. 中文 translationese) is **not ready**; this pass is
     the actor-side guarantee the critic's Voice check then independently confirms.
   - **Deterministic budget check — run `python scripts/plan_wordcount.py <plan.md> --<mode>` after
-    the VOICE PASS, before emitting the plan** (advisory; it counts takeaway + content units per
+    the VOICE PASS, before emitting the plan** (write the per-slide table to a **temp/scratch
+    file** for the pass — never into the deliverable folder, where plan files are forbidden)
+    (advisory; it counts takeaway + content units per
     row with the same load formula as the render lint, warning above ~50 plan-words presented /
     ~110 self-read — thresholds below the lint's TEXT WALL lines because design adds captions).
     An over-budget row gets **"over budget → notes/split"** recorded in its *notes* column, so the
@@ -423,7 +425,10 @@ below", "needs asset — see open questions").
 3–5 hard questions this room will actually ask, each mapped to: answered-on-slide-N, or a named
 BACKUP/appendix slide (drafted content in one line), or an honest "open — flag to presenter".
 Consulting norm: the meeting is won in the appendix; a decide-deck with zero backup slides walks
-in naked.
+in naked. **Named BACKUP slides get their own rows in the Per-slide content table, marked
+`backup` — excluded from the pace/slide-count check, flowed into the Design plan and the build as
+an appendix AFTER the closing slide, and skipped in the click-order note** (so the critic that
+weighs "backup slides for anticipated questions" finds them actually built, not just planned).
 
 ## Forward-looking additions
 Anything you drafted that isn't in the source (future work / next steps / the ask), **clearly

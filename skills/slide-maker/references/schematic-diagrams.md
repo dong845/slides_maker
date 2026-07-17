@@ -13,6 +13,14 @@ physical setup is *worse than none* — an expert (a supervisor, a class, a comm
 flipped lens, a mis-labelled force, or a backwards reaction instantly. So the rule throughout is:
 **build the real geometry/connections, label them correctly, and verify against the source.**
 
+## Table of contents
+- 1 — Which tool: pick before you draw
+- 1b — The image-tool path: generate the visual, keep the labels native
+- 2 — House style for every matplotlib schematic
+- 3 — Recipes (copy, adapt the geometry/labels to the source)
+- 4 — Placement & layout on the slide
+- 5 — The fidelity gate (do this before the critic)
+
 ## 1 — Which tool: pick before you draw
 
 | The schematic is… | Use | Why |

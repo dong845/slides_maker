@@ -19,6 +19,9 @@ from pptx import Presentation
 from pptx.util import Emu
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 
+if len(sys.argv) < 2:
+    print("usage: python3 extract_deck.py /path/to/their_deck.pptx [out_dir]")
+    raise SystemExit(2)
 path = sys.argv[1]
 out = sys.argv[2] if len(sys.argv) > 2 else "./extracted"
 assets = os.path.join(out, "assets")

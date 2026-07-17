@@ -1,0 +1,372 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""validate_review.py — deterministic schema check for the review-loop JSON contracts.
+
+Validates a critic review (agents/critic.md § "Output — return ONLY this JSON") or an
+arbiter payload (agents/arbiter.md Job 1 `verdicts` / Job 2 `checks`) BEFORE the
+coordinator acts on it, so a malformed reply bounces back to the model with the
+COMPLETE list of missing/invalid fields — one re-ask fixes everything, instead of a
+ping-pong of one-error-at-a-time retries.
+
+    python3 scripts/validate_review.py critic  review.json     # '-' reads stdin
+    python3 scripts/validate_review.py arbiter verdicts.json
+    python3 scripts/validate_review.py --selftest
+
+Exit 0 = valid ("OK — valid <kind> output"). Exit 1 = invalid, one line per problem.
+
+Stdlib only (no jsonschema): the contracts are transcribed by hand from the two agent
+files — when a contract changes there, change it here too.
+
+Critic checks: required top-level fields + types; verdict/severity/fix_risk enums; the
+coverage anti-skim block (slides_opened ints · passes · stats_block_seen ·
+contract_card_seen true|false|'none-declared'); plan_audit dict-or-null (null is the
+direction-preview / external-no-plan escape); the optional probes block (per_slide rows
++ memory_sentence); per-finding required keys (id · slide · severity · dimension ·
+issue · why · fix); and the consent rule — a "consent" verdict alongside a
+blocker/major finding is a contract violation (critic.md: any blocker/major → revise).
+
+Arbiter checks: Job 1 `verdicts` (finding_ref · real_verdict · rederivation ·
+fix_verdict; better_fix required iff fix_verdict='hurts') and/or Job 2 `checks`
+(finding_ref · resolved · regressions · dulled; still_wrong required iff not resolved;
+better_fix required iff dulled), plus the OPTIONAL `escalated_unreviewed:
+[{slide, issue}]` escalation escape hatch — accepted on either job, never required.
+"""
+import json
+import sys
+
+CRITIC_VERDICTS = ("consent", "revise")
+SEVERITIES = ("blocker", "major", "minor")
+FIX_RISKS = ("low", "medium", "high")
+REAL_VERDICTS = ("real", "false_positive", "unsure")
+FIX_VERDICTS = ("helps", "hurts", "neutral")
+
+_TYPES = {
+    "str": str,
+    "int": int,
+    "bool": bool,
+    "list": list,
+    "dict": dict,
+}
+
+
+def _is(value, typ):
+    """Type check that keeps JSON semantics: a bool is NOT an int."""
+    if typ == "int":
+        return isinstance(value, int) and not isinstance(value, bool)
+    return isinstance(value, _TYPES[typ])
+
+
+def _field(obj, key, typ, path, errors, required=True, enum=None):
+    """Check obj[key] exists (when required) and has the right type/enum.
+
+    Appends every problem to `errors` (never raises) and returns the value when it is
+    usable for deeper checks, else None.
+    """
+    if key not in obj:
+        if required:
+            errors.append("%s.%s: missing (required, expected %s%s)"
+                          % (path, key, typ,
+                             " — one of %s" % "|".join(enum) if enum else ""))
+        return None
+    value = obj[key]
+    if not _is(value, typ):
+        errors.append("%s.%s: wrong type %s (expected %s), got %r"
+                      % (path, key, type(value).__name__, typ, value))
+        return None
+    if enum is not None and value not in enum:
+        errors.append("%s.%s: invalid value %r — expected one of %s"
+                      % (path, key, value, "|".join(enum)))
+        return None
+    return value
+
+
+def _str_list(obj, key, path, errors, required=True):
+    values = _field(obj, key, "list", path, errors, required=required)
+    if isinstance(values, list):
+        for i, v in enumerate(values):
+            if not _is(v, "str"):
+                errors.append("%s.%s[%d]: must be a string, got %r" % (path, key, i, v))
+    return values
+
+
+# ---------------------------------------------------------------- critic ----
+
+def validate_critic(obj):
+    """Return a list of problems ([] = valid) for a critic review JSON."""
+    errors = []
+    if not isinstance(obj, dict):
+        return ["$: critic output must be a JSON object, got %s" % type(obj).__name__]
+
+    _field(obj, "purpose", "str", "$", errors)
+
+    # coverage — the anti-skim gate
+    cov = _field(obj, "coverage", "dict", "$", errors)
+    if isinstance(cov, dict):
+        slides = _field(cov, "slides_opened", "list", "$.coverage", errors)
+        if isinstance(slides, list):
+            for i, v in enumerate(slides):
+                if not _is(v, "int"):
+                    errors.append("$.coverage.slides_opened[%d]: must be an int slide"
+                                  " number, got %r" % (i, v))
+        _str_list(cov, "passes", "$.coverage", errors)
+        _field(cov, "stats_block_seen", "bool", "$.coverage", errors)
+        if "contract_card_seen" not in cov:
+            errors.append("$.coverage.contract_card_seen: missing (required — "
+                          "true | false | 'none-declared')")
+        elif not (_is(cov["contract_card_seen"], "bool")
+                  or cov["contract_card_seen"] == "none-declared"):
+            errors.append("$.coverage.contract_card_seen: invalid value %r — expected "
+                          "true | false | 'none-declared'" % (cov["contract_card_seen"],))
+
+    # plan_audit — dict of lens audits, or null (with the reason) on direction
+    # previews / external no-plan decks
+    if "plan_audit" not in obj:
+        errors.append("$.plan_audit: missing (required — the contract-card audit dict, "
+                      "or null for direction previews / external decks with no plans)")
+    elif obj["plan_audit"] is not None:
+        if not _is(obj["plan_audit"], "dict"):
+            errors.append("$.plan_audit: wrong type %s (expected dict or null)"
+                          % type(obj["plan_audit"]).__name__)
+        else:
+            for lens in ("lens_a", "lens_b"):
+                if lens in obj["plan_audit"] and not _is(obj["plan_audit"][lens], "dict"):
+                    errors.append("$.plan_audit.%s: wrong type %s (expected dict)"
+                                  % (lens, type(obj["plan_audit"][lens]).__name__))
+
+    # probes — optional (direction previews skip it); fields are lens-scoped so each
+    # is optional, but a present field must be well-formed
+    if "probes" in obj:
+        if not _is(obj["probes"], "dict"):
+            errors.append("$.probes: wrong type %s (expected dict)"
+                          % type(obj["probes"]).__name__)
+        else:
+            probes = obj["probes"]
+            per_slide = _field(probes, "per_slide", "list", "$.probes", errors,
+                               required=False)
+            if isinstance(per_slide, list):
+                for i, row in enumerate(per_slide):
+                    row_path = "$.probes.per_slide[%d]" % i
+                    if not _is(row, "dict"):
+                        errors.append("%s: must be an object {slide, first_read, "
+                                      "takeaway_guess}, got %r" % (row_path, row))
+                        continue
+                    if not _is(row.get("slide"), "int"):
+                        errors.append("%s.slide: must be an int, got %r"
+                                      % (row_path, row.get("slide")))
+                    _field(row, "first_read", "str", row_path, errors)
+                    _field(row, "takeaway_guess", "str", row_path, errors)
+            _field(probes, "memory_sentence", "str", "$.probes", errors, required=False)
+
+    verdict = _field(obj, "verdict", "str", "$", errors, enum=CRITIC_VERDICTS)
+    _field(obj, "ceiling", "str", "$", errors, required=False)
+    _field(obj, "summary", "str", "$", errors)
+    _str_list(obj, "strengths", "$", errors)
+
+    findings = _field(obj, "findings", "list", "$", errors)
+    worst = set()
+    if isinstance(findings, list):
+        for i, f in enumerate(findings):
+            f_path = "$.findings[%d]" % i
+            if not _is(f, "dict"):
+                errors.append("%s: must be an object, got %r" % (f_path, f))
+                continue
+            _field(f, "id", "str", f_path, errors)
+            if "slide" not in f:
+                errors.append("%s.slide: missing (required — int, or \"deck\" for a "
+                              "deck-level finding)" % f_path)
+            elif not (_is(f["slide"], "int") or f["slide"] == "deck"):
+                errors.append("%s.slide: invalid value %r — expected an int or \"deck\""
+                              % (f_path, f["slide"]))
+            sev = _field(f, "severity", "str", f_path, errors, enum=SEVERITIES)
+            if sev:
+                worst.add(sev)
+            for key in ("dimension", "issue", "why", "fix"):
+                _field(f, key, "str", f_path, errors)
+            _field(f, "fix_risk", "str", f_path, errors, required=False, enum=FIX_RISKS)
+
+    # the consent rule: any blocker/major finding forces "revise" (critic.md)
+    if verdict == "consent" and worst & {"blocker", "major"}:
+        errors.append("$.verdict: 'consent' with a blocker/major finding violates the "
+                      "contract — any blocker or major forces verdict 'revise'")
+    return errors
+
+
+# --------------------------------------------------------------- arbiter ----
+
+def validate_arbiter(obj):
+    """Return a list of problems ([] = valid) for an arbiter Job 1/Job 2 JSON."""
+    errors = []
+    if not isinstance(obj, dict):
+        return ["$: arbiter output must be a JSON object, got %s" % type(obj).__name__]
+
+    if "verdicts" not in obj and "checks" not in obj:
+        errors.append("$: arbiter output must carry 'verdicts' (Job 1 — validate "
+                      "findings) or 'checks' (Job 2 — verify fixes); neither is present")
+
+    verdicts = _field(obj, "verdicts", "list", "$", errors, required=False)
+    if isinstance(verdicts, list):
+        for i, v in enumerate(verdicts):
+            v_path = "$.verdicts[%d]" % i
+            if not _is(v, "dict"):
+                errors.append("%s: must be an object, got %r" % (v_path, v))
+                continue
+            _field(v, "finding_ref", "str", v_path, errors)
+            _field(v, "real_verdict", "str", v_path, errors, enum=REAL_VERDICTS)
+            _field(v, "rederivation", "str", v_path, errors)
+            fix_verdict = _field(v, "fix_verdict", "str", v_path, errors,
+                                 enum=FIX_VERDICTS)
+            if fix_verdict == "hurts":
+                if not _is(v.get("better_fix"), "str"):
+                    errors.append("%s.better_fix: required when fix_verdict is 'hurts' "
+                                  "— the corrected fix for the real problem" % v_path)
+            elif "better_fix" in v and not _is(v["better_fix"], "str"):
+                errors.append("%s.better_fix: must be a string, got %r"
+                              % (v_path, v["better_fix"]))
+
+    checks = _field(obj, "checks", "list", "$", errors, required=False)
+    if isinstance(checks, list):
+        for i, c in enumerate(checks):
+            c_path = "$.checks[%d]" % i
+            if not _is(c, "dict"):
+                errors.append("%s: must be an object, got %r" % (c_path, c))
+                continue
+            _field(c, "finding_ref", "str", c_path, errors)
+            resolved = _field(c, "resolved", "bool", c_path, errors)
+            if resolved is False and not _is(c.get("still_wrong"), "str"):
+                errors.append("%s.still_wrong: required when resolved is false — "
+                              "what remains" % c_path)
+            _str_list(c, "regressions", c_path, errors)
+            dulled = _field(c, "dulled", "bool", c_path, errors)
+            if dulled is True and not _is(c.get("better_fix"), "str"):
+                errors.append("%s.better_fix: required when dulled is true — resolve "
+                              "the finding WITHOUT subtracting the named strength"
+                              % c_path)
+
+    # optional escalation escape hatch — a blocker-grade issue no critic caught,
+    # reported for the next critic round (never required, on either job)
+    if "escalated_unreviewed" in obj:
+        esc = obj["escalated_unreviewed"]
+        if not _is(esc, "list"):
+            errors.append("$.escalated_unreviewed: wrong type %s (expected list of "
+                          "{slide, issue})" % type(esc).__name__)
+        else:
+            for i, e in enumerate(esc):
+                e_path = "$.escalated_unreviewed[%d]" % i
+                if not _is(e, "dict"):
+                    errors.append("%s: must be an object {slide, issue}, got %r"
+                                  % (e_path, e))
+                    continue
+                if "slide" not in e:
+                    errors.append("%s.slide: missing (required — int, or \"deck\")"
+                                  % e_path)
+                elif not (_is(e["slide"], "int") or _is(e["slide"], "str")):
+                    errors.append("%s.slide: invalid value %r — expected an int or "
+                                  "\"deck\"" % (e_path, e["slide"]))
+                _field(e, "issue", "str", e_path, errors)
+    return errors
+
+
+# -------------------------------------------------------------- selftest ----
+
+def _selftest():
+    """Three inline fixtures: a valid critic, a broken critic, a valid+broken arbiter."""
+    good_critic = {
+        "purpose": "MICCAI oral, 10 min, broad audience",
+        "coverage": {"slides_opened": [1, 2, 3], "passes": ["content lens (full deck)",
+                                                            "design lens (full deck)"],
+                     "stats_block_seen": True, "contract_card_seen": "none-declared"},
+        "plan_audit": None,
+        "probes": {"per_slide": [{"slide": 1, "first_read": "big title",
+                                  "takeaway_guess": "the method is fast"}],
+                   "memory_sentence": "4D recon in one pass; message understood"},
+        "verdict": "revise",
+        "summary": "Fix the cropped figure first.",
+        "strengths": ["clean grid"],
+        "findings": [{"id": "s2-crop-1", "slide": 2, "severity": "major",
+                      "dimension": "figures", "issue": "legend clipped",
+                      "why": "audience can't decode the curves",
+                      "fix": "re-crop to include the legend", "fix_risk": "low"}],
+    }
+    errs = validate_critic(good_critic)
+    assert errs == [], "valid critic flagged: %s" % errs
+
+    bad_critic = {
+        "purpose": "x",
+        # coverage missing entirely
+        "plan_audit": "n/a",                       # wrong type (str, not dict/null)
+        "verdict": "consent",                      # consent + blocker below = violation
+        "summary": "y",
+        "strengths": ["ok", 42],                   # non-string strength
+        "findings": [{"id": "f1", "slide": "3",    # slide as string, not int/"deck"
+                      "severity": "critical",      # bad enum
+                      "issue": "z"}],              # dimension/why/fix missing
+    }
+    errs = validate_critic(bad_critic)
+    for needle in ("$.coverage: missing", "$.plan_audit: wrong type",
+                   "$.strengths[1]", "$.findings[0].slide",
+                   "$.findings[0].severity", "$.findings[0].dimension",
+                   "$.findings[0].why", "$.findings[0].fix"):
+        assert any(needle in e for e in errs), "expected %r in %s" % (needle, errs)
+    # ("critical" fails the enum so no severity survives; the consent rule is
+    #  exercised separately with a well-typed blocker)
+    consent_blocker = dict(good_critic, verdict="consent")
+    consent_blocker["findings"] = [dict(good_critic["findings"][0], severity="blocker")]
+    errs = validate_critic(consent_blocker)
+    assert any("forces verdict 'revise'" in e for e in errs), errs
+
+    good_arbiter = {
+        "verdicts": [{"finding_ref": "s2-crop-1", "real_verdict": "real",
+                      "rederivation": "source p.4 Fig 2 — legend exists, crop cuts it",
+                      "fix_verdict": "hurts",
+                      "better_fix": "re-crop whole figure, not just the legend strip"}],
+        "escalated_unreviewed": [{"slide": 5, "issue": "headline number contradicts "
+                                                       "the source table"}],
+    }
+    errs = validate_arbiter(good_arbiter)
+    assert errs == [], "valid arbiter flagged: %s" % errs
+
+    bad_arbiter = {
+        "checks": [{"finding_ref": "s2-crop-1", "resolved": False,
+                    # still_wrong missing though resolved is false
+                    "regressions": "none",         # wrong type (str, not list)
+                    "dulled": True}],              # better_fix missing though dulled
+    }
+    errs = validate_arbiter(bad_arbiter)
+    for needle in ("$.checks[0].still_wrong", "$.checks[0].regressions",
+                   "$.checks[0].better_fix"):
+        assert any(needle in e for e in errs), "expected %r in %s" % (needle, errs)
+    assert validate_arbiter({}) != [], "empty arbiter object must fail (no job payload)"
+
+    print("selftest ok — 3 fixture groups passed")
+    return 0
+
+
+# ------------------------------------------------------------------- cli ----
+
+def main(argv):
+    if argv == ["--selftest"]:
+        return _selftest()
+    if len(argv) != 2 or argv[0] not in ("critic", "arbiter"):
+        print("usage: validate_review.py critic|arbiter <file|->   (or --selftest)",
+              file=sys.stderr)
+        return 2
+    kind, path = argv
+    raw = sys.stdin.read() if path == "-" else open(path, encoding="utf-8").read()
+    try:
+        obj = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        print("INVALID %s output — not JSON: %s" % (kind, exc), file=sys.stderr)
+        return 1
+    errors = (validate_critic if kind == "critic" else validate_arbiter)(obj)
+    if errors:
+        print("INVALID %s output — %d problem(s):" % (kind, len(errors)),
+              file=sys.stderr)
+        for e in errors:
+            print("  - %s" % e, file=sys.stderr)
+        return 1
+    print("OK — valid %s output" % kind)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

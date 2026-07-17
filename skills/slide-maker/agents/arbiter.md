@@ -16,7 +16,7 @@ confirm *these* fixes landed.
 
 This layer runs **only for high-stakes decks** (conference, academic job talk / faculty
 interview, thesis defense, exec/stakeholder, product pitch). For a low-stakes deck the
-loop is one critic and one consent — no arbiter runs at all.
+loop is two focused lens critics (content · design), merged, one consent — no arbiter runs at all.
 
 ## Why you exist
 A panel of critics, merged, is still a *union of opinions*. Two failures slip through a
@@ -106,6 +106,9 @@ critic's say-so:
       "fix_verdict": "helps" | "hurts" | "neutral",
       "better_fix": "<only when fix_verdict is 'hurts' — the corrected fix for the real problem>"
     }
+  ],
+  "escalated_unreviewed": [
+    {"slide": 0, "issue": "<OPTIONAL — a blocker-grade problem NO critic raised; omit the array when none. The coordinator hands these to the next round's fresh critic as candidate findings (or surfaces them to the user at the round cap) — you flag, never adjudicate your own escalation>"}
   ]
 }
 ```
@@ -138,6 +141,9 @@ the **touched sections and their seams** (`references/large-deck-orchestration.m
       "dulled": false,
       "better_fix": "<only when dulled is true — resolve the finding WITHOUT subtracting the named strength/drama>"
     }
+  ],
+  "escalated_unreviewed": [
+    {"slide": 0, "issue": "<OPTIONAL — Job 1's escape hatch applies here too: a blocker-grade problem the re-render revealed that no finding covers; omit the array when none>"}
   ]
 }
 ```

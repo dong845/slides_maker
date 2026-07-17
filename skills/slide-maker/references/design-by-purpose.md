@@ -7,6 +7,21 @@ you're free to set the look — tailor the visual system to the **purpose + audi
 chosen in step 0. The goal isn't decoration; it's that the deck *reads as the right
 kind of document* the moment it's on screen, which earns trust before a word is said.
 
+## Table of contents
+- Shortcut: design-language presets
+- Reach for the new modules — by purpose (every purpose benefits, not just design-forward ones)
+- How to use this file
+- Research meeting with a supervisor / lab group
+- Work status update to a manager / team
+- Academic conference talk
+- Academic job talk / faculty interview
+- Company / stakeholder / investor readout
+- Product description / pitch
+- Thesis defense
+- Teaching / lecture
+- Webinar / online presentation
+- Preset fit by purpose — a fast sanity map (fit is a default, avoid is a flag, both overridable with a stated reason)
+
 ## Shortcut: design-language presets
 For a strong, coherent *look* in one switch, `scripts/presets.py` has named design languages —
 `preset("glassmorphism" | "swiss" | "editorial_paper" | "editorial_report" | "risograph" |

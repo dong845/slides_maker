@@ -11,6 +11,18 @@ editable PowerPoint objects or faithful source figures.
 > apply; the palette is then extracted from the image with `deckkit.palette_from_image` so
 > native blocks fit the generated look.
 
+## Table of contents
+- Decide by taste and purpose — not by a rule or a quota
+- When to use image generation
+- Place plates consistently — and a content plate is NOT a header
+- Real brand / product assets come first — never fill with a generic stand-in
+- Sourced real imagery — the REFERENT RULE (does the subject actually exist?)
+- Planning workflow
+- Generating the images — auto-detect the source (no API key needed)
+- Real subjects must be factually right
+- Prompt rules
+- Verification
+
 ## Decide by taste and purpose — not by a rule or a quota
 Whether a slide gets a generated image is a **design call**, the same way motion is. Reach
 for a plate where your design sense says it will **emphasize** a point, make a slide **more
@@ -104,8 +116,10 @@ Source the asset down a **recognizability hierarchy**, stopping at the first you
 3. only then a tasteful neutral treatment — **never** a fake logo, an AI-imagined product, or a generic gradient silhouette standing in for the real mark.
 
 **If the real asset is needed but missing, STOP and ask the user for it** — do not paper over the gap
-with a generated look-alike or a placeholder that pretends to be the brand. A *correct placeholder*
-("logo goes here") the user will swap is honest; an invented brand asset is a fidelity violation (it
+with a generated look-alike or a placeholder that pretends to be the brand, and **never ship literal
+placeholder text ("logo goes here") on a slide**: that text IS the meta-annotation PRE-FLIGHT 8 and
+the critic treat as a blocker. The honest fallbacks are the designed wordmark (flagged) or asking
+the user; an invented brand asset is a fidelity violation (it
 misstates a real thing) and reads as fake instantly. This complements the rule above: generated
 imagery is for *atmosphere/concept*, never for a real identity that should be shown as-is.
 
@@ -143,7 +157,7 @@ lives on the layouts (`inspect_template.py` shows where) — don't double it; on
 if the template *doesn't* carry one. Cases where a recurring logo does NOT apply: a deck that spans
 many organisations (a survey, a literature review, a market landscape), or a neutral/academic talk
 where house branding would be noise — there, name entities inline instead. Same fidelity rule as
-above: the real mark or an honest placeholder, never a faked one.
+above: the real mark or the flagged designed wordmark, never a faked one.
 
 ## Sourced real imagery — the REFERENT RULE (does the subject actually exist?)
 

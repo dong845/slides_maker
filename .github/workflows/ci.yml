@@ -19,6 +19,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Manifest versions match (plugin.json vs marketplace.json)
+        working-directory: ${{ github.workspace }}
+        run: |
+          python -c "import json, sys; p = json.load(open('.claude-plugin/plugin.json'))['version']; m = json.load(open('.claude-plugin/marketplace.json'))['metadata']['version']; print(f'plugin.json version={p}  marketplace.json metadata.version={m}'); sys.exit(0 if p == m else f'VERSION MISMATCH: plugin.json version={p!r} != marketplace.json metadata.version={m!r} — bump both together')"
+
       - name: Install system deps (LibreOffice, rsvg, CJK fonts)
         run: |
           sudo apt-get update -q
@@ -32,6 +37,9 @@ jobs:
 
       - name: deckkit smoke (every public helper)
         run: python scripts/smoke_deckkit.py
+
+      - name: Review-contract validator selftest
+        run: python scripts/validate_review.py --selftest
 
       - name: Minimal build, lint, render
         run: |

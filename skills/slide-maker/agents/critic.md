@@ -227,8 +227,10 @@ Do not just skim for the first few obvious issues. Run these passes:
        same four principles the planner designed to, so findings name a shared cause: **Contrast** (does
        one element pop, clear size/weight/colour steps, ≤2 *text* fonts (a mono for code / a CJK face
        don't count), no underline-for-emphasis — or does it
-       blur to an even grey field?), **Repetition** (do title chrome / accent / fonts / footer / motif
-       repeat so the deck reads as one designed thing — flag a slide that breaks the system), **Alignment**
+       blur to an even grey field?), **Repetition** (do title chrome / accent / fonts / footer
+       repeat so the deck reads as one designed thing — flag a slide that breaks the system; the
+       signature MOTIF is exempt from this every-slide list — it's a DOSED device, 2–3 appearances
+       per the chrome budget, and per-slide motif stamping is itself the finding), **Alignment**
        (is everything on a shared grid, or is something off-grid/eyeballed?), **Proximity** (are related
        items grouped and unrelated ones separated, inter-group gap > intra-group?). A slide that feels
        "off" usually violates one — name which.
@@ -555,7 +557,9 @@ Do not just skim for the first few obvious issues. Run these passes:
      labels — see the size floor in `design-principles.md`), inconsistent fonts/sizes. **One font for
      the whole deck** reads flat — expect a **role pairing** (a DISPLAY title face vs FONT body, +MONO
      chrome; for CJK an EADISPLAY title vs EAFONT body); flag a display face that merely duplicates the
-     body, or a clashing/too-many-font mix.
+     body, or a clashing/too-many-font mix — **carve: on a CJK deck, ONE portable CJK family
+     differentiated by weight/size IS the sanctioned pairing** (`references/multilingual.md`'s
+     recommended portable setup; don't flag it as flat).
      For **non-Latin (CJK) decks**: any **tofu / missing glyphs** (□ / 缺字) is a blocker; the
      CJK font should be script-appropriate and consistent; emphasis must use weight/
      colour, **not faux-italic** (CJK has no true italic — slanted CJK reads as broken).
@@ -604,7 +608,12 @@ Do not just skim for the first few obvious issues. Run these passes:
      glyphs in its labels** (a non-Latin axis title or legend — CJK · Cyrillic · Greek · … — showing □,
      the classic raster-`designed_charts` failure on a non-Latin deck) is a blocker: rebuild it as an
      **editable native chart** (`deckkit.native_chart`/`native_dual_axis`, which render any script via
-     PowerPoint's fonts) or pass `font=<the script's font>` to the recipe.
+     PowerPoint's fonts) or pass `font=<the script's font>` to the recipe. **Data-viz colour &
+     scale (per `references/data-viz.md` "IBCS notation" + "Colour-blind safety"):** flag
+     hue-only series discrimination (multi-series lines must also differ by linestyle/marker or
+     carry direct end-labels), red/green status semantics with no second channel (icon/label/sign),
+     and — on a business/status deck — two charts of the SAME measure+unit on different value
+     scales with no scaling indicator (the classic silent lie no geometry check sees).
    - **Plot doesn't look right (computed/matplotlib plots):** **(a) jagged/aliased curves** — a smooth
      or high-frequency function rendered as angular zigzags because it was sampled too coarsely (the
      "sine looks weird" tell); the fix is a dense `np.linspace`, not integer steps. **(b) Legend or
@@ -666,7 +675,7 @@ Do not just skim for the first few obvious issues. Run these passes:
      ~1.5–2× the intra-group spacing (`vstack`/`rows` with a deliberate between-group gap).
    - **Real brand/product asset faked or generic-filled:** on a slide about a real brand/product/UI, a
      **generated look-alike, an invented logo, or a default-blue box** standing in for the real asset
-     (instead of the real logo/product/screenshot, or an honest "swap this" placeholder) — a
+     (instead of the real logo/product/screenshot, or a flagged designed wordmark) — a
      credibility + fidelity finding; the fix is to use the real asset or ask the user for it.
    - **Generated image not topical to the slide:** a plate that doesn't **depict this slide's actual
      subject** — a generic "fancy" image (random gradients/orbs/swooshes, an unrelated stock-y scene)
@@ -705,8 +714,9 @@ Do not just skim for the first few obvious issues. Run these passes:
      background, opaque blocks are fine.) **And check the OTHER two layers of the identity — an
      IDENTITY-PROPAGATION BREAK is the same tell at the type/component level:** on a generated-identity
      deck, judge the native type and component geometry against the plan's four-line
-     identity-propagation contract (`generated-template.md` §3 — type register · outline weight ·
-     corner language · shadow · fill flatness): an off-register default face (e.g. neo-grotesque body
+     identity-propagation contract (`generated-template.md` §3 — palette · type register ·
+     component geometry (outline weight / corner language / shadow / fill flatness) · surface):
+     an off-register default face (e.g. neo-grotesque body
      on a comic/hand-drawn identity) or stock component geometry (hairline squared cards on a bold-
      outline rounded identity) means the style lives only in the background — major.
    - **Deck rhythm (a deck-level check — scan all the thumbnails together):** across a **long** deck,
@@ -843,7 +853,7 @@ line it audits).
 {
   "purpose": "<echo the purpose you reviewed against>",
   "coverage": {
-    "slides_opened": [1, 2, "...every slide number whose PNG you actually Read — a missing number means the review is INVALID, not that the slide was fine"],
+    "slides_opened": [1, 2, "...every slide number whose PNG you actually Read — a missing number means the review is INVALID, not that the slide was fine. SCOPE: every slide in your ASSIGNED scope — the whole deck for a sole/whole-deck critic; your section's page range for a per-section critic (echo the range you were given); the coordinator rejects gaps against the scope, not the whole deck"],
     "passes": ["<name each lens pass you ran, e.g. 'content lens (full deck)', 'design lens (full deck)' — a sole critic lists TWO; round 2+ adds 'fresh whole-deck re-pass'>"],
     "stats_block_seen": true,
     "contract_card_seen": "true | false | 'none-declared' — true = the card was in your input; 'none-declared' = the dispatch explicitly stated no plans exist (external deck / redesign diagnosis / direction preview — legitimate); false = card absent with no statement, which obliges the main loop to re-dispatch with it before the review counts"

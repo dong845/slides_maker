@@ -7,6 +7,27 @@ the slide competes with the speaker instead of supporting them. For that deck, e
 follows from one idea: **a slide is a visual aid, not a document** — optimize for "understood in a
 few seconds." But first know the *delivery mode*, because the density rules flex with it.
 
+## Table of contents
+- Delivery mode — scope the density rules to how the deck is consumed
+- Tell a story — especially the opening
+- One idea per slide
+- Few words per point
+- Diagrams over text
+- Build native, editable objects — never a flattened slide
+- Use the source's own figures — whole
+- Every figure gets a legend + a takeaway
+- A placed figure's OWN text must stay LEGIBLE at the displayed size
+- Designed plots — pick the chart per argument
+- Big numbers — the hero numeral must read clean
+- Layout patterns — reach for the right one (apply dynamically, not always)
+- Tables and equations
+- Layout: give every element room
+- Colour: vary within the brand
+- Accessibility
+- Visual hierarchy
+- Callouts carry the message
+- Render and look — always
+
 ## Delivery mode — scope the density rules to how the deck is consumed
 **Before applying the rules below, know how the deck will be consumed** (the interview captures it):
 - **Presented (spoken)** — a speaker narrates (a live room OR a screen-shared meeting/webinar both

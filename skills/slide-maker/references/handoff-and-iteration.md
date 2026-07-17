@@ -8,6 +8,16 @@ and both are avoidable:
    scratch and the two never merged. (This has happened to a real user; it is the most
    damaging post-delivery failure.)
 
+## Table of contents
+- Two cheap disciplines worth keeping
+- What the deliverable folder contains
+- The core model: the script is the source of truth
+- What to tell the user at hand-off (step 6)
+- Iterating after delivery — the safety rule
+- Move the dial, don't flip it — correcting on design feedback
+- The taste write-back (step 6 close) — durable dials only
+- Why this matters
+
 ## Two cheap disciplines worth keeping
 - **Versioned critic rounds:** keep each critic-round build as `deck_v<N>.pptx` (+ its renders)
   instead of overwriting in place; when applying round-N fixes, diff the new renders against
@@ -57,7 +67,12 @@ Say it plainly, in one or two lines:
 🔴 **MUST — before any post-delivery rebuild, determine whether the user has hand-edited the
 file since your last build** — ask them, or compare the `.pptx` mtime to when you last wrote
 it. This fires in a *later session* where no pipeline gate runs and the reflex path (just
-rebuild) is the destructive one — treat it as a hard stop, not a courtesy.
+rebuild) is the destructive one — treat it as a hard stop, not a courtesy. **Gate artifact
+(required, per the enforcement invariant):** record one literal line in the round's response
+BEFORE rebuilding — `hand-edit check: asked|mtime-compared — clean|reconciled` — a post-delivery
+rebuild with no such line means the check didn't run. (The Step-6 note spec in SKILL.md is the one
+authoritative hand-off checklist — conditional items like the `provenance:` line, click order, and
+image credits live there; this file adds the iterate-safely mechanics only.)
 
 - **They have NOT hand-edited** → safe path: edit the **build script**, rebuild, re-render,
   re-run the critic. This is the normal iteration loop.

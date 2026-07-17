@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""smoke_deckkit — call every public deckkit helper (+ the chart recipes) with a canonical example on
-a blank deck and assert none raises. A cheap regression guard for the crash-prone positional/tuple
-colour contracts that have accumulated. Run after editing deckkit/designed_charts:
+"""smoke_deckkit — exercise the crash-prone CORE of deckkit (+ the chart recipes) with canonical
+examples on a blank deck and assert none raises. NOT exhaustive: it covers roughly half of the
+public helpers (~68 of 138 — the positional/tuple colour contracts and geometry paths that have
+actually broken), so a passing run is a regression guard, not proof every helper works. Run after
+editing deckkit/designed_charts:
 
     python scripts/smoke_deckkit.py     # exits non-zero on any failure
 """
@@ -98,7 +100,8 @@ ok("native_chart (editable)", lambda: dk.native_chart(S(), 0.6, 1, 6, 3.2, ["Q1"
 ok("native_dual_axis (editable)", lambda: dk.native_dual_axis(S(), 0.6, 1, 7, 3.2, ["m1", "m2", "m3"],
    [5, 24, 40], [100, 80, 62], left_name="占比（%）", right_name="成本（指数）", dark=True))
 ok("native_donut (editable)", lambda: dk.native_donut(S(), 0.6, 1, 5, 4, [("私域", 40), ("公域", 35), ("其他", 25)], "40%", "私域占比", dark=True))
-ok("native_pareto (editable)", lambda: dk.native_pareto(S(), 0.6, 1, 8, 4, [("华东", 45), ("华北", 28), ("华南", 18)], dark=True))
+ok("native_pareto (editable)", lambda: dk.native_pareto(S(), 0.6, 1, 8, 4, [("华东", 45), ("华北", 28), ("华南", 18)],
+   dark=True, count_name="数量", cum_name="累计 %"))    # CJK deck → pass the CJK series names explicitly
 ok("native_bubble (editable)", lambda: dk.native_bubble(S(), 0.6, 1, 8, 4, [(1, 2, 30), (2, 3, 55), (3, 2.4, 20)], dark=True))
 def _csv_chart():
     p = os.path.join(TMP, "_s.csv"); open(p, "w").write("m,a,b\nJ,1,\"2,000\"\nF,3,4\n")
@@ -222,6 +225,7 @@ ok("kpi_card (delta + strip, tall enough)", lambda: dk.kpi_card(
     delta_color=dk.RGBColor(0x1B, 0x7F, 0x5C), sub="从 92%", strip="首次超过流失"))
 ok("flow_compare (old/new + highlight + note)", lambda: dk.flow_compare(
     S(), 0.8, 1.4, 11.5, ["签约", "排期", "对接", "上线"], ["达标签约", "复用模板", "首次转化"],
+    old_label="旧流程", new_label="新流程",             # CJK deck → pass the CJK row labels explicitly
     old_result="27 天", new_result="7.5 天", highlight_old=2, highlight_new=2,
     note="40% 卡在此", transition_label="模板化"))
 
@@ -332,6 +336,67 @@ def _waterfall():
     assert os.path.exists(q) and os.path.getsize(q) > 1500, "waterfall PNG missing/trivial"
 ok("dc.waterfall (floating step bars + dashed connectors)", _waterfall)
 raises("waterfall rejects an empty item list", lambda: dc.waterfall(os.path.join(TMP, "_x.png"), []))
+
+# --- box/connector kit: every node() shape + all three arrowhead variants ---
+def _node_kit():
+    s2 = S()
+    centers = []
+    for i, shp in enumerate(["roundrect", "rect", "pill", "circle", "diamond",
+                             "parallelogram", "cylinder"]):
+        centers.append(dk.node(s2, 0.4 + i * 1.8, 1.2, 1.6, 0.8, shp, shape=shp, sub="sub"))
+    dk.node(s2, 0.4, 2.6, 1.6, 0.8, "hub", hub=True)
+    dk.node(s2, 2.4, 2.6, 1.6, 0.8, "opt", dashed=True)
+    dk.connector(s2, centers[0], centers[1], head="triangle", label="req")
+    dk.connector(s2, (0.6, 4.0), (3.0, 4.0), style="dashed", head="open")
+    dk.connector(s2, (0.6, 4.4), (3.0, 4.4), style="dotted", head="none")
+    dk.elbow_connector(s2, dk.loop_path(8.0, 5.0, 4.0, 4.6), style="dotted", head="open", label="retry")
+    dk.elbow_connector(s2, dk.loop_path(12.0, 9.0, 4.0, 4.6), head="none")
+    dk.elbow_connector(s2, [(9.0, 5.2), (9.0, 5.6), (12.0, 5.6)], head="triangle")
+ok("node (all 7 shapes + hub/dashed) + connector/elbow heads (triangle/open/none)", _node_kit)
+
+raises("vstack overflow raises at build time", lambda: dk.vstack(
+    S(), 0.6, 1.0, 5.0, [(2.0, lambda x, y, w: None), (2.0, lambda x, y, w: None)], bottom=3.0))
+
+# --- content_band + bottom_callout: the footer-safe return geometry must be exact ---
+def _band_and_callout():
+    s2 = S()
+    bx, by, bw, bh = dk.content_band(s2)
+    assert abs(bx - dk.GUTTER) < 1e-6 and abs(bw - (W - 2 * dk.GUTTER)) < 1e-6, "content_band x/w wrong"
+    assert abs((by + bh) - (H - dk.FOOTER_BAND - 0.15)) < 1e-6, "content_band bottom must clear the footer band"
+    body = "the takeaway body — long enough that it could wrap on a narrower frame"
+    top = dk.bottom_callout(s2, 0.6, W - 1.2, "TAKEAWAY", body)
+    ch = dk.measure_callout("TAKEAWAY", body, W - 1.2)
+    assert abs(top - (H - dk.FOOTER_BAND - 0.15 - ch)) < 1e-3, "bottom_callout bottom must anchor above the footer band"
+    assert by < top < H, "bottom_callout top must fall inside the content band"
+ok("content_band + bottom_callout (footer-safe return geometry)", _band_and_callout)
+
+ok("equation_native (linear LaTeX -> editable runs)", lambda: dk.equation_native(
+    S(), 0.8, 1.2, 9.0, 0.8, r"\mathcal{L} = \sum_i \|A x_i - y_i\|_2^2 + \lambda R(x_i)"))
+raises("equation_native rejects 2-D \\frac (use equation_png)", lambda: dk.equation_native(
+    S(), 0.8, 2.4, 6.0, 0.8, r"\frac{a}{b}"))
+
+# --- step_list active_idx: the active disc's fill must DIFFER from an inactive one
+#     (regression: the vertical branch once used _blend(acc, WHITE, 0.0) == acc, a no-op) ---
+def _step_list_active():
+    p = dk.blank_deck(10, 5.625); s2 = dk.add_slide(p)
+    dk.step_list(s2, 0.8, 1.0, 8.0, [("Collect", "gather the inputs"), ("Train", "fit the model")],
+                 active_idx=0)
+    from pptx.enum.shapes import MSO_SHAPE_TYPE as _T
+    discs = [sh for sh in s2.shapes if sh.shape_type == _T.AUTO_SHAPE
+             and abs(sh.width - dk.Inches(0.42)) < 2000 and abs(sh.height - dk.Inches(0.42)) < 2000]
+    assert len(discs) == 2, f"expected 2 number discs, found {len(discs)}"
+    fills = [d.fill.fore_color.rgb for d in discs]
+    assert fills[0] != fills[1], "active_idx must render the active disc's fill differently from inactive"
+    dk.step_list(s2, 0.8, 3.0, 8.0, [("A", ""), ("B", "")], orientation="horizontal", active_idx=1)
+ok("step_list active vs inactive disc fills differ (v + h)", _step_list_active)
+
+ok("cycle_diagram (3 nodes, defaults)", lambda: dk.cycle_diagram(
+    S(), 6.5, 3.6, [("Plan", ""), ("Do", "daily"), ("Check", "")]))
+ok("dumbbell_board (basic row, no hero/threshold)", lambda: dk.dumbbell_board(
+    S(), 0.8, 1.6, 11.0, [("Latency", "", 120, 80, 0, 150, "ms")]))
+ok("sources_page rule=True / rule=False", lambda: (dk.sources_page(S(), ["a", "b", "c"], rule=True),
+                                                   dk.sources_page(S(), ["d", "e"], rule=False)))
+ok("icon_tile (glass=True frosted tile)", lambda: dk.icon_tile(S(), 1.0, 1.0, 0.8, IMG, glass=True, fill=C("5B8DEF")))
 
 prs.save(os.path.join(TMP, "_smoke_deck.pptx"))
 print(f"\nsmoke_deckkit: {len(fails)} failure(s)" + ("" if not fails else " — " + "; ".join(n for n, _ in fails)))

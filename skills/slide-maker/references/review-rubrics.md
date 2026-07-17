@@ -364,7 +364,7 @@ Score each dimension; cite specific slides.
    established fact, or fabricated traction/market numbers presented as real. **Faked real
    assets count too:** on a slide about a real brand/product/UI, a generated look-alike, an
    invented logo, or a default-blue box standing in for the real asset (rather than the real
-   logo/screenshot or an honest placeholder) is a fidelity blocker — use the real asset or ask the user.
+   logo/screenshot or a flagged designed wordmark) is a fidelity blocker — use the real asset or ask the user.
    **Persistent brand chrome (the authoritative logo check — design *and* fidelity):** a **single-entity**
    deck (pitch / product / company readout / institution report — and equally a research / teaching / status
    deck whose subject IS one named tool / app / vendor) should carry a logo in a **fixed corner on every
@@ -503,7 +503,7 @@ After fixing, each promoted finding is **verified in the re-rendered pixels** (r
 no regression). Final consent requires a **second independent pass** to agree there's no
 surviving blocker/major; a *contested* blocker that survives the round cap is **surfaced
 to the user, not silently shipped**. This whole layer is a **no-op for low-stakes** decks
-(one critic, one consent).
+(two focused lens critics — content · design — merged, one consent; no arbiters).
 
 **Language consistency.** The deck should be in one language throughout; flag accidental
 mixing (a stray heading/label/bullet in another language, or drift between slides) unless

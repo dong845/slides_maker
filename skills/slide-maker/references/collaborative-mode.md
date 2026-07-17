@@ -21,6 +21,14 @@ so they can't drift, and **(2)** after the user picks, render **one real slide i
 style** with deckkit / `render_deck` and confirm before the full build. The gate decides *taste/
 direction*; the single real render confirms *fidelity*.
 
+## Table of contents
+- The four gates (each cheap to change; expensive work deferred)
+  - Gate A — Direction + archetypes
+  - Gate B — Content plan (the Step 1 CONTENT checkpoint)
+  - Gate C — Design plan (the Step 2 DESIGN checkpoint)
+  - Gate D — Draft (the build + critic loop, Steps 4–5)
+- Principles that keep it cheap and robust
+
 ## The four gates (each cheap to change; expensive work deferred)
 
 ### Gate A — Direction + archetypes

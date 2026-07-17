@@ -6,6 +6,17 @@ thing that matters**, and pairs it with a one-line "so-what". This file is the r
 rules. (For raw data with an *obvious* single comparison, a plain bar/line is still right — this
 is for when the relationship is richer.)
 
+## Table of contents
+- Pick by argument
+- Chart anti-patterns (each one has shipped an ugly or misleading chart — check by name)
+- The four rules every designed plot follows
+- IBCS notation — business/status/finance decks
+- Colour-blind safety
+- Editable native charts vs matplotlib rasters — pick by need
+- Native data furniture (deckkit)
+- Example
+- When NOT to use this
+
 ## Pick by argument
 | The point you're making | Chart | Helper (`scripts/designed_charts.py`) |
 |---|---|---|
@@ -115,6 +126,40 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
    then omit the in-figure legend and label the series in the native slide caption instead.)
    Always **view the rendered PNG** and fix aliasing / an occluding legend / clipped labels before
    placing it — a wrong-*looking* plot misleads even when the numbers are right.
+
+## IBCS notation — business/status/finance decks
+**Scope:** consulting/status/finance readouts (variance walks, plan-vs-actual, forecast bridges) —
+where the audience reads AC/PY/PL/FC daily. Academic/creative decks are exempt; this is reporting
+notation, not a universal style. A bar's **fill** says which data world it shows:
+
+| Scenario | Fill | `designed_charts` |
+|---|---|---|
+| **AC** — actual | solid dark ink | `scenario="actual"` |
+| **PY** — prior year/period | solid light grey | `scenario="prior"` |
+| **PL** — plan/budget | hollow: white face, dark edge | `scenario="plan"` |
+| **FC** — forecast | hatched `//` | `scenario="forecast"` |
+
+- `pareto(..., scenario=...)` and `waterfall(..., scenario=...)` take one scenario for the whole
+  chart **or a per-bar list** (the classic bridge: actual months solid, forecast months hatched);
+  in `waterfall` the treatment keeps each bar's semantic colour as its ink, so an FC variance bar
+  renders as a green/red `//` hatch. `scenario=None` (default) keeps the non-IBCS accent look.
+- **Variance semantics: green = favorable, red = unfavorable** (`favorable_color=` /
+  `unfavorable_color=` on `waterfall` and `dumbbell`; pass them swapped when *down* is good, e.g. a
+  cost bridge). **Never hue alone** — pair the colour with a **sign (+/−), a label, or position**
+  (the helpers do: signed waterfall labels, dumbbell dot position) so the reading survives
+  grayscale, a projector, and colour-blind viewers.
+- **Same measure + same unit → ONE value scale** across the charts on a slide/spread; if a shared
+  scale is impossible, carry an **explicit scaling indicator** (a `×10` note / axis-break marker) —
+  silently different scales fake comparability.
+- **Data titles state measure · unit · period** — "Revenue, m€, FY25 vs FY24" — never a vague
+  "Performance overview".
+
+## Colour-blind safety
+- `dk.OKABE_ITO` is the colour-blind-safe **categorical fallback** palette — reach for it whenever
+  a chart genuinely needs 3+ categorical hues and the deck palette isn't verified safe.
+- **Hue-only ban:** multi-series lines must differ by more than hue — vary linestyle/marker or add
+  direct end-of-line labels; status semantics (green/red, RAG) always pair the colour with an
+  icon/label/shape (rule 4 above; semantic-color-contract.md).
 
 ## Editable native charts vs matplotlib rasters — pick by need
 Three ways to put a chart on a slide; choose by what the deck needs:

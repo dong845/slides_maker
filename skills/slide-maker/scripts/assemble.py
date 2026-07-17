@@ -61,27 +61,37 @@ def _base(template=None, width_in=10.0, height_in=10.0 * 9 / 16):
 
 
 def build_deck(out_path, section_paths, *, template=None,
-               width_in=10.0, height_in=10.0 * 9 / 16):
+               width_in=10.0, height_in=10.0 * 9 / 16, lint=True):
     """Assemble the final deck: run every section module, in order, into one deck.
 
     out_path: where to save the .pptx.
     section_paths: ordered list of module files, each defining build_section(prs).
     template: optional .pptx to build on (else a blank 16:9 deck).
+    lint: run deckkit.lint_layout(prs, strict=True) right before saving, so a geometry
+        CRITICAL (off-canvas / overlap) blocks the save instead of shipping. lint=False
+        skips the gate — debugging only, never for a deliverable.
     Returns the final slide count."""
     prs = _base(template, width_in, height_in)
     for path in section_paths:
         _load(path).build_section(prs)
+    if lint:
+        from deckkit import lint_layout
+        lint_layout(prs, strict=True)
     prs.save(out_path)
     return len(prs.slides._sldIdLst)
 
 
 def preview_section(section_path, out_path, *, template=None,
-                    width_in=10.0, height_in=10.0 * 9 / 16):
+                    width_in=10.0, height_in=10.0 * 9 / 16, lint=True):
     """Render JUST one section to its own deck, so its authoring subagent can render +
     self-critique it in isolation before it's assembled. Same base/style as the final
-    deck, so what you see is what you'll get after assembly."""
+    deck, so what you see is what you'll get after assembly. `lint` gates the save with
+    deckkit.lint_layout(strict=True), like build_deck (lint=False = debugging only)."""
     prs = _base(template, width_in, height_in)
     _load(section_path).build_section(prs)
+    if lint:
+        from deckkit import lint_layout
+        lint_layout(prs, strict=True)
     prs.save(out_path)
     return out_path
 

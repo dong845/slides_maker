@@ -5,6 +5,15 @@ all handle non-Latin text. The deck won't break. The things that make it look *g
 (not just render) are **font glyph coverage**, **PowerPoint portability**, and a few
 **script-specific typography** habits.
 
+## Table of contents
+- One language, consistently (the default)
+- The one required change: set a script-appropriate font
+- CJK typography habits (so it reads like a native deck, not translated)
+- Write like a human — kill the "AI taste" in the copy (voice; most acute in 中文)
+- Equations & figures
+- Right-to-left scripts (Arabic / Hebrew) — limited
+- Verify
+
 ## One language, consistently (the default)
 
 **A deck is written in ONE language throughout** — every title, bullet, callout, label,
@@ -78,7 +87,9 @@ text, plus a clean **Latin** face for the numbers/English inside CJK runs:
 - `deckkit.DISPLAY`/`deckkit.FONT` = the Latin faces for those same roles, so digits/units/English
   (e.g. "≈40%", "1/5–1/7") render in a crisp Latin face, not the CJK fallback.
 
-A tasteful, portable Chinese pairing: **Hiragino Sans GB** (titles and body) or **Noto
+A tasteful, portable Chinese pairing: **Hiragino Sans GB** (titles and body — ONE family
+differentiated by weight/size is the sanctioned pairing on a CJK deck, and the critic carves it;
+don't read "display duplicates body" as a flaw here) or **Noto
 Sans CJK SC** (body) + **Helvetica Neue/Arial** (Latin). Keep it to **≤2 text families (display +
 body)** — the Latin and mono faces are functional roles, not extra style fonts — and apply it on
 every slide. *(Avoid setting everything to "Arial" — it has no CJK glyphs, so the whole deck rides

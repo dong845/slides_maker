@@ -13,6 +13,13 @@ R1 steps 1–3 (render → extract → critic), deliver the diagnosis, and OFFER
 interview + R0 fire only when they take it. The critic, rubrics, `deckkit`, and render loop are
 all the same as the build path — this just adds the front end.
 
+## Table of contents
+- Step R0 — Redesign interview: R0 REPLACES the template question (ask alongside purpose/audience/source/style)
+- Step R1 — Diagnose THEIR deck first (don't rebuild blind)
+- Step R2 — Rebuild to scope (selective, not scorched-earth)
+- Step R3 — Verify, loop, and show the before/after
+- Gate mapping on the light-cleanup / surgical fix-pass path
+
 ## Step R0 — Redesign interview: R0 REPLACES the template question (ask alongside purpose/audience/source/style)
 On the redesign path the keep/redesign answer IS the template decision — do not ask Q1's
 four-option template question up front. Beyond purpose/audience/source/style, a redesign
@@ -108,3 +115,15 @@ rebuild. Every rule below exists because its violation shipped compounding error
 Run the build → render → actor-critic loop as usual until consent. When you present, **show the
 before/after** for the slides you changed and name what each fix addressed (from the R1
 diagnosis) — the user should *see* the deck become more clearly theirs, not just "different".
+
+## Gate mapping on the light-cleanup / surgical fix-pass path
+The copy-in-place path has no Content plan, no Design plan, and no build script — so the pipeline
+gates that reference those artifacts map as follows (this carve is the rule; "PRE-FLIGHT, every
+deck" is satisfied THROUGH it, not skipped): the **R1 diagnosis + confirmed scope** stand in for
+the Step-1/2 plans — PRE-FLIGHT items that diff against plan artifacts (Spoken-thread notes,
+design-plan row vs docstring, motion manifest) are checked against the diagnosis + the fix ledger
+instead, and items with no analogue on an untouched slide are ticked `n/a — light-cleanup path
+(diagnosis is the plan)`. The **build-time geometry gate still runs in full** (`lint_layout(prs,
+strict=True)` on the edited file before save), as do render → `lint_deck.py` → the critic loop on
+the touched slides + a whole-deck coherence look. Nothing about this path relaxes hard floors —
+it only renames where the plan-shaped evidence lives.

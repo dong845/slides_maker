@@ -51,6 +51,8 @@ STEEL   = RGBColor(0x6E, 0x90, 0xA6)   # theme accent3
 VIOLET  = RGBColor(0x6A, 0x4C, 0x93)
 GREEN   = RGBColor(0x2E, 0x8B, 0x57)
 ACCENTS = [BLUE, TEAL, GOLD, STEEL, VIOLET, GREEN]   # cycle for multi-item diagrams
+# colour-blind-safe categorical fallback (Okabe-Ito) — swap in for ACCENTS when accessibility is asked for
+OKABE_ITO = ["#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000"]
 
 # layout: keep a consistent gutter of whitespace between a figure and any adjacent
 # text/callout/edge. Crowding elements together reads as amateur — give them room.
@@ -2582,9 +2584,11 @@ def native_donut(slide, x, y, w, h, segments, center_value="", center_label="", 
     return ch
 
 
-def native_pareto(slide, x, y, w, h, items, *, palette=None, dark=False, font=None):
+def native_pareto(slide, x, y, w, h, items, *, palette=None, dark=False, font=None,
+                  count_name="Count", cum_name="Cumulative %"):
     """Editable **Pareto**: ranked columns + a cumulative-% line on a secondary axis (native combo
     chart; click-to-edit; any-language-safe). items = [(label, value), ...] (sorted desc by you).
+    `count_name`/`cum_name` are the legend series names — CJK decks pass e.g. 数量 / 累计 %.
     Editable replacement for designed_charts.pareto."""
     from pptx.chart.data import CategoryChartData
     from pptx.enum.chart import XL_CHART_TYPE
@@ -2596,11 +2600,11 @@ def native_pareto(slide, x, y, w, h, items, *, palette=None, dark=False, font=No
     for v in vals:
         run += v; cum.append(round(100.0 * run / tot, 1))
     cd = CategoryChartData(); cd.categories = [str(k) for k, _ in items]
-    cd.add_series("数量", tuple(vals)); cd.add_series("累计 %", tuple(cum))
+    cd.add_series(count_name, tuple(vals)); cd.add_series(cum_name, tuple(cum))
     gf = slide.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, Inches(x), Inches(y), Inches(w), Inches(h), cd)
     ch = gf.chart
     pal = [_as_rgb(c) for c in (palette or ACCENTS)]
-    _theme_chart(ch, [("数量", 1), ("累计 %", 1)], palette=pal, dark=dark, font=font,
+    _theme_chart(ch, [(count_name, 1), (cum_name, 1)], palette=pal, dark=dark, font=font,
                  highlight=0, legend=True, value_fmt=None, smooth=False, kind="column")
     _chart_to_secondary(ch, dark=dark, font=font)
     # count bars sit on the primary axis — pin it to 0 so bar length reads as count, not count−min
@@ -3219,7 +3223,8 @@ def logo(slide, path, *, corner="tr", h=0.42, margin=0.3, w_in=None, h_in=None, 
     Use the REAL logo (see references/image-generation.md's real-asset hierarchy). Fallback
     order when it's missing: a real logo image -> a designed **wordmark** (call `wordmark()` to
     set the entity name in the deck's DISPLAY face as a transparent PNG, then pass that PNG here
-    — the sanctioned stand-in) -> an honest "logo here" placeholder as a last resort. NEVER an
+    — the sanctioned stand-in) -> if even the wordmark doesn't fit, ask the user for the asset —
+    never ship "logo here" placeholder text (a meta-annotation blocker). NEVER an
     AI-imagined or recolored look-alike. On a busy/dark background, give the logo a small scrim
     or light plate behind it so it stays legible. Returns the picture shape."""
     from PIL import Image
@@ -3552,9 +3557,10 @@ def step_list(slide, x, y, w, items, *, orientation="vertical", accent=None, ink
     cy = y
     for i, (title, body) in enumerate(items):
         d = 0.42; on = (active_idx == i)
-        box(slide, x, cy, d, d, fill=acc if (on or active_idx is None) else _blend(acc, WHITE, 0.0),
-            round=True, r=d / 2)
-        tc = _legible_ink(acc)
+        solid = on or active_idx is None      # inactive discs mirror the horizontal branch: outlined, not solid
+        box(slide, x, cy, d, d, fill=acc if solid else WHITE,
+            line=None if solid else acc, line_w=1.4, round=True, r=d / 2)
+        tc = _legible_ink(acc) if solid else acc
         text(slide, x, cy, d, d, [[(numr(i), 14, tc, True, False)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
         text(slide, x + d + 0.18, cy - 0.02, w - d - 0.18, 0.32, [[(title, 14.5, ic, True, False)]], space_after=0)
         bh = 0.3
@@ -3707,7 +3713,7 @@ def kpi_card(slide, x, y, w, h, label, value, *, unit="", delta=None, delta_colo
     return y + h
 
 
-def flow_compare(slide, x, y, w, old_stages, new_stages, *, old_label="旧流程", new_label="新流程",
+def flow_compare(slide, x, y, w, old_stages, new_stages, *, old_label="OLD", new_label="NEW",
                  old_sub="", new_sub="", old_result="", new_result="", old_accent=None,
                  new_accent=None, highlight_old=None, highlight_new=None, note=None,
                  transition_label="", ink=None, mute=None, font=None, row_gap=1.32):
@@ -3716,7 +3722,8 @@ def flow_compare(slide, x, y, w, old_stages, new_stages, *, old_label="旧流程
     row's right edge (27 天 vs 7.5 天), an optional red `note` under the old row's highlight,
     and a transition marker between the rows. THE form for a process-REBUILD story (交付重构 /
     redefined pipeline / migration): before/after of a *procedure*, where `dumbbell_board` is
-    before/after of *metrics*. Keep stages <=5 and stage text <=6 CJK glyphs. Returns bottom y."""
+    before/after of *metrics*. Keep stages <=5 and stage text <=6 CJK glyphs. `old_label`/
+    `new_label` default to OLD/NEW — CJK decks pass 旧流程/新流程 explicitly. Returns bottom y."""
     oc = _as_rgbc(old_accent) if old_accent is not None else RGBColor(0xC8, 0x8A, 0x2B)
     nc = _as_rgbc(new_accent) if new_accent is not None else RGBColor(0x1B, 0x7F, 0x5C)
     ic_ = ink if ink is not None else DEEP

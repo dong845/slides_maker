@@ -10,6 +10,18 @@ This branch **decides the look up front**, so after it's confirmed you **skip th
 gate** and any LOOK question — the rest of the interview (purpose, audience, source, language,
 and Q4's density + tone, which the visual identity does not decide) still runs normally.
 
+## Table of contents
+- The construction model (this is the whole idea)
+- Workflow
+  - 1 — Mini-interview for the visual identity (before generating)
+  - 2 — Generate the template image(s)
+  - 3 — Derive a matching `style.py` (treat the image as a style example)
+  - 4 — Render a sample and get feedback (hard gate)
+  - 5 — Continue the interview, then build to the template
+- Legibility & fidelity guardrails (busy styles fight text)
+- Checklist
+- Style library — well-known starting styles (seed, then tailor)
+
 ## The construction model (this is the whole idea)
 A good generated template is a **cohesive visual SYSTEM**, not one pretty picture — a palette, a
 small **motif vocabulary** (the signature shapes/decorations), a type pairing, and **component
@@ -71,7 +83,7 @@ layers**, and the split is what keeps it editable *and* on-brand:
     design-principles.md "Block fill must FIT the background". Otherwise cards / panels / chips default
     frosted.)
     **The composite card components default OPAQUE — switch them to their glass variants here:**
-    `kpi_card(fill="glass")` (frosted body instead of the white default), `icon_tile(style="glass")`,
+    `kpi_card(fill="glass")` (frosted body instead of the white default), `icon_tile(glass=True)`,
     or seat any other component (`dumbbell_board`, `flow_compare`, a stat block) on a `glass_card`
     first and pass `fill`-less content on top. A stock component dropped at its white-canvas default
     onto an interior plate is exactly the "opaque card on generated background" failure above.
@@ -311,7 +323,10 @@ them, and show both. The content slide is essential: it proves the blocks actual
 - **Save the confirmed template to the registry** (`~/.codex/slide-templates/<name>/` in
   Codex, or `~/.claude/slide-templates/<name>/` in Claude Code): the `style.py`, the
   generated `assets/`, and a `profile.md` — so it's a reusable choice next time (it shows up
-  under Q1's registered templates).
+  under Q1's registered templates). **Under a per-deck auto directive the hero checkpoint was an
+  FYI, not a confirmation — defer the save to Step 6's save-this-look offer (explicit yes
+  required); only a user-confirmed hero checkpoint earns the automatic save** (never an
+  un-consented registry write).
 
 ## Legibility & fidelity guardrails (busy styles fight text)
 - **Text-free images, native text on top** — never bake slide copy, numbers, labels, or logos

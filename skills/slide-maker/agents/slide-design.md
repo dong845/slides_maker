@@ -274,7 +274,9 @@ in `design-principles.md`), and record how each is satisfied:
   that engineer that order, and a slide whose *first* look isn't the hero fails the pass. Design
   attention, not decoration.
 - **Repetition (deck-level — yours to own)** — the Step-1 design language repeats on every slide
-  (palette, type, title chrome, footer, divider, motif, wayfinding numeral, corner-rounding). Call out
+  (palette, type, title chrome, footer, divider, wayfinding numeral, corner-rounding — the signature
+  MOTIF is NOT in this list: it repeats as a dosed device, 2–3 appearances per the §1 chrome budget,
+  never per-slide). Call out
   what must repeat. A kicker/eyebrow must NOT echo a word the title already leads with; corner-rounding
   is one deck-wide language (rounded cards ⇒ rounded images).
 - **Alignment** — every element on a shared grid via a **measured primitive**
@@ -615,16 +617,16 @@ NOT a blanket per-slide quota):
   else a **designed wordmark by default (flagged as a stand-in)**, surfaced at the DESIGN checkpoint for
   the user to confirm or override (a multi-org / neutral-academic deck, or one whose template already
   carries a logo, satisfies this by naming entities inline / not doubling).
-- **(k) sketch-first taste** — the plan shows at least one choice no template would have made
-  (a bespoke composition, an adapted component, a content-born device, or a deliberate act of
-  restraint), and every taste-deviation from a default carries its one-clause reason. A plan whose
-  every choice traces to a stock component at default settings is NOT ready — re-sketch.
 - **(j) chrome budget & freshness** — saturated colour sits on content elements (data, icons, diagram
   nodes, hero numbers); chrome is quiet (no multi-hue ornament, colour spine, or loud badge stamped
   per-slide; the signature motif appears ≤3 times), and the look is derived from *this* deck's subject,
   not a rerun of the previous deck's look for the same user — checked against the Design language's
   `taste profile:` line: the varied foundation is named against the last look-history entry, or the
   LOCKED arm is stated (unfalsifiable "it feels fresh" is not a pass).
+- **(k) sketch-first taste** — the plan shows at least one choice no template would have made
+  (a bespoke composition, an adapted component, a content-born device, or a deliberate act of
+  restraint), and every taste-deviation from a default carries its one-clause reason. A plan whose
+  every choice traces to a stock component at default settings is NOT ready — re-sketch.
 - **(l) cover & dividers carry a device** — the cover (and each divider) NAMES its chosen visual
   device — a source hero figure, a real domain artifact, a computed data-viz of the headline number,
   a duotone photo, or the signature motif — **or** states a one-clause reason it is deliberately
@@ -644,13 +646,15 @@ NOT a blanket per-slide quota):
   table AND carries its evidence token (`official asset — <source>` / `searched, none found →
   designed wordmark (flagged)` / `n/a — <reason>`). On a single-entity deck a bare "wordmark", "text only",
   or missing line fails — the search was not run or not recorded.
-- **(p) image rows carry source tokens on-contract** — every Image opt-in row has a token from the
-  REFERENT-RULE grammar (`references/image-generation.md` step 5), the source class matches the
-  image's depicted-subject referent (no `generated` claiming photographic reality of a
-  real-and-specific subject unless recorded as a declared stylized deviation), and real-referent
-  rows without a findable photo use a `searched, none found → …` rung, never a silent swap. A
-  stylized-deviation escape is valid only under a deck-wide declared stylized register (or an
-  explicit user request), and any `searched, none found` rung names the origins tried.
+- **(p) image rows carry source tokens on-contract — split by owner:** at YOUR (agent) time, every
+  Image opt-in row declares its depicted-subject **referent class + INTENDED source class** from the
+  REFERENT-RULE grammar (`references/image-generation.md` step 5) — no `generated` claiming
+  photographic reality of a real-and-specific subject unless recorded as a declared stylized
+  deviation (valid only under a deck-wide declared stylized register or an explicit user request).
+  The COMPLETED token — `sourced — <origin> (<license>)`, or a `searched, none found → …` rung
+  naming the origins tried — is filled by the main loop's search AFTER you emit the plan and is
+  checked by the coordinator at the design-gate precondition, never a silent swap. (You cannot fill
+  origins you haven't searched; declaring the intent is your half of the contract.)
 Fix any failing check before the DESIGN checkpoint.
 
 ### Design-critic checklist
