@@ -1138,8 +1138,12 @@ def part_eyebrow(slide, x, y, text_str, *, w=6.0, color=MUTE, font=None, size=11
     """A small TRACKED caps eyebrow in the chrome (usually mono) font — the editorial/technical
     'part label'. Route every kicker/eyebrow through one chrome font for a quiet signature.
     ``font`` resolves to the CURRENT module ``MONO`` at call time, so reassigning ``deckkit.MONO``
-    re-themes it (a def-time default would freeze the import-time value → Consolas tofu)."""
+    re-themes it (a def-time default would freeze the import-time value → Consolas tofu).
+    The default ``w`` is CLAMPED to the actual canvas so the box never extends off a narrow
+    (portrait/story) deck — on the standard 16:9 canvas the clamp never engages."""
     font = font or MONO
+    sw, _sh = _slide_size(slide)
+    w = min(w, max(0.5, sw - x - 0.05))
     tb = text(slide, x, y, w, 0.3, [[(text_str.upper(), size, color, True, False, font)]], space_after=0)
     return _set_spc(tb, track)
 

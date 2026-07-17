@@ -217,6 +217,7 @@ every **🔴 CHECKPOINT** is a hard stop.
 | Cross-deck user taste — registry-root `taste.md` schema · read/write · dial promotion | `references/user-taste.md` |
 | Large / sectioned decks · collaborative gates | `references/large-deck-orchestration.md` · `references/collaborative-mode.md` |
 | East-Asian / ink looks | `references/east-asian-aesthetic.md` |
+| Canvas formats (16:9 default · 4:3 · 1:1 · 小红书 3:4 · story 9:16 · A4) | `scripts/formats.py` (registry) · `references/canvas-formats.md` (per-surface layout DNA) |
 | The build helpers (source of truth) | `scripts/deckkit.py` (docstrings) |
 | Geometry lint — build-time · render-time | `deckkit.lint_layout(prs, strict=True)` (Step 4, pre-render) · `scripts/lint_deck.py` (Step 5, post-render) |
 | ANY error / lint finding / env failure — symptom → cause → fix, plain language | `references/troubleshooting-faq.md` (open it BEFORE improvising a fix; report findings to the user in its plain-language form) |
@@ -433,6 +434,14 @@ the direction gate** (the look is already decided). The four:
        emailed), so **don't infer it from the purpose or the density choice — ask it.** For self-read,
        there's no talking-time, so also get the **deck length** directly (short ~5–8 / medium ~9–15 /
        long 16+) instead of deriving it from minutes.
+       **Canvas format rides on this answer:** an ordinary talk/meeting/self-read deck is 16:9 —
+       never ask a format question there (16:9 is the unchanged default and every rule assumes it).
+       But when the deliverable is a **non-slide surface** — a 小红书/RED image note, an Instagram
+       square post, a Story/Reels/Shorts vertical, an A4 print one-pager, or a venue demanding 4:3 —
+       **confirm the canvas format** (one option-line, or fold into this question) and build on the
+       matching `scripts/formats.py` preset: per-format safe zones, chrome policy, density, and
+       layout DNA live in `references/canvas-formats.md`. Same identity + components, recomposed —
+       never a 16:9 layout transplanted onto a portrait canvas.
      - **Deck length is ALWAYS the user's choice — surface it, never silently derive it.** Make it an
        explicit interview option: a **self-read** deck → ask **short ~5–8 / medium ~9–15 / long 16+**; a
        **spoken** deck → the **time budget** sets the working count (~1 slide/min), but still **confirm the
@@ -822,6 +831,19 @@ don't silently dump into `/tmp`. You'll remind them to open it in step 6.
 > `~/Downloads/<deck>/` layout every reference assumes); only if home is unwritable, use
 > `./<deck-name>/` in the working directory. Never `/tmp`. State the chosen location in chat the
 > moment you decide it — auto mode is never invisible — and repeat it in the hand-off.)*
+
+**Canvas format (only when the interview picked a non-default surface).** The default deck is
+16:9 via `deckkit.blank_deck()` — untouched, and everything below assumes it. When the interview
+confirmed a different surface (4:3 venue, 小红书 3:4, square 1:1, story 9:16, A4 print), start from
+`scripts/formats.py` instead: `FMT = formats.get("<name>")` → `prs = formats.blank_deck(FMT)`,
+take the safe content rect from `formats.band(FMT)` (it encodes the platform-UI safe zones — on
+story/RED, text outside it is covered by the platform), honor `FMT.chrome` (social surfaces get NO
+deck footer/page numbers), branch stack-vs-split layouts on `FMT.columns_ok`, multiply only
+display/cover type by `FMT.display_scale`, and pass `FMT.lint_flags` to the Step-5 lint. Keep the
+SAME pt tokens for body/label type (canvas inches are chosen per format so relative size lands
+right — the inch-normalization principle) and the same components/identity throughout; per-surface
+layout DNA + the repurpose/batch pattern live in `references/canvas-formats.md`. The design plan
+records a `format:` line whenever it's not `wide`.
 
 **Keep the per-deck build script (`build_<deck>.py`) in that same folder, beside the
 `.pptx`.** The build script — not the rendered file — is the *source of truth* for the
@@ -1974,6 +1996,9 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   `validate_review.py` — stdlib schema validator for critic/arbiter JSON (`critic|arbiter <file|->`;
   Step 5 runs it before acting on any review).
 - `anim.py` — PowerPoint click-builds/transitions (pair `references/animation.md`).
+- `formats.py` — named canvas-format registry (16:9 default · 4:3 · square 1:1 · 小红书 3:4 · story
+  9:16 · A4 print): dimensions, platform safe zones, chrome policy, density + lint flags, and the
+  `band()` safe-rect helper; opt-in — the 16:9 default never touches it (pair `references/canvas-formats.md`).
 - `designed_charts.py` — raster matplotlib chart recipes (dumbbell, slope, dual_axis, bubble_trend,
   pareto, donut_kpi, **waterfall** — for a chart type with no native equivalent or a deliberate look;
   prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
@@ -1999,6 +2024,6 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   content out of an existing deck — the redesign path).
 **Agents** (`agents/`): `content-planner.md` (Step-1 CONTENT deep-understand + claim ledger + per-slide message; the content checkpoint) · `slide-design.md` (the art director — Step-2 design language + per-slide form/layout/rhythm + icons + appear-animation + the Form ledger; the design checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `asset-prep.md` (execution-only asset materializer — crops/equations/plates/icons after the design plan is approved; zero design decisions) · `openai.yaml` (Codex display metadata).
 
-**References** (`references/`, loaded on demand): `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `design-intelligence-addendum.md` (the deck-level design gates Step 2 measures against — rhythm map · block-dependency audit · Concept→Visualization table · semantic-colour ledger · variation floors) · `troubleshooting-faq.md` (**symptom → cause → fix for every error surface** — env · build exceptions · both lints · render · images · CJK — plus the FAQ; consult on any failure, and report findings to the user in its plain-language form) · `user-taste.md` (the registry-root `taste.md` — schema · read protocol · dial-ledger promotion + consented-look write-back) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
+**References** (`references/`, loaded on demand): `canvas-formats.md` (per-surface layout DNA for the non-16:9 formats — square/RED/story/A4 — + the repurpose/batch pattern; pairs `scripts/formats.py`) · `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `design-intelligence-addendum.md` (the deck-level design gates Step 2 measures against — rhythm map · block-dependency audit · Concept→Visualization table · semantic-colour ledger · variation floors) · `troubleshooting-faq.md` (**symptom → cause → fix for every error surface** — env · build exceptions · both lints · render · images · CJK — plus the FAQ; consult on any failure, and report findings to the user in its plain-language form) · `user-taste.md` (the registry-root `taste.md` — schema · read protocol · dial-ledger promotion + consented-look write-back) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).
 
 **Registry** (NOT part of the skill): `~/.codex/slide-templates/` (Codex) · `~/.claude/slide-templates/` (Claude Code) — the user's saved templates, **plus `taste.md` at the root** (the portable taste profile — schema + read/write protocol in `references/user-taste.md`); read for choices, write new `profile.md`s to the active host — a freshly-designed look saved at hand-off carries the vetted critic `strengths` distilled into its profile's Notes. Empty for a new user (no templates, no `taste.md` — silently skipped; no write until the first durable signal).

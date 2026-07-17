@@ -9,14 +9,39 @@ section is a distilled summary — the full notes live on the
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-07-17
+
 ### Added
+- **Canvas formats** — `scripts/formats.py`, a named canvas-format registry (16:9 default ·
+  4:3 · square 1:1 · 小红书 3:4 · story 9:16 · A4 print) with per-format dimensions,
+  platform-UI safe zones, chrome policy, density guidance, lint flags, and a `band()`
+  safe-content-rect helper (safe zones + footer reserve). Opt-in: the 16:9 default path
+  never touches it, and all deckkit components carry over unchanged.
+- `references/canvas-formats.md` — per-surface layout DNA, the inch-normalization sizing
+  principle, the repurpose/batch pattern (one content plan → several surfaces), and three
+  **verified layout patterns** (band-driven pitch distribution · closing element anchored
+  at the band bottom · MIDDLE-anchored clusters) proven by a 6-format visual-verification
+  pass (2 judge rounds per format, all-pass).
+- SKILL.md wiring: the interview confirms the canvas format only for non-talk deliverables
+  (social card / print); Step 3 documents the `formats.py` build path.
 - `CHANGELOG.md` (this file), backfilled from the GitHub releases.
 - `scripts/validate_review.py` — stdlib-only validator for the critic/arbiter review-JSON
   contracts (`python3 validate_review.py critic|arbiter <file|->`), with a `--selftest`.
 - CI: a step asserting `plugin.json` and `marketplace.json` versions match, and a
   `validate_review.py --selftest` step.
 
+### Changed
+- Hardened gates from live-deck feedback: sourced-photo **aesthetic vetting** (+ a
+  `searched, found but low-quality → generated, flagged illustrative` rung), title-over-hero
+  legibility (a scrim only dims a bright frame-line — cover linework with a near-opaque
+  panel; clear title↔subtitle gap), semantic-colour **text vs fill** two-token contrast rule
+  (text ≥4.5:1), block text centered by construction, and rotating title-chrome treatments
+  (2–3 per deck) so the title band never reads as one fixed template.
+
 ### Fixed
+- `deckkit.part_eyebrow` default width (6.0in) now clamps to the real canvas, so eyebrows
+  never overflow narrow (story/portrait) decks — found by the canvas-format verification;
+  byte-identical on standard 16:9 calls.
 - `.claude-plugin/plugin.json` version aligned to the marketplace manifest (3.0.0 → 3.0.1).
 
 ## [3.0.1] - 2026-07-15
