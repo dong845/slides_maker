@@ -9,6 +9,64 @@ section is a distilled summary — the full notes live on the
 
 ## [Unreleased]
 
+## [3.4.0] - 2026-07-19
+
+### Added — multi-format source ingestion (Word · Excel · image · audio · video · cloud)
+- The content-planner (`agents/content-planner.md` §1 "Input formats") now has an explicit ingest
+  route + fidelity floor per source type: **Word `.docx`** (`ingest.py doctext` exact text+tables;
+  long docs → `office`→PDF for long-source triage); **`.pptx`** → `extract_deck.py` (native);
+  **Excel `.xlsx`** → `ingest.py sheet` (exact CSV rows; office→PDF drops data); **images** (place the
+  pixels as a figure freely, but a number/quote *typed* off one is `verified? = N` until confirmed —
+  no OCR); **video** (supplied transcript = precise spoken content; else `frames` samples the visual
+  track and the narration is a flagged GAP — never invented); **audio-only** and **cloud docs
+  (Google/Notion/URL)** get honest "supply a transcript / export the file" guidance.
+- `scripts/ingest.py` — `probe` (detect + route), `doctext` (python-docx), `sheet` (openpyxl → CSV),
+  `office` (LibreOffice → PDF; isolated temp profile, no litter), `frames` (ffmpeg keyframes, **capped
+  at 60**, refuses audio-only files, honest "no STT" warning); clean errors + exit codes on every bad
+  input; arg parsing hardened.
+- **Fidelity mirror (both sides wired):** the planner routes pixel/audio-sourced claims through the
+  claim ledger as `verified? = N` (with image/frame/transcript `source` tokens), AND the critic now
+  enforces it — `references/review-rubrics.md` item 10 + `agents/critic.md` flag a number typed off an
+  unverifiable image (blocker → show as a trend) and a video's reconstructed narration dressed as fact
+  (major). Re-reading the same pixels is not confirmation.
+- Wiring: Step-0 source question lists the formats + dedicated routes (uncrossed); nav-table + Files
+  inventory list `ingest.py`.
+
+### Changed / Fixed — holistic integration hardening (from a whole-delta 4-lens audit)
+- **The CONTRACT CARD now carries the new artifacts** in all three enumerations (SKILL.md assembly ·
+  critic.md · arbiter.md): the `source size:` line + the approved Source-coverage map on a long-source
+  deck (critics judge completeness against its built-around/summarised set, never the whole book) and
+  the transcript status on a video-sourced deck — closing the gap where the rubric told the critic to
+  judge against an artifact it was never given.
+- **Two-phase planner dispatch for over-threshold sources** — phase 1 (classify+map+triage) returns the
+  draft coverage map, the coordinator posts the selection FYI and confirms the slice, phase 2 runs the
+  verbatim deep-read; recorded as a `selection FYI:` plan line the checkpoint checks (a one-shot
+  dispatch silently made the "early" FYI post-hoc).
+- **`source size:` is now required for EVERY file-sourced deck** (not just self-declared long ones) —
+  the bounded-vs-long classification is a recorded measurement; its absence blocks the plan (the gate
+  was self-referential before: only sources already judged "long" ever got measured).
+- **Arbiter wired into the fidelity mirror** — a pixel/audio-sourced ledger row cannot be confirmed by
+  re-reading the pixels; absent an underlying-data/transcript locator the critic's finding is real
+  (an arbiter following the old text could overturn a correct blocker).
+- **Video gate** — a video-sourced plan must carry the transcript-status line (supplied locator or the
+  visual-only GAP line), checked at the §1 self-verify + checkpoint + digest; supplied-transcript rows
+  verify like text (they were wrongly pinned to `verified? = N`); pixel rows become shippable by
+  appending the underlying-data locator and flipping to Y.
+- **Stale re-key fixed** — the CONTENT-checkpoint precondition still gated "every `map` TOC chapter"
+  (vacuous on a no-TOC book); now "every skeleton section" like everywhere else. CJK caveat on the
+  `wc -w` fallback (undercounts ~6–30×); mixed-format multi-file sets convert non-PDF members to PDF;
+  page-scoped figure locators on long sources (never whole-book `autofig`).
+- **Tooling** — `ingest.py doctext` now extracts textboxes + headers/footers and warns on
+  footnotes/endnotes (was silently dropping them while claiming "exact"); `sheet` warns when formula
+  cells have no cached value (blank ≠ absent) and emits pure dates; `office` converts into a fresh
+  temp dir + checks the exit code (a stale same-name PDF could masquerade as a fresh conversion);
+  `extract_pdf.py headings` falls back to bold/ALL-CAPS candidates when a book has no font-size
+  outliers; `map`'s no-TOC hint points at `headings`; EPUB no longer warned against (it's a
+  documented route).
+- **troubleshooting-faq.md §11** — symptom → cause → fix for every new ingestion/long-source error
+  surface (the FAQ's "any failure" promise held again); `requirements.txt` lists the optional
+  ingestion deps (python-docx · openpyxl · ffmpeg).
+
 ## [3.3.0] - 2026-07-18
 
 ### Added

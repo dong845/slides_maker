@@ -28,11 +28,13 @@ agents.
 - **Purpose, audience, time budget**, and the **venue** if it's a conference talk.
 - **Style / language** and the **template / brand** decision (or "design a clean one") — you
   *record* it for the slide-design agent; you do not act on the *look*.
-- **Source material** — paths to a paper, code repo, doc, figures, an existing deck — or an
-  explicit **"none"** (build from your own expertise + the web). Note that most decks are
-  **partial**: a source *plus* gaps the web must fill — a paper that needs since-publication
-  context or current framing, a code repo with no writeup, figures with no prose, a doc that
-  omits the venue. Treat source vs. no-source as a spectrum, not a switch.
+- **Source material** — paths to a paper, code repo, doc, figures, an existing deck, **a Word /
+  PowerPoint / Excel file, a standalone image, or a video / recording** — or an explicit **"none"**
+  (build from your own expertise + the web). Each format has an ingest route + a fidelity floor —
+  see **Input formats** at the end of §1; the short version is *text extracts exactly, pixels don't*.
+  Note that most decks are **partial**: a source *plus* gaps the web must fill — a paper that needs
+  since-publication context or current framing, a code repo with no writeup, figures with no prose, a
+  doc that omits the venue. Treat source vs. no-source as a spectrum, not a switch.
 - The **content-relevant references**: `references/review-rubrics.md` (how the critic will judge
   you — the content lens), `references/multilingual.md` (non-Latin / bilingual, and "write like a
   human"). *(The design references — `design-principles.md`, `design-by-purpose.md`,
@@ -68,7 +70,11 @@ deck: anything you can read faithfully in one pass (up to ~40–50 pages). **Whe
 — a book, a manual, a long report, or any PDF too big to read faithfully in one pass — do NOT fake
 a single linear read** (it either overflows, or worse *fits* and goes shallow, then fabricates
 plausible-but-absent "book-ish" points). **Switch to *Long-source mode* below** — it reaches the
-SAME complete, traced comprehension brief by triage instead of a linear read. Either way, write a
+SAME complete, traced comprehension brief by triage instead of a linear read. **And bounded-vs-long
+is MEASURED, never eyeballed: for EVERY file-based source, run the cheap size probe of Long-source
+step 0 FIRST and record the `source size:` brief field** — the field decides the branch, so the
+classification is a checkable record; a file-sourced brief with no `source size:` line is **not
+ready** (a mis-eyeballed 55-page PDF is exactly the "fits and goes shallow" case). Either way, write a
 **comprehension brief** — a REQUIRED, fixed-field artifact, every field traced to a locatable
 source span so it can't be paraphrased from memory:
 1. **ONE-SENTENCE MESSAGE** — what the source most wants remembered — plus the verbatim source
@@ -93,12 +99,20 @@ hedged, or unsupported by a quotable span, you have NOT understood it — re-rea
 open question; **an incomplete or untraced brief blocks the pipeline** (do not proceed to the
 arc/plan). **Coverage gate:** run the diff described in "The editor's stance" — every brief-listed key point
 mapped to a slide or consciously cut in Open questions; a silent omission blocks the plan.
-**Long-source gate (hard):** if the `source size:` field marks the source over-threshold
-(Long-source mode step 0), the plan MUST carry a **Source-coverage map** with a disposition for
-every **skeleton section** (the `map` TOC, or the recorded reconstructed skeleton when there is no
-TOC; every file for a multi-file source) — a "cut" is a conscious, justified cut, never an absence —
-**and** the "deep-read verbatim vs. mapped/skimmed" line filled; a missing or partial map, or an
-over-threshold source with no map at all, is **not ready** and blocks the plan like a dropped brief point.
+**Long-source gate (hard):** a file-sourced brief with **no `source size:` field at all** is not
+ready — the bounded-vs-long classification never happened (the field is required for every
+file-based source, precisely so this gate can't be bypassed by never measuring). If the field marks
+the source over-threshold (Long-source mode step 0), the plan MUST carry a **Source-coverage map**
+with a disposition for every **skeleton section** (the `map` TOC, or the recorded reconstructed
+skeleton when there is no TOC; every file for a multi-file source) — a "cut" is a conscious,
+justified cut, never an absence — **and** the "deep-read verbatim vs. mapped/skimmed" line filled;
+a missing or partial map, or an over-threshold source with no map at all, is **not ready** and
+blocks the plan like a dropped brief point.
+**Video gate (hard):** a deck whose source includes a video/recording MUST carry a
+**transcript-status line** — either the supplied transcript's locator, or the exact line *"video
+read visual-only, no transcript — spoken content is a GAP"* (Input formats); a video-sourced plan
+with neither is **not ready** (the GAP line is what stops reconstructed narration shipping as fact,
+so its absence is a gate failure, not a formality).
 **Emphasis test:** predict, from your brief alone, what the source's own
 abstract/conclusion stresses most; if your one-sentence message would surprise the authors, it's
 wrong — fix it before continuing.
@@ -118,10 +132,18 @@ evidence, and letting the rest go on purpose.** Work in this order:
    as the comprehension brief's `source size:` field, by source type: **PDF / EPUB** → `python
    scripts/extract_pdf.py map <src>` (CJK-correct load + token estimate; `info` gives page count only,
    no tokens); **`.docx` / `.md` / a Google-Doc / a long web page** → export/convert to PDF first, or
-   fall back to a non-tool count (`wc -w`, line count) for the estimate; **a code repo** → there are no
+   fall back to a non-tool count for the estimate — **but `wc -w` UNDERCOUNTS CJK ~6–30×** (no
+   inter-character spaces), so for Chinese/Japanese/Korean text either convert to PDF first (`map` is
+   CJK-correct) or count as *CJK chars ÷ 2 + Latin words* (the skill's load formula), never raw
+   `wc -w`; **a spreadsheet** → sheet/row counts (`ingest.py sheet` prints them; a 10⁵-row workbook is
+   a triage problem too — dump per-sheet and pull only the ranges the deck needs, don't read it
+   linearly); **a code repo** → there are no
    pages — size it by the file/module tree (`git ls-files | wc -l`, total LOC) and triage by directory,
    not chapters. **Multi-file / multi-volume** (vol1+vol2, a doc set) → run the estimate **per file and
-   SUM** for the decision (three "bounded" 30-pp PDFs are a 90-pp long source). 🔴 **If the total is
+   SUM** for the decision (three "bounded" 30-pp PDFs are a 90-pp long source); **and once the SET is
+   over-threshold, convert every non-PDF member via `ingest.py office`→PDF regardless of its individual
+   size** — so skeleton, `pages` columns, and `<file>:p.NNN` provenance exist uniformly across volumes
+   — **recording each converted PDF's path in the plan** so page cites stay re-openable. 🔴 **If the total is
    over ~40–50 pages (or a token estimate that won't fit a faithful single pass), long-source mode + a
    Source-coverage map are REQUIRED** — the §1 self-verify gate below blocks a plan that skips them for
    an over-threshold source. This converts "is it long?" from a silent judgment into a recorded,
@@ -177,10 +199,17 @@ evidence, and letting the rest go on purpose.** Work in this order:
    *source→brief* axis (the brief→slide diff can't see a chapter dropped during triage, because it
    never became a brief point) — **a skeleton section missing from the map blocks the plan**, same as
    a dropped brief key point (which is why the reconstructed skeleton is recorded in the plan: the gate
-   needs a ground-truth list to diff against). **Surface it EARLY:** show the coverage map to the user
+   needs a ground-truth list to diff against). **Surface it EARLY:** the coverage map reaches the user
    right after mapping+triage (steps 2–3), *before* sinking the verbatim deep-read of step 4 — that is
    when a wrong-slice correction is cheapest — and it rides the CONTENT checkpoint again before
-   design/build.
+   design/build. **The mechanics depend on how you're running:** run **inline** (by the coordinator),
+   post the selection FYI directly and continue on confirmation. Run as a **dispatched subagent** (no
+   user channel mid-run), the dispatch is **TWO-PHASE**: end your FIRST run after steps 0–3, returning
+   `source size:` + the skeleton + the draft Source-coverage map for the coordinator to surface; the
+   verbatim deep-read (steps 4–6) happens in the SECOND dispatch, on the confirmed slice. Never
+   deep-read an unconfirmed slice inside a single dispatch — that silently converts the early FYI
+   into a post-hoc one, the exact waste it exists to prevent. Record the event as a plan line —
+   `selection FYI: posted <when> · slice confirmed/adjusted` — so the checkpoint can see it happened.
 
 **Honest limits — state them, never fake them.** A **scanned / image-only or DRM-locked** PDF yields
 no extractable text (`map`/`text` print a `⚠ NO extractable text` warning) — say so and ask for a text
@@ -192,6 +221,62 @@ point you at the chapters that matter. And **never claim you "read the whole boo
 it** — record in the plan what you deep-read verbatim vs. mapped/skimmed. That honesty is what keeps
 the deck trustworthy; a confident deck built on a shallow read is the failure this mode prevents.
 
+#### Input formats — ingest each precisely, and mark what the tools can't verify
+The comprehension brief is only as trustworthy as the extraction under it. Route each source to the
+ingest path that gets *exact* content where exact content exists, and — the fidelity floor —
+**anything read off pixels (an image, a video frame) or heard (a video's audio) is a claim-ledger
+`verified? = N` row until confirmed against real text/data**, exactly like a book page or a web claim
+(§2 PROVENANCE CONTRACT). Never present a vision-estimated number or a paraphrased-from-a-frame quote
+as established fact.
+- **Text-exact (high-fidelity — extract, don't guess):** a **PDF** → `extract_pdf.py`; a **code repo**
+  → read it; **plain text / Markdown / `.csv`** → read directly; an **existing `.pptx`** →
+  `extract_deck.py` (native — keeps masters/figures; `office`→PDF is a lossy fallback, not the route).
+  **Word:** a short/word-primary **`.docx`** → `scripts/ingest.py doctext` (python-docx: exact text +
+  tables + heading tags — the highest-fidelity Word path); a **long/book-length** `.docx`, or when
+  **layout / figures** matter, → `ingest.py office <file>` → PDF (then the PDF pipeline, incl.
+  **long-source mode** — a book-length doc still gets map/headings/triage, not a full-text dump);
+  `.doc`/`.odt` go through `office` too. **Spreadsheet `.xlsx`** → `ingest.py sheet` (openpyxl → exact
+  CSV rows; heed its ⚠ if formula cells carry no cached value — those columns are blank in the CSV,
+  not absent in the source); **do NOT** use `office`→PDF for a spreadsheet — it renders a print
+  layout and drops/truncates the data. A **huge workbook** (10⁵+ rows) is a triage problem like a
+  book: check the sheet/row counts first, dump per-sheet, and pull only the ranges the deck needs.
+  All of these extract verbatim, so their claims are traceable like any paper's.
+- **Image (a screenshot, chart, diagram, photo, scanned page)** — two DISTINCT roles, different
+  fidelity: **(a) ASSET** — crop and place the *original pixels* as a figure: no claim-fidelity risk
+  (the audience sees the source; governed by the figure-crop rule), do it freely. **(b) SOURCE** —
+  *derive a number/quote/label* to type onto a slide: read it with the model's **own vision** (there
+  is no OCR installed) — fine to understand structure + gist for planning, **but vision is not a data
+  extractor**, so every value/quote you TYPE from an image is a **`verified? = N` ledger row** until
+  confirmed against the **underlying CSV / source text**. Ask for that data when it's load-bearing, or
+  show the point as a **trend, not typed figures**; a load-bearing number typed off an unverifiable
+  image is a fidelity blocker. Placing the chart as a figure does NOT make its numbers verified.
+- **Video (a talk, screen-recording, demo):** if the user supplies a **transcript / captions**
+  (`.srt`/`.vtt`/`.txt`), that is the precise spoken content — treat it as text. Otherwise
+  `ingest.py frames <video> <dir> --every N` samples keyframes (capped at 60) for the **VISUAL** track
+  (slides shown, UI, scenes) that you read with vision — but the **spoken narration is a GAP** (no
+  speech-to-text here), which is usually where a talk's content lives. So **ask for a transcript.** If
+  you go visual-only (a slide/screen recording), the plan MUST carry the line *"video read visual-only,
+  no transcript — spoken content is a GAP"*, and you must **not present the talk's spoken conclusions
+  as source facts** — a reconstructed through-line ("the speaker argued X") is proposed, not sourced,
+  and any claim not in a supplied transcript is `verified? = N`. Don't invent narration you couldn't hear.
+- **Audio-only (a podcast, interview, voice memo — `.mp3`/`.m4a`/…):** there are no frames and **no
+  speech-to-text** — so with no transcript there is **nothing to ingest**. Ask for a transcript /
+  captions (the precise spoken content); never fabricate what was said. (`ingest.py probe` says this
+  plainly; `ingest.py frames` on an audio-only file refuses cleanly rather than mis-blaming the file.)
+- **Cloud / URL (Google Docs·Slides, Notion, a shared link):** not a local file — ask the user to
+  **export/download** it (Google: File → Download → .docx/.pptx/.pdf) or paste the text, then route the
+  download by format; for a public web page, `WebFetch` it as source text.
+- **Ledger tokens for pixel/audio sources:** in the claim ledger (§2), the `source` column for an
+  image-derived row is `<image path> (region)`, for a video-frame row `<video>@MM:SS` /
+  `frame_NNNN.png`, for an un-transcribed spoken claim the audio locator. **The tokens that pin a row
+  to `verified? = N` are image / video-frame / UN-transcribed-audio** — a supplied-transcript locator
+  is a TEXT source and verifies like any other (open the transcript, compare verbatim → Y). **How a
+  pixel row becomes shippable:** on confirmation, append the underlying-data locator (the CSV path /
+  source-text span / transcript cite) to the row's `source` column *alongside* the pixel token and
+  flip `verified?` to Y — a pixel row with no underlying-data locator stays N no matter what it says,
+  which is exactly what the critic checks.
+- `scripts/ingest.py probe <file>` detects the type and prints the recommended route when unsure.
+
 ### 2 — Research and fact-check the web (for any deck, not just no-source)
 Use the web for **three jobs**, and run it whether or not you have a source:
 - **(a) Fill the gaps the source doesn't cover** — the venue's norms, related work *since* the
@@ -201,8 +286,11 @@ Use the web for **three jobs**, and run it whether or not you have a source:
 - **(b) Re-verify falsifiable / time-bound claims — including ones taken from the source.** Record
   them in a **CLAIM LEDGER** (a required part of the plan): one row per falsifiable claim, columns
   `claim (as it appears on a slide) | type (number / date / name / citation / superlative /
-  dated-event) | source (paper §/fig/table+page, or web URL) | verbatim value or quote | verified?
-  (Y/N) | as-of date | tense/status`. **Extraction rule:** every number, date, proper name,
+  dated-event) | source (paper §/fig/table+page · web URL · book `<file>:p.NNN` · **image `<path>
+  (region)`** · **video `<file>@MM:SS`/`frame_NNNN.png`** · **transcript locator**) | verbatim value
+  or quote | verified? (Y/N) | as-of date | tense/status`. **A source token that is an image, a video
+  frame, or un-transcribed audio pins the row to `verified? = N`** until confirmed against underlying
+  data / a supplied transcript — re-reading the same pixels is not confirmation. **Extraction rule:** every number, date, proper name,
   citation, every "first / largest / latest / state-of-the-art / best" superlative, and every
   scheduled/dated event — from the SOURCE as well as the web — must be a ledger row before it can
   appear on a slide **or in a Spoken thread** (the narration is a claim surface too — a number the
@@ -461,8 +549,9 @@ Produce a single, human-readable **Content plan** (markdown) the user can approv
 The fixed-field artifact from §1, **every field filled and traced** to a locatable source span
 (one-sentence message + its verbatim source sentence and location; contributions; method essence;
 per figure/table/chart/screenshot one row naming the carrying element; nuance/limitation quoted;
-**plus, for a long source, the `source size:` field** — pages + token estimate from Long-source
-mode step 0, the recorded basis for the over-threshold classification).
+**plus, for ANY file-based source, the `source size:` field** — pages + token estimate from
+Long-source mode step 0 (a cheap `map`/heuristic run), the recorded basis for the bounded-vs-long
+classification; a file-sourced brief with no `source size:` line is not ready).
 This is not optional preamble — it's the evidence the rest of the plan stands on, and the content
 checkpoint reviews it first. A brief with empty / hedged / untraced fields is **not ready**.
 

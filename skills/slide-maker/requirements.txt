@@ -5,5 +5,8 @@ matplotlib>=3.8.0
 
 # Optional (feature-gated; scripts degrade gracefully without them):
 #   cairosvg>=2.7      — SVG icon rasterization fallback when Chrome/Chromium is absent
-#   LibreOffice (system) — render_deck.sh PNG render loop
+#   LibreOffice (system) — render_deck.sh PNG render loop · ingest.py office (doc -> PDF)
 #   Chrome/Chromium (system) — primary SVG rasterizer for icons.py
+#   python-docx>=1.0   — ingest.py doctext (Word .docx exact text/tables)
+#   openpyxl>=3.1      — ingest.py sheet (Excel .xlsx exact rows)
+#   ffmpeg/ffprobe (system) — ingest.py frames (video keyframe sampling)

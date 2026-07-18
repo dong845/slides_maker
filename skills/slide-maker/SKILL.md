@@ -147,7 +147,8 @@ memory sentence + a 2-line brief/ledger DIGEST (the comprehension brief's one-se
 a claim-ledger tally, e.g. `ledger: 14 claims · 14 verified · 0 open` — full brief + ledger stay
 in the plan, posted on request or on any digest anomaly) + emotional-curve line + pace check +
 **(long source only) a 1-line Source-coverage DIGEST** (`source: 320 pp · built-around 4 ch ·
-summarised 3 · cut 5` + the chosen slice — full per-chapter map in the plan) + ONE table (`# | 角色 | 记忆句(takeaway) |
+summarised 3 · cut 5` + the chosen slice — full per-chapter map in the plan) + **(video source only)
+the transcript-status line** (supplied locator, or "visual-only — spoken content is a GAP") + ONE table (`# | 角色 | 记忆句(takeaway) |
 承载证据 | units`) — the `units` column is the count of content units the row carries (the
 distribution pass's output): a `1` on a standalone content slide or a `6+` on a spoken beat is
 visible at a glance, so an about-to-be-empty or about-to-be-dense page gets caught at the
@@ -211,6 +212,7 @@ every **🔴 CHECKPOINT** is a hard stop.
 | The craft / the "why" (contrast · hierarchy · C.R.A.P. · layout safety) | `references/design-principles.md` |
 | Per-purpose look (defense vs exec vs lecture …) | `references/design-by-purpose.md` |
 | Content — deep read + per-slide message (Step 1) | `agents/content-planner.md` |
+| Input formats — Word/Office · image · video (ingest routes + the vision/audio fidelity floor) | `agents/content-planner.md` §1 (Input formats) · `scripts/ingest.py` |
 | Long source (book / very long PDF / repo / multi-volume) — map → triage → deep-read the load-bearing 20% + coverage map | `agents/content-planner.md` §1 (long-source mode) · `scripts/extract_pdf.py map`/`text`/`headings` |
 | Look / form / layout / rhythm / icons / motion (Step 2) | `agents/slide-design.md` |
 | Independent review + JSON schema | `agents/critic.md` · `agents/arbiter.md` · `references/review-rubrics.md` |
@@ -518,12 +520,22 @@ the direction gate** (the look is already decided). The four:
        say plainly that this skill is tuned for *talks* — confirm size/orientation and
        the venue's poster spec before building.
 
-3. **Source material.** "Do you have content for me to work from — code, a paper, a
-   doc, existing slides, figures/images?"
+3. **Source material.** "Do you have content for me to work from — code, a paper, a PDF,
+   a Word/PowerPoint/Excel file, a doc, existing slides, figures/images, a video or recording?"
    - *Yes* → **dig in deeply** (step 1, content branch): read it properly and build
      from the real material. (But per "requirements first" above — if they didn't
      ask you to reuse a provided deck's *content/wording* as-is, mine it for facts
-     and figures, don't inherit its structure or text.)
+     and figures, don't inherit its structure or text.) **Route each format to its ingest
+     path (content-planner §1 "Input formats") — each dedicated extractor kept uncrossed:** a **`.docx`**
+     → `scripts/ingest.py doctext` (exact; a long/book-length one → `ingest.py office`→PDF so long-source
+     triage applies); **`.pptx`** → `extract_deck.py` (native — the redesign path); **`.xlsx`** →
+     `ingest.py sheet` (exact rows; NOT office→PDF, which drops data); **PDF** → `extract_pdf.py`; an
+     **image** → read with vision (understand + place the pixels freely; a number/quote you *type* off
+     it is `verified? = N` until confirmed — no OCR here); a **video** → **ask for a transcript** for the
+     spoken content + `ingest.py frames` for visuals (no speech-to-text, so narration you can't hear is a
+     gap, never invented); **audio-only / a cloud doc (Google/Notion/URL)** → ask for a transcript /
+     an exported file respectively. The fidelity floor: text extracts exactly; pixels/audio are
+     `verified? = N` until confirmed.
    - *No* → **build the content yourself** from your knowledge, and **web-search to
      ground it** (correct facts, current numbers, credible framing) rather than
      inventing. Confirm the intended scope/outline with the user before building.
@@ -706,8 +718,12 @@ inventing — it's fidelity to what's *true now*.
   worse, *fits* and goes shallow, then invents plausible-but-absent points. Run the planner's
   **Long-source mode** (`agents/content-planner.md` §1): (1) **classify size deterministically** —
   PDF/EPUB → `python scripts/extract_pdf.py map <src>` (CJK-correct load + token estimate); `.docx`/
-  `.md`/Google-Doc/web → convert to PDF first or use a `wc`-style count; a code repo → size the file
-  tree; **multi-file → sum across files** — recorded as the brief's `source size:` field; over
+  `.md`/Google-Doc/web → convert to PDF first or use a `wc`-style count (**never raw `wc -w` on CJK
+  text — it undercounts ~6–30×; count CJK chars ÷ 2 + Latin words, or convert to PDF and let `map`
+  do it**); a code repo → size the file
+  tree; **multi-file → sum across files** (once the set is over-threshold, convert every non-PDF
+  member `office`→PDF so pages/provenance exist uniformly) — recorded as the brief's `source size:`
+  field; over
   ~40–50 pp (or a token estimate that won't fit one pass) FORCES the mode, (2) anchor on purpose FIRST,
   (3) **map the structure** — TOC/bookmarks + density; **no TOC? `extract_pdf.py headings <src>`**
   reconstructs a skeleton by font-size outlier (recorded in the plan), (4) read **only the chapters
@@ -718,7 +734,15 @@ inventing — it's fidelity to what's *true now*.
   **per page** from the plan's locators (never `autofig` the whole book). The plan then carries a
   **Source-coverage map** (every skeleton section → built-around / summarised / cut) so the SELECTION
   is explicit — on a book the biggest risk is building around the *wrong slice*, not misreading one
-  figure. A **scanned / image-only or DRM-locked** PDF yields no extractable text (`map`/`text` print
+  figure. **Dispatch mechanics — the selection FYI must land BEFORE the deep-read, so an
+  over-threshold source makes the planner dispatch TWO-PHASE:** phase 1 (steps 0–3) returns the
+  `source size:` + skeleton + draft coverage map, the coordinator posts the selection FYI in chat
+  (a stop normally, an FYI under the auto-waiver) and gets the slice confirmed/adjusted, THEN phase 2
+  (steps 4–6) runs the verbatim deep-read on the confirmed slice — a one-shot dispatch has no user
+  channel mid-run, so a single-phase dispatch silently converts the "early" FYI into a post-hoc one
+  (the plan records `selection FYI: posted <when> · slice confirmed/adjusted`, which the checkpoint
+  precondition checks). An inline-run planner just posts the FYI directly at the same point.
+  A **scanned / image-only or DRM-locked** PDF yields no extractable text (`map`/`text` print
   a `⚠ NO extractable text` warning) — say so and ask for a text version, OCR, or the specific
   chapters, never hallucinate the contents.
 
@@ -742,14 +766,18 @@ map as a **cheap selection FYI right after mapping+triage, before sinking the ve
 and it is re-confirmed here **before DESIGN and BUILD (Step 2+) commit.** The wrong-slice risk is the
 biggest one at book scale, so it is surfaced even under the auto-waiver (as an FYI). **Precondition —
 the comprehension gate:** before showing the plan, confirm it carries a *complete* comprehension
-brief (every field filled + traced) and claim ledger (no shipped `verified?=N` rows), **a
+brief (every field filled + traced) and claim ledger (no shipped `verified? = N` rows), **a
 Takeaway spine that reads as one argument** (an incoherent spine is "not ready" — send it back to
 the planner), a `scripts/plan_wordcount.py` pass over the per-slide table (advisory — but an
-over-budget row with no recorded "over budget → notes/split" resolution goes back too), **and — for
-an over-threshold long source — a complete Source-coverage map** (a disposition for every `map` TOC
-chapter + the verbatim-vs-skimmed line; a missing/partial map is "not ready"); an
-empty/hedged/untraced brief is **not ready** — send it back to the planner. Fold in the user's
-edits to the story, then move to design (Step 2).
+over-budget row with no recorded "over budget → notes/split" resolution goes back too), **a
+`source size:` line on any file-sourced deck** (the bounded-vs-long classification must be a
+recorded measurement — its absence means the classification never ran), **for an over-threshold
+long source a complete Source-coverage map** (a disposition for every **skeleton section** — the
+`map` TOC *or* the recorded reconstructed skeleton, every file for a multi-file source — + the
+verbatim-vs-skimmed line + the `selection FYI:` line; a missing/partial map is "not ready"), **and
+for a video-sourced deck the transcript-status line** (supplied locator or the visual-only GAP
+line); an empty/hedged/untraced brief is **not ready** — send it back to the planner. Fold in the
+user's edits to the story, then move to design (Step 2).
 > **🔴 CHECKPOINT — CONTENT:** show the comprehension brief + claim ledger + narrative arc + the
 > per-slide takeaways/content, and confirm the pace/slide-count, before any design work begins —
 > rendered as the compact ≤~25-line checkpoint artifact defined under the 🔴 CHECKPOINT convention
@@ -771,7 +799,9 @@ Probing NEVER materializes crops/equations/plates — asset-prep still runs only
 plan is approved (`agents/asset-prep.md`, unchanged); an unlocatable or to-be-generated asset is
 listed "dims unknown", and a no-asset deck skips the manifest entirely.
 **The per-asset SPEC asset-prep consumes has a named producer:** the Design plan's per-slide rows
-(or its image opt-in list) carry, per asset, the crop spec (or `autofig index N`), a generated
+(or its image opt-in list) carry, per asset, the crop spec (or `autofig index N` — **but on a
+long-source deck the locator must be page-scoped**: `figures <src> <page>` + the caption label,
+never a whole-document `autofig` index, whose global numbering shifts between runs), a generated
 plate's topical prompt, an equation's target height, and a GIF's poster frame — and where the
 approved plan left one implicit, the COORDINATOR completes it from the plan's own geometry when
 assembling asset-prep's work order (asset-prep itself never decides these; it only executes).
@@ -1776,7 +1806,12 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
      never rationale).** A compact artifact the coordinator builds for every pipeline-built deck:
      the **deck memory sentence + emotional-curve line** (peak marked), the **per-slide
      takeaway / role / question / beat table**, the **claim ledger**, the **per-figure
-     carrying-element rows**, and the Design plan's **declared contracts** — the skeleton rhythm
+     carrying-element rows**, **on a long-source deck the `source size:` line + the approved
+     Source-coverage map** (the per-section disposition rows + the verbatim-vs-skimmed line — the
+     critics judge completeness against its built-around/summarised set, NOT the whole book, and
+     read a `cut` row as a conscious cut), **on a video-sourced deck the transcript status**
+     (supplied-transcript locator, or the "video read visual-only — spoken content is a GAP" line),
+     and the Design plan's **declared contracts** — the skeleton rhythm
      map, the WOW slide(s), the money slide (the slide the deck exists for), **the `boldness:` dial +
      the `signature move:` line** (so the distinctiveness lens can judge whether the declared risk
      actually landed in the pixels or got sanded back to safe), the semantic-colour
@@ -2098,7 +2133,8 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   dump for chunked reading), and `headings` (reconstruct a skeleton for a no-TOC book)** — the tooling
   for the content-planner's long-source mode) · `crop_helper.py`
   (crop/trim/panel **by looking, not guessing**) · `extract_deck.py` (pull content out of an existing
-  deck — the redesign path).
+  deck — the redesign path) · `ingest.py` (ingest a NON-PDF source — `doctext`/`office` for Word/Office,
+  `frames` for a video's visual track, `probe` to route — with the vision/audio fidelity floor).
 **Agents** (`agents/`): `content-planner.md` (Step-1 CONTENT deep-understand + claim ledger + per-slide message; the content checkpoint) · `slide-design.md` (the art director — Step-2 design language + per-slide form/layout/rhythm + icons + appear-animation + the Form ledger; the design checkpoint) · `critic.md` (independent critic brief — the two review lenses + JSON schema) · `arbiter.md` (high-stakes finding cross-validation + fix-verification; no-op low-stakes) · `asset-prep.md` (execution-only asset materializer — crops/equations/plates/icons after the design plan is approved; zero design decisions) · `openai.yaml` (Codex display metadata).
 
 **References** (`references/`, loaded on demand): `canvas-formats.md` (per-surface layout DNA for the non-16:9 formats — square/rednote/story/A4 — + the repurpose/batch pattern; pairs `scripts/formats.py`) · `design-principles.md` (the craft / the "why"; incl. the **C.R.A.P. framework** — Contrast · Repetition · Alignment · Proximity) · `design-gallery.md` (style+component catalogue mined from 21 pro decks — pick a preset, reach for the right component) · `semantic-color-contract.md` (bind a hue to a concept deck-wide) · `review-rubrics.md` (universal + per-purpose review criteria) · `design-by-purpose.md` (per-purpose look for "design a clean one") · `form-selection.md` (**content-shape → candidate FORMS** — the single design-decision map; generate a set, pick deliberately) · `schematic-diagrams.md` (**HOW to draw a labelled SCIENCE schematic** — force/ray/circuit/apparatus/vector/wave; matplotlib/domain-lib recipes for precise/label-critical ones, OR the image tool for complex/stylized/template-matched ones with labels overlaid native; + the domain-accuracy fidelity gate) · `data-viz.md` (pick the chart type; editable-native vs raster) · `image-generation.md` (when/how; topical, text-free, consistently placed) · `icons.md` (one coherent open-licensed icon family, recolored, restrained) · `generated-template.md` (Q1's image-tool template branch) · `style-analysis.md` (mimic a style example, Q4) · `font-guidance.md` (portable fonts, tofu recovery) · `multilingual.md` (non-Latin / CJK / RTL) · `east-asian-aesthetic.md` (Chinese ink / traditional looks — paper · seal · CJK numerals · `ink_wash`/`eastern_traditional`) · `animation.md` (when/why + `anim.py`) · `large-deck-orchestration.md` (section fan-out; default is single-author) · `collaborative-mode.md` (direction→outline→draft gates) · `redesign-existing-deck.md` (diagnose-then-rebuild) · `handoff-and-iteration.md` (delivery + iterate without clobbering edits) · `design-intelligence-addendum.md` (the deck-level design gates Step 2 measures against — rhythm map · block-dependency audit · Concept→Visualization table · semantic-colour ledger · variation floors) · `troubleshooting-faq.md` (**symptom → cause → fix for every error surface** — env · build exceptions · both lints · render · images · CJK — plus the FAQ; consult on any failure, and report findings to the user in its plain-language form) · `user-taste.md` (the registry-root `taste.md` — schema · read protocol · dial-ledger promotion + consented-look write-back) · `examples/` (`build_example_generic.py`, `style_example.py`, `section_example.py`).

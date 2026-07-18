@@ -400,14 +400,23 @@ Score each dimension; cite specific slides.
    **Currency:** if the deck makes time-bound / falsifiable claims (a "latest / current", a count, a
    ranking, a dated event), confirm it carries an **as-of date** (as the planner requires) and that
    nothing dated has silently gone stale (last year's figure presented as this year's is a finding).
-   **Web- OR book/long-source-page-sourced claims (the planner's PROVENANCE CONTRACT,
+   **Web- OR book-page- OR pixel/audio-sourced claims (the planner's PROVENANCE CONTRACT,
    `agents/content-planner.md` §2) — applies whenever the ledger carries web-sourced rows, INCLUDING
    no-source decks (this item's "source exists" scoping does not exempt them; a no-source deck is where
-   these checks matter most), AND to long-source decks where the `source` column is a book page
-   (`p.NNN` / `<file>:p.NNN`): a book claim whose only provenance is a chapter note or reading-subagent
-   summary rather than the re-opened page counts as unverified (`verified?=N`) and must not ship as
-   fact:** a load-bearing claim traceable only to an aggregator/secondary source — or refuted when
-   re-traced to its primary — is a **blocker**; **spliced figures** (numbers from different sources/dates
+   these checks matter most), to long-source decks where the `source` column is a book page
+   (`p.NNN` / `<file>:p.NNN`), AND to any row whose source is an **image / video-frame / un-transcribed
+   audio**: a book claim whose only provenance is a chapter note or reading-subagent summary rather than
+   the re-opened page, OR a number/quote/label typed off an **image or video frame** and not confirmed
+   against the underlying CSV/source text (image) or a supplied transcript (video/audio), counts as
+   unverified (`verified? = N`) and must not ship as typed fact — a load-bearing figure typed off an
+   unverifiable image is a **blocker** (show it as a qualitative trend instead). "Recompute each number
+   against its source" (below) **cannot be satisfied by re-reading the same pixels**, so an
+   image/video-frame row marked `verified? = Y` with no underlying-data locator is treated as unverified.
+   **Spoken-track claims:** any content attributed to a video/recording's *narration* that is not backed
+   by a supplied transcript (a reconstructed "the speaker argued X", a qualitative through-line inferred
+   from slides alone) is unverified — dressing it as sourced fact is a **major** (it must be flagged
+   proposed, like forward-looking content). **Then:** a load-bearing claim traceable only to an
+   aggregator/secondary source — or refuted when re-traced to its primary — is a **blocker**; **spliced figures** (numbers from different sources/dates
    paired on one slide as a single current fact) are a **major**, because each number can be real
    while the pairing misleads; **quote-mark abuse** (quotation marks around non-contiguous, altered,
    or paraphrased words — including a relative claim hardened into an absolute) is a **major**: fix

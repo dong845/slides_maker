@@ -40,7 +40,10 @@ coordinator applies the rule.
 - The **CONTRACT CARD** (pipeline-built decks; the same card the critic received): the deck
   message + emotional-curve line, the per-slide takeaway/role/question/beat table, the
   **claim ledger** (`claim | type | source | verbatim value | verified? | as-of | tense`), the
-  **per-figure carrying-element rows**, and the Design plan's declared contracts (rhythm map ·
+  **per-figure carrying-element rows**, on a long-source deck the **`source size:` line + the
+  approved Source-coverage map** (completeness is scoped to its built-around/summarised set — a
+  `cut` row is a conscious cut, not an omission), on a video-sourced deck the **transcript status**
+  (supplied locator, or the visual-only GAP line), and the Design plan's declared contracts (rhythm map ·
   WOW/money slide · the `boldness:` dial + the `signature move:` line (what the `dulled` check reads) ·
   semantic-colour ledger · type tokens · motion manifest · the chosen preset
   name + its `guard` string verbatim (or `custom look — no preset guards`) (on the generated-template branch, plus the four identity-propagation contract lines — palette · type register · component geometry · surface) · the `logo plan:` line
@@ -94,7 +97,13 @@ critic's say-so:
   its **source location AND its claim-ledger row** (the contract card carries the ledger); confirm each figure/table's on-slide emphasis
   matches the card's recorded **carrying element** (the row/column/curve that makes the point), not
   a plausible-but-wrong axis. A wrong number or a mis-emphasis is a blocker even if only one critic
-  caught it — never refute it away as noise.
+  caught it — never refute it away as noise. **Pixel/audio provenance carve (🔴):** a ledger row
+  whose `source` token is an **image / video frame / un-transcribed audio** cannot be confirmed by
+  re-reading those pixels — that is the exact operation the provenance contract forbids (rubric
+  item 10: "re-reading the same pixels is not confirmation"). Such a row needs an
+  **underlying-data / transcript locator**; absent one, the critic's "unverified / typed-off-pixels"
+  finding is **real** — never return `false_positive` because the slide's number visually matches
+  the source image.
 
 ### Job 1 output — return ONLY this JSON
 ```json

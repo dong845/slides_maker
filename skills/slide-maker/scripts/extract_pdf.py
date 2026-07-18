@@ -115,7 +115,12 @@ def outline_map(pdf, bins=30):
     total = sum(wpp)
     pc = doc.page_count
     fmt = (doc.metadata or {}).get("format", "") or "?"
-    note = "" if doc.is_pdf else f"  ⚠ opened as {fmt}, NOT a PDF — confirm this is the file you meant"
+    ext = os.path.splitext(pdf)[1].lower()
+    expected = ext in (".epub", ".xps", ".fb2", ".cbz") and not doc.is_pdf   # documented, supported routes
+    if doc.is_pdf or expected:
+        note = "" if doc.is_pdf else "  (supported; page numbers are fitz pagination, not print pages)"
+    else:   # e.g. a .pdf that opened as Text — the renamed-wrong-file case the warning exists for
+        note = f"  ⚠ opened as {fmt}, NOT a PDF — confirm this is the file you meant"
     print(f"{pdf}: {pc} pages · ~{total:,} load-words · ~{total * 4 // 3:,} tokens est.  [{fmt}]{note}")
     # scanned / image-only / DRM guard — get_text() returns "" on image-only pages, so a
     # scanned book would otherwise print a normal-looking (but empty) skeleton.
@@ -131,8 +136,9 @@ def outline_map(pdf, bins=30):
         for lvl, title, pg in toc:
             print(f"  {'  ' * max(lvl - 1, 0)}p{pg:<5} {title}")
     else:
-        print("\n(no embedded TOC/bookmarks — reconstruct a skeleton with `text`: scan for heading "
-              "lines / chapter titles, or fall back to fixed-size page windows; triage costs more here)")
+        print("\n(no embedded TOC/bookmarks — reconstruct a skeleton with `extract_pdf.py headings "
+              "<src>` (font-size/bold/caps outliers, no whole-book read); if the book is single-size, "
+              "fall back to fixed-size page windows)")
     print("\nWORD DENSITY (binned — text-dense vs sparse regions; a SHAPE cue, not importance):")
     nb = min(pc, bins)
     step = -(-pc // nb)                      # ceil division
@@ -190,6 +196,8 @@ def headings(pdf, start=1, end=None, limit=250):
     if start > end:
         doc.close(); print(f"error: bad page range {start}-{end} (PDF has {pc} pages)"); return 1
     sizes = Counter()
+    bold_chars = 0
+    total_chars = 0
     spans = []
     for p in range(start, end + 1):
         for blk in doc[p - 1].get_text("dict").get("blocks", []):
@@ -198,8 +206,12 @@ def headings(pdf, start=1, end=None, limit=250):
                 if not txt or not line.get("spans"):
                     continue
                 sz = round(max(sp["size"] for sp in line["spans"]), 1)
+                bold = any(sp.get("flags", 0) & 16 for sp in line["spans"])
                 sizes[sz] += len(txt)
-                spans.append((p, sz, txt))
+                total_chars += len(txt)
+                if bold:
+                    bold_chars += len(txt)
+                spans.append((p, sz, txt, bold))
     doc.close()
     if not sizes:
         print("no extractable text (scanned/image-only) — can't reconstruct headings; needs OCR")
@@ -207,15 +219,30 @@ def headings(pdf, start=1, end=None, limit=250):
     body = sizes.most_common(1)[0][0]        # dominant size = body text
     print(f"candidate headings (body ≈ {body}pt; lines ≥ {body * 1.15:.1f}pt, ≤ 90 chars):")
     shown = 0
-    for p, sz, txt in spans:
+    for p, sz, txt, _b in spans:
         if sz >= body * 1.15 and len(txt) <= 90:
             print(f"  p{p:<5} {sz:>5}pt  {txt}")
             shown += 1
             if shown >= limit:
                 break
     if not shown:
-        print("  (no font-size outliers — the book may be single-size; fall back to fixed-size page "
-              "windows and title each window from its first line)")
+        # second pass — the two most common real no-TOC layouts: bold same-size heads, ALL-CAPS heads
+        body_is_bold = bold_chars > 0.5 * total_chars   # a mostly-bold book → bold isn't a signal
+        for p, sz, txt, bold in spans:
+            if len(txt) > 90:
+                continue
+            letters = [c for c in txt if c.isalpha()]
+            caps = letters and sum(1 for c in letters if c.isupper()) >= 0.8 * len(letters) and len(letters) >= 4
+            if (bold and not body_is_bold) or caps:
+                print(f"  p{p:<5} {'bold' if bold else 'CAPS':>5}  {txt}")
+                shown += 1
+                if shown >= limit:
+                    break
+        if shown:
+            print("  (no size outliers — showing bold/ALL-CAPS candidates instead)")
+    if not shown:
+        print("  (no size/bold/caps outliers — the book may be single-style; fall back to fixed-size "
+              "page windows and title each window from its first line)")
     return 0
 
 

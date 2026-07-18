@@ -20,6 +20,7 @@ plain-language form (what broke → why → the fix you applied or propose), nev
 8. [Images: generation & sourcing](#8--images-generation--sourcing)
 9. [CJK / bilingual issues](#9--cjk--bilingual-issues)
 10. [FAQ one-liners](#10--faq-one-liners)
+11. [Source ingestion & long-source (`ingest.py` · `extract_pdf.py map/text/headings`)](#11--source-ingestion--long-source-ingestpy--extract_pdfpy-maptextheadings)
 
 ## 1 · How to read an error
 
@@ -194,3 +195,22 @@ deliberate choice, not a miss" — silence reads as "didn't notice".
 - **Something not on this page?** Run `bash scripts/check_env.sh` first (rules out environment),
   then read the error's owner section above; if it's genuinely new, the error text + the slide
   number + the build-script line are the three facts that make it debuggable.
+
+## 11 · Source ingestion & long-source (`ingest.py` · `extract_pdf.py map/text/headings`)
+Every message below is deliberate tool output, not a crash — each tells you the next move.
+
+| You see | Cause | First fix |
+|---|---|---|
+| `⚠ NO extractable text (~0 words across N pages)` from `map` | The PDF is scanned / image-only or DRM-locked — there is no text layer, and no OCR is installed | Ask the user for a text-based PDF, OCR, or the specific chapters. Do NOT infer contents; vision-reading pages yields `verified? = N` claims only |
+| `PDF is password-protected — can't read it` | Encrypted file | Ask for an unlocked copy |
+| `can't open '…' as a document (…)` | Corrupt/truncated file, or a format fitz can't parse (`.md`, `.doc`, a half-downloaded PDF) | Re-download/re-export; `.docx`→`ingest.py doctext`/`office`; `.md`/`.txt` are read directly, no tool needed |
+| `error: bad page range …` from `text`/`headings` | Reversed / out-of-range / sub-1 pages (often a TOC page number past the real page count) | Re-check against `map`'s page count |
+| `(no embedded TOC/bookmarks — reconstruct a skeleton with headings …)` | The book has no bookmarks | Run `extract_pdf.py headings <src>`; if it reports no size/bold/caps outliers, fall back to fixed-size page windows |
+| `python-docx not installed` / `openpyxl not installed` | Missing optional dep for `doctext`/`sheet` | `pip install python-docx` / `pip install openpyxl`, or use the printed alternative route |
+| `LibreOffice (soffice) not found` / `ffmpeg not found` | Missing system tool for `office`/`frames` | Install it, or ask the user to export a PDF / supply a transcript |
+| `conversion FAILED (rc=…) . soffice said: …` from `office` | LibreOffice couldn't read the file (corrupt, unsupported) | The quoted soffice stderr names it; ask for a re-export |
+| `⚠ N formula cell(s) have no cached value` from `sheet` | The workbook was written programmatically and never re-saved by a spreadsheet app — formula cells carry no computed value | Open + re-save in Excel/LibreOffice, or get a CSV export; the blanked columns are NOT absent in the source |
+| `⚠ this .docx has footnotes/endnotes — doctext does NOT extract them` | python-docx can't see those parts | Use `office` → PDF and read the pages if they carry content |
+| `'…' has no video track (audio-only?)` from `frames` | The file is audio-only — there is no speech-to-text here | Ask for a transcript/captions (.srt/.vtt/.txt); never invent narration |
+| `⚠ clamping to --every …s` from `frames` | The video is long; the 60-frame cap bounds the vision-reading load | Expected. To inspect a region closely, cut a sub-clip with ffmpeg and sample that |
+| `⚠ VISUAL only: the SPOKEN narration is NOT captured` | Reminder printed on every `frames` run | The plan must carry the transcript-status line; spoken-track claims without a transcript stay `verified? = N` |

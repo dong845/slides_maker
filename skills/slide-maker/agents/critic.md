@@ -88,7 +88,13 @@ something.
   is given, note that and judge candidates from the pixels alone.
 - The **CONTRACT CARD** (pipeline-built decks): a compact artifact of the deck's DECLARED
   contracts — the deck memory sentence + emotional-curve line (peak marked), the per-slide
-  takeaway/role/question/beat table, the claim ledger, the per-figure carrying-element rows, and
+  takeaway/role/question/beat table, the claim ledger, the per-figure carrying-element rows, **on a
+  long-source deck the `source size:` line + the approved Source-coverage map** (judge completeness
+  against its *built-around + summarised* set, NOT the whole book — a section its rows mark `cut` is
+  a conscious, user-approved cut, never a "silent omission" finding; a `built-around` section absent
+  from the deck IS one), **on a video-sourced deck the transcript status** (supplied-transcript
+  locator, or the "visual-only — spoken content is a GAP" line: with the latter, any spoken-track
+  claim presented as sourced fact is a finding), and
   the Design plan's declared contracts (skeleton rhythm map · WOW slide(s) · money slide ·
   the `boldness:` dial + the `signature move:` line (what the distinctiveness axis judges) ·
   semantic-colour ledger · type tokens · motion manifest · the chosen preset name + its `guard`
@@ -217,7 +223,12 @@ Do not just skim for the first few obvious issues. Run these passes:
        `references/image-generation.md` "Sourced real imagery"); **primary-source provenance** (a
        load-bearing web-sourced claim whose ledger row traces only to an aggregator/secondary source,
        or that a live primary-source check refutes, is a **blocker** — the planner's PROVENANCE
-       CONTRACT, `agents/content-planner.md` §2); **spliced figures** (numbers from different
+       CONTRACT, `agents/content-planner.md` §2); **pixel/audio provenance** (a number/quote/label
+       typed off an **image or video frame** and not confirmed against underlying data/text, or a
+       claim about a video's **spoken track** with no supplied transcript, is unverified — a
+       load-bearing figure typed off an unverifiable image is a **blocker** (show it as a trend),
+       reconstructed narration dressed as fact is a **major**; re-reading the same pixels is not
+       confirmation — rubric item 10); **spliced figures** (numbers from different
        sources/dates paired on one slide as a single current fact — each may be real, the pairing
        misleads; **major**, rubric item 10); **quote-mark abuse** (quotation marks around
        non-contiguous, altered, or paraphrased words — a clause quote needs its ellipsis, a
