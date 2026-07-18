@@ -397,6 +397,32 @@ ok("dumbbell_board (basic row, no hero/threshold)", lambda: dk.dumbbell_board(
 ok("sources_page rule=True / rule=False", lambda: (dk.sources_page(S(), ["a", "b", "c"], rule=True),
                                                    dk.sources_page(S(), ["d", "e"], rule=False)))
 ok("icon_tile (glass=True frosted tile)", lambda: dk.icon_tile(S(), 1.0, 1.0, 0.8, IMG, glass=True, fill=C("5B8DEF")))
+ok("icon_tile two-colour grad shorthand (c0,c1) not misread as stop-list",
+   lambda: dk.icon_tile(S(), 1.0, 1.0, 0.8, IMG, grad=(C("9DD9DD"), C("C6B8EB"))))
+
+# --- grad normalization: (c0,c1) and stop-list forms both parse; RGBColor-is-tuple bug guard
+def _grad_norm():
+    a = dk._norm_stops((C("9DD9DD"), C("C6B8EB")))                       # shorthand → 2 stops
+    b = dk._norm_stops([(0.0, C("FF0000"), 1.0), (1.0, C("0000FF"), 1.0)])  # full stops
+    c = dk._norm_stops([(0.0, "9DD9DD"), (1.0, "C6B8EB")])               # (pos,colour) no alpha
+    assert len(a) == 2 and abs(a[0][2] - 1.0) < 1e-9, a
+    assert len(b) == 2 and str(b[0][1]) == "FF0000", b
+    assert len(c) == 2 and abs(c[1][0] - 1.0) < 1e-9, c
+ok("_norm_stops handles (c0,c1) + stop-list + (pos,colour)", _grad_norm)
+
+# --- icon_tile contrast guard: a low-contrast glyph↔tile pair gets the tile auto-nudged to >=3:1
+def _icon_guard():
+    from PIL import Image as _I
+    gp = os.path.join(TMP, "_vio_glyph.png")
+    im = _I.new("RGBA", (48, 48), (0, 0, 0, 0))
+    for x in range(16, 34):
+        for y in range(22, 28): im.putpixel((x, y), (0x60, 0x52, 0xB3, 255))  # violet ink
+    im.save(gp)
+    assert dk.contrast_ratio(C("6052B3"), C("14182A")) < 3.0                  # the bad pair
+    ink = dk._png_dominant_ink(gp)
+    assert str(ink) == "6052B3", ink                                          # ink inferred from PNG
+    dk.icon_tile(S(), 1.0, 1.0, 0.8, gp, shape="circle", fill=C("14182A"))    # no glyph= → auto-guard
+ok("icon_tile auto-guards low glyph/tile contrast (infers ink, nudges tile)", _icon_guard)
 
 prs.save(os.path.join(TMP, "_smoke_deck.pptx"))
 print(f"\nsmoke_deckkit: {len(fails)} failure(s)" + ("" if not fails else " — " + "; ".join(n for n, _ in fails)))

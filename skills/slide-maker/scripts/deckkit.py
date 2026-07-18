@@ -473,11 +473,68 @@ def text(slide, x, y, w, h, runs, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP,
 
 
 # ===================================================================== shapes
+_INK_CACHE = {}
+def _png_dominant_ink(path):
+    """The representative INK colour of an icon PNG = alpha-weighted mean of its opaque pixels.
+    For a monochrome glyph this IS the glyph colour; for a duotone it's close enough to decide
+    contrast. Returns an RGBColor, or None if the file can't be read. Lets icon_tile guarantee
+    glyph↔tile contrast automatically, without the caller having to declare the ink."""
+    if path in _INK_CACHE:
+        return _INK_CACHE[path]
+    ink = None
+    try:
+        from PIL import Image
+        im = Image.open(path).convert("RGBA")
+        im.thumbnail((64, 64))
+        rs = gs = bs = ws = 0.0
+        for r, g, b, a in im.getdata():
+            if a > 40:
+                w = a / 255.0
+                rs += r * w; gs += g * w; bs += b * w; ws += w
+        if ws > 0:
+            ink = RGBColor(int(rs / ws), int(gs / ws), int(bs / ws))
+    except Exception:
+        ink = None
+    _INK_CACHE[path] = ink
+    return ink
+
+
+def _looks_color(v):
+    """True if v is a single colour spec — 'RRGGBB' / RGBColor / an (r,g,b) int triple.
+    RGBColor subclasses tuple, so this is how we tell a colour from a (pos, colour, alpha) stop."""
+    if isinstance(v, str):
+        return True
+    if isinstance(v, RGBColor):
+        return True
+    return isinstance(v, (tuple, list)) and len(v) == 3 and all(isinstance(z, int) for z in v)
+
+
+def _norm_stops(grad):
+    """Accept EITHER a two-colour shorthand `(c0, c1)` OR a full stop-list
+    `[(pos, colour[, alpha]), ...]` and return normalised `[(pos, colour, alpha), ...]`.
+    The shorthand is detected robustly: a 2-element sequence whose BOTH elements look like
+    colours. (RGBColor subclasses tuple, so a naive `isinstance(grad[0], tuple)` misfires and
+    treats `(RGBColor, RGBColor)` as a raw stop-list — the bug this guards against.)"""
+    if grad is None:
+        return None
+    if len(grad) == 2 and _looks_color(grad[0]) and _looks_color(grad[1]):
+        return [(0.0, grad[0], 1.0), (1.0, grad[1], 1.0)]
+    out = []
+    for st in grad:
+        if len(st) == 2:
+            out.append((st[0], st[1], 1.0))      # (pos, colour) → alpha 1.0
+        else:
+            out.append((st[0], st[1], st[2]))
+    return out
+
+
 def _grad_fill(shape, stops, angle=90.0, radial=False):
     """Apply a gradient fill WITH PER-STOP ALPHA to a shape (python-pptx solid fills can't do
-    this). `stops` = list of (pos 0..1, colour as 'RRGGBB'/RGBColor, alpha 0..1). `angle` is the
-    linear direction in degrees (0=→, 90=↓); `radial=True` makes a centre-out radial (for glows).
-    This is the enabler for glass cards, soft glows, and graduated photo scrims."""
+    this). `stops` = a two-colour shorthand `(c0, c1)` OR a list of (pos 0..1, colour as
+    'RRGGBB'/RGBColor, alpha 0..1). `angle` is the linear direction in degrees (0=→, 90=↓);
+    `radial=True` makes a centre-out radial (for glows). This is the enabler for glass cards,
+    soft glows, and graduated photo scrims."""
+    stops = _norm_stops(stops)
     sp = shape._element.spPr
     for tag in ("a:noFill", "a:solidFill", "a:gradFill", "a:blipFill", "a:pattFill", "a:grpFill"):
         e = sp.find(qn(tag))
@@ -1475,7 +1532,7 @@ def icon_card(slide, x, y, w, h, png, title, body="", *, fill=None, line=None,
 
 
 def icon_tile(slide, x, y, size, png, *, shape="circle", fill=None, grad=None, grad_angle=120.0,
-              ring=None, ring_w=1.6, glass=False, sheen=False, pad=None, alt=None):
+              ring=None, ring_w=1.6, glass=False, sheen=False, pad=None, alt=None, glyph=None):
     """Place an icon inside a STYLED TILE — the versatile alternative to a bare monochrome drop.
     The same recolored icon reads very differently by container, so vary the treatment to fit the
     deck instead of always using a flat glyph (see references/icons.md "treatments"):
@@ -1489,6 +1546,12 @@ def icon_tile(slide, x, y, size, png, *, shape="circle", fill=None, grad=None, g
       glass : True → a frosted translucent tile (low-alpha tint of `fill` + white rim) for
               dark / glowing / photographic backgrounds (pair with `glow()`).
       sheen : True → a soft top highlight (the glassy edge in modern decks).
+      glyph : the icon's INK colour (what you passed to `icon_png(..., color=)`). Pass it and the
+              tile is GUARANTEED to clear WCAG non-text 3:1 against the glyph — the tile is auto-
+              nudged away from the glyph's luminance only as far as needed (prints a one-line notice
+              if it adjusts). ALWAYS pass it: a dark glyph on a dark tile (or a same-hue pair, e.g.
+              a teal glyph on an aqua tile) is invisible, and this is the one place that's caught by
+              construction rather than only at render (`references/icons.md` "contrast").
 
     `size` is the tile edge in inches; the icon is inset by `pad` (default ≈26% so the glyph sits
     at ~50-55% of the tile — the tidy proportion). For a ROW of icons keep size/shape/treatment
@@ -1499,13 +1562,39 @@ def icon_tile(slide, x, y, size, png, *, shape="circle", fill=None, grad=None, g
     sh_kind = {"circle": MSO_SHAPE.OVAL, "squircle": MSO_SHAPE.ROUNDED_RECTANGLE,
                "square": MSO_SHAPE.RECTANGLE}.get(shape, MSO_SHAPE.OVAL)
     t = slide.shapes.add_shape(sh_kind, Inches(x), Inches(y), Inches(size), Inches(size))
+    # CONTRAST GUARD — when the caller declares the glyph's ink colour, guarantee the tile it sits
+    # ON clears the WCAG non-text 3:1 bar, auto-nudging the tile away from the glyph's luminance
+    # (toward white for a dark glyph, toward near-black for a light one) only as far as needed. This
+    # makes a low-contrast icon-on-tile impossible by construction, not just flagged after the fact.
+    if glyph is None and not glass:
+        glyph = _png_dominant_ink(png)   # auto-read the icon's ink so the guard always runs
+    if glyph is not None and not glass:
+        g = _as_rgbc(glyph)
+        to_end = WHITE if contrast_ratio(g, WHITE) >= contrast_ratio(g, _BLACK) else _BLACK
+        def _guard(cols):
+            cols = [_as_rgbc(c) for c in cols]
+            if all(contrast_ratio(g, c) >= 3.0 for c in cols):
+                return cols, False
+            for tt in (0.25, 0.5, 0.75, 1.0):
+                adj = [_blend(c, to_end, tt) for c in cols]
+                if all(contrast_ratio(g, c) >= 3.0 for c in adj):
+                    return adj, True
+            return [_blend(c, to_end, 1.0) for c in cols], True
+        if grad is not None:
+            stops = _norm_stops(grad)
+            cols, fixed = _guard([s[1] for s in stops])
+            grad = [(stops[i][0], cols[i], stops[i][2]) for i in range(len(stops))]
+        elif fill is not None:
+            cols, fixed = _guard([fill]); fill = cols[0]
+        else:
+            fixed = False
+        if fixed:
+            print(f"[deckkit] icon_tile: tile nudged for glyph contrast (glyph #{_hex(g)} needed ≥3:1)")
     if glass:
         tint = _as_rgb(fill) if fill is not None else WHITE
         _grad_fill(t, [(0.0, tint, 0.20), (1.0, tint, 0.06)], angle=grad_angle)
     elif grad is not None:
-        stops = grad if isinstance(grad[0], (tuple, list)) \
-            else [(0.0, _as_rgb(grad[0]), 1.0), (1.0, _as_rgb(grad[1]), 1.0)]
-        _grad_fill(t, stops, angle=grad_angle)
+        _grad_fill(t, grad, angle=grad_angle)
     elif fill is not None:
         t.fill.solid(); t.fill.fore_color.rgb = _as_rgb(fill)
     else:

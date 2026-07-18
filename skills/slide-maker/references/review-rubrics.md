@@ -213,7 +213,8 @@ Score each dimension; cite specific slides.
    members) shown as *N duplicate blocks* is a flaw — expect the **pattern** (2–3 representatives + `…`
    + a `×N` badge, shared detail said once; `repeat_row`). **Icons:** when the deck uses SVG icons,
    judge the five quality marks (`icons.md`) — semantic fit, one coherent family, per-category
-   colour-coding, contrast, and consistent size/position; a mismatched zoo, one-per-bullet clutter, or a
+   colour-coding, contrast (**a tiled icon's glyph must clear ~3:1 against ITS TILE, not just the
+   slide — flag a same-hue or dark-on-dark glyph/tile pair**), and consistent size/position; a mismatched zoo, one-per-bullet clutter, or a
    decorative icon that does no job (fails the rule-of-thumb — *what is this / does / why pay attention*)
    is a finding. **Also judge STYLE-fit (Scenario fit, `icons.md`):** icons fit *any* topic — judge the
    *style match*, not their presence. An icon whose **weight/treatment fights the preset** (a chunky,

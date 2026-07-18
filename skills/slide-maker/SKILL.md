@@ -1291,7 +1291,14 @@ A few rules that matter (see `references/design-principles.md`):
   too faint" bug. So keep TWO tokens per accent when needed: a **bright fill-only** variant (rules,
   bars, icon tiles, header bands) and a **darker text-safe** variant (`contrast_ratio(...) ≥ 4.5`)
   for any run set in that colour — verify each bound hue's *text* value with `deckkit.contrast_ratio`
-  at design time, not just the fill. Name the closing slide
+  at design time, not just the fill. **The same split covers a MARK ON A FILLED GROUND — an icon
+  glyph on its tile, a symbol/number on a coloured chip, an arrowhead on a band — which must clear the
+  WCAG non-text bar ~3:1 against *that ground*, not just against the slide.** The classic misses are a
+  same-hue pair (a teal glyph on an aqua tile) and a dark-on-dark pair (a coloured glyph on a
+  near-black tile) — both invisible. `deckkit.icon_tile` guards this by construction: it reads the
+  icon's ink from the PNG (or takes an explicit `glyph=<colour>`) and auto-nudges the tile to ≥3:1, so
+  **prefer `icon_tile` over hand-placing an icon on a raw `box`**; when you compose a mark on a fill by
+  hand, pick it with `deckkit.contrast_ratio(mark, ground) ≥ 3` (or invert to white / near-black). Name the closing slide
   for its purpose, in the deck's language ("Conclusion" for an English talk; 结论/总结 on a Chinese deck).
 - **Accessibility.** Keep text ≥4.5:1 on its fill (`contrast_ratio`; `chip`/`modbox`
   auto-pick a readable text colour) and never encode meaning by colour alone. Set
@@ -1619,6 +1626,12 @@ critic round — full rationale in `references/design-principles.md`):
   deliberately-contrasted hue**: no two adjacent blocks share a colour, and **no neutral gray
   sits in the sequence as if it were a category** (use `palette()` — it warns on both). A vivid
   block beside a gray one reads as half-finished.
+- **Mark-on-fill contrast — an icon glyph on its tile, a symbol/number on a coloured chip** — the
+  mark must stand out from the ground it sits ON (~3:1), not just from the slide. Zoom each icon tile:
+  a **same-hue pair** (teal glyph on aqua tile) or a **dark-on-dark pair** (coloured glyph on
+  near-black tile) is invisible — the exact bug a mid-tone tile hides. `icon_tile` auto-guards this
+  (white/near-white glyph on a deep tile, or deep glyph on a pale tile); a hand-placed icon-on-`box`
+  does not, so check it here.
 - **Titles** — a subtitle/definition line has a clear gap below the title's accent rule; the
   kicker/eyebrow adds a section label, it doesn't echo a word the title already leads with. **The
   title CHROME itself is not one fixed template repeated on every slide** — an identical

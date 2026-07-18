@@ -50,6 +50,10 @@ auto-cycle a fixed ink set (blue→pink→ochre→black) per section. Same princ
   be brighter/lower as text-contrast but should still clear ~3:1 for non-text contrast. So a vivid
   accent that fails as text is fine as a fill — just keep a **darker text-safe token** of the same hue
   for any run set in that colour (see SKILL.md "Colour"). Meaning is what's bound; the two tokens are
-  the same concept at two legibility roles.
+  the same concept at two legibility roles. **A MARK ON A FILLED GROUND takes the non-text role too** —
+  an icon glyph on its tile, a numeral/symbol on a coloured chip, an arrowhead on a band must clear
+  ~3:1 against *that ground*: the same-hue trap (a teal glyph on an aqua tile) and the dark-on-dark
+  trap (a coloured glyph on a near-black tile) are the two that go invisible. `deckkit.icon_tile`
+  enforces this by construction (reads the glyph ink, nudges the tile to ≥3:1).
 - The contract is deck-wide: a one-off recolour that breaks it (a green "risk" cell) is a real flaw the
   critic should flag.

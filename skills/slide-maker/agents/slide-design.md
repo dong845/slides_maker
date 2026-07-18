@@ -148,7 +148,13 @@ feel art-directed rather than defaulted, and it's yours to set once and hold. Pi
   **motif itself is DOSED, not stamped** (chrome budget, next bullet).
 - **Palette ratios are computed at PLAN time, not discovered at lint time.** When you record the
   palette, list every planned ink×canvas pair WITH its computed contrast ratio
-  (`deckkit.contrast_ratio()`), floors ≥4.5:1 body / ≥3:1 large-or-bold chrome — especially on a
+  (`deckkit.contrast_ratio()`), floors ≥4.5:1 body / ≥3:1 large-or-bold chrome — **and every
+  MARK×GROUND pair the same way: an icon glyph × its tile, a symbol/number × its chip, an arrowhead
+  × its band, floor ≥3:1 (WCAG non-text).** The invisible traps a harmonious palette hides are the
+  **same-hue pair** (a teal glyph on an aqua tile) and the **dark-on-dark pair** (a coloured glyph on
+  a near-black tile); the clean pairings are white/near-white glyph on a deep tile, or deep glyph on a
+  pale tile. (`deckkit.icon_tile` auto-guards this at build time, but a hand-placed icon-on-`box` or
+  symbol-on-chip does not — so plan its ratio.) Especially on a
   muted/tonal register, where the systematic failure is a whole chrome family (kickers, captions,
   pagination) at 2.4–3.3:1 that looks harmonious and reads as invisible
   (`design-principles.md` "Muted register ≠ low contrast": mute the HUE, keep the VALUE distance).

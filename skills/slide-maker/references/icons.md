@@ -277,8 +277,14 @@ A good icon slide gets ALL of these right; getting one wrong is what makes icons
 
 ## Build checklist
 One family · **semantic fit** (metaphor matches the content) · **colour-coded per category** (each
-category its own hue from `palette(n)`, carried by the icon + label + tint) · **contrast** against the
-background (bright on dark / saturated on light, disc if needed) · small (≤ title) · **consistent
+category its own hue from `palette(n)`, carried by the icon + label + tint) · **contrast** — the glyph
+must clear ~3:1 against **whatever it sits ON**: against the slide for a bare icon (bright on dark /
+saturated on light), and against **its TILE** for a tiled icon. The two invisible traps are the
+**same-hue pair** (a teal glyph on an aqua tile) and the **dark-on-dark pair** (a coloured glyph on a
+near-black tile). Use `icon_tile`, which guarantees it by construction — it reads the glyph's ink from
+the PNG (or takes `glyph=<colour>`) and auto-nudges the tile to ≥3:1; a clean pairing is a **white/
+near-white glyph on a deep tile**, or a **deep glyph on a pale tile** (never a mid glyph on a mid
+tile of the same hue). · small (≤ title) · **consistent
 size/position/treatment** across siblings · style matches the deck (outline vs filled) · **does a job**
 (passes the rule-of-thumb — answers *what is this / what does it do / why pay attention*; else cut) ·
 text always present · assets cached in the deck folder.

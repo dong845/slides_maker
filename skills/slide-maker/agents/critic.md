@@ -631,9 +631,12 @@ Do not just skim for the first few obvious issues. Run these passes:
      (`references/icons.md`) and flag — **wrong/generic metaphor** (the icon doesn't match what it
      labels — a gear on every card; an icon that mislabels the concept); **broken colour-coding** (a
      multi-category layout where the icons DON'T carry each category's hue, or the hues aren't distinct/
-     consistent — icon, label, and card tint should share one colour per category); **poor contrast**
-     (a dark/pale icon lost on a dark deck, or pure-black on a coloured one — it should be bright on
-     dark / saturated on light, disc if needed); **mismatched families** or **outline-mixed-with-filled**
+     consistent — icon, label, and card tint should share one colour per category); **poor contrast —
+     against WHATEVER THE GLYPH SITS ON** (a dark/pale icon lost on a dark deck, or pure-black on a
+     coloured one — bright on dark / saturated on light, disc if needed; **AND, for a TILED icon, the
+     glyph against ITS TILE ≥3:1**, not just against the slide: the two invisible traps are a same-hue
+     pair — a teal glyph on an aqua tile — and a dark-on-dark pair — a coloured glyph on a near-black
+     tile, e.g. a garbled/near-black `icon_tile` gradient; zoom the tile to check); **mismatched families** or **outline-mixed-with-filled**
      across siblings; **inconsistent** size/position across sibling cards; an **oversized** icon (larger
      than the title); a **decorative** icon that labels nothing or **one-per-bullet** clutter; an **icon
      with no text label**. The decoration test is the **rule-of-thumb** (`icons.md`): every icon must
