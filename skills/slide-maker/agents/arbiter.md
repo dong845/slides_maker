@@ -41,7 +41,8 @@ coordinator applies the rule.
   message + emotional-curve line, the per-slide takeaway/role/question/beat table, the
   **claim ledger** (`claim | type | source | verbatim value | verified? | as-of | tense`), the
   **per-figure carrying-element rows**, and the Design plan's declared contracts (rhythm map ·
-  WOW/money slide · semantic-colour ledger · type tokens · motion manifest · the chosen preset
+  WOW/money slide · the `boldness:` dial + the `signature move:` line (what the `dulled` check reads) ·
+  semantic-colour ledger · type tokens · motion manifest · the chosen preset
   name + its `guard` string verbatim (or `custom look — no preset guards`) (on the generated-template branch, plus the four identity-propagation contract lines — palette · type register · component geometry · surface) · the `logo plan:` line
   with its evidence token · the checkpoint motif line (device + meaning + legibility mode) · the
   approved image opt-in rows with their per-row source tokens (+ license/credit notes and any
@@ -122,9 +123,10 @@ For each promoted finding, confirm **in the pixels** — not in the build script
 issue is actually resolved, and check the touched slides and their neighbours for a
 **regression** the fix introduced. Also judge the required **`dulled`** axis — defined
 NARROWLY: *the fix bought its resolution by subtracting declared drama — a named strength
-degraded, the hero/WOW demoted, a build removed; judge the touched slides against the
-strengths list, not free-floating taste* (this preserves the judge-don't-design
-invariant). `dulled: true` re-opens the finding with a `better_fix`, the same path as
+degraded, the hero/WOW demoted, **the declared `signature move` sanded back to the safe
+catalogue** (a big number / gradient / full-bleed photo), a build removed; judge the touched
+slides against the strengths list + the contract card's signature move, not free-floating
+taste* (this preserves the judge-don't-design invariant). `dulled: true` re-opens the finding with a `better_fix`, the same path as
 `resolved: false`; a trade-off the manifest DECLARED is weighed, not auto-flagged. On a **large/sectioned deck** this re-check may fold
 into the whole-deck critic's re-pass rather than spawning separate arbiters — focus it on
 the **touched sections and their seams** (`references/large-deck-orchestration.md`).

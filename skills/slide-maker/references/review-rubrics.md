@@ -321,7 +321,20 @@ Score each dimension; cite specific slides.
    — few true visual events, or **fewer than 4 distinct visual protagonists** on a deck of 6+ content
    slides (adjacent slides not differing on density / colour mode / protagonist); and a **WOW that isn't
    memorable** — a hero beat that is merely a *large* element, not one that contrasts with its neighbours
-   and stays memorable after the deck is closed. (General and cross-purpose — a short or
+   and stays memorable after the deck is closed. **DISTINCTIVENESS (the upward axis — blandness is a
+   defect, not just brokenness):** the contract card carries a `boldness:` dial + a declared `signature
+   move:`. Flag when **the signature move didn't land** — it was sanded back to the safe catalogue
+   ("a big number / a nice gradient / a full-bleed photo" is NOT a signature move), and, at
+   `boldness: balanced+` or higher, when the honest answer to *"what's the one thing a viewer remembers
+   tomorrow?"* is **"a clean competent deck"** (forgettableness is itself the finding). Hold this to the
+   declared dial (a `conservative` deck may be clean-and-elegant); **when NO dial is declared (external
+   deck / redesign diagnosis / light-cleanup / direction preview), this axis stands down — raise no
+   distinctiveness finding.** Also flag a **CLASHING** move — a bold beat that imports a foreign identity
+   (new font/palette/one-off device) so it reads as another deck's slide. **Precedence + severity: this
+   is a ceiling push, never a floor — every finding on it (timid / sanded / bland / clashing) is MAJOR
+   at most, never a blocker;** it drives one improvement attempt, then ships (surfaced as the consent
+   `ceiling` note) rather than blocking a legible deck. A bold idea that broke a floor is a floor finding
+   first, redone legibly. (General and cross-purpose — a short or
    deliberately-uniform deck relaxes the counts.)
    **Two evidence sources for this deck-level pass:** *(1) the THUMBNAIL pass — RECORDED* — view all
    slides at

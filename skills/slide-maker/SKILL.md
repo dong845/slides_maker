@@ -41,6 +41,13 @@ design. On every deck, at every decision:
 4. **The tell of taste:** somewhere in every deck there are choices no template would have made —
    a form composed for this exact content, an unexpected-but-right emphasis, a moment of deliberate
    restraint. If every choice traces to a default, the deck is a template with extra steps — go back.
+   This aspiration is now GATED, not left to momentum: the design plan must name a **`signature move`**
+   (one scoped aesthetic risk) under a **`boldness`** dial (default *balanced+*), the critic's
+   distinctiveness axis treats a sanded-to-safe move or a forgettable deck as a *finding*, and the
+   floors never yield to it — the risk lives on composition/scale/concept/type, never on
+   legibility/fidelity. **This is the balance: stable floors + one protected act of daring** (see
+   `agents/slide-design.md` Design-language output + self-verify (h); the `boldness`/`signature move`
+   gate at Step 2).
 
 **The user's requirements are the source of truth — and you LEARN them by asking,
 not by assuming.** A template they hand you, content in an old deck, or your own
@@ -152,7 +159,10 @@ even though the checkpoint is an FYI, not a stop (this is the cheapest fidelity 
 delegation uses most; the comprehension gate still forbids shipping any unverified claim). Design
 checkpoint = look/palette/type/motif in ~4 lines (the **motif line states device + meaning + how a
 stranger reads it** — label/legend/figurative, the slide-design STRANGER TEST) + the rhythm-map table +
-the three design musts + a one-line Form-ledger/diversity verdict + the image opt-in list (the
+the three design musts + a one-line Form-ledger/diversity verdict + the **`boldness:` + `signature
+move:` lines** (the dial + the one scoped aesthetic risk + the bold reference it adapts — even as an
+auto-waiver FYI, a timid "big number" signature move or a wrong dial should cost one glance to veto) +
+the image opt-in list (the
 few proposed images, for approval — **each row carries its source token**: `generated — <tool>` /
 `sourced — <origin> (<license>)` / `provided — …` / a `searched, none found → …` rung (full grammar:
 `references/image-generation.md` step 5), per the REFERENT RULE in `image-generation.md`) + the **`logo plan:` line with its evidence token**
@@ -761,7 +771,15 @@ signature motif + a deliberately-chosen palette/type, not a defaulted light/mini
 **taste-profile field** in that Design language section — `taste profile: <n dials applied / none on
 file> · freshness: varied <foundation> vs <last look-history line>`, or the alternate arm `look
 LOCKED (registered/provided template) — carve applies` — the line that makes the freshness rule
-checkable and any profile override visible (`references/user-taste.md`), **an
+checkable and any profile override visible (`references/user-taste.md`), **a `boldness:` line
+(conservative | balanced+ | bold | experimental — default balanced+) AND a real `signature move:`
+line** — the ONE deliberate aesthetic RISK a template wouldn't make, scoped to where it lands (cover /
+WOW / money slide) and adapting a named bold reference; a `signature move` that reduces to "a big
+number / a nice gradient / a full-bleed photo" is the safe catalogue, **not** a signature move, and
+makes the plan incomplete (send it back; self-verify (h) owns this) — only `boldness: conservative`
+(whether user-set or purpose-defaulted) makes the risk optional, softening the field to a named
+"deliberately restrained" clause so it's never blank; the risk lives on
+composition/scale/concept/type and **never** overrides a floor (legibility/fidelity/lint win), **an
 `AR a.b -> <zone>` annotation in the Layout cell of every slide placing a manifest-listed
 figure/table** (a plan that commits a known-geometry asset to a zone without checking the fit is
 not ready — send it back to the art director; the slide-design §3 Image-fit rule owns the
@@ -807,6 +825,8 @@ abstract subject gets native forms, not photos. Every image row carries its sour
 grammar. The user then approves which (if any) are
 generated or sourced. Fold in the user's design edits, then set up the canvas (Step 3).
 > **🔴 CHECKPOINT — DESIGN:** show the Design language + Form ledger + the 3 design musts + the
+> **`boldness:` line + the `signature move:` line** (the one scoped aesthetic risk + where it lands +
+> the bold reference it adapts — so a wrong dial or a timid/too-wild move costs one glance to veto) + the
 > image opt-in list (each row with its `generated — <tool>` / `sourced — <origin> (<license>)` /
 > `provided — …` / `searched, none found → …` rung — full grammar: `references/image-generation.md`
 > step 5 — source token) + (for a company/product/single-entity deck) the **`logo plan:` line WITH its
@@ -1718,7 +1738,9 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
      the **deck memory sentence + emotional-curve line** (peak marked), the **per-slide
      takeaway / role / question / beat table**, the **claim ledger**, the **per-figure
      carrying-element rows**, and the Design plan's **declared contracts** — the skeleton rhythm
-     map, the WOW slide(s), the money slide (the slide the deck exists for), the semantic-colour
+     map, the WOW slide(s), the money slide (the slide the deck exists for), **the `boldness:` dial +
+     the `signature move:` line** (so the distinctiveness lens can judge whether the declared risk
+     actually landed in the pixels or got sanded back to safe), the semantic-colour
      ledger, the type tokens, the motion manifest, the **chosen preset name + its `guard` string
      verbatim** (or `custom look — no preset guards`) (on the generated-template branch, plus the four identity-propagation contract lines — palette · type register · component geometry · surface), the **`logo plan:` line with its evidence
      token**, the **checkpoint motif line** (device + meaning + legibility mode), the **approved

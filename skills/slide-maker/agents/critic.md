@@ -90,6 +90,7 @@ something.
   contracts — the deck memory sentence + emotional-curve line (peak marked), the per-slide
   takeaway/role/question/beat table, the claim ledger, the per-figure carrying-element rows, and
   the Design plan's declared contracts (skeleton rhythm map · WOW slide(s) · money slide ·
+  the `boldness:` dial + the `signature move:` line (what the distinctiveness axis judges) ·
   semantic-colour ledger · type tokens · motion manifest · the chosen preset name + its `guard`
   string verbatim (or `custom look — no preset guards`) (on the generated-template branch, plus the four identity-propagation contract lines — palette · type register · component geometry · surface) · the `logo plan:` line with its evidence
   token · the checkpoint motif line (device + meaning + legibility mode) · the approved image opt-in
@@ -256,6 +257,39 @@ Do not just skim for the first few obvious issues. Run these passes:
        "template-with-extra-steps"): ask "which choice here would a template NOT have made?" — if no
        slide answers, the deck is compliant but dead, and that is a deck-level finding with the
        missing counter-example as its evidence.
+       **DISTINCTIVENESS AXIS — judge the SIGNATURE MOVE, and treat blandness as a defect (not just
+       brokenness).** This axis is the loop's ONE upward-pushing lens: the others subtract flaws, this
+       one asks whether anything here is *brave*. The contract card carries the `boldness:` dial + the
+       declared `signature move:`. Check: **did that risk actually land in the pixels, or was it sanded
+       back to safe during build/fix?** A signature move that reduced to "a big number / a nice gradient
+       / a full-bleed photo" did NOT land — that is a finding (`signature_move.landed: false`), the exact
+       mediocrity tell. And name **the one thing a viewer remembers tomorrow**; if the honest answer is
+       "a clean, competent deck," then — at `boldness: balanced+` or higher — **forgettableness itself is
+       a finding**, not a pass (at `boldness: conservative` a clean-and-elegant deck is acceptable, so
+       hold this bar to the declared dial. **And when NO boldness dial is declared** — an external
+       deck under review/redesign, a light-cleanup fix-pass, a direction preview: **do NOT raise a
+       distinctiveness/blandness finding at all** — this axis needs a declared dial to judge against,
+       so it stands down, exactly like the plan-audit does with no plans). **Precedence (critical):**
+       this axis is a CEILING push, never
+       a floor — it can demand a braver move, but it can NEVER justify overriding legibility / fidelity /
+       lint; a bold idea that broke a floor is a floor finding first, re-attempted legibly, not waved
+       through for daring. So the two failure modes are symmetric: *timid* (no signature move landed →
+       distinctiveness finding) and *reckless* (a risk that broke a floor → floor finding).
+       **The symmetric failure — a signature move that CLASHES:** if the bold beat imports a foreign
+       identity (a new font / palette / a one-off alien device not dosed elsewhere), so it reads as "a
+       different deck's slide" rather than this deck's peak, flag it as a cohesion finding — the move
+       should reuse the deck's own palette/type/motif/grid and be brave in composition/scale/concept
+       only (`slide-design.md` COHESION rule). So you police both ends: *timid* (no move landed) AND
+       *clashing* (a move that broke the deck's one visual system).
+       **Severity of EVERY finding on this axis (timid · sanded-to-safe · bland · clashing): MAJOR at
+       most, never a blocker.** A blocker is reserved for wrong / broken / illegible (a floor). What
+       "MAJOR" means here, precisely — so the guarantee isn't overstated: like any major it drives ONE
+       genuine improvement attempt (that IS the upward push — the actor re-tries the braver/cohesive
+       move), but it is **non-blocking** — if the attempt doesn't clearly help or the round cap is
+       reached, the deck **ships** with the finding surfaced in the Step-6 note as an honest open
+       question (SKILL Step 5 cap rule: a surviving major is never a silent ship, never a hard stop). So a
+       clean-but-bland or clean-but-safe deck costs at most one attempt, then ships — this axis raises
+       the bar, it never sinks a shippable deck.
        **Does the look fit the purpose?** crisp/corporate status vs sober defense vs bold pitch vs warm
        lecture (`design-by-purpose.md`) — a mismatch is a real finding. **If a style example was given, judge
        fidelity to it PER THE CHOSEN MIMIC MODE** (the contract card carries it; `style-analysis.md`): **Mode A
@@ -863,7 +897,7 @@ line it audits).
   },
   "plan_audit": {
     "_comment": "the contract-card audit — each declared contract judged from PIXELS as kept | broken | degraded, lens-owned; null (with the reason) for direction previews / external decks with no plans",
-    "lens_b": {"skeleton_rhythm": "kept|broken|degraded — <one clause>", "wow": [{"slide": 0, "landed": true, "why": "<one clause vs its actual neighbours — a WOW that is merely big did not land>"}], "money_slide": "<did the visual peak land on the declared slide?>", "semantic_colour": "<ledger kept / a hue double-booked where>", "type_tokens": "<sizes drawn from the declared tokens?>", "eye_path_misses": ["<slides whose squint-level first-read missed the declared hero>"]},
+    "lens_b": {"skeleton_rhythm": "kept|broken|degraded — <one clause>", "wow": [{"slide": 0, "landed": true, "why": "<one clause vs its actual neighbours — a WOW that is merely big did not land>"}], "signature_move": {"landed": true, "why": "<did the declared signature move (contract card) survive as a real aesthetic risk, or get sanded to safe (a big number / gradient / full-bleed photo)? judge vs the boldness dial>"}, "memorable_one_thing": "<the ONE thing a viewer remembers tomorrow; if 'a clean competent deck' at boldness>=balanced+, that is a finding>", "money_slide": "<did the visual peak land on the declared slide?>", "semantic_colour": "<ledger kept / a hue double-booked where>", "type_tokens": "<sizes drawn from the declared tokens?>", "eye_path_misses": ["<slides whose squint-level first-read missed the declared hero>"]},
     "lens_a": {"memory_sentence": "<your remembered ONE sentence, written BEFORE reading the card's deck message>", "matches_deck_message": true, "curve_visible": "<is the declared emotional curve visible in pacing?>", "takeaway_titles": "<content-slide titles vs the takeaway table — list divergent slides>", "motion_manifest": "kept|broken|degraded"}
   },
   "probes": {

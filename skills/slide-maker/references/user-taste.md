@@ -42,6 +42,12 @@ An unbounded profile stops being readable at interview speed, so **prune at appe
 | dimension | position | evidence (deck · date · the user's verbatim words) |
 |---|---|---|
 | colour | vivid content, quiet chrome | cine-mri · 2026-06-14 · "太素了 — colour on the data, not the frame" |
+| boldness | balanced+ (stable base + one signature move) | <deck · date · verbatim> |
+
+*(`boldness` is a first-class dial — conservative | balanced+ | bold | experimental. It seeds the
+design plan's `boldness:` line under an auto directive, per the same recurrence gate as any dial; an
+explicit per-deck request still overrides it. The row above is illustrative — promote it only on real
+evidence, like any other dial.)*
 
 ## NO-GOs  (≤5 lines)
 - No white-card-block dominance ("looks like a template, not a design") — cine-mri · 2026-06-14

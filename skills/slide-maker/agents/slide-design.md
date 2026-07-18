@@ -75,6 +75,14 @@ sameness, no hero, dead layout, thoughtless motion, decorative icons — is your
   → visual structure → layout, never template-first); **2 Rhythm** (alternate dense/light; mix
   hero / dashboard / diagram / timeline / minimalist); **3 Space** (intentional whitespace, ~50–70% whitespace); **4 Visual surprise** (a memorable WOW/hero slide every ~6–8 slides — a bold number,
   a dramatic statement, or an iconic diagram); **5 Visual reasoning** (concept → visualization).
+  **On #4, the tell of a MEDIOCRE art director is that "surprise" only ever means BIGGER (a huge
+  numeral, a large statement) — never BRAVER.** A big number is the safe catalogue move; a genuine
+  surprise is a compositional / conceptual / scale RISK a template would not make (a form composed for
+  this exact content, a dramatic asymmetry, negative space as the subject, a physical metaphor drawn
+  out, an unexpected crop or type moment). The **`signature move`** (Design-language output + the
+  `boldness` dial below) is where the plan is FORCED to commit one such risk, scoped and defended, so
+  "a choice no template would make" (the TASTE PROTOCOL) becomes a gated deliverable instead of an
+  aspiration that momentum skips.
 
 ## Method
 
@@ -146,6 +154,17 @@ feel art-directed rather than defaulted, and it's yours to set once and hold. Pi
   preset's guard line** (honored literally; guards survive the vary-it rule) — the
   *system* (palette, type, spacing, chrome geometry) repeats on every slide (CRAP Repetition); the
   **motif itself is DOSED, not stamped** (chrome budget, next bullet).
+- **Raise the ceiling with bold references BEFORE you commit the signature move** (this is what stops
+  the art direction being merely competent). Do a quick web pass for **2–3 genuinely distinctive,
+  award-level references in this genre** — editorial spreads, poster/motion design, the best decks of
+  this kind — not "clean corporate deck" results. Look at what makes each *brave* (a composition, a
+  scale play, a concept, a type moment), and **name in the plan the ONE bold move you're adapting**
+  into this deck's `signature move` (adapt to the topic, never transplant; the floors + guards still
+  bind). Designing from a raised reference set is the difference between recombining your own safe
+  priors and reaching for something you wouldn't have defaulted to. (Scale to stakes: a quick
+  low-stakes deck can lean on your own taste + one reference; a brand-defining deck earns the full
+  pass. If no web tool is available, name the borrowed move from your own knowledge of the genre's
+  best work.)
 - **Palette ratios are computed at PLAN time, not discovered at lint time.** When you record the
   palette, list every planned ink×canvas pair WITH its computed contrast ratio
   (`deckkit.contrast_ratio()`), floors ≥4.5:1 body / ≥3:1 large-or-bold chrome — **and every
@@ -538,6 +557,45 @@ freshness: varied <foundation> vs <last look-history line>`, or the alternate ar
 (registered/provided template) — carve applies` — the line that makes the freshness rule checkable
 (self-verify (j) reads it; the Step-2 design gate requires it; `references/user-taste.md`).
 
+It also carries the **BOLDNESS + SIGNATURE MOVE contract — two required lines** (this is the balance
+mechanism: stable floors, one protected act of daring):
+- **`boldness: <conservative | balanced+ | bold | experimental>`** — the deck's aesthetic-risk budget.
+  Precedence: an explicit user request > `taste.md`'s promoted dial > a purpose-derived default
+  (**balanced+** for most decks; *conservative* for a sober defense / regulatory / status readout
+  unless asked otherwise; *bold* leans in for a pitch / launch / brand / culture deck). The dial sets
+  HOW MANY beats may carry risk and HOW FAR the signature move pushes: **conservative** = an elegant
+  restrained touch, risk optional; **balanced+** = exactly ONE genuine signature move (default);
+  **bold** = the cover AND the WOW/money slide may each carry a risk (≤2 beats); **experimental** =
+  the deck's whole form vocabulary is open to reinvention within the floors (brand-defining / art-forward
+  only). Record which arm set it.
+- **`signature move: <the one deliberate aesthetic RISK> · lands on <cover | WOW | money slide #N> ·
+  adapts <the bold move borrowed from a sourced reference, §1 research> · fits because <one clause>`**
+  — the single choice a template would NOT make (a form composed for this content, a dramatic scale
+  play, a strong-concept cover, negative space as subject, an unexpected crop/type moment), SCOPED to
+  where it lands so the rest of the deck stays disciplined. **A `signature move` that is just "a big
+  number" / "a nice gradient" / "a full-bleed photo" is NOT a signature move — those are the safe
+  catalogue; name the actual risk.** Under a *conservative* dial (whether user-requested OR
+  purpose-defaulted for a sober defense/regulatory/status deck) the risk is OPTIONAL: take a modest,
+  restrained signature move if one fits, **or** — if none does — fill the field with the one-clause
+  `deliberately restrained: <why>` so **the field is never blank** either way. (At balanced+ and above
+  a real signature move is required, not optional.) This field is a gate: the Step-2 design gate requires
+  it, self-verify (h) checks it landed (brave, not merely big), and the Step-5 critic's distinctiveness
+  axis flags it if the build sanded it back to safe. **The floors never yield to it — a signature move
+  that breaks legibility/fidelity/lint is redirected to a legible form, never shipped broken (the risk
+  is in composition/scale/concept/**type-setting** — a brave scale/crop/weight of the deck's OWN
+  faces, NOT a new font — the axes that don't touch the floors).**
+  **COHESION rule (so one bold beat doesn't fracture the deck): the signature move is built from the
+  deck's OWN design language — same palette · type · motif · grid — as a *protagonist variation
+  amplified*, NEVER a new identity (a brave type MOMENT uses the deck's own faces at dramatic
+  scale/crop/weight; a NEW FONT is forbidden — likewise no new palette, no one-off alien device). A peak that
+  reuses the deck's materials contrasts with its neighbours WITHOUT clashing (that's exactly
+  "repeat the system, vary the protagonist"). If the move genuinely needs a NEW visual device, it must
+  be DOSED like a motif — bookended (cover↔close) or appearing ≥2× (and still within the chrome
+  budget's ≤3-appearance cap) — so it reads as intentional system,
+  not a one-off. Scoping the move to the cover / WOW / money slide is the low-clash choice *because*
+  those beats are already expected to be the deck's peaks; the clash risk is a foreign identity, not the
+  location.**
+
 ### Deck rhythm
 The planned **sequence of visual protagonists** (e.g. cover → diagram → chart → photo → big-number →
 divider), the dense↔light / colour pacing, the ~50–70% whitespace target, where the **WOW/hero** beats
@@ -610,10 +668,17 @@ NOT a blanket per-slide quota):
   markers. WHERE they don't: one per prose bullet, as space-filler in an empty region, mixed
   families/weights, or duplicating a number (stats stay numeric). The test: would a glyph let a
   squinting viewer identify the item before reading its label? Yes → icon; no → skip, one clause.
-- **(h) WOW is memorable** — each WOW/hero names *why-memorable* AND the *surrounding contrast* against
-  its neighbours, else it's just a bigger slide (§1.4) — and one WOW/hero coincides with the content
-  plan's **"slide this deck exists for"**, or the plan states a one-clause reason the visual peak
-  sits elsewhere.
+- **(h) WOW is memorable, and the SIGNATURE MOVE is brave (not just big)** — each WOW/hero names
+  *why-memorable* AND the *surrounding contrast* against its neighbours, else it's just a bigger slide
+  (§1.4); and one WOW/hero coincides with the content plan's **"slide this deck exists for"**, or the
+  plan states a one-clause reason the visual peak sits elsewhere. **PLUS the Design language carries a
+  `boldness:` line and a real `signature move:`** — a composition/scale/concept/type RISK a template
+  wouldn't make, scoped to where it lands, adapting a named bold reference (§1). A `signature move`
+  that reduces to "a big number / a nice gradient / a full-bleed photo" fails this check (that's the
+  safe catalogue, the exact mediocrity tell) — re-sketch a genuine one, or, under `boldness:
+  conservative` (user-set or purpose-defaulted), record the one-clause "deliberately restrained: <why>"
+  so the field is never blank. The risk lives on
+  the aesthetic axes only; if it would break a floor, redirect it to a legible form (floors win).
 - **(i) content-triggered** (only when that content is present) — method / procedure → an `algorithm_block`
   (or one-clause why prose is better); principle / mechanism / experiment / definition → a labelled
   schematic diagram built CORRECTLY (domain-accurate, faithful to source) alongside text, or an
