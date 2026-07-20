@@ -234,7 +234,14 @@ def _subset_pptx(src, keep_idx, dest):
 
 
 def _render_pdf(soffice, src, outdir):
-    """pptx -> pdf via a throwaway LibreOffice profile. Returns (pdf_path, result, cmd)."""
+    """pptx -> pdf via a throwaway LibreOffice profile, into an EMPTY private directory.
+
+    `outdir` must not already contain `<src-stem>.pdf`. Rendering into a directory that may hold a
+    previous PDF is how a FAILED conversion gets read back as success: the caller checks only that
+    the file exists, and a stale one satisfies that. Reproduced with real LibreOffice on a deck it
+    refuses to convert — the run printed "rendered N slides" and exit 0 over untouched output.
+    Returns (pdf_path, result, cmd); the caller must check `result.returncode`.
+    """
     profile = tempfile.mkdtemp(prefix="lo_render_")
     try:
         cmd = [soffice, "-env:UserInstallation=" + Path(profile).as_uri(),
@@ -369,6 +376,53 @@ def main(argv):
         return 0
 
 
+
+    # Give this invocation its OWN LibreOffice profile: lets parallel renders (the
+    # large-deck section fan-out) run at once without fighting a shared profile lock,
+    # and lets the render work even while the user has the LibreOffice GUI open.
+    # Without this, concurrent/coexisting soffice calls silently produce no PDF.
+    src_pptx, keep = pptx, None
+    tmp_subset = tmp_dir = None
+    if incremental:
+        keep = changed
+        tmp_dir = tempfile.mkdtemp(prefix="lo_subset_")
+        tmp_subset = os.path.join(tmp_dir, "subset.pptx")
+        _subset_pptx(pptx, set(keep), tmp_subset)
+        src_pptx = tmp_subset
+
+    # A subset renders into its OWN temp dir. Writing out/subset.pdf would collide between two
+    # concurrent runs sharing a render dir (which the per-invocation LibreOffice profile above
+    # exists to allow), and a crashed run would leave a file that breaks the render-only cleanup.
+    # ALWAYS convert into a private empty directory, never straight into `out`: `out` may already
+    # hold a <deck>.pdf (a previous render, or a --deliverables artefact when out is the deck
+    # folder), and a stale file there would make a failed conversion look like a successful one.
+    if tmp_dir is None:
+        tmp_dir = tempfile.mkdtemp(prefix="lo_render_out_")
+    import atexit
+    atexit.register(shutil.rmtree, tmp_dir, True)       # a die() mid-render must not leak a deck copy
+    pdf, result, cmd = _render_pdf(soffice, src_pptx, tmp_dir)
+    if result.returncode != 0 or not os.path.isfile(pdf):
+        detail = [
+            "LibreOffice failed to convert {} (exit {}).".format(pptx, result.returncode)
+            if result.returncode != 0 else "LibreOffice produced no PDF from {}.".format(pptx),
+            "Command: " + " ".join(cmd),
+            "Exit code: {}".format(result.returncode),
+        ]
+        stdout = _tail(result.stdout)
+        stderr = _tail(result.stderr)
+        if stdout:
+            detail.append("stdout:\n" + stdout)
+        if stderr:
+            detail.append("stderr:\n" + stderr)
+        detail.append(
+            "Check that the file opens, close any open copy, and in sandboxed runtimes "
+            "rerun the render with the permissions needed for LibreOffice."
+        )
+        die("\n".join(detail))
+
+    # Clear the previous render only NOW, after LibreOffice has actually produced a PDF. Doing it
+    # earlier meant a failed conversion destroyed the last good render and left nothing at all —
+    # the user lost working output to a run that produced none.
     # Wiping the render dir BEFORE deciding is what made --fast a no-op: every PNG looked
     # "missing", so every slide looked changed. An incremental run keeps the existing PNGs and
     # overwrites only the ones it re-renders.
@@ -394,44 +448,6 @@ def main(argv):
                     except OSError:
                         pass
     os.makedirs(out, exist_ok=True)
-
-    # Give this invocation its OWN LibreOffice profile: lets parallel renders (the
-    # large-deck section fan-out) run at once without fighting a shared profile lock,
-    # and lets the render work even while the user has the LibreOffice GUI open.
-    # Without this, concurrent/coexisting soffice calls silently produce no PDF.
-    src_pptx, keep = pptx, None
-    tmp_subset = tmp_dir = None
-    if incremental:
-        keep = changed
-        tmp_dir = tempfile.mkdtemp(prefix="lo_subset_")
-        tmp_subset = os.path.join(tmp_dir, "subset.pptx")
-        _subset_pptx(pptx, set(keep), tmp_subset)
-        src_pptx = tmp_subset
-
-    # A subset renders into its OWN temp dir. Writing out/subset.pdf would collide between two
-    # concurrent runs sharing a render dir (which the per-invocation LibreOffice profile above
-    # exists to allow), and a crashed run would leave a file that breaks the render-only cleanup.
-    if tmp_dir:
-        import atexit
-        atexit.register(shutil.rmtree, tmp_dir, True)   # a die() mid-render must not leak a deck copy
-    pdf, result, cmd = _render_pdf(soffice, src_pptx, tmp_dir if incremental else out)
-    if not os.path.isfile(pdf):
-        detail = [
-            "LibreOffice produced no PDF from {}.".format(pptx),
-            "Command: " + " ".join(cmd),
-            "Exit code: {}".format(result.returncode),
-        ]
-        stdout = _tail(result.stdout)
-        stderr = _tail(result.stderr)
-        if stdout:
-            detail.append("stdout:\n" + stdout)
-        if stderr:
-            detail.append("stderr:\n" + stderr)
-        detail.append(
-            "Check that the file opens, close any open copy, and in sandboxed runtimes "
-            "rerun the render with the permissions needed for LibreOffice."
-        )
-        die("\n".join(detail))
 
     try:
         import fitz  # pymupdf
@@ -537,9 +553,9 @@ def main(argv):
                                 os.path.splitext(os.path.basename(pptx))[0] + ".pdf")
         try:
             if os.path.abspath(pdf_dest) != os.path.abspath(pdf):
-                os.replace(pdf, pdf_dest)
-        except OSError:
-            pdf_dest = pdf                 # couldn't move (odd mount/permissions) — it stays in out/
+                shutil.move(pdf, pdf_dest)   # move, not replace: the source is a temp dir that may
+        except OSError:                      # sit on a different filesystem
+            pdf_dest = pdf                   # couldn't move (odd mount/permissions)
 
     # Self-contained flip-through viewer — parked BESIDE the .pptx (deck root), same as the PDF, so
     # the user finds it without digging into render/. It references the PNGs through the render subdir

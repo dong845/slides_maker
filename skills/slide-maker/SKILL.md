@@ -1365,12 +1365,14 @@ A few rules that matter (see `references/design-principles.md`):
   the mechanical layout faults: it runs in-process in milliseconds, *before* the slow render +
   visual-critic round, and walks **every** shape — however it was placed, the grid helpers or raw
   coordinates — reasoning about each label's **ink** rectangle (where the glyphs actually land), so it
-  stays quiet on the generously-sized frames real builds use. It **hard-fails (CRITICAL)** on five
+  stays quiet on the generously-sized frames real builds use. It **hard-fails (CRITICAL)** on six
   things: content (text ink / a card / a non-bleed image) **off-canvas**, text **overflowing** a visible
-  box, **text-on-text** overlap, **CJK runs with no `<a:ea>` font** (`CJK_NO_EA` — set
+  box, **text-on-text** overlap, a **connector routed through a block** (`CONNECTOR_IN_BOX`), **CJK runs with no `<a:ea>` font** (`CJK_NO_EA` — set
   `deckkit.EAFONT` before building; catching it here saves the render round-trip lint_deck previously
   needed), and **display numerals in an OLD-STYLE figure face** (`OLDSTYLE_FIGURES` — Georgia,
-  Palatino, Baskerville, Constantia… set digits at mixed heights so a big number visibly bobs; route
+  Hoefler Text, Constantia… set digits at mixed heights so a big number visibly bobs; **which faces
+  qualify is MEASURED from the installed font**, not taken from a list, so a face whose digits are
+  actually lining is never penalised; route
   the numeral run to a lining face. Scoped so it only fails the real defect: the run must be ≥20pt
   **and mostly digits**. Running prose stays quiet, and a heading that merely contains a year
   ("2026 Roadmap") gets a WARN, not a build failure); it **warns** on a label/figure **escaping its card**, a **single

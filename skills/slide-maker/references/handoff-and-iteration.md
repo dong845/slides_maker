@@ -35,6 +35,8 @@ under 2s). So for every round after the first, re-render with **`--fast`**: it d
 fingerprint against the previous run and re-renders only what changed, subsetting the pptx to those
 slides. An 18-slide deck goes from ~12s to ~4.7s for a one-slide edit, and a no-op round costs 0.07s.
 The PNGs it writes are byte-identical to a full render, so the lint and the critic are unaffected.
+`--fast` and `--deliverables` are mutually exclusive (a subset render has no whole-deck PDF): use
+`--fast` for the iteration rounds, then one plain `--deliverables` run for the hand-off.
 It falls back to a full render, with the reason printed, whenever the page mapping could be wrong
 (slide count changed, every slide changed, auto slide-number fields, no cache) — a slow render is an
 acceptable outcome; a stale PNG that a critic then signs off on is not.

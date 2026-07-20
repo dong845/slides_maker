@@ -234,12 +234,61 @@ DISPLAY = None            # optional DISPLAY/title font (Latin) — when set, ti
 # It must be a LINING-figure face: those components render nothing but a number, so an old-style
 # default guarantees the wobble every time — and, since v3.6.0, trips the deck's own build gate.
 # Georgia's italic display look is still available to any caller that passes serif="Georgia".
-# Faces that ship OLD-STYLE (text) figures by default — digits at mixed heights. Shared by the
-# numeral-face resolver below and by lint_layout's OLDSTYLE_FIGURES check.
+# Faces BELIEVED to ship old-style (text) figures. This is only a FALLBACK: whenever the font file
+# can be found we MEASURE it instead, because a hand-maintained list is wrong sooner or later — this
+# one shipped claiming Palatino has text figures when the installed Palatino measures as lining
+# (digit top-spread 2/100pt), which would have force-substituted a deliberately chosen face and
+# hard-failed a hero numeral for a defect that does not exist.
 _OLDSTYLE_FIGURE_FACES = {
-    "Georgia", "Baskerville", "Palatino", "Palatino Linotype", "Book Antiqua",
-    "Constantia", "Hoefler Text", "Calluna", "Candara",
+    "Georgia", "Book Antiqua", "Constantia", "Hoefler Text", "Calluna", "Candara",
 }
+_FIGURE_STYLE_CACHE = {}
+
+
+def _font_file(face):
+    """Best-effort path to an installed font file for `face` (macOS/Linux/Windows dirs)."""
+    import glob
+    import os
+    roots = ("/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Library/Fonts",
+             os.path.expanduser("~/Library/Fonts"), "/usr/share/fonts", "/usr/local/share/fonts",
+             os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts"))
+    stem = face.replace(" ", "")
+    for root in roots:
+        for ext in ("ttf", "ttc", "otf", "TTF", "TTC", "OTF"):
+            for cand in (face, stem):
+                hits = glob.glob(os.path.join(root, "{}.{}".format(cand, ext)))
+                if hits:
+                    return hits[0]
+    return None
+
+
+def has_oldstyle_figures(face):
+    """True when `face`'s digits sit at MIXED heights (old-style / text figures).
+
+    Measured from the installed font when it can be located — digits in a lining face share one
+    baseline and one height, so the bounding-box spread across 0-9 is ~0. Falls back to the curated
+    list only for fonts this machine does not have.
+    """
+    if not face:
+        return False
+    if face in _FIGURE_STYLE_CACHE:
+        return _FIGURE_STYLE_CACHE[face]
+    verdict = None
+    path = _font_file(face)
+    if path:
+        try:
+            from PIL import ImageFont
+            f = ImageFont.truetype(path, 100)
+            boxes = [f.getbbox(d) for d in "0123456789"]
+            spread = max(max(b[1] for b in boxes) - min(b[1] for b in boxes),
+                         max(b[3] for b in boxes) - min(b[3] for b in boxes))
+            verdict = spread > 8          # ~8% of the em: real text figures spread 18-23
+        except Exception:
+            verdict = None
+    if verdict is None:
+        verdict = face in _OLDSTYLE_FIGURE_FACES
+    _FIGURE_STYLE_CACHE[face] = verdict
+    return verdict
 # Fallback for a digits-only run when the deck's own display face has old-style figures. A SERIF
 # with lining figures, so an editorial deck keeps its register — swapping to a grotesque would
 # silently restyle four shipped presets that deliberately choose a serif display face.
@@ -256,7 +305,7 @@ def numeral_face(preferred=None):
     renders nothing but digits has no legitimate use for old-style figures.
     """
     cand = preferred or DISPLAY or FONT
-    if cand and cand not in _OLDSTYLE_FIGURE_FACES:
+    if cand and not has_oldstyle_figures(cand):
         return cand
     return NUMERAL_SERIF
 
@@ -832,12 +881,13 @@ def stat_row(slide, x, y, w, items, *, ink=DEEP, accent=MAGENTA, serif=None, div
         cx = x + i * (cw + gap)
         fsz = fig_size
         mruns = [(str(fig), True)] + ([(" " + str(unit), True)] if unit else [])
-        nat = _natural_width_in(mruns, fsz, serif)
+        _nface = numeral_face(serif)      # digits-only figure: guarantee lining, keep the register
+        nat = _natural_width_in(mruns, fsz, _nface)
         if nat > cw:                              # the "-0.9 million" mid-number split bug
             fsz = max(15.0, fig_size * cw / nat * 0.98)
-        runs = [(str(fig), fsz, ink, True, False, serif)]
+        runs = [(str(fig), fsz, ink, True, False, _nface)]
         if unit:
-            runs.append((" " + str(unit), fsz * 0.42, accent, True, False, serif))
+            runs.append((" " + str(unit), fsz * 0.42, accent, True, False, _nface))
         tb = text(slide, cx, y, cw, 0.7, [runs], space_after=0)
         tb.text_frame.word_wrap = False
         cap_h = max(0.4, measure_text([(str(label), False)], cw, 12, pad=0.04))
@@ -4785,14 +4835,31 @@ _OLDSTYLE_DISPLAY_PT = 20.0
 # This separates "596,513" / "¥4,508,824,075" (the defect: a big number visibly bobbing) from
 # "2026 Roadmap" (an ordinary title that merely contains a year, where old-style figures are a
 # normal typographic choice). Hard-failing the latter would break perfectly good decks.
-_OLDSTYLE_NUMERAL_SHARE = 0.4
+# Measured separation on a spread of real strings: word-bearing headings top out around 0.5
+# ("2026年展望" = 0.40, "Q3 results" = 0.30), while genuine display numerals sit at 0.86-1.00.
+# 0.6 falls in the empty gap, so neither class lands on the boundary.
+_OLDSTYLE_NUMERAL_SHARE = 0.6
 
 
 def _digit_share(txt):
-    body = [c for c in (txt or "") if not c.isspace()]
-    if not body:
-        return 0.0
-    return sum(c.isdigit() for c in body) / float(len(body))
+    """Fraction of a run that is DIGITS, weighted by visual width.
+
+    A CJK glyph occupies about twice the advance of a Latin one, so counting characters raw makes
+    the same heading read as numeral-dominant in Chinese and word-dominant in English: "2026
+    Roadmap" scored 0.36 (a warning) while "2026 年路线图" scored 0.50 (a build failure). Counting
+    CJK at 2 restores the intent — the metric is asking "is this mostly a number?", which is a
+    question about what the eye sees, not about codepoints.
+    """
+    total = 0.0
+    digits = 0.0
+    for c in (txt or ""):
+        if c.isspace():
+            continue
+        w = 2.0 if _has_cjk(c) else 1.0
+        total += w
+        if c.isdigit():
+            digits += w
+    return (digits / total) if total else 0.0
 
 _LINT_LINE_H = 1.20     # DETECTION line-height factor — the real LibreOffice render height (≈1.2×em).
                         # Deliberately > the 1.12 PLACEMENT estimate the measure_*/vstack helpers use:
@@ -5015,7 +5082,7 @@ def lint_layout(prs, *, verbose=True, strict=False, overlap_tol=0.05, escape_tol
                 for run in para.runs:
                     try:
                         nm = (run.font.name or "").strip()
-                        if nm not in _OLDSTYLE_FIGURE_FACES:
+                        if not has_oldstyle_figures(nm):
                             continue
                         if not any(ch.isdigit() for ch in (run.text or "")):
                             continue

@@ -559,7 +559,9 @@ def _oldstyle_figures():
             return True
     # the defect: a big number whose digits visibly bob
     assert _lint("Georgia", 58, "596,513"), "display numeral in Georgia must FAIL"
-    assert _lint("Palatino", 34, "2026"), "display numeral in Palatino must FAIL"
+    # NB: NOT Palatino — the installed Palatino measures as LINING (digit spread ~2/100pt), which
+    # is exactly why the blacklist was replaced by measurement. Hoefler Text really is old-style.
+    assert _lint("Hoefler Text", 34, "2026"), "display numeral in Hoefler Text must FAIL"
     assert _lint("Georgia", 62, "\u00a54,508,824,075"), "currency hero numeral must FAIL"
     # NOT the defect: body prose, and headings that merely contain a digit. Blocking these would
     # hard-fail ordinary decks - a title like "2026 Roadmap" is a normal typographic choice.
@@ -589,6 +591,33 @@ def _oldstyle_figures():
         tb = s.shapes.add_textbox(dk.Inches(1), dk.Inches(1), dk.Inches(6), dk.Inches(1))
         r = tb.text_frame.paragraphs[0].add_run(); r.text = "1234"; r.font.name = "Georgia"
     assert not _lint_prs(_unsized), "unsized Georgia digits must PASS"
+
+    # Every shipped preset must survive its OWN numeral components. Four of them set a Georgia
+    # display face, and stat_row/kpi_card/scorecard previously hard-failed on their own output.
+    import presets as _pr
+    _saved = (dk.DISPLAY, dk.FONT)
+    for _nm in ("glassmorphism", "swiss", "editorial_paper", "editorial_report", "risograph",
+                "memphis", "brutalist", "blueprint", "ink_wash", "eastern_traditional",
+                "consulting", "dark_tech", "luxury_dark", "museum_memorial"):
+        _p = _pr.preset(_nm)
+        dk.DISPLAY = _p.get("display"); dk.FONT = _p.get("font") or dk.FONT
+        def _numerals(s, _p=_p):
+            dk.big_numeral(s, 0.6, 0.6, "03")
+            dk.stat_row(s, 0.6, 2.0, 8.8, [("596,513", "", "returns"), ("42%", "", "share")])
+            dk.scorecard(s, 0.6, 3.6, 2.2, 1.2, "REVENUE", "2,026")
+            dk.kpi_card(s, 3.2, 3.6, 2.2, 1.2, "USERS", "1,634")
+            dk.ghost_numeral(s, 6.0, 3.6, 3.0, 1.4, "07")
+        assert not _lint_prs(_numerals), "preset %s must survive its own numeral components" % _nm
+    dk.DISPLAY, dk.FONT = _saved
+
+    # The digit-share metric must not invert on CJK: a year inside a Chinese heading is a heading.
+    assert dk._digit_share("2026 Roadmap") < dk._OLDSTYLE_NUMERAL_SHARE
+    assert dk._digit_share("2026年展望") < dk._OLDSTYLE_NUMERAL_SHARE, "CJK heading must not read as a numeral"
+    assert dk._digit_share("2026 로드맵") < dk._OLDSTYLE_NUMERAL_SHARE
+    assert dk._digit_share("596,513") >= dk._OLDSTYLE_NUMERAL_SHARE
+    # Figure style is MEASURED from the installed font, not asserted from a list.
+    assert not dk.has_oldstyle_figures("Times New Roman")
+    assert dk.numeral_face("Palatino") == "Palatino", "a lining face must not be substituted"
 ok("OLDSTYLE_FIGURES gate (display numerals in text-figure faces fail; body prose passes)", _oldstyle_figures)
 
 print(f"\nsmoke_deckkit: {len(fails)} failure(s)" + ("" if not fails else " — " + "; ".join(n for n, _ in fails)))

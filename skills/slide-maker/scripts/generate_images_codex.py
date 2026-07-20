@@ -137,8 +137,11 @@ def main():
     args = ap.parse_args()
 
     if not args.dry_run and not _have_codex():
-        print("error: the `codex` CLI is not installed / on PATH. Run `codex login` first, or use "
-              "scripts/generate_images_openai.py with OPENAI_API_KEY instead.", file=sys.stderr)
+        print("error: the `codex` CLI is not installed / on PATH. Install it and run `codex login` "
+              "— that path is free on the user's existing subscription.\n"
+              "Do NOT silently switch to scripts/generate_images_openai.py: that path is METERED "
+              "(real money per image) and needs the user's explicit go-ahead first — see the "
+              "BILLING GATE in references/image-generation.md.", file=sys.stderr)
         return 2
 
     manifest = Path(args.manifest)
