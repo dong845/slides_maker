@@ -9,6 +9,8 @@ section is a distilled summary — the full notes live on the
 
 ## [Unreleased]
 
+## [3.5.0] - 2026-07-20
+
 ### Added — connectors dock on block edges (arrows never emerge from a block's centre)
 - **`edge_point(rect, toward)`** — the point where a line aimed at `toward` crosses a block's
   boundary; the primitive behind edge-docked arrows (optional `inset` for a standoff).
