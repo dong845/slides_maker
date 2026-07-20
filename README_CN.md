@@ -10,19 +10,18 @@
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-5b5bd6">
   <img alt="Output: editable PPTX" src="https://img.shields.io/badge/output-native_editable_PPTX-0f766e">
   <a href="https://skillhub.cloud.tencent.com/skills/slides-maker"><img alt="腾讯 SkillHub" src="https://img.shields.io/badge/%E8%85%BE%E8%AE%AF_SkillHub-%E7%AB%8B%E5%8D%B3%E8%8E%B7%E5%8F%96-2f6feb"></a>
-  <a href="https://xiaping.coze.com/skill/c0136d99-50d0-4f05-909a-f78fa4be7104"><img alt="Coze 扣子" src="https://img.shields.io/badge/Coze_%E6%89%A3%E5%AD%90-%E7%AB%8B%E5%8D%B3%E8%8E%B7%E5%8F%96-6653f5"></a>
 </p>
 
 <p align="center">
   <a href="https://clawhub.ai/dong845/skills/slide-maker"><img alt="ClawHub" src="docs/badges/clawhub_cn.svg"></a>
-  <a href="https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt"><img alt="ChatGPT GPT 商店" src="https://img.shields.io/badge/GPT_Store-slide--maker_GPT-10a37f"></a>
+  <a href="https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt"><img alt="ChatGPT GPT 商店" src="https://img.shields.io/badge/GPT_Store-slide--maker_(addsum_studio)-10a37f"></a>
 </p>
 
 <p align="center"><sub><a href="https://addsum.top/cn/"><strong>增和科技 Addsum</strong></a> 出品 · 免费开源</sub></p>
 
 > **一个会读你真实材料、绝不编造数字、输出真正可编辑的原生 PowerPoint、并且要等独立评审点头才交付的 AI 做 PPT 工具。**
 
-在 Codex 或 Claude Code 里聊几句——或者**零安装**,直接在 ChatGPT 里用 [slide-maker GPT](https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt)。它不是一句 prompt 瞎猜幻灯片:一支各司其职的 **agent 团队**先读懂你的论文 / 代码 / 文档(没有材料就先联网调研),规划故事线,围绕它设计每一页,生成一份真正的 `.pptx`,再交给独立评审过一遍,才交到你手上。
+在 Codex 或 Claude Code 里聊几句——或者**零安装**,直接在 ChatGPT 里用 [slide-maker (addsum studio)](https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt)。它不是一句 prompt 瞎猜幻灯片:一支各司其职的 **agent 团队**先读懂你的论文 / 代码 / 文档(没有材料就先联网调研),规划故事线,围绕它设计每一页,生成一份真正的 `.pptx`,再交给独立评审过一遍,才交到你手上。
 
 多数 AI-PPT 工具都在拼"几秒出漂亮 PPT"。slide-maker 优化的是——当这份 deck 是**你要拿去讲、要负责**的时候——真正重要的四件事:
 
@@ -34,7 +33,7 @@
 <sub>原生可编辑 PPTX 如今已是基本盘(不少工具都能做)。稀缺的是**可编辑 + 溯源不编造 + 审校过 + 每 deck 定制**——四者合一,在一份归你所有的文件里。诚实的边界:没有零配置云端、没有分享链接、没有动态网页背景——它做的是一个**本地生成的文件**,能在真 PowerPoint/Keynote 里干净打开、编辑。详见[不一样在哪](#slide-maker-不一样在哪)。</sub>
 
 > ### 🤖 新:在 ChatGPT 里直接用——零安装,GPT 商店即开即用
-> **[slide-maker GPT →](https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt)** 继承了本技能的能力,**用 ChatGPT 做幻灯片完全可行**:点开链接,或在 **GPT 商店**搜索 **"slide-maker GPT"**,丢给它一篇论文 / 一份文档 / 一个主题就能出 deck。(下方的本地技能仍是完整体验。)
+> **[slide-maker (addsum studio) →](https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt)** 继承了本技能的能力,**用 ChatGPT 做幻灯片完全可行**:点开链接,或在 **GPT 商店**搜索 **"slide-maker (addsum studio)"**,丢给它一篇论文 / 一份文档 / 一个主题就能出 deck。(下方的本地技能仍是完整体验。)
 
 近期更新:现在还能读 **Word、Excel、CSV、图片、视频/音频**(一律先精确提取——绝不从像素里猜数字),整本**书或超长 PDF** 也会按你这份 deck 的目的做章节取舍,而不是走马观花。
 
@@ -202,12 +201,11 @@ slide-maker 不是一个 prompt 包办一切，而是一组各有专职的 **age
 
 ### 第一步：安装
 
-> **⚡ 什么都不想装？直接在 ChatGPT 里用 [slide-maker GPT](https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt)** ——
-> 它继承了本技能的能力，去 **GPT 商店**搜 "slide-maker GPT" 即可开始做幻灯片，零配置；下面的本地安装仍是完整体验。
+> **⚡ 什么都不想装？直接在 ChatGPT 里用 [slide-maker (addsum studio)](https://chatgpt.com/g/g-6a5b41f0a33881918be69e8b10f8b4ff-slide-maker-gpt)** ——
+> 它继承了本技能的能力，去 **GPT 商店**搜 "slide-maker (addsum studio)" 即可开始做幻灯片，零配置；下面的本地安装仍是完整体验。
 >
 > **更喜欢从市场一键获取？slide-maker 也已上架
-> [腾讯 SkillHub](https://skillhub.cloud.tencent.com/skills/slides-maker)、
-> [Coze 扣子 · 小瓶智能体](https://xiaping.coze.com/skill/c0136d99-50d0-4f05-909a-f78fa4be7104) 和
+> [腾讯 SkillHub](https://skillhub.cloud.tencent.com/skills/slides-maker) 和
 > [ClawHub](https://clawhub.ai/dong845/skills/slide-maker)——最后这个可直接装进
 > [OpenClaw](https://openclaw.ai)，OpenClaw 用户同样可以使用 slide-maker** ——
 > 按对应页面的说明获取即可，然后回来装下面的运行依赖（无论哪种装法都需要）。
