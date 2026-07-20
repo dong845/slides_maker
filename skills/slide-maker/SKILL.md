@@ -1579,6 +1579,18 @@ loop starts mostly geometry-clean. `lint_deck.py` below then re-checks that geom
 as a backstop and adds the render/parse-only faults; the rest is what needs real pixels (crop,
 contrast, balance, a tofu glyph, text on a busy image), which only the render shows.
 
+**Iterating on a deck you already rendered? Add `--fast`.** `render_deck … --fast` fingerprints
+every slide (its XML + rels + the bytes of the media it references, mixed with a deck-global digest
+covering the theme/master/layouts/canvas size) against the previous run, then re-renders **only the
+slides that changed** — it subsets the pptx to those slides, converts that, and overwrites just their
+PNGs. Measured on an 18-slide deck: a full render is ~12s, a one-slide change is **~4.7s**, and a run
+where nothing changed is **0.07s**. Output is byte-identical to a full render (verified), so the
+critic and the render-time lint see exactly what they would have seen anyway. It falls back to a full
+render — and says why — whenever the mapping could be wrong: slide count changed, every slide changed,
+the deck uses auto slide-number fields, or there is no cache. **Use it for the actor-critic fix rounds
+and for post-delivery tweaks** ("change slide 7 to a chart"); use a plain full render for the first
+render of a deck and whenever you pass `--deliverables`.
+
 First **render and look** (`bash scripts/render_deck.sh <deck.pptx>` → one PNG per
 slide). python-pptx writes blind — overflow, low contrast, a callout on the footer,
 or a missing glyph only show up in the image. Fix mechanical issues and re-render.
@@ -2123,7 +2135,11 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   any-language-safe) **and the build-time geometry gate** (`lint_layout(prs, strict=True)` — run before `prs.save()`;
   the in-process pre-render net for overflow/off-canvas/text-overlap/card-escape/footer/off-centre — plus
   `fit_text_size`); the build's source of truth. Full signatures in its docstrings.
-- `render_deck.py` — pptx → one PNG per slide (verify + critic loop). **`--deliverables` (alias
+- `render_deck.py` — pptx → one PNG per slide (verify + critic loop). **`--fast` re-renders only the
+  slides whose content changed since the last run** (per-slide fingerprint + deck-global digest,
+  cached in `render/.render-cache.json`; subsets the pptx, output byte-identical to a full render,
+  auto-falls-back to full whenever the page mapping could be wrong) — ~12s → ~4.7s for a one-slide
+  edit, 0.07s when nothing changed. **`--deliverables` (alias
   `--final`) additionally parks the PDF beside the pptx and writes `viewer.html`, a zero-dependency
   flip-through preview** — off by default, so an in-progress deck never accumulates stale copies;
   run it at hand-off once the user confirms the deck is final (PNGs always stay in `render/`); finds LibreOffice cross-platform

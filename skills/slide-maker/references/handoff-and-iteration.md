@@ -28,6 +28,17 @@ and both are avoidable:
   meeting, so the meeting confirms rather than debates" (the consulting prewire norm; out of
   scope for the builder, high value for the presenter).
 
+## Iterating fast after delivery
+Post-delivery tweaks are conversational — "make slide 7 a chart", "shrink that title" — and the cost
+of each round is almost entirely the render, not the build (python-pptx rebuilds an 18-slide deck in
+under 2s). So for every round after the first, re-render with **`--fast`**: it diffs a per-slide
+fingerprint against the previous run and re-renders only what changed, subsetting the pptx to those
+slides. An 18-slide deck goes from ~12s to ~4.7s for a one-slide edit, and a no-op round costs 0.07s.
+The PNGs it writes are byte-identical to a full render, so the lint and the critic are unaffected.
+It falls back to a full render, with the reason printed, whenever the page mapping could be wrong
+(slide count changed, every slide changed, auto slide-number fields, no cache) — a slow render is an
+acceptable outcome; a stale PNG that a critic then signs off on is not.
+
 ## What the deliverable folder contains
 The deck + `render/` PNGs, the build script (source of truth), the speaker-notes source,
 `assets/` (incl. `sourced/credits.txt` when sourced photos exist),
