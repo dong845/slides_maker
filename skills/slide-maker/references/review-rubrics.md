@@ -480,7 +480,13 @@ Score each dimension; cite specific slides.
    placed **whole** and legible at the deck's read distance? *(Named `data-viz.md` anti-patterns to catch
    by name: cropped-axis drama · off-zero diverging neutral · **a `choropleth` that shades raw COUNTS
    instead of a rate/per-capita** — the map just re-drawing population — · a map used for a handful of
-   regions a bar would serve better · a blank region read as zero when it is NO DATA.)* Do `scorecard`/`change_stat` **▲/▼ deltas
+   regions a bar would serve better · a blank region read as zero when it is NO DATA · **a stacked chart
+   that misleads** — a 100%-stack hiding a collapsing total, a stack with negative segments, or clustered
+   bars where composition-over-time wants a stacked/area chart · **a `bullet_graph`/KPI dashboard with no
+   real target line** (or a lower-is-better KPI shaded the wrong way — `higher_better=False`) · **a
+   `range_bars` used where a point estimate (`dot_strip`) is truer**.)* Note: the single-highlight rule
+   below is CLUSTERED-chart only — a **stacked/area composition** chart correctly keeps every series its
+   own colour so the mix reads; don't flag that as a missing highlight. Do `scorecard`/`change_stat` **▲/▼ deltas
    / before→after** carry the **right polarity** (green for the genuinely-good direction)? Are
    **formulas typeset** (`equation_native` editable, or `equation_png` for 2-D), **never cropped bitmaps** — transcribed from a paper or
    *derived faithfully from code* (a code-derived formula must express what the code computes)? Are

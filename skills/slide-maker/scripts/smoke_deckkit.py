@@ -251,9 +251,11 @@ ok("lint_layout CONNECTOR_IN_BOX (centre-anchor flags; edge-docked/covered silen
 def _svg_sanitizer():
     import time as _t
     import icons as _ic
-    # dangerous vectors removed, legit drawing + internal refs kept
+    # dangerous vectors removed, legit drawing + internal refs kept. NOTE: the file:// URL is a benign
+    # SENTINEL ("file:///SANITIZED"), not a real system path — the assertion below only checks that the
+    # `file://` reference is stripped, so no real sensitive local path needs to ship in this fixture.
     dirty = ('<svg onload="x()"><script>fetch("//e")</script>'
-             '<foreignObject><iframe src="file:///etc/passwd"/></foreignObject>'
+             '<foreignObject><iframe src="file:///SANITIZED"/></foreignObject>'
              '<image href="http://evil/x"/><style>@import url(http://evil)</style>'
              '<path d="M0 0h9"/><use href="#g"/></svg>')
     c = _ic.sanitize_svg(dirty).lower()
@@ -297,6 +299,20 @@ def _choropleth():
     lo, hi = -12, 20                                          # div zero-centre check (helper is offline)
     neg, pos = _m._div_poles("#1F5FA8"); assert neg != pos, "diverging poles must be distinct"
 ok("maps.choropleth (projection + region-match + render)", _choropleth)
+
+# --- composition/target/range components: stacked+area charts, bullet_graph (per-row scale), range_bars ---
+def _comp_components():
+    p = dk.blank_deck(10, 5.625); s = dk.add_slide(p)
+    ser = [("A", [3, 4, 5]), ("B", [2, 3, 2])]
+    for k in ("column_stacked", "column_stacked_100", "area_stacked"):     # the new native KIND entries resolve
+        dk.native_chart(dk.add_slide(p), 0.5, 0.5, 4, 2.5, ["Q1", "Q2", "Q3"], ser, kind=k, legend=True)
+    yb = dk.bullet_graph(s, 0.5, 0.5, 4.6, [("CSAT", 4.1, 4.5), ("Rev", 82, 90), ("Churn", 6, 5)],
+                         higher_better=True)                                 # mixed units → per-row scale
+    assert yb > 0.5, "bullet_graph returns a bottom y"
+    yb2 = dk.range_bars(s, 5.0, 0.5, 4.4, [("DCF", 8, 12, 10), ("Comps", 9, 14, 11)])
+    assert yb2 > 0.5, "range_bars returns a bottom y"
+    assert not [f for f in dk.lint_layout(p, verbose=False) if f[1] == "CRITICAL"], "clean placement lints clean"
+ok("native_chart stacked/area + bullet_graph (per-row) + range_bars", _comp_components)
 
 ok("tint mixes toward white", lambda: dk.tint("1B7F5C", 0.14))
 ok("kpi_card (delta + strip, tall enough)", lambda: dk.kpi_card(

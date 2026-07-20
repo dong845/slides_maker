@@ -646,6 +646,11 @@ Do not just skim for the first few obvious issues. Run these passes:
    - **Designed plots & surface patterns (correct + legible):** a generated chart must
      **single-highlight** the one series that matters and **carry a stated so-what** (`takeaway_rail`)
      — a chart with no conclusion, or with every series saturated, is a finding; place it *whole*.
+     (Carve-out: single-highlight is for CLUSTERED charts — a **stacked/area composition** chart
+     correctly keeps every series its own colour so the mix reads; there the finding to name is a
+     stacked chart that **misleads** — a 100%-stack hiding a collapsing total, negative segments, or
+     clustered bars where composition-over-time wants a stack — per `data-viz.md`. A KPI dashboard
+     with no target line wants `bullet_graph`.)
      **Glassmorphism only on a dark / glowing / photo base** — a glass card on a light slide is
      near-invisible (flag it); a **photo scrim aimed at the text zone**, not a flat full-slide wash
      that greys the whole image. Flag a `big_numeral`/`scorecard` value that wrapped or overran, and

@@ -2592,9 +2592,17 @@ def native_chart(slide, x, y, w, h, categories, series, *, kind="line_markers",
     for CJK; a Cyrillic/Greek deck's FONT already covers those).
 
     `series` = [(name, [v, v, ...]), ...]; `categories` = the x labels. Themed to the deck (palette,
-    dark). `kind`: 'line' | 'line_markers' | 'column' | 'bar'. `highlight` = index of the one series
-    to keep in the accent (others dropped to grey). For a two-scale 'A↑ vs B↓' chart use
-    `native_dual_axis` instead.
+    dark). `kind`: 'line' | 'line_markers' | 'column' | 'bar' — plus the **composition** kinds for a
+    total AND its component mix (e.g. revenue mix across quarters): 'column_stacked' |
+    'column_stacked_100' (share of 100%) | 'bar_stacked' | 'bar_stacked_100' | 'area' | 'area_stacked' |
+    'area_stacked_100'. On a stacked kind each series gets its OWN palette colour — omit `highlight`
+    (which greys the rest) so the mix reads; use '…_100' when the SHARE matters more than the total
+    (but keep the total visible elsewhere — a 100%-stack can hide a collapsing total). Stacked/area
+    kinds assume **NON-NEGATIVE, same-sign parts of ONE whole** (a negative segment crosses zero and
+    the height stops meaning the total — a printed notice fires) and read cleanly to **~4–5 series**
+    (more reuse palette colours and blur — group the tail into 'Other'). `highlight` = index of the
+    one series to keep in the accent (others dropped to grey) — for CLUSTERED charts, not stacked. For
+    a two-scale 'A↑ vs B↓' chart use `native_dual_axis` instead.
 
     **`zero_base=True` (default) forces a ZERO value-axis baseline for column/bar charts** so bar
     LENGTH encodes the value itself, not ``value − auto_min``. Without it PowerPoint auto-crops the
@@ -2610,11 +2618,25 @@ def native_chart(slide, x, y, w, h, categories, series, *, kind="line_markers",
     from pptx.chart.data import CategoryChartData
     from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
     KIND = {"line": XL_CHART_TYPE.LINE, "line_markers": XL_CHART_TYPE.LINE_MARKERS,
-            "column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED}
+            "column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
+            # composition-over-time / part-to-whole (a total AND its component mix):
+            "column_stacked": XL_CHART_TYPE.COLUMN_STACKED,
+            "column_stacked_100": XL_CHART_TYPE.COLUMN_STACKED_100,
+            "bar_stacked": XL_CHART_TYPE.BAR_STACKED,
+            "bar_stacked_100": XL_CHART_TYPE.BAR_STACKED_100,
+            "area": XL_CHART_TYPE.AREA, "area_stacked": XL_CHART_TYPE.AREA_STACKED,
+            "area_stacked_100": XL_CHART_TYPE.AREA_STACKED_100}
     cd = CategoryChartData()
     cd.categories = [str(c) for c in categories]
     for name, vals in series:
         cd.add_series(str(name), tuple(vals))
+    # a STACKED/area chart's height encodes the TOTAL — negative segments cross zero and the stack no
+    # longer reads as a sum, so the total is misrepresented. Warn (don't block): signed data wants a
+    # clustered or diverging form.
+    if kind.startswith(("column_stacked", "bar_stacked", "area")) and any(
+            isinstance(v, (int, float)) and v < 0 for _, vals in series for v in vals):
+        print("[deckkit] native_chart: a STACKED/area chart with NEGATIVE values misrepresents the total "
+              "(segments cross zero) — use a clustered ('column'/'bar') or a diverging form for signed data.")
     gf = slide.shapes.add_chart(KIND.get(kind, XL_CHART_TYPE.LINE_MARKERS),
                                 Inches(x), Inches(y), Inches(w), Inches(h), cd)
     ch = gf.chart
@@ -2622,7 +2644,7 @@ def native_chart(slide, x, y, w, h, categories, series, *, kind="line_markers",
                  legend=legend, value_fmt=value_fmt, smooth=smooth, kind=kind)
     # honest magnitude: a column/bar's LENGTH must encode value, so pin the axis to 0 (a non-zero
     # auto-min makes a bar encode value−min — the 'cropped-axis drama' that misreads magnitude).
-    if zero_base and kind in ("column", "bar"):
+    if zero_base and kind in ("column", "bar", "column_stacked", "bar_stacked"):
         try:
             allv = [float(v) for _, vals in series for v in vals]
             if allv and min(allv) >= 0:
@@ -2691,7 +2713,7 @@ def _theme_chart(ch, series, *, palette, dark, font, highlight, legend, value_fm
             ser.marker.format.line.color.rgb = col
         except Exception:
             pass
-        if kind in ("column", "bar"):
+        if kind and (kind.startswith("column") or kind.startswith("bar") or kind.startswith("area")):
             try:
                 ser.format.fill.solid(); ser.format.fill.fore_color.rgb = col
             except Exception:
@@ -4451,6 +4473,113 @@ def segmented_bar(slide, x, y, w, h, parts, *, labels=None, accents=None, show_p
         leaderboard(slide, x, yb + 0.12, min(w, 4.2), dropped, row_h=0.34, gap=0.06)  # never lose the sliver's %
         yb = yb + 0.12 + len(dropped) * 0.40
     return yb
+
+
+def bullet_graph(slide, x, y, w, rows, *, bands=(0.6, 0.85), accent=None, row_h=0.5,
+                 label_w=None, value_w=0.95, gap=0.14, ink=None, band_colors=None,
+                 target_c=None, font=None, unit="", higher_better=True):
+    """Stephen Few's BULLET GRAPH — a compact 'actual vs TARGET, in context' KPI bar, one row per metric.
+    Each row scales to its OWN maximum (KPIs carry different units, so a shared axis would crush the
+    small ones — CSAT 0–5 next to Revenue 0–150), with qualitative BANDS (poor / ok / good) shaded
+    behind a MEASURE bar (accent) to ``actual`` and a TARGET tick — so gap-to-goal AND 'which band it
+    lands in' read as geometry, not a caption.
+
+    ``rows = [(label, actual, target), ...]`` — or ``(label, actual, target, [b1, b2])`` with per-row
+    ABSOLUTE band thresholds. Otherwise ``bands`` gives the zone edges as FRACTIONS of each row's max
+    (default ``(0.6, 0.85)`` → <60% poor / 60–85% ok / >85% good); ``bands=None`` draws a plain track.
+    ``higher_better=False`` reverses the band shading for 'lower is better' KPIs (churn, latency).
+    Returns the bottom y. The dashboard bar ``scorecard``/``meter_bar`` can't give — those carry a
+    value(+delta) but no plan line and no thresholds. Reuses ``axis_scale`` per row so the measure bar
+    always fits its track. Only reach for it when each KPI has a REAL target/plan line (without one use
+    ``scorecard``/``meter_bar``). Assumes non-negative actual/target; on a DARK deck pass ``band_colors``
+    (light-gray defaults wash out), ``ink`` and ``target_c``. See references/data-viz.md (IBCS plan-vs-actual)."""
+    acc = accent if accent is not None else BLUE
+    ink_ = ink if ink is not None else DEEP
+    tc = target_c if target_c is not None else ink_
+    lw = label_w if label_w is not None else min(2.6, max(1.15, w * 0.24))
+    bx = x + lw
+    bw = w - lw - value_w
+    bc = list(band_colors or ["D8DBE2", "E6E9EE", "F2F4F7"])
+    if not higher_better:
+        bc = list(reversed(bc))
+    yy = y
+    for r in rows:
+        label, actual, target = str(r[0]), float(r[1]), float(r[2])
+        if len(r) > 3 and r[3]:
+            rb = [float(b) for b in r[3]]                     # per-row ABSOLUTE thresholds
+        elif bands is None:
+            rb = []                                           # plain track
+        else:
+            rb = [f * max(actual, target) for f in bands]     # fractions of THIS row's max
+        rb = sorted(rb)                                       # monotone zone edges (guard unsorted input)
+        rmax = (max([actual, target] + rb) * 1.12) or 1.0     # each row auto-scales to its own max
+        X, _ = axis_scale(bx, bw, 0.0, rmax)
+        cy = yy + row_h / 2.0
+        band_h = row_h * 0.72
+        by = cy - band_h / 2.0
+        edges = [0.0] + rb + [rmax]
+        for i in range(len(edges) - 1):
+            box(slide, X(edges[i]), by, max(0.02, X(edges[i + 1]) - X(edges[i])), band_h,
+                fill=bc[min(i, len(bc) - 1)])
+        mh = band_h * 0.42                                    # measure bar (accent), thinner, centred
+        box(slide, X(0.0), cy - mh / 2.0, max(0.02, X(actual) - X(0.0)), mh, fill=acc, round=True, r=mh * 0.35)
+        tk_h = band_h * 1.14                                  # target tick, taller than the bands
+        box(slide, X(target) - 0.012, cy - tk_h / 2.0, 0.024, tk_h, fill=tc)
+        text(slide, x, yy, lw - 0.1, row_h, [[(label, 11, ink_, True, False, font or FONT)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        text(slide, bx + bw + 0.06, yy, value_w - 0.08, row_h,
+             [[(f"{actual:g}{unit}", 11.5, ink_, True, False, font or FONT)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        yy += row_h + gap
+    return yy
+
+
+def range_bars(slide, x, y, w, rows, lo=None, hi=None, *, accent=None, row_h=0.5, label_w=None,
+               point_c=None, ink=None, label_c=None, font=None, unit="", show_ends=True):
+    """A 'FOOTBALL FIELD' — a value RANGE per category as floating min–max bars on ONE shared axis
+    (valuation / estimate / forecast ranges). ``rows = [(label, low, high[, point]), ...]``; an optional
+    ``point`` marks a base/mid case with a tick. ``lo``/``hi`` fix the shared scale (default: a padded
+    data range). Returns the bottom y. The RANGE cousin of ``dot_strip``/``dumbbell_board`` — it calls
+    the same ``axis_scale`` mapper, so value geometry never drifts between forms. This is the component
+    behind form-selection's recipe-only 'football field' note."""
+    acc = accent if accent is not None else BLUE
+    ink_ = ink if ink is not None else DEEP
+    lc = label_c if label_c is not None else MUTE
+    pc = point_c if point_c is not None else ink_
+    los = [float(r[1]) for r in rows]
+    his = [float(r[2]) for r in rows]
+    pts = [float(r[3]) for r in rows if len(r) > 3 and r[3] is not None]
+    dlo = min(los + pts) if (los or pts) else 0.0        # include base-case points so a tick never
+    dhi = max(his + pts) if (his or pts) else 1.0        # falls off the shared axis
+    pad = (dhi - dlo) * 0.10 or 1.0
+    lo = lo if lo is not None else dlo - pad
+    hi = hi if hi is not None else dhi + pad
+    lw = label_w if label_w is not None else min(2.6, max(1.15, w * 0.24))
+    bx = x + lw
+    bw = w - lw
+    X, draw_axis = axis_scale(bx, bw, lo, hi)
+    yy = y
+    bar_h = row_h * 0.44
+    for r in rows:
+        label, low, high = str(r[0]), float(r[1]), float(r[2])
+        point = r[3] if len(r) > 3 else None
+        cy = yy + row_h / 2.0
+        box(slide, X(low), cy - bar_h / 2.0, max(0.05, X(high) - X(low)), bar_h, fill=acc,
+            round=True, r=bar_h * 0.4)
+        if show_ends:
+            text(slide, X(low) - 0.92, cy - 0.13, 0.86, 0.26,
+                 [[(f"{low:g}{unit}", 9.5, lc, False, False, font or FONT)]],
+                 align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+            text(slide, X(high) + 0.06, cy - 0.13, 0.92, 0.26,
+                 [[(f"{high:g}{unit}", 9.5, lc, False, False, font or FONT)]],
+                 anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        if point is not None:
+            box(slide, X(float(point)) - 0.012, cy - bar_h * 0.92, 0.024, bar_h * 1.84, fill=pc)
+        text(slide, x, yy, lw - 0.1, row_h, [[(label, 11, ink_, True, False, font or FONT)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=0)
+        yy += row_h + 0.12
+    draw_axis(slide, yy + 0.03)
+    return yy + 0.32
 
 
 def meter_bar(slide, x, y, w, frac, *, label=None, value=None, value_unit=None,

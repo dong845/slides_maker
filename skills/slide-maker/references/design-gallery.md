@@ -97,8 +97,13 @@ legibility rules).
   (italic dekker under a headline), `year_badge` (chronology pill), `concept_equation` (ZINE =
   MAGAZINE word-equation headline).
 - **Micro-viz (cheap, legible):** `dot_meter` (●●○), `tradeoff_list` (green + / red −), `segmented_bar`
-  (cumulative 100%). For KPIs use `scorecard`/`stat_row`/`change_stat`; for ranked-to-chart use
-  `leaderboard`; for the so-what use `takeaway_rail`.
+  (cumulative 100%). For KPIs use `scorecard`/`stat_row`/`change_stat` — or **`bullet_graph`** (actual
+  vs TARGET with poor/ok/good bands, per-row scale so mixed units are fine — the status-dashboard bar);
+  for ranked-to-chart use `leaderboard`; for the so-what use `takeaway_rail`.
+- **Value on a shared axis:** `dot_strip` (points) · `dumbbell_board` (before→after) · **`range_bars`**
+  (a "football field" — floating min–max ranges per row, optional base-case tick) — all share one
+  `axis_scale`. Composition over time (a total AND its mix) → `native_chart(kind='column_stacked' /
+  '…_stacked_100' / 'area_stacked')` (real editable charts; `…_100` when the SHARE is the story).
 - **Decision & strategy furniture:** `eval_matrix` (options×criteria grid — `harvey_ball` fifths-fill
   glyphs or semantic ✓/◐/✕ marks, `recommend=` tints the winning column + a RECOMMENDED tab; the
   qualitative scoring `table` can't give) · `heat_matrix` (category×category grid coloured by value,

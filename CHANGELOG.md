@@ -9,6 +9,27 @@ section is a distilled summary — the full notes live on the
 
 ## [Unreleased]
 
+### Added — composition / target / range components (native, editable)
+- **`native_chart` stacked & area kinds** — `column_stacked` · `column_stacked_100` · `bar_stacked` ·
+  `bar_stacked_100` · `area` · `area_stacked` · `area_stacked_100`: real editable PowerPoint charts for
+  **composition over time** (a total AND its component mix — the most common exec chart the roster
+  couldn't draw). Series-fill themed, `zero_base` extended to stacked column/bar, CJK `<a:ea>` labels
+  intact; a printed notice fires on negative segments (a stack's height only reads as a sum for
+  same-sign parts).
+- **`deckkit.bullet_graph`** — Stephen Few's 'actual vs TARGET, in context' KPI bar (poor/ok/good bands +
+  a target tick), one row per metric. Each row scales to its OWN max, so a **mixed-unit dashboard** reads
+  right; `higher_better=False` reverses the bands for churn/latency. The dashboard bar `scorecard`/
+  `meter_bar` can't give.
+- **`deckkit.range_bars`** — a 'football field' (floating min–max ranges per row on a shared `axis_scale`
+  + optional base-case tick); closes form-selection's recipe-only note.
+- Wired end-to-end from a 4-lane self-check (integration · decision-taste · **agent-workflow cooperation**
+  · correctness): a Composition + Range row in the Concept→Visualization dictionary (§3), a
+  'stacked chart that misleads' anti-pattern (100%-hides-collapsing-total · negative segments · spaghetti)
+  in `data-viz.md` + critic hooks in `review-rubrics.md`/`critic.md`, a single-highlight **carve-out** so a
+  correct stacked chart isn't flagged, and roster/catalogue entries (`form-selection.md`, `data-viz.md`,
+  `design-gallery.md`, `SKILL.md`). Correctness fixes: range_bars includes base-case points in its axis;
+  bullet_graph sorts bands; smoke test added.
+
 ### Added — choropleth map (value per country / province)
 - **`deckkit.choropleth(slide, x, y, w, h, data, mapname)`** + **`scripts/maps.py`** — the high-payoff
   form the skill was missing: shade a real map by a value per region. `mapname` = `europe` · `world` ·

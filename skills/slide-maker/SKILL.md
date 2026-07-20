@@ -1220,7 +1220,7 @@ A few rules that matter (see `references/design-principles.md`):
   weakest way to show a trend. **Pick the chart TYPE that fits the argument, not always a
   bar** — `references/data-viz.md` has a roster + ready recipes. **For a deck in ANY non-Latin language
   (CJK · Cyrillic · Greek · …), or when the user will edit the chart, use an EDITABLE native chart** —
-  `deckkit.native_chart` (line/column/bar) / `deckkit.native_dual_axis` (two-scale A↑ vs B↓): a real
+  `deckkit.native_chart` (line/column/bar + stacked/area composition kinds) / `deckkit.native_dual_axis` (two-scale A↑ vs B↓): a real
   PowerPoint chart that renders non-Latin labels via PowerPoint's fonts (**no tofu**) and is
   click-editable (pass `font=` the script's font). For the richer raster types
   (`scripts/designed_charts.py`: donut+KPI, dumbbell, slope, bubble+trend, Pareto) pass your palette /

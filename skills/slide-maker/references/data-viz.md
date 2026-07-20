@@ -39,16 +39,29 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
 - **Small multiples / trellis** — the same metric across many comparable slices (regions, products, cohorts): a `rows`/`columns` grid of identical mini charts with **shared x/y scales** (so shapes compare) + **one highlighted** slice, the rest greyed. Better than one spaghetti chart of N series.
 - **Sparkline** — a tiny axis-less word-scale trend inside a KPI tile / table cell / sentence: a matplotlib line with axes/ticks/frame off, saved small and placed inline via `picture`, or a native mini `native_chart` stripped of chrome. Pairs with `big_numeral`/`stat_row` to show "the number AND its trend".
 - **Chart annotation layer** — data-anchored overlays ON a designed chart: a **CAGR growth arrow** across columns, a **delta bracket** between two bars, a **reference/target line** (`ax.axhline`), a **convergence/target band** (`ax.axhspan`), or a labeled callout on the key point. The annotation carries the "so-what" *inside* the plot; keep it to the ONE thing that matters.
-- **Football field / range bars** — a value RANGE per category (valuation, estimate, min–max) as floating horizontal bars on a shared `deckkit.axis_scale`, one row per category — a `dot_strip` cousin for ranges instead of points.
+- **Football field / range bars** — a value RANGE per category (valuation, estimate, min–max) → **`deckkit.range_bars`** (floating horizontal bars on a shared `axis_scale`, one row per category, optional base-case tick) — a `dot_strip` cousin for ranges instead of points.
+- **Composition over time** — a total AND its component mix across periods → **`deckkit.native_chart(kind='column_stacked' | '…_stacked_100' | 'area_stacked')`** (real editable charts; `…_100` when the SHARE is the story). Clustered bars hide the mix.
+- **Actual vs target dashboard** — KPIs each with a plan line and good/ok/poor context → **`deckkit.bullet_graph`** (per-row scale, so mixed units are fine; `higher_better=False` for churn/latency). `scorecard`/`meter_bar` carry a value but no target or thresholds.
 - **Choropleth (value per region)** — one value PER COUNTRY / PER PROVINCE shaded on a real map → **`deckkit.choropleth(slide, x, y, w, h, data, mapname)`** where `mapname` = `'europe'` · `'world'` · `'china'` (provinces). Built on public-domain geometry (Natural Earth countries · DataV China provinces) via `scripts/maps.py`, projected (Albers for a region, equirectangular for the world), light→`accent` ramp with a neutral no-data fill. Key `data` by ISO-3166 alpha-2/alpha-3 or English name (countries) or province name/adcode (china); unmatched keys are reported. Title + gradient legend are NATIVE deckkit text (CJK-safe), so the map PNG stays language-agnostic. Geometry is fetched once and cached like icons (needs matplotlib — already a dep — and network on first use). Use it instead of a `dot_strip` when the geography itself carries meaning; keep `dot_strip` when a handful of named values on a common scale say it more simply.
 
 ## Chart anti-patterns (each one has shipped an ugly or misleading chart — check by name)
 - **Dual-axis abuse** — two unrelated series forced onto twin axes to fake correlation; use it only
   for one genuinely paired ↑/↓ story, and colour-key each axis to its series.
 - **Too many series** — >4 lines/bars per chart turns evidence into spaghetti; split, or grey all
-  but the ONE series the takeaway is about (single-highlight rule).
+  but the ONE series the takeaway is about (single-highlight rule). *Carve-out: single-highlight is
+  for CLUSTERED/line charts — a **stacked/area composition** chart keeps every series its own colour
+  so the mix reads (omit `highlight`); the cap there is ~4–5 genuine parts-of-a-whole.*
 - **Composition without meaning** — a donut/stacked bar for parts that don't sum to a meaningful
   whole; if the audience won't ask "share of what?", use a bar.
+- **Stacked chart that misleads** — three traps on `native_chart(kind='…_stacked…')`: (1) a
+  **100%-stacked** whose SHARE grows while the absolute TOTAL is collapsing — the mix looks healthy as
+  the business shrinks; keep the total visible (pair with a plain stacked bar, or annotate it). (2)
+  **NEGATIVE segments** — a stack's height only reads as a sum when parts are same-sign; a negative
+  segment crosses zero and the total is misrepresented (deckkit prints a notice) — use a clustered or
+  diverging form for signed data. (3) **too many / non-parts series** — a stack reads cleanly to ~4–5
+  genuine parts-of-one-whole; beyond that segments reuse colours and blur, so group the tail into
+  "Other" or split. (Corollary: **clustered bars where composition-over-time wants a stack** — 8
+  quarters × 4 lines as 32 clustered bars buries the very mix-shift that is the story.)
 - **Cropped-axis drama** — a bar chart whose y-axis starts above 0 inflates a small delta; bars
   start at 0 (lines may zoom, but then say so on the axis). This bites hardest on **clustered-high
   data** (scores 85/88/92, revenue 210/220/230): the renderer *auto-crops* the axis to ~200 and a
@@ -180,7 +193,8 @@ Three ways to put a chart on a slide; choose by what the deck needs:
   (a) the deck is in ANY non-Latin language, or (b) the user wants to edit the chart.** Pass `font=`
   your deck's text font for the script (your `EAFONT` for CJK; a Cyrillic/Greek deck's `FONT` already
   covers those). **Covers nearly the whole roster:** `native_chart` (`line`/`line_markers`/`column`/
-  `bar`, and **slope** = a 2-point line), `native_dual_axis` (two-scale 'A↑ vs B↓', e.g. 占比% vs
+  `bar` + the **composition** kinds `column_stacked`/`…_stacked_100`/`bar_stacked`/`…_stacked_100`/
+  `area`/`area_stacked`/`…_stacked_100`, and **slope** = a 2-point line), `native_dual_axis` (two-scale 'A↑ vs B↓', e.g. 占比% vs
   成本指数), `native_donut` (part-to-whole + a KPI in the hole), `native_pareto` (columns + cumulative-%
   line on a secondary axis), `native_bubble` (x·y·size). Themed (`palette`, `dark`, `font`,
   `highlight`). **Data from a spreadsheet?** `deckkit.series_from_csv(path, x_col, y_cols)` → `(categories,
