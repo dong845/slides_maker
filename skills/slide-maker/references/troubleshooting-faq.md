@@ -93,8 +93,10 @@ intentional sticker/burst overhangs.
 The shipped pipeline is one command: `bash scripts/render_deck.sh <deck.pptx>` — internally
 LibreOffice (`soffice --headless --convert-to pdf`, with an **isolated per-run profile**) then
 PyMuPDF rasterizes each page at a fixed 2× (~144 DPI) to `render/slide01.png … slideNN.png`
-(plus `thumb_first/last.png`; a self-contained `viewer.html` preview is parked at the deck root beside
-the `.pptx`, and the intermediate `<deck>.pdf` beside it too — both root files are expected deliverables)
+(plus `thumb_first/last.png`. The `<deck>.pdf` and a self-contained `viewer.html` preview are
+**reserved hand-off deliverables**, NOT build output: pass `--deliverables` to park them at the deck
+root once the deck is final. Re-rendering a deck already rendered? `--fast` re-renders only the
+slides whose content changed.)
 (zero-padded, no hyphen) plus `thumb_first.png`/`thumb_last.png`; then
 `python3 scripts/lint_deck.py <deck.pptx> --renders render/`.
 
