@@ -103,6 +103,8 @@ legibility rules).
   glyphs or semantic ✓/◐/✕ marks, `recommend=` tints the winning column + a RECOMMENDED tab; the
   qualitative scoring `table` can't give) · `heat_matrix` (category×category grid coloured by value,
   `scale="seq"|"div"|"risk"`, contrast-aware cell text — the designed risk/prioritization matrix) ·
+  `choropleth` (a value PER country/province shaded on a real `europe`/`world`/`china` map — public-domain
+  geometry, light→accent ramp, native CJK-safe title + legend; the form for when *where* is the story) ·
   `tier_stack` (one taper core: `mode="funnel"` conversion drop-off / `mode="pyramid"` proportional
   tiers, semantic ramp + optional `values`; `funnel()`/`pyramid()` wrappers).
 - **Plan / time:** `gantt` (task bars on a shared `axis_scale` — `lanes=` swimlanes, `today=` marker,

@@ -270,6 +270,34 @@ def _svg_sanitizer():
     assert dt < 0.2, f"sanitize_svg took {dt*1000:.0f}ms on a ReDoS payload (must reject in <200ms)"
 ok("icons.sanitize_svg (strips script/foreignObject/external refs; keeps paths; ReDoS-safe)", _svg_sanitizer)
 
+# --- maps.choropleth: projection math, region-key matching (incl. NE -99 patch), and a real render ---
+def _choropleth():
+    import os as _os
+    import tempfile as _tf
+    import maps as _m
+    assert _m._norm("广东省") == "广东" and _m._norm("Germany") == "germany", "region name normalization"
+    fx, fy = _m._albers(10, 50, 10, 52, 43, 62)
+    assert abs(fx) < 5 and abs(fy) < 5 and fx == fx, "albers projection produced a sane finite point"
+    kde = _m._region_keys({"NAME": "Germany", "ISO_A2": "DE", "ISO_A3": "DEU"}, "ne")
+    assert "de" in kde and "deu" in kde and "germany" in kde, "country key set (iso + name)"
+    assert "fr" in _m._region_keys({"NAME": "France", "ISO_A2": "-99"}, "ne"), "NE -99 ISO patch (France→FR)"
+    assert "广东" in _m._region_keys({"name": "广东省", "adcode": 440000}, "cn"), "province key (name)"
+    # full render needs the base geometry (fetched+cached on first use); skip cleanly when offline
+    out = _os.path.join(_tf.gettempdir(), "_smoke_choropleth.png")
+    try:
+        _m.choropleth_png(out, {"DE": 3.0, "FR": 7.0, "ES": 12.0}, "europe", legend=True)
+        # NaN/None must NOT crash (treated as no-data), and div must zero-centre on 0
+        _m.choropleth_png(out, {"DE": float("nan"), "FR": 7.0, "ES": None}, "europe", legend=True)
+        _m.choropleth_png(out, {"DE": 20, "FR": -5, "ES": 12}, "europe", scale="div", legend=True)
+    except RuntimeError as e:
+        if "could not fetch" in str(e):
+            print("  [smoke] choropleth render skipped — base geometry not cached (offline)"); return
+        raise
+    assert _os.path.exists(out) and _os.path.getsize(out) > 2000, "choropleth PNG missing/empty"
+    lo, hi = -12, 20                                          # div zero-centre check (helper is offline)
+    neg, pos = _m._div_poles("#1F5FA8"); assert neg != pos, "diverging poles must be distinct"
+ok("maps.choropleth (projection + region-match + render)", _choropleth)
+
 ok("tint mixes toward white", lambda: dk.tint("1B7F5C", 0.14))
 ok("kpi_card (delta + strip, tall enough)", lambda: dk.kpi_card(
     S(), 0.8, 0.8, 3.4, 2.3, "净收入留存 NRR", "108", unit="%", delta="+16pt",

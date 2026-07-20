@@ -1508,6 +1508,93 @@ def picture(slide, path, x, y, w, h, fit="contain", alt=None, round=False, r=Non
     return pic
 
 
+def choropleth(slide, x, y, w, h, data, mapname="europe", *, title=None, accent=None, accent2=None,
+               scale="seq", vmin=None, vmax=None, unit=None, source=None, legend=True, dark=False,
+               no_data=None, img_path=None):
+    """A value-shaded MAP — the right form for a value PER GEOGRAPHIC REGION (per country / per
+    province), where a `dot_strip` or bar loses the spatial story. Renders a real base map
+    (``mapname`` = 'europe' | 'world' | 'china') from public-domain geometry via ``scripts/maps.py``,
+    colours each region by ``data`` on a light→``accent`` ramp, and draws a NATIVE title + gradient
+    legend (so titles/units render in any language, CJK included, unlike text baked into the raster).
+
+    ``data`` = ``{region: value}``. Keys: ISO-3166 alpha-2/alpha-3 or the English name for
+    europe/world (``{"DE": 3.1, "FR": 7.3}``); the province name or adcode for china
+    (``{"广东省": 100, "北京市": 95}``). Regions with no datum take the neutral ``no_data`` fill;
+    unmatched keys AND non-finite/None values are reported and drawn as no-data (a blank region means
+    NO DATA, not zero — check the printed notice and fix any typo/ISO before shipping).
+
+    **Shade a RATE / share / per-capita / index — not a raw COUNT** (a total just re-draws population/
+    area; big regions always go dark). ``scale='seq'`` (default, one-directional magnitude) or ``'div'``
+    (signed / around a reference — the ramp is zero-centred so the neutral colour == 0, unless you pass
+    explicit symmetric ``vmin``/``vmax``; ``accent2`` sets the opposite pole). ``vmin``/``vmax`` fix the
+    range; ``unit`` labels the legend; ``source`` adds a caption. Requires matplotlib (already a deck
+    dependency); geometry is fetched once and cached like icons. Returns the bottom y.
+    See references/data-viz.md (choropleth + the counts-not-rates anti-pattern) and form-selection.md."""
+    import os
+    import tempfile
+    import maps as _maps
+    import math as _math
+    acc = BLUE if accent is None else accent
+    acc_hex = (acc if isinstance(acc, str) else str(acc)).lstrip("#").upper()   # bare 'RRGGBB'
+    vals = [v for v in data.values() if isinstance(v, (int, float)) and _math.isfinite(v)]
+    lo = vmin if vmin is not None else (min(vals) if vals else 0.0)
+    hi = vmax if vmax is not None else (max(vals) if vals else 1.0)
+    if scale == "div" and vmin is None and vmax is None:      # zero-centre so neutral == 0 (matches map)
+        m = max(abs(lo), abs(hi), 1e-9); lo, hi = -m, m
+    if hi <= lo:
+        hi = lo + 1.0
+    nd = no_data if no_data is not None else ("2A2E38" if dark else "E7E9F0")
+    ink = WHITE if dark else DEEP
+    # 1) render the language-agnostic map (geometry only — title/legend are native, below)
+    tmp = img_path or tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
+    _maps.choropleth_png(tmp, data, mapname, accent="#" + acc_hex, accent2=accent2, scale=scale,
+                         vmin=lo, vmax=hi, no_data="#" + str(nd).lstrip("#"),
+                         title=None, legend=False, dark=dark)
+    ty = y
+    if title:
+        text(slide, x, ty, w, 0.4, [[(title, 16, ink, True, False, DISPLAY or FONT)]], space_after=0)
+        ty += 0.52
+    leg_h = (0.62 if unit else 0.5) if legend else (0.24 if source else 0.0)
+    map_bottom = y + h - leg_h
+    # too short to fit a map AND a legend → drop the legend rather than overlap it silently
+    if legend and (map_bottom - ty) < 0.6:
+        legend = False; leg_h = 0.24 if source else 0.0; map_bottom = y + h - leg_h
+    picture(slide, tmp, x, ty, w, max(0.4, map_bottom - ty), fit="contain")
+    if img_path is None:
+        try:
+            os.remove(tmp)                 # python-pptx already embedded the bytes
+        except OSError:
+            pass
+    # 2) native gradient legend (CJK-safe) — matches the map ramp: light→accent (seq) or pole↔pole (div)
+    if legend:
+        lw, lh = min(2.4, w * 0.42), 0.16
+        lx = x
+        lyy = y + h - leg_h + (0.22 if unit else 0.06)
+        if scale == "div":
+            neg, pos = _maps._div_poles("#" + acc_hex, accent2)
+            stops = [(0.0, neg.lstrip("#"), 1.0), (0.5, "F5F5F7", 1.0), (1.0, pos.lstrip("#"), 1.0)]
+        else:
+            _r, _g, _b = (int(acc_hex[i:i + 2], 16) for i in (0, 2, 4))
+            light = "%02X%02X%02X" % tuple(int(c + 0.88 * (255 - c)) for c in (_r, _g, _b))
+            stops = [(0.0, light, 1.0), (1.0, acc_hex, 1.0)]
+        box(slide, lx, lyy, lw, lh, grad=stops, grad_angle=0.0, round=True, r=0.03)  # box() disables shadow
+
+        def _f(v):
+            return f"{v:.0f}" if (abs(v) >= 10 or float(v).is_integer()) else f"{v:.1f}"
+        text(slide, lx, lyy + lh + 0.02, lw, 0.2, [[(_f(lo), 9.5, MUTE, False, False, FONT)]], space_after=0)
+        if scale == "div":                                    # mid (0) tick so the neutral point is labelled
+            text(slide, lx, lyy + lh + 0.02, lw, 0.2, [[(_f((lo + hi) / 2), 9.5, MUTE, False, False, FONT)]],
+                 align=PP_ALIGN.CENTER, space_after=0)
+        text(slide, lx, lyy + lh + 0.02, lw, 0.2, [[(_f(hi), 9.5, MUTE, False, False, FONT)]],
+             align=PP_ALIGN.RIGHT, space_after=0)
+        if unit:
+            text(slide, lx, lyy - 0.24, w - lx, 0.22, [[(unit, 9.5, MUTE, False, False, FONT)]], space_after=0)
+    if source:
+        text(slide, x, y + h - 0.20, w, 0.2, [[(source, 8.5, MUTE, False, False, FONT)]],
+             align=(PP_ALIGN.RIGHT if legend else PP_ALIGN.LEFT), space_after=0)
+    return y + h
+
+
 def icon(slide, png, x, y, size, *, alt=None, disc=None, disc_pad=None):
     """Place a square icon PNG (use `scripts/icons.py`'s `icon_png()` to fetch+recolor+rasterize
     an open-licensed SVG first). `size` is the icon's edge in inches — keep it small and consistent

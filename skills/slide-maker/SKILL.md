@@ -222,6 +222,7 @@ every **🔴 CHECKPOINT** is a hard stop.
 | Colour-means-one-thing (bind a hue to a concept deck-wide) | `references/semantic-color-contract.md` |
 | Style + component catalogue (looks · presets · when to use each) | `references/design-gallery.md` |
 | Charts (which type · editable-native vs raster) | `references/data-viz.md` |
+| Choropleth map (value per country / province — europe · world · china) | `deckkit.choropleth()` · `scripts/maps.py` · `references/data-viz.md` |
 | Science schematics (force / ray / circuit / apparatus …) | `references/schematic-diagrams.md` |
 | Generated + sourced imagery (when/how · text-free · topical · REFERENT RULE + source tokens) | `references/image-generation.md` |
 | Generated-template branch (hero + shallow bg + frosted blocks) | `references/generated-template.md` |
@@ -2123,7 +2124,9 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   `band()` safe-rect helper; opt-in — the 16:9 default never touches it (pair `references/canvas-formats.md`).
 - `designed_charts.py` — raster matplotlib chart recipes (dumbbell, slope, dual_axis, bubble_trend,
   pareto, donut_kpi, **waterfall** — for a chart type with no native equivalent or a deliberate look;
-  prefer deckkit's native charts; `references/data-viz.md`). `presets.py` — named
+  prefer deckkit's native charts; `references/data-viz.md`). `maps.py` — **choropleth base maps**
+  (europe · world · china provinces) from public-domain geometry, value-shaded → PNG placed by
+  `deckkit.choropleth()` (which adds the native title + legend); `references/data-viz.md`. `presets.py` — named
   design-language presets (glassmorphism · swiss · editorial_paper · editorial_report · risograph ·
   memphis · brutalist · blueprint · ink_wash · eastern_traditional · **consulting** (MBB action-title) ·
   **dark_tech** (engineering dark + diagram-island) · **luxury_dark** · **museum_memorial**; ink_wash/

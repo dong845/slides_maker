@@ -298,6 +298,7 @@ a learning curve, an adoption chart, or a compounding argument.
 | **Roadmap** | quarterly timeline, release train, milestone path | Future sequencing matters | No time order | Three cards labelled Q1/Q2/H2 only |
 | **Case study** | journey + proof metrics, story arc, expansion path | A person / entity changes over time | Pure metric summary | Timeline with no protagonist |
 | **Insight / conclusion** | editorial quote, big sentence, black band, hero claim | One message should land emotionally | Detail-heavy slide | Small conclusion hidden at bottom |
+| **Geography / location / spatial distribution ("where")** | choropleth / shaded map → `deckkit.choropleth` (europe · world · china provinces) | A value varies PER country/province and *where* is the story | Only a few regions (a ranked bar/`dot_strip` reads better), or the location is incidental | Mapping raw COUNTS not rates (map just re-draws population); or a bar that discards the geography |
 
 After a row is chosen here, hand off to `form-selection.md` for the concrete candidate SET + tie-breaker
 (e.g. Comparison → `dumbbell` vs `slope` vs `before_after`) and to `design-gallery.md`/`data-viz.md` for

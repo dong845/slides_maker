@@ -9,7 +9,27 @@ section is a distilled summary — the full notes live on the
 
 ## [Unreleased]
 
-## [3.5.1] - 2026-07-20
+### Added — choropleth map (value per country / province)
+- **`deckkit.choropleth(slide, x, y, w, h, data, mapname)`** + **`scripts/maps.py`** — the high-payoff
+  form the skill was missing: shade a real map by a value per region. `mapname` = `europe` · `world` ·
+  `china` (provinces). Built on **public-domain geometry** (Natural Earth 110m countries · DataV China
+  provinces — nothing fabricated), rendered with matplotlib (no geopandas): Albers equal-area conic for a
+  region, equirectangular for the world; light→`accent` ramp (or `scale='div'`); neutral no-data fill;
+  thin borders. Key `data` by ISO-3166 alpha-2/alpha-3 or English name (countries), or province name/adcode
+  (china); the Natural Earth `ISO_A2 = -99` quirk is patched (France/Norway…) and unmatched keys are
+  reported, not dropped.
+- The map PNG is **language-agnostic**; the title + gradient legend are **native deckkit text**, so units
+  and titles render in any language (CJK included) instead of matplotlib tofu. Geometry is fetched once and
+  cached like icons (network only on first use; `SLIDE_MAKER_CACHE` override).
+- Hardened by a 3-lane self-check (code-alignment · decision-taste · adversarial correctness): `scale='div'`
+  is **zero-centred** (neutral == 0, distinct poles via `accent2`) and the native legend now renders the
+  diverging ramp with a 0 tick so **legend and map agree**; NaN/None values are treated as no-data (no
+  crash); the unmatched-key notice reports the **actual** bad keys; China's **nine-dash line** renders as a
+  visible dashed element. Decision-taste wired everywhere the model looks: a **Geography/"where"** row in the
+  Concept→Visualization dictionary (`design-intelligence-addendum.md` §3 + `form-selection.md`), a
+  **counts-not-rates** anti-pattern in `data-viz.md` + a named critic check in `review-rubrics.md`, and the
+  "shade a rate, blank = no data" guidance in the docstring. Smoke covers projection, region matching
+  (incl. the -99 patch), NaN, div, and a real render.
 
 ### Security — hardening pass (public-skill audit)
 - **SVG icon rasterizer no longer executes untrusted content (was the one real vuln).** `icon_png()`

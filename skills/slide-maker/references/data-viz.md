@@ -40,6 +40,7 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
 - **Sparkline** — a tiny axis-less word-scale trend inside a KPI tile / table cell / sentence: a matplotlib line with axes/ticks/frame off, saved small and placed inline via `picture`, or a native mini `native_chart` stripped of chrome. Pairs with `big_numeral`/`stat_row` to show "the number AND its trend".
 - **Chart annotation layer** — data-anchored overlays ON a designed chart: a **CAGR growth arrow** across columns, a **delta bracket** between two bars, a **reference/target line** (`ax.axhline`), a **convergence/target band** (`ax.axhspan`), or a labeled callout on the key point. The annotation carries the "so-what" *inside* the plot; keep it to the ONE thing that matters.
 - **Football field / range bars** — a value RANGE per category (valuation, estimate, min–max) as floating horizontal bars on a shared `deckkit.axis_scale`, one row per category — a `dot_strip` cousin for ranges instead of points.
+- **Choropleth (value per region)** — one value PER COUNTRY / PER PROVINCE shaded on a real map → **`deckkit.choropleth(slide, x, y, w, h, data, mapname)`** where `mapname` = `'europe'` · `'world'` · `'china'` (provinces). Built on public-domain geometry (Natural Earth countries · DataV China provinces) via `scripts/maps.py`, projected (Albers for a region, equirectangular for the world), light→`accent` ramp with a neutral no-data fill. Key `data` by ISO-3166 alpha-2/alpha-3 or English name (countries) or province name/adcode (china); unmatched keys are reported. Title + gradient legend are NATIVE deckkit text (CJK-safe), so the map PNG stays language-agnostic. Geometry is fetched once and cached like icons (needs matplotlib — already a dep — and network on first use). Use it instead of a `dot_strip` when the geography itself carries meaning; keep `dot_strip` when a handful of named values on a common scale say it more simply.
 
 ## Chart anti-patterns (each one has shipped an ugly or misleading chart — check by name)
 - **Dual-axis abuse** — two unrelated series forced onto twin axes to fake correlation; use it only
@@ -65,9 +66,18 @@ The recipes render a themed PNG → place with `deckkit.picture(out, ..., fit="c
 - **Off-zero neutral on a signed scale** — a diverging blue↔red (or +/−) encoding whose neutral is
   anchored at the DATA midpoint, not the value 0, so a true `0` renders blue ("negative") and
   all-positive deltas straddle neutral — the sign reading is simply wrong. Anchor neutral at the
-  semantic zero. `deckkit.heat_matrix(scale='div')` zero-centres by default (pass explicit
-  `vmin`/`vmax` only to fix a deliberate asymmetric range); a matplotlib diverging map needs
-  `TwoSlopeNorm(vcenter=0)` (or a symmetric `vmin=-M, vmax=+M`).
+  semantic zero. `deckkit.heat_matrix(scale='div')` **and `deckkit.choropleth(scale='div')`** zero-centre
+  by default (both pass explicit symmetric `vmin`/`vmax` only for a deliberate asymmetric range); a
+  hand-rolled matplotlib diverging map needs `TwoSlopeNorm(vcenter=0)` (or a symmetric `vmin=-M, vmax=+M`).
+- **Choropleth that maps COUNTS, not rates** — the #1 map lie: shading a raw TOTAL (sales, users, cases)
+  so big/populous regions always go dark and the map just re-draws population/area. Shade a **rate / share /
+  per-capita / index / density** so region size doesn't dominate; a raw total belongs on a ranked bar or
+  `dot_strip`, or normalise by population/area first. Related traps: (a) a map for only a **handful of
+  regions** where a ranked bar reads better (use `choropleth` when *where* is the story, not just because the
+  categories are places); (b) **sequential ramp on signed data** (or `div` on one-directional magnitude) —
+  `seq` for magnitude, `div` for signed/around-a-reference; (c) a **blank region reads as zero** when it's
+  actually NO DATA — `deckkit.choropleth` fills unmatched regions a distinct neutral and prints the
+  unmatched keys, so verify that notice and fix any typo/ISO before shipping.
 - **Axis that misses a bar** — a baseline / value axis drawn to a hand-picked width that stops short of
   the last bar reads as a rendering bug; derive its extent from the data (`last_bar_x_end − axis_x`).
 - **Waterfall that double-counts** — showing increments AND their sum as peer bars ("+8 / +8.3 / +16.3"

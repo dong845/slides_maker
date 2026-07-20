@@ -477,7 +477,10 @@ Score each dimension; cite specific slides.
    the data-viz / publication helpers).* Is the chart **type chosen to fit the argument** (not a bar
    where a part-to-whole wants a donut, nor a grouped bar where a trend wants a slope/dual-axis), with
    a **single highlight** on the one series that matters and a stated **so-what** (`takeaway_rail`),
-   placed **whole** and legible at the deck's read distance? Do `scorecard`/`change_stat` **▲/▼ deltas
+   placed **whole** and legible at the deck's read distance? *(Named `data-viz.md` anti-patterns to catch
+   by name: cropped-axis drama · off-zero diverging neutral · **a `choropleth` that shades raw COUNTS
+   instead of a rate/per-capita** — the map just re-drawing population — · a map used for a handful of
+   regions a bar would serve better · a blank region read as zero when it is NO DATA.)* Do `scorecard`/`change_stat` **▲/▼ deltas
    / before→after** carry the **right polarity** (green for the genuinely-good direction)? Are
    **formulas typeset** (`equation_native` editable, or `equation_png` for 2-D), **never cropped bitmaps** — transcribed from a paper or
    *derived faithfully from code* (a code-derived formula must express what the code computes)? Are
