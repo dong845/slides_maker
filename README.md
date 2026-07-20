@@ -10,6 +10,7 @@
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-5b5bd6">
   <img alt="Output: editable PPTX" src="https://img.shields.io/badge/output-native_editable_PPTX-0f766e">
   <a href="https://skillhub.cloud.tencent.com/skills/slides-maker"><img alt="Tencent SkillHub" src="https://img.shields.io/badge/Tencent_SkillHub-get_it-2f6feb"></a>
+  <a href="https://xiaping.coze.com/skill/c0136d99-50d0-4f05-909a-f78fa4be7104"><img alt="Coze" src="https://img.shields.io/badge/Coze-get_it-6653f5"></a>
 </p>
 
 <p align="center">
@@ -206,7 +207,8 @@ To be plain about it: it does not promise a perfect deck in one shot. It promise
 > Zero setup; the local install below stays the full-power path.
 >
 > **Prefer a marketplace? slide-maker is also published on
-> [Tencent SkillHub](https://skillhub.cloud.tencent.com/skills/slides-maker) and
+> [Tencent SkillHub](https://skillhub.cloud.tencent.com/skills/slides-maker),
+> [Coze](https://xiaping.coze.com/skill/c0136d99-50d0-4f05-909a-f78fa4be7104), and
 > [ClawHub](https://clawhub.ai/dong845/skills/slide-maker) — the last one installs straight into
 > [OpenClaw](https://openclaw.ai), so OpenClaw users get slide-maker too** —
 > grab it there by following each page's install instructions, then come back for the runtime

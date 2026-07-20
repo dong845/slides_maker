@@ -10,6 +10,7 @@
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-5b5bd6">
   <img alt="Output: editable PPTX" src="https://img.shields.io/badge/output-native_editable_PPTX-0f766e">
   <a href="https://skillhub.cloud.tencent.com/skills/slides-maker"><img alt="腾讯 SkillHub" src="https://img.shields.io/badge/%E8%85%BE%E8%AE%AF_SkillHub-%E7%AB%8B%E5%8D%B3%E8%8E%B7%E5%8F%96-2f6feb"></a>
+  <a href="https://xiaping.coze.com/skill/c0136d99-50d0-4f05-909a-f78fa4be7104"><img alt="Coze" src="https://img.shields.io/badge/Coze-%E7%AB%8B%E5%8D%B3%E8%8E%B7%E5%8F%96-6653f5"></a>
 </p>
 
 <p align="center">
@@ -205,7 +206,8 @@ slide-maker 不是一个 prompt 包办一切，而是一组各有专职的 **age
 > 它继承了本技能的能力，去 **GPT 商店**搜 "slide-maker (addsum studio)" 即可开始做幻灯片，零配置；下面的本地安装仍是完整体验。
 >
 > **更喜欢从市场一键获取？slide-maker 也已上架
-> [腾讯 SkillHub](https://skillhub.cloud.tencent.com/skills/slides-maker) 和
+> [腾讯 SkillHub](https://skillhub.cloud.tencent.com/skills/slides-maker)、
+> [Coze](https://xiaping.coze.com/skill/c0136d99-50d0-4f05-909a-f78fa4be7104) 和
 > [ClawHub](https://clawhub.ai/dong845/skills/slide-maker)——最后这个可直接装进
 > [OpenClaw](https://openclaw.ai)，OpenClaw 用户同样可以使用 slide-maker** ——
 > 按对应页面的说明获取即可，然后回来装下面的运行依赖（无论哪种装法都需要）。
