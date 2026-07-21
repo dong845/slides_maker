@@ -37,6 +37,12 @@ slides. An 18-slide deck goes from ~12s to ~4.7s for a one-slide edit, and a no-
 The PNGs it writes are byte-identical to a full render, so the lint and the critic are unaffected.
 `--fast` and `--deliverables` are mutually exclusive (a subset render has no whole-deck PDF): use
 `--fast` for the iteration rounds, then one plain `--deliverables` run for the hand-off.
+**`--slides N[,M]`** is the third member of the family: it renders exactly the pages you name, for
+when you already KNOW what changed (the Step-4 signature proof, or "re-render just page 7"). Same
+exclusivity as `--fast` — not with `--deliverables`, and not with `--fast` itself, which chooses the
+set for you. It deliberately writes NO cache: it rendered some pages, so recording fingerprints for
+all of them would let the next `--fast` call stale PNGs current. That means the run AFTER a
+`--slides` run does a full render — correct, and the reason is printed.
 It falls back to a full render, with the reason printed, whenever the page mapping could be wrong
 (slide count changed, every slide changed, auto slide-number fields, no cache) — a slow render is an
 acceptable outcome; a stale PNG that a critic then signs off on is not.

@@ -292,15 +292,25 @@ Do not just skim for the first few obvious issues. Run these passes:
        should reuse the deck's own palette/type/motif/grid and be brave in composition/scale/concept
        only (`slide-design.md` COHESION rule). So you police both ends: *timid* (no move landed) AND
        *clashing* (a move that broke the deck's one visual system).
-       **Severity of EVERY finding on this axis (timid · sanded-to-safe · bland · clashing): MAJOR at
-       most, never a blocker.** A blocker is reserved for wrong / broken / illegible (a floor). What
-       "MAJOR" means here, precisely — so the guarantee isn't overstated: like any major it drives ONE
-       genuine improvement attempt (that IS the upward push — the actor re-tries the braver/cohesive
-       move), but it is **non-blocking** — if the attempt doesn't clearly help or the round cap is
-       reached, the deck **ships** with the finding surfaced in the Step-6 note as an honest open
-       question (SKILL Step 5 cap rule: a surviving major is never a silent ship, never a hard stop). So a
-       clean-but-bland or clean-but-safe deck costs at most one attempt, then ships — this axis raises
-       the bar, it never sinks a shippable deck.
+       **Severity on this axis is set by the deck's own `boldness:` dial — the user's declared
+       appetite is what decides how big a defect blandness is here.**
+       - **At `conservative` / `balanced+` (the default): MAJOR at most, never a blocker.** A blocker
+         is reserved for wrong / broken / illegible (a floor). Like any major it drives ONE genuine
+         improvement attempt (that IS the upward push — the actor re-tries the braver/cohesive move),
+         but it is **non-blocking**: if the attempt doesn't clearly help or the round cap is reached,
+         the deck **ships** with the finding surfaced in the Step-6 note as an honest open question
+         (SKILL Step 5 cap rule: a surviving major is never a silent ship, never a hard stop). A
+         clean-but-safe deck costs at most one attempt, then ships.
+       - **At `boldness: bold` / `experimental`, a surviving *timid* or *sanded-to-safe* verdict is
+         BLOCKING-UNTIL-WAIVED** — after the one improvement attempt, the deck does not ship silently:
+         **surface the choice to the USER** — *(a) one more round, naming the concrete change; or
+         (b) ship as-is, recorded as a knowing accept*. Their answer ships it either way. This is not
+         a stricter bar; it is the **waiver moving from you to them**. A user who asked for bold and
+         received forgettable did not get what they asked for, and that judgement is theirs, not
+         yours — you are the party with an interest in calling your own output good enough.
+         *(Scope: `timid` / `sanded` only. `clashing` stays MAJOR — it is a cohesion defect with a
+         clear fix, not an unmet appetite. And this never over-rides a floor: an idea that broke
+         legibility is a floor finding first, redone legibly.)*
        **Does the look fit the purpose?** crisp/corporate status vs sober defense vs bold pitch vs warm
        lecture (`design-by-purpose.md`) — a mismatch is a real finding. **If a style example was given, judge
        fidelity to it PER THE CHOSEN MIMIC MODE** (the contract card carries it; `style-analysis.md`): **Mode A

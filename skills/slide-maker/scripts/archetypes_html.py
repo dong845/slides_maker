@@ -60,7 +60,15 @@ _DEFAULTS = {
     "font_display": "Georgia, 'Times New Roman', serif",
     "font_body": "'Helvetica Neue', Arial, sans-serif",
     "density": "minimal",
+    # COMPOSITION — the axis this preview could not express before. Two directions can share a
+    # palette family and still read as different decks if the ink lands somewhere else; the
+    # converse (different hues, identical layout) is the "three colourways of one idea" failure.
+    "cover": "centred",         # centred | low-left | split-vertical | full-bleed-type
+    "skeleton": "statement",    # statement | split | island | band | rail
 }
+
+_COVERS = ("centred", "low-left", "split-vertical", "full-bleed-type")
+_SKELETONS = ("statement", "split", "island", "band", "rail")
 
 
 def _norm(d):
@@ -69,6 +77,12 @@ def _norm(d):
     if not s.get("accents"):
         s["accents"] = [s["accent"]]
     s["name"] = d.get("name", "Direction")
+    # An unknown value must not silently fall back to the default — that would make the gate
+    # claim a composition it did not render. Fail loudly instead.
+    if s["cover"] not in _COVERS:
+        raise ValueError("direction {!r}: cover must be one of {}".format(s["name"], _COVERS))
+    if s["skeleton"] not in _SKELETONS:
+        raise ValueError("direction {!r}: skeleton must be one of {}".format(s["name"], _SKELETONS))
     return s
 
 
@@ -109,8 +123,15 @@ def _slide_cover(S):
         cbg, tt, tag = S["bg"], S["ink"], S["mute"]
     else:
         cbg, tt, tag = S["ink"], "#ffffff", "rgba(255,255,255,.55)"
-    return f'''<div class="slide cover" style="background:{cbg}">
-      <div class="accentbar" style="background:{S['accent']}"></div>
+    comp = S["cover"]
+    # The accent bar is a LEFT-EDGE device; on a split cover it becomes the divider, and on a
+    # full-bleed-type cover it goes away entirely (the type IS the composition there).
+    bar = "" if comp == "full-bleed-type" else (
+        f'<div class="accentbar" style="background:{S["accent"]}"></div>')
+    panel = (f'<div class="cover-panel" style="background:{S["accent"]}"></div>'
+             if comp == "split-vertical" else "")
+    return f'''<div class="slide cover cov-{comp}" style="background:{cbg}">
+      {bar}{panel}
       <div class="cover-body">
         <div class="cover-ttl" style="color:{tt}">Deck Title</div>
         <div class="cover-sub" style="color:{S['accent']}">a one-line subtitle in this direction</div>
@@ -137,10 +158,22 @@ def _slide_bullets(S):
         _bullet_row(S, "Emphasis", "where it matters"),
         _bullet_row(S, "Consistent", "spacing and rhythm"),
     ])
-    return f'''<div class="slide" style="background:{S['bg']}">
-      {_title_bar(S, "How content slides read", "archetype")}
-      <ul class="bullets">{bl}</ul>
-      {_callout(S, "TAKEAWAY", "One idea per slide, carried by the layout.")}
+    sk = S["skeleton"]
+    # NOTE the -el suffix: the slide itself carries `sk-<name>` as a MODIFIER, so an inner element
+    # may never reuse that exact class — doing so applied the element's rules to the whole slide.
+    # A tint OF THE DECK'S OWN GROUND, not a fixed near-white: on a dark direction a literal
+    # light band under light ink measures ~1.1:1. Mode-agnostic by construction.
+    band = (f'<div class="sk-band-el" style="border-color:{S["line"]}"></div>'
+            if sk == "band" else "")
+    rail = (f'<div class="sk-rail-el" style="background:{S["accent"]}"></div>'
+            if sk == "rail" else "")
+    return f'''<div class="slide sk-{sk}" style="background:{S['bg']}">
+      {band}{rail}
+      <div class="sk-body">
+        {_title_bar(S, "How content slides read", "archetype")}
+        <ul class="bullets">{bl}</ul>
+        {_callout(S, "TAKEAWAY", "One idea per slide, carried by the layout.")}
+      </div>
       {_footer(S, 2, "direction preview")}
     </div>'''
 
@@ -284,6 +317,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .ftr{position:absolute;left:26px;right:26px;bottom:8px;display:flex;justify-content:space-between;
   font-size:9px;border-top:1px solid;padding-top:4px;letter-spacing:.04em}
 .cover .ftr{display:none}
+
+/* ── COMPOSITION variants — the axis the direction gate now diverges on.
+   Each must move the INK, not merely restyle it: a viewer comparing two directions should see
+   a different shape with the page squinted, before reading a word. */
+.cov-centred{justify-content:center}
+.cov-low-left{justify-content:flex-end;padding-bottom:34px}
+.cov-low-left .cover-ttl{font-size:30px}
+.cov-split-vertical{justify-content:center;padding-left:46%}
+.cov-split-vertical .cover-panel{position:absolute;left:0;top:0;bottom:0;width:40%;opacity:.92}
+.cov-split-vertical .accentbar{display:none}
+.cov-split-vertical .cover-ttl{font-size:26px}
+/* the tag is bottom-LEFT by default, which on a split cover lands ON the accent panel at
+   whatever contrast the pair happens to give. Move it beside the title instead. */
+.cov-split-vertical .cover-tag{left:46%}
+.cov-full-bleed-type{justify-content:center;padding-left:0;padding-right:0}
+.cov-full-bleed-type .cover-body{padding-left:0;text-align:center}
+.cov-full-bleed-type .cover-ttl{font-size:44px;letter-spacing:-.03em;line-height:.98}
+.cov-full-bleed-type .cover-sub{margin-top:14px}
+.cov-full-bleed-type .cover-tag{left:0;right:0;text-align:center}
+
+.sk-body{z-index:2;position:static}   /* NEVER position:relative — .callout/.ftr are anchored
+                                          to the SLIDE's bottom; re-parenting floats them up */
+.sk-statement .sk-body{padding-top:2px}
+.sk-split{display:flex}
+.sk-split .sk-body{width:62%;margin-left:auto;padding-left:18px}
+.sk-split .bullets li{font-size:13px}
+.sk-island .sk-body{margin:0 7%;padding:12px 16px 0;border-radius:10px;
+  background:rgba(127,127,127,.055)}
+.sk-band .sk-band-el{position:absolute;left:0;right:0;top:0;height:30%;border-bottom:1px solid;
+  background:rgba(127,127,127,.14);z-index:0}
+.sk-band .sk-body{padding-top:10px}
+.sk-band .tbar{margin-bottom:16px}
+.sk-rail .sk-rail-el{position:absolute;left:0;top:0;bottom:0;width:6px;z-index:1}
+.sk-rail .sk-body{padding-left:18px}
 
 /* pick buttons + selection */
 .dir-foot{margin-top:14px;display:flex;justify-content:flex-end}

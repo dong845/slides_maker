@@ -688,6 +688,19 @@ NOT a blanket per-slide quota):
   conservative` (user-set or purpose-defaulted), record the one-clause "deliberately restrained: <why>"
   so the field is never blank. The risk lives on
   the aesthetic axes only; if it would break a floor, redirect it to a legible form (floors win).
+  **AND the `signature move:` line carries `carried_by:` naming 2–3 slides** — the signature slide
+  plus ≥1 more where the same idea does STRUCTURAL work (the motif becomes the diagram's own
+  geometry / the composition's own logic), not a decorative repeat. One brave slide surrounded by
+  safe ones reads as an accident; a carried idea reads as a position. Fails this check when
+  `carried_by` names only the signature slide, or names slides where the idea is merely *stamped*
+  (a badge, a rule, a corner mark) rather than load-bearing. The ≤3-appearance motif budget in (j)
+  still binds — carried is 2–3 slides doing work, never a device on every page.
+  *(`boldness: conservative` exempts this with the "deliberately restrained" clause, as above.)*
+- **(h2) the look-choice was RECORDED** — the Design language carries the branch's gate line:
+  `direction gate:` on branch (c), `style gate:` on branch (d) (SKILL Step 2's checkpoint
+  contract). Under Auto the carve arm must still NAME the three candidate styles and the
+  one-clause reason each loser lost. A plan on (c)/(d) with no gate line is INCOMPLETE — an
+  unrecorded pick is indistinguishable from no pick having happened.
 - **(i) content-triggered** (only when that content is present) — method / procedure → an `algorithm_block`
   (or one-clause why prose is better); principle / mechanism / experiment / definition → a labelled
   schematic diagram built CORRECTLY (domain-accurate, faithful to source) alongside text, or an

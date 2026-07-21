@@ -330,10 +330,15 @@ Score each dimension; cite specific slides.
    declared dial (a `conservative` deck may be clean-and-elegant); **when NO dial is declared (external
    deck / redesign diagnosis / light-cleanup / direction preview), this axis stands down — raise no
    distinctiveness finding.** Also flag a **CLASHING** move — a bold beat that imports a foreign identity
-   (new font/palette/one-off device) so it reads as another deck's slide. **Precedence + severity: this
-   is a ceiling push, never a floor — every finding on it (timid / sanded / bland / clashing) is MAJOR
-   at most, never a blocker;** it drives one improvement attempt, then ships (surfaced as the consent
-   `ceiling` note) rather than blocking a legible deck. A bold idea that broke a floor is a floor finding
+   (new font/palette/one-off device) so it reads as another deck's slide. **Precedence + severity: this is a ceiling push, never a floor —
+   and its severity is set by the deck's `boldness:` dial.** At `conservative`/`balanced+` every
+   finding on it (timid / sanded / bland / clashing) is **MAJOR at most, never a blocker**: one
+   improvement attempt, then it ships (surfaced as the consent `ceiling` note) rather than blocking a
+   legible deck. **At `bold`/`experimental` a surviving *timid* or *sanded* verdict is
+   BLOCKING-UNTIL-WAIVED** — after the one attempt, the USER chooses between another round (with the
+   concrete change named) and a knowing ship; the waiver is theirs, not the agent's, because a deck
+   asked to be bold and delivered bland did not deliver what was promised. `clashing` stays MAJOR at
+   every dial (a cohesion defect with a clear fix, not an unmet appetite). A bold idea that broke a floor is a floor finding
    first, redone legibly. (General and cross-purpose — a short or
    deliberately-uniform deck relaxes the counts.)
    **Two evidence sources for this deck-level pass:** *(1) the THUMBNAIL pass — RECORDED* — view all

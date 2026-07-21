@@ -274,10 +274,27 @@ def main(argv):
     # slide = 2.5s + 0.7s. Rasterization, not the PDF export, is the dominant cost — so the win
     # comes from rasterizing one page, and subsetting the pptx makes the export cheap too.
     fast = False
+    # --slides N[,M]: render ONLY these 1-indexed slides. Unlike --fast (which DIFFS against a
+    # cache and therefore renders everything on a first run), this is an explicit "show me page N"
+    # — the signature-move preview at Step 3.5, and any "just re-render the page I edited" loop.
+    only = None
     argv = list(argv)
     while "--fast" in argv:
         argv.remove("--fast")
         fast = True
+    for i, a in enumerate(list(argv)):
+        if a == "--slides" or a.startswith("--slides="):
+            raw = a.split("=", 1)[1] if "=" in a else (argv[i + 1] if i + 1 < len(argv) else "")
+            try:
+                only = sorted({int(t) for t in raw.replace(" ", "").split(",") if t})
+            except ValueError:
+                die("--slides wants 1-indexed slide numbers, e.g. --slides 1,6")
+            if not only:
+                die("--slides wants at least one slide number, e.g. --slides 6")
+            argv.remove(a)
+            if "=" not in a and raw in argv:
+                argv.remove(raw)
+            break
     for flag in ("--deliverables", "--final"):
         while flag in argv:
             argv.remove(flag)
@@ -288,8 +305,15 @@ def main(argv):
         # successful render, or (with nothing changed) a silent exit-0 that produced no PDF and no
         # viewer.html at the exact moment the hand-off contract required them.
         die("--deliverables needs a full-deck render — drop --fast for the hand-off run")
+    if only and deliverables:
+        # Same reason as --fast: a subset cannot produce the whole-deck PDF the hand-off promises.
+        die("--deliverables needs a full-deck render — drop --slides for the hand-off run")
+    if only and fast:
+        # Contradictory intents: --fast decides WHICH slides to render, --slides declares them.
+        die("--slides and --fast both choose the slide set — pass one")
     if not argv:
-        die("usage: python render_deck.py /path/to/deck.pptx [out_dir] [--fast] [--deliverables]")
+        die("usage: python render_deck.py /path/to/deck.pptx [out_dir] "
+            "[--fast | --slides N[,M]] [--deliverables]")
     pptx = argv[0]
     out = argv[1] if len(argv) > 1 else "./render"
 
@@ -370,7 +394,19 @@ def main(argv):
         pptx_stat = (_st.st_mtime_ns, _st.st_size)
     except OSError:
         pptx_stat = None
-    incremental = fast and changed is not None and 0 < len(changed) < len(fps)
+    if only is not None:
+        if blockers:
+            # The SAME correctness bar as --fast: anything that makes the slide->page mapping
+            # uncertain (hidden slides, an unresolvable part, auto slide-number fields that
+            # renumber inside a subset) must not be papered over just because the user named a page.
+            die("cannot render a subset of this deck: {}\n"
+                "  drop --slides and render the whole deck".format(blockers[0]))
+        bad = [n for n in only if not (1 <= n <= len(fps))]
+        if bad:
+            die("--slides {} out of range — this deck has {} slide(s)".format(
+                ",".join(str(b) for b in bad), len(fps)))
+        changed = [n - 1 for n in only]
+    incremental = (fast or only is not None) and changed is not None and 0 < len(changed) < len(fps)
     if fast and changed is not None and len(changed) == len(fps) and len(fps):
         # Every slide changed (a rebuild that touched everything, or a deck-global edit such as a
         # theme/canvas change). A subset of "all slides" is just a full render with extra steps.
@@ -481,6 +517,12 @@ def main(argv):
 
     doc = fitz.open(pdf)
     skip_cache = False
+    if only is not None:
+        # A --slides run rasterized SOME pages; the fingerprints in hand describe ALL of them.
+        # Caching them would tell the next --fast "nothing changed" while most PNGs are stale —
+        # precisely the lie the incremental path exists to avoid. Drop the cache instead, so the
+        # next --fast honestly does a full render.
+        skip_cache = True
     if incremental:
         # PDF page k corresponds to deck slide keep[k] — write ONLY those PNGs and leave the
         # rest of render/ untouched.
@@ -603,7 +645,8 @@ def main(argv):
         try: os.remove(stale)
         except OSError: pass
     if incremental:
-        print("fast render: {} of {} slides re-rendered ({}) -> {}".format(
+        print("{}: {} of {} slides re-rendered ({}) -> {}".format(
+            "slides render" if only is not None else "fast render",
             len(keep), len(fps), ", ".join(str(i + 1) for i in keep), out))
         # If a hand-off already produced the deck-root pair, they now lag the deck. Say so loudly:
         # a stale PDF someone opens and reviews is the failure this whole path is built to avoid.

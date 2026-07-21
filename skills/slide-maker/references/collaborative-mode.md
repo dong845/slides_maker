@@ -36,8 +36,13 @@ direction*; the single real render confirms *fidelity*.
 > branch it runs BY DEFAULT (SKILL.md Q1(c); named carves there), because that is the one
 > branch where the look is invented from nothing and the user has seen no options.
 1. From the interview (purpose/audience/style) generate **differentiated directions** —
-   distinct design *languages*, not three shades of one idea: vary the big axes
-   (light/dark, warm/cool, serif/sans, restrained/bold) so the choice is real. Each is
+   distinct design *languages*, not three shades of one idea.
+   🔴 **The rule is PAIRWISE and checkable: any two directions must differ on ≥2 of
+   {palette mood · type attitude · density/scale · COMPOSITION ENVELOPE}.** Light-vs-dark and
+   warm-vs-cool are *knobs on one design*; the composition envelope — WHERE the ink sits — is the
+   axis that makes two previews read as different decks before a word is read. When an axis is
+   LOCKED (a brand accent, a mimic target), it leaves the divergence set and the ≥2 rule applies to
+   what remains — a constraint relocates variance, it never licenses convergence. Each is
    grounded in `design-by-purpose.md` and named with a one-line rationale (e.g.
    *Editorial* — serif, airy, gravitas; *Keynote* — dark, high-contrast, energetic;
    *Corporate* — light, crisp, institutional). Each direction is a **style module** with
@@ -49,19 +54,28 @@ direction*; the single real render confirms *fidelity*.
      structured choices when available, or a short direct question in plain chat.
 2. Capture each direction as a small **design-token object** (`name`, `rationale`, the
    palette hexes `bg/ink/grey/mute/line/light/accent` + an `accents` list, `font_display`,
-   `font_body`, `density`) — and keep the **fonts portable** (Georgia, Arial/Helvetica,
+   `font_body`, `density`, **`cover`** (`centred | low-left | split-vertical | full-bleed-type`)
+   and **`skeleton`** (`statement | split | island | band | rail`) — the last two are the
+   composition axis, and an unknown value is a hard error rather than a silent fallback, so the
+   gate can never claim a composition it did not render) — and keep the **fonts portable** (Georgia, Arial/Helvetica,
    'Times New Roman', Consolas, Verdana — present on macOS+Windows) so the preview and the
    eventual pptx agree. This same token set seeds the chosen direction's `style.py` later, so
    there's **one source of truth** and no HTML→pptx drift. Write the 2–3 directions to a
    `directions.json` in a disposable `_directions/` subfolder of the deck folder.
-3. Build the **one comparison link** with `python scripts/archetypes_html.py
+3. 🔴 **Check the divergence mechanically BEFORE building the link:**
+   `python scripts/directions_diversity.py directions.json`. Exit 2 means a pair matched on ≥3 of
+   the four axes — REDIVERGE it, or keep it and record the reason on the checkpoint's
+   `direction gate:` line. This is not distrust of the pick; it is that the agent writing the three
+   directions and the agent judging their difference are the same mind, and that mind's failure
+   mode is confident, well-argued sameness.
+4. Build the **one comparison link** with `python scripts/archetypes_html.py
    directions.json _directions/directions.html "Deck Title"`. It renders the **same four
    archetype slides per direction** — cover, bullets+callout, diagram pipeline, data/figure
    — into a single self-contained HTML page: same content, only the style differs, so the
    comparison is apples-to-apples and shows how the user's *real* slide types will look, not
    just a pretty cover. (The page already bakes in the instructions and the "describe your
    own — D" prompt.)
-4. **Give the user the link** — the `file://…/directions.html` path to copy into a browser.
+5. **Give the user the link** — the `file://…/directions.html` path to copy into a browser.
    Each direction has a **"Pick this one"** button (and a "D — describe your own" textarea); the
    page copies a short **paste-back line** to the clipboard — `I pick direction B — Keynote`, or
    `I pick D (my own): <text>` — which the user pastes back into chat (the page can't message the
@@ -76,10 +90,10 @@ direction*; the single real render confirms *fidelity*.
      Never force one of your three.
    - *(Optional, when a host browser tool or headless Chrome is available, you may screenshot
      the page to show inline too — but the link is the deliverable the user reviews.)*
-5. Apply knobs — or a "D" free-text intention — by editing the **token-set** and re-running
+6. Apply knobs — or a "D" free-text intention — by editing the **token-set** and re-running
    `archetypes_html.py` (a tweak = change a constant + regenerate the page — cheap, instant,
    no LibreOffice) until the user consents.
-6. On consent: **(a)** turn the chosen token-set into the deck's `style.py` (the standard
+7. On consent: **(a)** turn the chosen token-set into the deck's `style.py` (the standard
    style-module interface), then **render ONE real slide in it** (deckkit + `render_deck`) and
    confirm it matches what they picked — this closes the HTML→pptx fidelity gap before the
    costly build; **(b)** optionally persist it to the active template registry (profile.md +

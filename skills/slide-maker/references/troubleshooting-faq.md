@@ -96,7 +96,8 @@ PyMuPDF rasterizes each page at a fixed 2× (~144 DPI) to `render/slide01.png �
 (plus `thumb_first/last.png`. The `<deck>.pdf` and a self-contained `viewer.html` preview are
 **reserved hand-off deliverables**, NOT build output: pass `--deliverables` to park them at the deck
 root once the deck is final. Re-rendering a deck already rendered? `--fast` re-renders only the
-slides whose content changed.)
+slides whose content changed; `--slides N[,M]` renders exactly the pages you name, for when you
+already know which — neither combines with `--deliverables` or with each other.)
 (zero-padded, no hyphen) plus `thumb_first.png`/`thumb_last.png`; then
 `python3 scripts/lint_deck.py <deck.pptx> --renders render/`.
 

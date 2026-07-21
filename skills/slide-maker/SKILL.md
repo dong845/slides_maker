@@ -172,11 +172,20 @@ few proposed images, for approval — **each row carries its source token**: `ge
 `references/image-generation.md` step 5), per the REFERENT RULE in `image-generation.md`) + the **`logo plan:` line with its evidence token**
 (`official asset — <source>` / `searched, none found → designed wordmark (flagged)` / `n/a — <reason>`; a bare
 "wordmark" with no recorded search on a single-entity deck = incomplete, even as an auto-waiver FYI)
-**+ one required `direction gate:` line — on the
-design-clean branch either `picked A/B/C/D of 3 (html: <path>)` or the named carve
-(e.g. `carve: user said just-go` / `carve: Mode-A mimic`); a design checkpoint on branch (c)
-with no direction-gate line is not ready** (this is the gate artifact that keeps the
-3-directions step from silently vanishing). Keep each under ~25 lines — the user reads it in the
+**+ one required GATE line naming the look-choice that was made — `direction gate:` on the
+design-clean branch (c), `style gate:` on the generated-template branch (d).** Branch (c):
+`picked A/B/C/D of 3 (html: <path>) · diversity: <ok | flagged <pair> → rediverged | justified: <reason>>`
+— the mechanical-check verdict rides on the same line, so a collapsed set cannot be posted as a
+choice without the collapse being spoken — or the named carve (e.g. `carve: user said just-go` /
+`carve: Mode-A mimic`). Branch (d): `picked <X> of 3 (gallery: <path>)`, **or**, when Auto/你决定
+skipped the gallery, `carve: auto-pick — ` **followed by all three candidate styles WITH the
+one-clause reason each loser lost** (e.g. `art-deco: 与 shanghai-city 撞档 · photo-collage: 无版权图源`).
+**A design checkpoint on branch (c) or (d) with no gate line is not ready.** Both are the gate
+artifact that keeps the choose-a-look step from silently vanishing — history: branch (c)'s gate was
+made a default precisely because an "offer" got skipped under momentum, and branch (d)'s gallery
+carried the same wording with no line to record it, so an Auto pick left NO trace that alternatives
+ever existed. The carve arm is what makes this cheap: Auto never has to *generate* three galleries,
+but it must always *name* what it rejected — the user's veto costs one glance either way. Keep each under ~25 lines — the user reads it in the
 terminal and answers in one click. Do **NOT** write `content-plan.md` / `design-plan.md` files
 into the deliverable folder (they clutter it; the conversation is the record) — unless the user
 explicitly asks for plan files.
@@ -381,11 +390,29 @@ the direction gate** (the look is already decided). The four:
      the best fit, and post the rendered images + pick as the FYI (mirror of the Q1(d)
      image-tool hero checkpoint) — the waiver removes the stop, never the artifact.
      - *Running the gate* → run **Gate A** of `references/collaborative-mode.md`
-       with **3 *differentiated* directions** (distinct light/dark, warm/cool, serif/sans —
-       not three shades of one idea), each captured as a **design-token set** (palette +
-       portable fonts + motif) and rendered by `scripts/archetypes_html.py` into **ONE
-       self-contained HTML page** showing all three in the **same** representative slides
-       (cover / points+callout / diagram / data). **Hand the user the single `file://…
+       with **3 *differentiated* directions**, each captured as a **design-token set** (palette +
+       portable fonts + motif + **composition**) and rendered by `scripts/archetypes_html.py` into
+       **ONE self-contained HTML page** showing all three in the **same** representative slides
+       (cover / points+callout / diagram / data).
+       - 🔴 **DIVERGENCE IS A PAIRWISE RULE, NOT AN EXHORTATION: any two directions must differ on
+         ≥2 of four axes — {palette mood · type attitude · density/scale · COMPOSITION ENVELOPE}.**
+         "Distinct light/dark, warm/cool, serif/sans" describes *knobs*; a dark version and a light
+         version of one layout are two coats on one design. The composition axis is the token set's
+         `cover` (`centred | low-left | split-vertical | full-bleed-type`) and `skeleton`
+         (`statement | split | island | band | rail`) — **where the ink sits**, which is what a
+         viewer reads first with the page squinted. *(Measured motivation: a real delivered deck had
+         8/12 pages on one composition signature and 55/66 page pairs under the "same shape" line —
+         while its FORMS varied correctly. Composition was never chosen, only defaulted.)*
+       - **LOCK-AND-REDIRECT.** When the user or a brand fixes an axis (a mandated accent, "match our
+         corporate look", a Q4 mimic), that axis LEAVES the divergence set and the ≥2 rule re-applies
+         to the ones that remain. A constraint relocates variance; it never licenses convergence.
+       - 🔴 **Run the mechanical check before you post the link:**
+         `python scripts/directions_diversity.py directions.json`. It measures mode · palette
+         distance · type pairing · composition and flags any pair matching on ≥3 axes. **Exit 2 is
+         not an auto-kill** — REDIVERGE the flagged pair, or keep it and record the reason on the
+         `direction gate:` line ("brand-locked accent — divergence moved to composition + type").
+         The check exists because the agent that writes the three directions is the same agent that
+         judges whether they differ; only an outside measurement catches three skins of one idea. **Hand the user the single `file://…
        directions.html` link** to open in a browser, review side-by-side, and pick from — no
        local pptx samples. Collect the pick + knobs. Present the pick as **A / B / C plus a
        fourth "D — describe your own" option**: if the user picks D, they *type the look they
@@ -854,7 +881,12 @@ LOCKED (registered/provided template) — carve applies` — the line that makes
 checkable and any profile override visible (`references/user-taste.md`), **a `boldness:` line
 (conservative | balanced+ | bold | experimental — default balanced+) AND a real `signature move:`
 line** — the ONE deliberate aesthetic RISK a template wouldn't make, scoped to where it lands (cover /
-WOW / money slide) and adapting a named bold reference; a `signature move` that reduces to "a big
+WOW / money slide) and adapting a named bold reference, **plus a `carried_by:` clause naming 2–3
+slides (the signature slide + ≥1 more) where the same idea does STRUCTURAL work** — one brave slide
+among nineteen safe ones reads as a tonal break, not a position; coherence is what makes daring look
+deliberate. Carried means the idea becomes the *shape of the content* on those slides (the motif
+turns into the diagram's own geometry), **not** a decorative repeat — a device stamped on every page
+is the opposite failure and the motif budget (≤3 appearances) still binds; a `signature move` that reduces to "a big
 number / a nice gradient / a full-bleed photo" is the safe catalogue, **not** a signature move, and
 makes the plan incomplete (send it back; self-verify (h) owns this) — only `boldness: conservative`
 (whether user-set or purpose-defaulted) makes the risk optional, softening the field to a named
@@ -1019,6 +1051,30 @@ Math) for its glyphs — flag that dependency; `equation_png` is font-independen
 Full list, fallbacks, and tofu recovery in `references/font-guidance.md`.
 
 ## Step 4 — Build with deckkit
+
+> ### 🔴 Step 4 opens with the SIGNATURE PROOF — one slide, rendered, BEFORE the other slides exist
+> The `boldness:` / `signature move:` contract is approved as **prose**. The pixels that either honour
+> it or sand it back to safe do not appear until Step 5, after the whole deck is built — at which point
+> the critic's "the signature move got sanded" finding costs a rebuild, and that cost is exactly why it
+> gets accepted instead of fixed. **Put the evidence where the decision is:**
+> 1. Author the **signature slide first** (the one the `signature move:` line names) — plus its
+>    `carried_by:` partner if the idea's structural claim is only legible across the pair.
+> 2. Build, then render just that page:
+>    `python3 scripts/render_deck.py <deck>.pptx <out> --slides N` (~5s vs ~12s full; the PNG is
+>    byte-identical to the same page from a full render, so it is evidence, not an approximation).
+> 3. **Post the PNG** with one line: *"this is what `<signature move>` actually looks like."* A 🔴 stop
+>    in the default flow; under a per-deck AUTO WAIVER it downgrades to a posted FYI like every other
+>    approval stop — the waiver removes the wait, never the artifact.
+> 4. Then author the rest. If the proof is wrong you have re-authored ONE slide, not twenty.
+>
+> **Skip only when:** `boldness: conservative` with its "deliberately restrained" clause recorded (no
+> risk was taken, so there is nothing to prove), or a 1–2 slide tiny-ask. A registered/provided template
+> does NOT skip it — a borrowed look still has a signature slide, and that is exactly where a template
+> deck either becomes designed or stays a template.
+>
+> *(Measured: build ≈ 1.8s, `--slides` render ≈ 4.7s vs 12.3s full. The proof costs less than one
+> critic round, and it is spent BEFORE the expensive authoring rather than after.)*
+
 Write a small per-deck build script that imports `scripts/deckkit.py` (don't re-derive primitives;
 full signatures + behaviour are in its docstrings). **Build the approved Design plan** (form ledger,
 rhythm, per-slide design, colour, logo) as the source of truth — the slide-design agent already chose
@@ -1863,8 +1919,11 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
      (supplied-transcript locator, or the "video read visual-only — spoken content is a GAP" line),
      and the Design plan's **declared contracts** — the skeleton rhythm
      map, the WOW slide(s), the money slide (the slide the deck exists for), **the `boldness:` dial +
-     the `signature move:` line** (so the distinctiveness lens can judge whether the declared risk
-     actually landed in the pixels or got sanded back to safe), the semantic-colour
+     the `signature move:` line INCLUDING its `carried_by:` slides** (so the distinctiveness lens can
+     judge whether the declared risk actually landed in the pixels or got sanded back to safe — and,
+     on the named carry slides specifically, whether the idea does structural work there or was
+     merely stamped), **the branch's gate line** (`direction gate:` / `style gate:`, so a look that
+     was never chosen from alternatives is visible as such), the semantic-colour
      ledger, the type tokens, the motion manifest, the **chosen preset name + its `guard` string
      verbatim** (or `custom look — no preset guards`) (on the generated-template branch, plus the four identity-propagation contract lines — palette · type register · component geometry · surface), the **`logo plan:` line with its evidence
      token**, the **checkpoint motif line** (device + meaning + legibility mode), the **approved
@@ -1956,7 +2015,19 @@ Then run the **actor-critic loop** — this is the quality engine, and the criti
    surface the unresolved finding(s) in the Step-6 note as an honest open question — the
    low-stakes analogue of high-stakes' "fail loudly at the cap" below. Cap the rounds by
    stakes so the loop converges fast: **low-stakes ≈ up to 2 rounds, high-stakes up
-   to 3.** If the first render is already clean and the critic consents, you're done
+   to 3.**
+   > 🔴 **One exception to "surface it and ship": a surviving `timid` / `sanded-to-safe`
+   > distinctiveness finding on a deck whose `boldness:` is `bold` or `experimental`.** There the
+   > deck does **not** ship on your say-so — after the one improvement attempt, put the choice to the
+   > USER in two lines: *(a) one more round — naming the concrete change you would make; (b) ship
+   > as-is, recorded as a knowing accept.* Either answer ships it; what changes is **who waives**.
+   > A deck the user asked to be bold and received forgettable did not deliver what was asked, and
+   > you are the party with an interest in calling your own output good enough. **This is the only
+   > taste finding that can hold a deck, it needs the user's own dial set to `bold`/`experimental`
+   > to fire, and it is never a floor** (a bold idea that broke legibility is a floor finding first).
+   > At `balanced+`/`conservative`, unchanged: one attempt, then ship with the note.
+   > *(Owned by `agents/critic.md` distinctiveness axis + `references/review-rubrics.md`; all three
+   > must say the same thing — this rule has a history of drifting apart across files.)* If the first render is already clean and the critic consents, you're done
    in one round — don't manufacture extra rounds. Otherwise apply the blocker+major
    fixes, rebuild, re-render.
 3. **Repeat.** The critic **re-reviews the whole deck fresh** (fixes introduce new
@@ -2151,7 +2222,15 @@ A checkable red-flag list; if a draft does any of these, stop and fix it before 
   any-language-safe) **and the build-time geometry gate** (`lint_layout(prs, strict=True)` — run before `prs.save()`;
   the in-process pre-render net for overflow/off-canvas/text-overlap/card-escape/footer/off-centre — plus
   `fit_text_size`); the build's source of truth. Full signatures in its docstrings.
-- `render_deck.py` — pptx → one PNG per slide (verify + critic loop). **`--fast` re-renders only the
+- `directions_diversity.py` — mechanical divergence check for direction-gate candidates
+  (mode · palette distance · type pairing · composition), flagging any pair that matches on ≥3 of 4
+  axes. Exit 0 all diverge / 2 flagged / 1 unreadable. Never auto-kills: a flag means REDIVERGE **or**
+  record a named justification on the `direction gate:` line. Run it before posting the preview link.
+- `render_deck.py` — pptx → one PNG per slide (verify + critic loop). **`--slides N[,M]` renders ONLY
+  the named 1-indexed pages** — the Step-4 SIGNATURE PROOF and any "re-render just the page I edited"
+  loop; byte-identical to those pages from a full render, and it deliberately leaves NO cache (a cache
+  would claim every page is current). Mutually exclusive with `--fast` (which chooses the set for you)
+  and with `--deliverables` (which needs the whole deck). **`--fast` re-renders only the
   slides whose content changed since the last run** (per-slide fingerprint + deck-global digest,
   cached in `render/.render-cache.json`; subsets the pptx, output byte-identical to a full render,
   auto-falls-back to full whenever the page mapping could be wrong) — ~12s → ~4.7s for a one-slide
