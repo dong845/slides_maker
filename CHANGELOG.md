@@ -9,6 +9,74 @@ section is a distilled summary — the full notes live on the
 
 ## [Unreleased]
 
+### Added — native 2.5D isometric components (no generated image)
+- **`deckkit.iso_bars`** — a **faithful** 2.5D bar chart: extrusion height is linear in the value and
+  zero-based, so the depth never distorts the data (this is why the projection is parallel, not
+  perspective — a perspective chart would foreshorten the far bars and lie). Rejects negatives and
+  >9 bars with an actionable message; `highlight=` pops one bar in `hi_color=` (default the deck's
+  emphasis hue).
+- **`deckkit.iso_stack`** — a layered architecture / disclosure ladder / decision hierarchy: floating
+  isometric slabs with a label aligned beside each. Caps at ~6 layers (raises, like `org_tree`).
+- **`deckkit.iso_prism`** — one extruded isometric block as a hero; returns a **cleared apex** anchor
+  above the whole top face so a caller can seat a label without landing it on the rhombus.
+- Fixed projection (true 30° isometric) and one-light-source face shading (top = base, right ×0.80,
+  left ×0.55) so every 2.5D element in a deck reads as one system. Text sits **beside** the geometry —
+  python-pptx cannot shear text onto a tilted face. **Scenario gates** live in `form-selection.md`:
+  2.5D trades **precision for presence** (the constant top-face pedestal compresses ratios, an 8×
+  reads ~4.8×), so it is a pitch/launch/keynote move, never a research/defense results comparison, and
+  the more the room rewards rigor the worse the trade. Dose like generated imagery — one 2.5D moment
+  per deck. Complementary to the generated-image branch: native = crisp, editable, data-bearing;
+  generated = soft, organic, atmospheric.
+
+### Added — `component_audit.py`: did this deck hand-roll a form the library implements?
+- Reads the build script (which components were called, via `dk.x()`, an alias, or
+  `from deckkit import x`) + the finished pptx (geometry signatures: bar row · abutting 100% band ·
+  tile row · marker row) and names the component whose geometry a hand-roll matches. **Advisory,
+  never a blocker** — a bespoke composition is the *signature move*; what the tool states as fact is
+  the usage ratio and the specific match. **Motivation, measured:** across three delivered decks the
+  build scripts called 3 of 59 form components; everything else was raw box+text, re-inheriting the
+  geometry bugs the components fix. Run at PRE-FLIGHT 12.
+- Suppression is **derived from deckkit's source** (which functions draw rects) intersected with the
+  form catalogue — a hand-kept list was wrong twice in two edits (`columns()` returns rects and draws
+  nothing; `table()` emits a GraphicFrame), each time silencing real detections deck-wide. A
+  deck that was never opened now prints `NOT CHECKED` and exits 1 rather than reporting clean.
+
+### Added — deck-level gates: RULE_THROUGH_TEXT · composition axis · signature proof
+- **`RULE_THROUGH_TEXT`** (build-time lint CRITICAL) — a decorative rule/divider drawn *through* a
+  text block's ink, always caused by a hand-picked `y` the text later grew into. Neither existing
+  lint caught it (a thin box over text is not text-on-text, not overflow, not invisible text); it
+  shipped twice in one delivered deck and was caught by the user. Derive the rule from the block's
+  measured end, never a coordinate.
+- **The direction gate diverges on COMPOSITION, not just palette** — the token set gained `cover`
+  and `skeleton` (rendered faithfully to the canonical skeleton vocabulary), divergence is now a
+  pairwise `≥2 of {palette · type · density · composition}` rule with lock-and-redirect, and a new
+  `directions_diversity.py` measures it (never auto-kills — rediverge or justify on the gate line).
+  The picked composition is **carried into the built deck** (the `cover` token becomes the cover's
+  layout, `skeleton` becomes the rhythm map's plurality), not discarded at `style.py`.
+- **The SIGNATURE PROOF opens Step 4** — author the signature slide first and render just that page
+  (`render_deck.py --slides N`) before authoring the rest, so the pixels that honour or sand the
+  `boldness:`/`signature move:` contract arrive when the decision is cheap to change, not after the
+  whole deck is built. `signature move:` now carries a `carried_by:` clause (2–3 slides where the
+  idea does structural work), verified through to the critic.
+
+### Changed — blandness can block, at the user's own dial
+- The critic's distinctiveness axis was MAJOR-at-most (a deck asked to be **bold** could ship
+  forgettable with a footnote while a 4pt overflow blocked). At `boldness: bold`/`experimental` a
+  surviving *timid*/*sanded* verdict is now blocking-until-**the user** waives it — the waiver moves
+  from the agent to the person who set the dial. `conservative`/`balanced+` unchanged.
+
+### Fixed
+- **`render_deck.py --slides N[,M]`** renders only the named pages (the signature-proof path);
+  byte-identical to those pages from a full render, leaves no cache, mutually exclusive with `--fast`
+  and `--deliverables`.
+- **`lint_deck.py` is iso-aware** — two textless freeform polygons that overlap are the faces of one
+  vector drawing (an iso solid, any freeform illustration), not a card collision; a pure-2.5D slide
+  no longer drowns the linter in self-overlap noise. A text card on a prism still flags.
+- A long chain of self-inflicted defects found by adversarial review across these features — an
+  over-suppressing audit list, a green pre-flight for an unopened deck, a composition axis that
+  stopped at the preview, an iso_prism return that produced invisible labels, iso_stack labels
+  drifting into the trough beside the next slab — each fixed and locked with a regression.
+
 ## [3.7.0] — 2026-07-21
 
 ### Added — design components the form catalogue kept prescribing and could not draw
