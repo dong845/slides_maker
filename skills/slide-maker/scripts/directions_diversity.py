@@ -66,7 +66,7 @@ def _face_class(stack):
 # (counting as a divergent composition) and only fail later in the renderer, so a collapsed set
 # could earn a divergence credit from a value that does not exist.
 _COVERS = ("centred", "low-left", "split-vertical", "full-bleed-type")
-_SKELETONS = ("statement", "split", "island", "band", "rail")
+_SKELETONS = ("statement", "split", "island", "band", "rail", "dashboard", "full-bleed", "gallery")
 
 
 def _checked(d, key, allowed):

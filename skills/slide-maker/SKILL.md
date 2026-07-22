@@ -407,8 +407,9 @@ the direction gate** (the look is already decided). The four:
          corporate look", a Q4 mimic), that axis LEAVES the divergence set and the ≥2 rule re-applies
          to the ones that remain. A constraint relocates variance; it never licenses convergence.
        - 🔴 **Run the mechanical check before you post the link:**
-         `python scripts/directions_diversity.py directions.json`. It measures mode · palette
-         distance · type pairing · composition and flags any pair matching on ≥3 axes. **Exit 2 is
+         `python scripts/directions_diversity.py directions.json`. It scores four axes — **palette
+         mood** (a light/dark flip counts as a palette divergence, so mode is folded in) · **type
+         pairing** · **density** · **composition** — and flags any pair matching on ≥3 of the 4. **Exit 2 is
          not an auto-kill** — REDIVERGE the flagged pair, or keep it and record the reason on the
          `direction gate:` line ("brand-locked accent — divergence moved to composition + type").
          The check exists because the agent that writes the three directions is the same agent that
@@ -1137,7 +1138,9 @@ The helper set, by job:
   `icon_ghost` an oversized faint watermark, `icon_card` the upper-left feature-card pattern; vary the
   treatment to fit the deck — see `references/icons.md` "Treatments"). *(These exist so you never
   hardcode a low `y` — the recurring overlap/footer bug.)*
-- **Text & blocks:** `bullet`, `callout` (auto-grows), `chip`, `modbox`, `arrow`, `table` (highlight
+- **Text & blocks:** `bullet`, `callout` (auto-grows), `chip`, `modbox` (a labelled MODULE box —
+  reach for it as the node when mapping architecture modules / code files / system parts joined by
+  `connector`, where a plain `node` is too bare; role word + optional filename/tag), `arrow`, `table` (highlight
   the key row), `code_block`, `hrule`.
 - **Colour:** `palette(n, ACCENTS)` (n distinct, contrast-checked fills — warns on adjacent same-hue;
   never a gray filler), `palette_from_image` (match a generated template's palette), `accent_one`
@@ -1193,6 +1196,10 @@ The helper set, by job:
   **stroke semantics** (solid=required
   · dashed=optional · dotted=feedback) and **shape semantics** (straight=adjacent flow · elbow/U=loop /
   return / non-adjacent), exactly one `hub` (hub optional in the system-architecture recipe — the
+  focal path can carry emphasis instead)  *(NB two similarly-named helpers: **`hub_spoke`** draws the
+  whole radial FIGURE — one centre + labelled spoke nodes on a ring; **`hub_spokes`** only draws the
+  CONNECTORS from an existing hub to existing nodes. Reach for `hub_spoke` to build the diagram,
+  `hub_spokes` to wire one you laid out yourself.)* the
   focal path can carry emphasis instead); `diagram_island` (bright figure panel on a dark slide);
   `concentric_rings` (nested framework); `step_list` (numbered process, vertical/horizontal).
   - **This kit draws conceptual BOX-FLOW only — not physical science schematics.** For a

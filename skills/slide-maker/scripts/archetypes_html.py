@@ -68,7 +68,12 @@ _DEFAULTS = {
 }
 
 _COVERS = ("centred", "low-left", "split-vertical", "full-bleed-type")
-_SKELETONS = ("statement", "split", "island", "band", "rail")
+# the full canonical rhythm-map vocabulary (design-intelligence-addendum §skeleton) — accepted so a
+# legitimate dashboard/full-bleed/gallery home-skeleton never crashes the gate. Five have a dedicated
+# preview CSS; the other three map to a nearest representative FOR THE PREVIEW ONLY (the token value
+# passed on to style.py stays exact).
+_SKELETONS = ("statement", "split", "island", "band", "rail", "dashboard", "full-bleed", "gallery")
+_SKELETON_PREVIEW = {"dashboard": "split", "full-bleed": "statement", "gallery": "split"}
 
 
 def _norm(d):
@@ -153,10 +158,11 @@ def _callout(S, label, body):
 
 
 def _slide_bullets(S):
-    """The CONTENT archetype — rendered per the direction's skeleton, faithfully to the canonical
-    vocabulary (design-intelligence-addendum §skeleton), so the user picks a composition the deck
-    will actually build, not a padding variation of one layout."""
-    sk = S["skeleton"]
+    """The CONTENT archetype — rendered per the direction's skeleton. Five of the eight canonical
+    skeletons (design-intelligence-addendum §skeleton) render faithfully; dashboard/full-bleed/gallery
+    map to a nearest representative for the PREVIEW (their real token is still carried into style.py),
+    so the user picks a composition the deck will build, not a padding variation of one layout."""
+    sk = _SKELETON_PREVIEW.get(S["skeleton"], S["skeleton"])   # preview render only; token stays exact
     tb = _title_bar(S, "How content slides read", "archetype")
     bl3 = "".join([
         _bullet_row(S, "Terse points", "a few words each"),

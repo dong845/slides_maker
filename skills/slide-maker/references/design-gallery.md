@@ -74,6 +74,9 @@ legibility rules).
   (CMT 色彩·材质·纹理); `hub_spoke`/`quadrant`/`timeline` for those specific shapes.
 - **Layered-card vocabulary (modern-SaaS polish):** `kpi_card` (hairline card = tinted `icon_chip`
   + label + DELTA pill top-right + big value + muted sub + optional `conclusion_strip`) ·
+  *(tie-breaker vs `scorecard`: reach for **`scorecard`** for a plain metric tile in a row of peers;
+  **`kpi_card`** when the tile wants the richer SaaS treatment — an icon chip, a delta pill, a
+  so-what strip. Same job, different polish level.)*
   `icon_chip` (accent-tinted squircle, accent icon) · `conclusion_strip` (the accent-tinted so-what
   bar that closes a card) · `tint(color, frac)` (the pastel surface mixer behind all of these — pass `base=` to mix toward a
   dark canvas instead of white). On an image-backed or dark page use the glass variants —
@@ -104,6 +107,18 @@ legibility rules).
   (a "football field" — floating min–max ranges per row, optional base-case tick) — all share one
   `axis_scale`. Composition over time (a total AND its mix) → `native_chart(kind='column_stacked' /
   '…_stacked_100' / 'area_stacked')` (real editable charts; `…_100` when the SHARE is the story).
+- **Small multiples:** **`small_multiples`** — the SAME metric across many comparable slices
+  (regions/products/cohorts) as identical mini native charts pinned to ONE shared value axis + one
+  highlighted slice. Use the ONE call; hand-composing `native_chart` per panel loses the shared
+  scale that IS the form (`data-viz.md`, `form-selection.md`).
+- **Labelled 2-D position:** **`position_map`** — N labelled items on two continuous axes with
+  anti-collision labels (the within-cell position `quadrant` throws away). A perceptual/competitive/
+  effort-vs-impact map.
+- **Guided figure walkthrough:** **`annotated_figure`** — a real figure + numbered markers + a
+  numbered caption rail + an optional magnified inset. The integral-figure walkthrough the
+  whole-figure rule keeps wanting, done in one call.
+- **Hierarchy / org chart / taxonomy:** **`org_tree`** — tidy two-pass layout (centroid parents,
+  horizontal bus) that raises rather than squeeze when a tree can't fit legibly.
 - **Decision & strategy furniture:** `eval_matrix` (options×criteria grid — `harvey_ball` fifths-fill
   glyphs or semantic ✓/◐/✕ marks, `recommend=` tints the winning column + a RECOMMENDED tab; the
   qualitative scoring `table` can't give) · `heat_matrix` (category×category grid coloured by value,
